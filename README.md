@@ -1,0 +1,2 @@
+# Vapourepo
+Welcome to Vapourepo! This repository contains my AUR submissions, as well as sources for Vapour OS, an Arch based Linux Distro I'm working on. You can find pre-built packages for both of these in the packages directory, which you can add to Pacman.

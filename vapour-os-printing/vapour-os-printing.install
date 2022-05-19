@@ -1,0 +1,8 @@
+post_install() {
+    systemctl --now enable cups.socket
+    echo "Print services enabled and online"
+}
+pre_remove() {
+    systemctl --now disable cups.socket
+    echo "Print services disabled and offline - if you want to keep CUPS then re-enable and restart cups.socket"
+}

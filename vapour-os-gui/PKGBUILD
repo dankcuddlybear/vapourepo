@@ -1,0 +1,21 @@
+pkgname=vapour-os-gui
+pkgver=0.1
+pkgrel=1
+pkgdesc='X11 and Pipewire sound server base package for Vapour OS'
+arch=(any)
+url='https://github.com/dankcuddlybear/Vapour-OS'
+depends=('pipewire-alsa'
+    'pipewire-jack'
+    'pipewire-pulse'
+    'pipewire-v4l2'
+    'pipewire-zeroconf'
+    'xorg-server'
+)
+optdepends=('vapour-os-amdgpu: AMD GPU drivers'
+    'vapour-os-gaming: Windows/Linux gaming libraries and software'
+    'vapour-os-gnome: GNOME X11/Wayland shell and utilities'
+    'vapour-os-i915: Intel GPU drivers'
+    'vapour-os-i915-gen3-6: Intel GPU drivers (gen 3-6)'
+    'vapour-os-kde: KDE X11 desktop and utilities'
+    'vapour-os-xfce: XFCE X11 desktop and utilities'
+)

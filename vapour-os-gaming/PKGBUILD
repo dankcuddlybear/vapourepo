@@ -1,0 +1,36 @@
+pkgname=vapour-os-gaming
+pkgver=0.1
+pkgrel=1
+pkgdesc='Vapour OS game libraries for 64 bit/32 bit Windows and Linux game compatibility'
+arch=(any)
+url='https://github.com/dankcuddlybear/Vapour-OS'
+backup=(etc/drirc)
+depends=('dxvk-bin'
+	'gamemode'
+#	'joystickwake'
+	'lib32-gamemode'
+	'lib32-gst-plugins-base'
+	'lib32-gst-plugins-good'
+	'lib32-libxslt'
+	'lib32-mangohud'
+	'lib32-ocl-icd'
+	'lib32-vkd3d'
+	'lib32-vulkan-mesa-layers'
+	'mangohud'
+	'ocl-icd'
+	'proton-ge-custom-bin'
+	'steam-native-runtime'
+	'vkd3d'
+	'winetricks'
+	'wine-gecko'
+	'wine-ge-custom'
+	'wine-mono'
+	'wine-nine'
+#    'xone-dkms'
+)
+source=('vapour-os-gaming-files.tar.gz')
+sha512sums=('2b98408451b075c5f48c9407f1c69f32d836c49dfdab452761aab73f4cb341a4148be3c3e4315771d96d68661d4a35f911ebc74aeb55a14bb8dacb09bfdc6e04')
+package() {
+	mkdir $pkgdir/etc
+	mv $srcdir/drirc $pkgdir/etc/drirc
+}

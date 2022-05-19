@@ -1,0 +1,8 @@
+1) Save edits to kernel parameters to seperate files, read them when creating bootloader entries
+	The bootloader entries are only created once and are not changed after that. If the user wants a graphical boot screen, they need to manually edit the entries.
+	Instead, include additional kernel parameters in packages, and read them when creating bootloader entries. In order for this to work see below:
+2) Create scripts to update bootloader entries
+	The script needs to be able to find UUID for the root partition. Find the currently mounted root partition and find its UUID
+	Read additional kernel parameters (installed by packages like vapour-os-bootscreen) and add them to bootloader entries
+	Re-run this script every time a package is installed that includes additional kernel parameters
+3) Auto light/dark mode & screen brightness

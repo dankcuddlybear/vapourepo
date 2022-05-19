@@ -1,0 +1,15 @@
+post_install() {
+    systemctl enable sddm-plymouth.service && PLYMOUTH=1
+    if [ $PLYMOUTH == 1 ]; then
+        systemctl disable sddm.service
+        echo "SDDM enabled - please reboot or start sddm-plymouth.service"
+        echo "Don't forget to stop sddm.service if it is running"
+    else
+        systemctl enable sddm.service
+        echo "SDDM enabled - please reboot or start sddm.service"
+    fi
+}
+pre_remove() {
+    systemctl disable sddm.service sddm-plymouth.service
+    echo "SDDM disabled - please reboot or stop sddm.service/sddm-plymouth.service, or re-enable and restart sddm.service/sddm-plymouth.service if you are keeping it"
+}

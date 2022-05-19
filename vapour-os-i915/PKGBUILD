@@ -1,0 +1,22 @@
+pkgname=vapour-os-i915
+pkgver=0.1
+pkgrel=1
+pkgdesc='Vapour OS Intel GPU drivers for OpenGL, Vulkan, OpenCL and hardware video acceleration. For gen 5 (Broadwell) or later. WARNING: Some module options taint the kernel.'
+arch=(any)
+url='https://github.com/dankcuddlybear/Vapour-OS'
+backup=(etc/X11/xorg.conf.d/20-intel.conf)
+depends=('intel-compute-runtime'
+    'intel-media-driver'
+    'lib32-mesa'
+    'lib32-vulkan-intel'
+    'vulkan-intel'
+    'xf86-video-intel'
+)
+source=('vapour-os-i915-files.tar.gz')
+sha512sums=('9848ca9fe4f320a132d2110bbd53e497e979f07d86268de3fc6fba8d5679531cd60e9191244fdf193b5465b9858dd656ae5785c4add55707d1f8a726d52b7302')
+package() {
+	mkdir -p $pkgdir/etc/X11/xorg.conf.d $pkgdir/usr/lib/modprobe.d $pkgdir/usr/lib/sysctl.d
+	mv $srcdir/xorg.conf $pkgdir/etc/X11/xorg.conf.d/20-intel.conf
+	mv $srcdir/modprobe.conf $pkgdir/usr/lib/modprobe.d/i915.conf
+	mv $srcdir/sysctl.conf $pkgdir/usr/lib/sysctl.d/i915.conf
+}

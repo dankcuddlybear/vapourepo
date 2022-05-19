@@ -1,0 +1,15 @@
+post_install() {
+    systemctl enable gdm-plymouth.service && PLYMOUTH=1
+    if [ $PLYMOUTH == 1 ]; then
+        systemctl disable gdm.service
+        echo "GDM enabled - please reboot or start gdm-plymouth.service"
+        echo "Don't forget to stop gdm.service if it is running"
+    else
+        systemctl enable gdm.service
+        echo "GDM enabled - please reboot or start gdm.service"
+    fi
+}
+pre_remove() {
+    systemctl disable gdm.service gdm-plymouth.service
+    echo "GDM disabled - please reboot or stop gdm.service/gdm-plymouth.service, or re-enable and restart gdm.service/gdm-plymouth.service if you are keeping it"
+}

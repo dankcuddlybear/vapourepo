@@ -1,0 +1,9 @@
+post_install() {
+	systemctl --now enable ananicy-cpp.service avahi-daemon.service fstrim.timer irqbalance.service NetworkManager.service rtirq.service
+	echo "Core systemd units enabled and online"
+	/opt/vapour-os/vosconfig
+}
+pre_remove() {
+	systemctl --now disable ananicy-cpp.service avahi-daemon.service irqbalance.service rtirq.service
+	echo "Core systemd units disabled and offline"
+}

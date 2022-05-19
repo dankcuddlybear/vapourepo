@@ -1,0 +1,3 @@
+EDITOR=/usr/bin/nano
+GTK_USE_PORTAL=1
+__GL_SYNC_TO_VBLANK=0

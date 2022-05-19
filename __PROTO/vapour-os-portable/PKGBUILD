@@ -1,0 +1,10 @@
+pkgname=vapour-os-portable
+pkgver=0.1
+pkgrel=1
+pkgdesc='Vapour OS features for portable devices'
+arch=(any)
+url='https://github.com/dankcuddlybear/Vapour-OS'
+backup=(etc/auto-cpufreq.conf)
+depends=('auto-cpufreq')
+optdepends=('hdapsd: Drop protection for mechanical HDDs in laptops (requires accelerometer)')
+install=vapour-os-portable.install

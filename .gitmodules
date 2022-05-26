@@ -1,3 +1,6 @@
 [submodule "hackbgrt-bin"]
 	path = hackbgrt-bin
 	url = ssh://aur@aur.archlinux.org/hackbgrt-bin.git
+[submodule "intel-opencl-runtime"]
+	path = intel-opencl-runtime
+	url = https://aur.archlinux.org/intel-opencl-runtime.git

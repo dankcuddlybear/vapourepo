@@ -1,0 +1,8 @@
+[Plymouth Theme]
+Name=Breeze
+Description=Breeze spinner theme without Arch logo. Modified by dankcuddlybear
+ModuleName=script
+
+[script]
+ImageDir=/usr/share/plymouth/themes/breeze
+ScriptFile=/usr/share/plymouth/themes/breeze/script

@@ -5,7 +5,7 @@ pkgdesc='Vapour OS Intel GPU drivers for OpenGL, Vulkan, OpenCL and hardware vid
 arch=(any)
 url='https://github.com/dankcuddlybear/Vapour-OS'
 backup=(etc/X11/xorg.conf.d/20-intel.conf)
-depends=('beignet'
+depends=('intel-opencl'
     'lib32-libva-intel-driver'
     'lib32-mesa'
     'lib32-vulkan-intel'

@@ -2,42 +2,41 @@ pkgname=vapour-os
 pkgver=0.1
 pkgrel=1
 pkgdesc='Vapour OS core system'
-arch=(any)
+arch=(x86_64)
 url='https://github.com/dankcuddlybear/Vapour-OS'
 install=vapour-os.install
 depends=(
-    # Minimal bootable system
-    'base' 'efibootmgr' 'linux-zen' 'linux-firmware' 'sudo'
-    # Compilers/makedepends
-    'autoconf' 'automake' 'bison' 'fakeroot' 'gcc' 'git' 'linux-zen-headers' 'make' 'patch' 'pkgconf' 'which' 'yay'
-    # Power saving, hardware protection, safety features
-    'hdparm'
-    # Performance enhancements
-    'ananicy-cpp' 'ananicy-rules-git' 'irqbalance' 'realtime-privileges' 'rtirq'
-    # Filesystems
-    'dosfstools' 'mtools' 'ntfs-3g'
-    # Archives
-    'p7zip' 'unrar'
-    # Networking
-    'networkmanager' 'nss-mdns'
-    # Utilities
-    'man-db' 'man-pages'
-    # Terminal font for HiDPI/LoDPI support
-    'terminus-font'
+	# Minimal bootable system
+	'base' 'efibootmgr' 'linux-zen' 'linux-firmware' 'sudo'
+	# Compilers/makedepends
+	'autoconf' 'automake' 'bison' 'fakeroot' 'gcc' 'git' 'linux-zen-headers' 'make' 'patch' 'pkgconf' 'which' 'yay'
+	# Power saving, hardware protection, safety features
+	'hdparm'
+	# Performance enhancements
+	'ananicy-cpp' 'ananicy-rules-git' 'irqbalance' 'realtime-privileges' 'rtirq'
+	# Filesystems
+	'dosfstools' 'mtools' 'ntfs-3g'
+	# Archives
+	'p7zip' 'unrar'
+	# Networking
+	'networkmanager' 'nss-mdns'
+	# Utilities
+	'man-db' 'man-pages'
+	# Terminal font for HiDPI/LoDPI support
+	'terminus-font'
 )
 optdepends=('amd-ucode: AMD microcode'
-    'vapour-os-amdgpu: AMD GPU drivers'
-    'vapour-os-bootscreen: Graphical boot screen'
-    'vapour-os-gaming: Windows/Linux gaming libraries and software'
-    'vapour-os-gnome: GNOME X11/Wayland shell and utilities'
-    'vapour-os-gui: X11 GUI with Pipewire sound server'
-    'vapour-os-i915: Intel GPU drivers'
-    'vapour-os-i915-gen3-6: Intel GPU drivers (gen 3-6)'
-    'vapour-os-intel: Enhancements for Intel CPUs'
-    'vapour-os-kde: KDE X11 desktop and utilities'
-    'vapour-os-multimedia: Audio/video codecs and disc support'
-    'vapour-os-portable: For portable devices like laptops or handheld PCs'
-    'vapour-os-printing: CUPS printing and printer drivers'
-    'vapour-os-xfce: XFCE X11 desktop and utilities'
-    
+	'intel-ucode: Intel microcode'
+	'vapour-os-amdgpu: AMD GPU drivers'
+	'vapour-os-bootscreen: Graphical boot screen'
+	'vapour-os-gaming: Windows/Linux gaming libraries and software'
+	'vapour-os-gnome: GNOME X11/Wayland shell and utilities'
+	'vapour-os-gui: X11 GUI with Pipewire sound server'
+	'vapour-os-i915: Intel GPU drivers'
+	'vapour-os-i915-gen3-6: Intel GPU drivers (gen 3-6)'
+	'vapour-os-kde: KDE X11 desktop and utilities'
+	'vapour-os-multimedia: Audio/video codecs and disc support'
+	'vapour-os-portable: For portable devices like laptops or handheld PCs'
+	'vapour-os-printing: CUPS printing and printer drivers'
+	'vapour-os-xfce: XFCE X11 desktop and utilities'
 )

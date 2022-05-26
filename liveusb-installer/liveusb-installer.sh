@@ -1,9 +1,4 @@
 #!/bin/bash
-
-#########################################
-#                PREPARE                #
-#########################################
-
 [ $(whoami) != "root" ] && echo "[ERROR] You must run this script with root priviliges." && exit 1 # Do not run without root priviliges
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )  # Get script directory
 . $SCRIPT_DIR/options.conf # Load options
@@ -118,8 +113,7 @@ echo "COMING SOON (hopefully):"
 echo " - Power saver - like Android's battery saver but better. Disables compositing, sets refresh rate to 60FPS, lowers the screen brightness and forces light theme (forces dark theme on OLED displays)."
 echo " - Vapour OS manager: Manage the system and software or repair the system. Toggle settings which will take effect immediately (most of them)."
 echo " - Data saver - like Android's data saver. Reduces network usage for background apps, and compresses all network traffic."
-echo " - Eye saver - automatically adjusts screen brightness based on ambient light conditions. Enables dark theme at sunset or if there is low ambient light."
-echo "   Makes colours warmer during sunset to help you sleep better. Requires location services and ambient light sensor or webcam."
+echo " - Eye saver - automatically adjusts screen brightness based on ambient light conditions. Enables dark theme at sunset or if there is low ambient light. Makes colours warmer during sunset to help you sleep better. Requires location services and ambient light sensor or webcam."
 echo " - Wayland support, although this will probably never happen, not for a thousand years."
 echo
 read -p "When you are ready, press enter to continue or CTRL+C to abort installation." CONTINUE
@@ -243,31 +237,6 @@ echo "" >> /mnt/etc/pacman.conf
 echo "[multilib]" >> /mnt/etc/pacman.conf
 echo "Include = /etc/pacman.d/mirrorlist" >> /mnt/etc/pacman.conf
 echo "" >> /mnt/etc/pacman.conf
-
-# Configure bootloader
-mkdir -p /mnt/boot/loader/entries
-echo "default arch.conf" > /mnt/boot/loader/loader.conf
-echo "timeout 2" >> /mnt/boot/loader/loader.conf
-echo "console-mode keep" >> /mnt/boot/loader/loader.conf
-echo "editor no" >> /mnt/boot/loader/loader.conf
-echo "auto-firmware no" >> /mnt/boot/loader/loader.conf
-echo "random-seed-mode always" >> /mnt/boot/loader/loader.conf
-
-# Create bootloader entry
-echo "title Arch Linux" > /mnt/boot/loader/entries/arch.conf
-echo "linux /vmlinuz-linux-zen" >> /mnt/boot/loader/entries/arch.conf
-[ $CPU == "intel" ] && echo "initrd /intel-ucode.img" >> /mnt/boot/loader/entries/arch.conf
-[ $CPU == "amd" ] && echo "initrd /amd-ucode.img" >> /mnt/boot/loader/entries/arch.conf
-echo "initrd /initramfs-linux-zen.img" >> /mnt/boot/loader/entries/arch.conf
-echo "options rw acpi_osi=Linux quiet splash loglevel=0 rd.systemd.show_status=false rd.udev.log_level=0 vt.global_cursor_default=0 root=$UUID_ROOT " >> /mnt/boot/loader/entries/arch.conf
-
-# Create bootloader entry (fallback initramfs)
-echo "title Arch Linux (fallback initramfs)" > /mnt/boot/loader/entries/arch-fallback.conf
-echo "linux /vmlinuz-linux-zen" >> /mnt/boot/loader/entries/arch-fallback.conf
-[ $CPU == "intel" ] && echo "initrd /intel-ucode.img" >> /mnt/boot/loader/entries/arch-fallback.conf
-[ $CPU == "amd" ] && echo "initrd /amd-ucode.img" >> /mnt/boot/loader/entries/arch-fallback.conf
-echo "initrd /initramfs-linux-zen-fallback.img" >> /mnt/boot/loader/entries/arch.conf
-echo "options rw acpi_osi=Linux root=$UUID_ROOT" >> /mnt/boot/loader/entries/arch.conf
 
 # Create directories
 mkdir -p /mnt/etc/vapour-os

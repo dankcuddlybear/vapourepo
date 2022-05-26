@@ -4,6 +4,6 @@ post_install() {
 	/opt/vapour-os/vosconfig
 }
 pre_remove() {
-	systemctl --now disable ananicy-cpp.service avahi-daemon.service irqbalance.service rtirq.service
+	systemctl --now disable ananicy-cpp.service avahi-daemon.service fstrim.timer irqbalance.service rtirq.service
 	echo "Core systemd units disabled and offline"
 }

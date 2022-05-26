@@ -1,4 +1,0 @@
-post_install() {
-    echo "If you are using a display manager, stop/disable it and start/enable the Plymouth version."
-    echo "For example, if you are using SDDM stop/disable sddm.service and start/enable sddm-plymouth.service"
-}

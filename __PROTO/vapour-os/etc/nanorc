@@ -14,7 +14,7 @@
 
 ## When soft line wrapping is enabled, make it wrap lines at blanks
 ## (tabs and spaces) instead of always at the edge of the screen.
-# set atblanks
+set atblanks
 
 ## Automatically indent a newly created line to the same number of
 ## tabs and/or spaces as the preceding line -- or as the next line
@@ -62,7 +62,7 @@ set autoindent
 # set historylog
 
 ## Display a "scrollbar" on the righthand side of the edit window.
-# set indicator
+set indicator
 
 ## Scroll the buffer contents per half-screen instead of per line.
 # set jumpyscrolling
@@ -175,7 +175,7 @@ set softwrap
 set tabsize 4
 
 ## Convert each typed tab to the fitting number of spaces.
-set tabstospaces
+# set tabstospaces
 
 ## Snip whitespace at the end of lines when justifying or hard-wrapping.
 set trimblanks
@@ -267,8 +267,10 @@ include "/usr/share/nano/*.nanorc"
 ## For quickly uppercasing or lowercasing the word under the cursor.
 ## (These effectively do a Ctrl+Right followed by a Shift+Ctrl+Left,
 ## and then pipe the selected text through a sed command.)
-#bind Sh-M-U "Oc[1;6D|sed 's/.*/\U&/'" main
-#bind Sh-M-L "Oc[1;6D|sed 's/.*/\L&/'" main
+#bind Sh-M-U "Oc[1;6D|sed 's/.*/\U&/'
+" main
+#bind Sh-M-L "Oc[1;6D|sed 's/.*/\L&/'
+" main
 
 ## If you would like nano to have keybindings that are more "usual",
 ## such as ^O for Open, ^F for Find, ^H for Help, and ^Q for Quit,

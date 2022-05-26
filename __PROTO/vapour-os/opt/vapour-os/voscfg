@@ -1,25 +1,28 @@
 #!/bin/sh
-#[ $(whoami) != "root" ] && echo "[ERROR] You must run this script with root priviliges." && exit 1
+# Vapour OS config tool (CLI). Configure various critical system settings.
+# This script will run once after installing Vapour OS.
+# If you didn't use the live USB installer, your system will work but some settings will be unset. You will need to run voscfg again.
+[ $(whoami) != "root" ] && echo "[ERROR] You must run this script with root priviliges." && exit 1
 . /etc/vapour-os/display.conf
 . /etc/locale.conf
 . /etc/vconsole.conf
 . /tmp/options.conf
+unset CFG_PARTIAL CFG_LOCALE CFG_TIMEZONE CFG_KEYMAP CFG_XKEYMAP CFG_SCALE CFG_NETWORK CFG_FSTAB CFG_BOOTLOADER CFG_INITRAMFS
 [[ $- != *i* ]] && INTERACTIVE=0 || INTERACTIVE=1
 
 PrintHelp() {
 echo "Usage: $0 [OPTIONS]"
-echo "	-h	--help		Show this info"
-echo "	--auto			Auto-configure missing options (no user input)"
-echo "	--locale		Set system language and locale"
-echo "	--timezone		Set system time zone"
-echo "	--keymap		Set console keyboard layout"
-echo "	--xkeymap		Set X11 keyboard layout. Warning: xkeymaps are named differently from console keymaps"
-echo "	--scale			Set X11 display scaling and console font size"
-echo "	--network		Configure hostname and other network settings"
-echo "	--bootloader:	Edit kernel parameters and update bootloader entries with package provided parameters"
-echo "	--intiramfs:	Update initramfs with package provided changes"
+echo "    -h --help     Show this info"
+echo "    --auto        Auto-configure missing options (no user input)"
+echo "    --locale      Set system language and locale"
+echo "    --timezone    Set system time zone"
+echo "    --keymap      Set console keyboard layout"
+echo "    --xkeymap     Set X11 keyboard layout. Warning: xkeymaps are named differently from console keymaps"
+echo "    --scale       Set X11 display scaling and console font size"
+echo "    --network     Configure hostname and other network settings"
+echo "    --bootloader: Edit kernel parameters and update bootloader entries with package provided parameters"
+echo "    --intiramfs:  Update initramfs with package provided changes"
 }
-
 while getopts ":h" option; do
 	case $option in
 		h | help)
@@ -39,11 +42,11 @@ while getopts ":h" option; do
 		xkeymap)
 			CFG_XKEYMAP=1
 			CFG_PARTIAL=1;;
-		network)
-			CFG_NETWORK=1
-			CFG_PARTIAL=1;;
 		scale)
 			CFG_SCALE=1
+			CFG_PARTIAL=1;;
+		network)
+			CFG_NETWORK=1
 			CFG_PARTIAL=1;;
 		bootloader)
 			CFG_BOOTLOADER=1
@@ -200,7 +203,7 @@ echo "DISPLAY_SCALE=$DISPLAY_SCALE" > /etc/vapour-os/display.conf
 [ 81 <= $DISPLAY_SCALE < 94 ] && CONSOLEFONT="ter-114b"
 [ 94 <= $DISPLAY_SCALE < 106 ] && CONSOLEFONT="ter-116b"
 [ 106 <= $DISPLAY_SCALE < 119 ] && CONSOLEFONT="ter-118b"
-[ 119 <= $DISPLAY_SCALE < 131 ] && CONSOLEFONT="ter-120b"
+[ 119 <= $DISPLAY_SCALE < 131 ] && CONSfilesOLEFONT="ter-120b"
 [ 131 <= $DISPLAY_SCALE < 144 ] && CONSOLEFONT="ter-122b"
 [ 144 <= $DISPLAY_SCALE < 162 ] && CONSOLEFONT="ter-124b"
 [ 162 <= $DISPLAY_SCALE < 188 ] && CONSOLEFONT="ter-128b"
@@ -212,3 +215,58 @@ echo "FONT=$CONSOLEFONT" >> /etc/vconsole.conf
 [ 159 <= $DISPLAY_SCALE < 234 ] && XCURSOR_SIZE=48
 [ 234 <= $DISPLAY_SCALE < 334 ] && XCURSOR_SIZE=64
 [ 334 <= $DISPLAY_SCALE ] && XCURSOR_SIZE=96
+
+# Bootloader
+if [ -z $CFG_PARTIAL ] || [ ! -z $CFG_BOOTLOADER ]; then
+	. /opt/vapour-os/partinfo # Find UUID of root partition
+	unset KPARAMS
+	unset KPARAMS_GRAPHICAL
+	# Read additional kernel parameters in /opt/vapour-os/kparams.d
+	KPARAMS=$(cat /opt/vapour-os/kparams.d/main)
+	KPARAMS_GRAPHICAL=$(cat /opt/vapour-os/kparams.d/graphical)
+	mkdir -p /boot/loader/entries
+	# Configure bootloader
+	echo "default arch.conf" > /boot/loader/loader.conf
+	echo "timeout 2" >> /boot/loader/loader.conf
+	echo "console-mode keep" >> /boot/loader/loader.conf
+	echo "editor no" >> /boot/loader/loader.conf
+	echo "auto-firmware no" >> /boot/loader/loader.conf
+	echo "random-seed-mode always" >> /boot/loader/loader.conf
+	# Create default bootloader entry
+	echo "title Arch Linux" > /mnt/boot/loader/entries/arch.conf
+	echo "linux /vmlinuz-linux-zen" >> /mnt/boot/loader/entries/arch.conf
+	[ -f /boot/amd-ucode.img ] && echo "initrd /amd-ucode.img" >> /mnt/boot/loader/entries/arch.conf
+	[ -f /boot/intel-ucode.img ] && echo "initrd /intel-ucode.img" >> /mnt/boot/loader/entries/arch.conf
+	echo "initrd /initramfs-linux-zen.img" >> /mnt/boot/loader/entries/arch.conf
+	echo "options $KPARAMS $KPARAMS_GRAPHICAL root=$ROOT_UUID" >> /mnt/boot/loader/entries/arch.conf
+	# Create bootloader entry (fallback initramfs)
+	echo "title Arch Linux (fallback initramfs)" > /mnt/boot/loader/entries/arch-fallback.conf
+	echo "linux /vmlinuz-linux-zen" >> /mnt/boot/loader/entries/arch-fallback.conf
+	[ -f /boot/amd-ucode.img ] && echo "initrd /amd-ucode.img" >> /mnt/boot/loader/entries/arch.conf
+	[ -f /boot/intel-ucode.img ] && echo "initrd /intel-ucode.img" >> /mnt/boot/loader/entries/arch-fallback.conf
+	echo "initrd /initramfs-linux-zen-fallback.img" >> /mnt/boot/loader/entries/arch.conf
+	echo "options $KPARAMS root=$ROOT_UUID" >> /mnt/boot/loader/entries/arch.conf
+fi
+
+# Initramfs
+if [ -z $CFG_PARTIAL ] || [ ! -z $CFG_INITRAMFS ]; then
+	[ -f /usr/bin/plymouth ] && GRAPHICAL=1
+	echo "# This file was automatically generated by voscfg. Any changes to this file may be lost next time voscfg is run." > /etc/mkinitcpio.conf
+	if [ $GRAPHICAL == 1 ]; then
+		[ $GPU0 == "intel" ] && echo "MODULES=(i915)" >> /etc/mkinitcpio.conf
+		[ $GPU0 == "amd" ] && echo "MODULES=(amdgpu)" >> /etc/mkinitcpio.conf
+		[ $GPU0 == "nvidia" ] && echo "MODULES=(nvidia)" >> /etc/mkinitcpio.conf
+	else
+		echo "MODULES=()" >> /etc/mkinitcpio.conf
+	fi
+	echo "BINARIES=()" >> /etc/mkinitcpio.conf
+	echo "FILES=()" >> /etc/mkinitcpio.conf
+	if [ $GRAPHICAL == 1 ]; then
+		echo "HOOKS=(autodetect base systemd sd-vconsole modconf sd-plymouth block filesystems keyboard fsck)" >> /etc/mkinitcpio.conf
+	else
+		echo "HOOKS=(autodetect base systemd sd-vconsole modconf block filesystems keyboard fsck)" >> /etc/mkinitcpio.conf
+	fi
+	echo "COMPRESSION=\"zstd\"" >> /etc/mkinitcpio.conf
+	rm /boot/initramfs-*.img
+	mkinitcpio -P
+fi

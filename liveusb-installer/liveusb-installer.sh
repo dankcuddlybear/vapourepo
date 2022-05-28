@@ -262,19 +262,24 @@ echo "[ \$ANSWER == \"y\" ] || [ \$ANSWER == \"Y\" ] && clear && \
 echo \"Enter root password\" && passwd root" >> /mnt/tmp/chroot-cfg.sh												# If yes, set root password
 echo "useradd -m \$OWNER; echo; echo \"Enter password for user \$OWNER\"; passwd \$OWNER" >> /mnt/tmp/chroot-cfg.sh	# Set owner's password
 echo "gpasswd -a \$OWNER video; gpasswd -a \$OWNER audio; gpasswd -a \$OWNER wheel" >> /mnt/tmp/chroot-cfg.sh		# Add owner to video, audio and wheel groups
-echo "cd /tmp; sudo -u $OWNER git clone https://aur.archlinux.org/yay.git || exit 1" >> /mnt/tmp/chroot-cfg.sh	# Donwload yay PKGBUILD
-echo "cd yay; sudo -U $OWNER makepkg -cirs || exit 1" >> /mnt/tmp/chroot-cfg.sh									# Install yay
-echo "cd ../; rm -rf yay" >> /mnt/tmp/chroot-cfg.sh																# Clean up
+echo "cd /tmp; sudo -u $OWNER git clone https://aur.archlinux.org/yay.git || exit 1" >> /mnt/tmp/chroot-cfg.sh		# Donwload yay PKGBUILD
+echo "cd yay; sudo -U $OWNER makepkg -cirs || exit 1" >> /mnt/tmp/chroot-cfg.sh										# Install yay
+echo "cd ../; rm -rf yay" >> /mnt/tmp/chroot-cfg.sh																	# Clean up
 echo "pacman-key --recv-key FBA220DFC880C036 --keyserver keyserver.ubuntu.com || exit 1" >> /mnt/tmp/chroot-cfg.sh	# Fetch keys for Chaotic-AUR
 echo "pacman-key --lsign-key FBA220DFC880C036" >> /mnt/tmp/chroot-cfg.sh											# Locally sign keys for Chaotic-AUR
 echo "pacman --noconfirm -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst' \
 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst' || exit 1" >> /mnt/tmp/chroot-cfg.sh		# Install Chaotic-AUR keyring and mirrorlist
 echo "echo \"[chaotic-aur]\" >> /etc/pacman.conf" >> /mnt/tmp/chroot-cfg.sh											# Add Chaotic-AUR repo to pacman.conf
 echo "echo \"Include = /etc/pacman.d/chaotic-mirrorlist\" >> /etc/pacman.conf" >> /mnt/tmp/chroot-cfg.sh			# Add Chaotic-AUR repo to pacman.conf
+echo "echo \"\" >> /etc/pacman.conf" >> /mnt/tmp/chroot-cfg.sh
+echo "echo \"[vapourepo]\" >> /etc/pacman.conf" >> /mnt/tmp/chroot-cfg.sh																	# Add Vapourepo to pacman.conf
+echo "echo \"SigLevel = Optional DatabaseOptional\" >> /etc/pacman.conf" >> /mnt/tmp/chroot-cfg.sh											# Add Vapourepo to pacman.conf
+echo "echo \"Server = https://raw.githubusercontent.com/dankcuddlybear/\\\$repo/main/__PKG\" >> /etc/pacman.conf" >> /mnt/tmp/chroot-cfg.sh	# Add Vapourepo to pacman.conf
 echo "pacman --asdeps -D $PKG_PACSTRAP chaotic-keyring chaotic-mirrorlist yay-bin " >> /mnt/tmp/chroot-cfg.sh		# Set explicitly installed packages to "dependency"
 echo "sudo -U $OWNER yay -Syu vapour-os || exit 1" >> /mnt/tmp/chroot-cfg.sh										# Finish installing Vapour OS
 echo "gpasswd -a $OWNER realtime" >> /mnt/tmp/chroot-cfg.sh															# Add owner to realtime group
 echo "setterm -cursor on > /etc/issue" >> /mnt/tmp/chroot-cfg.sh													# Fix for no cursor in TTY
+echo "/opt/vapour-os/voscfg" >> /mnt/tmp/chroot-cfg.sh																# Configure Vapour OS
 echo "sync" >> /mnt/tmp/chroot-cfg.sh																				# Force writes to complete
 chmod +x /mnt/tmp/chroot-cfg.sh
 sync

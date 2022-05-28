@@ -261,6 +261,7 @@ echo "GPU1=\"$GPU1\"                    # \"amd\", \"nvidia\" or leave blank if 
 echo "PORTABLE=\"$PORTABLE\"            # Set to 1 if your device is portable" >> /mnt/etc/vapour-os/device.conf
 echo "BATTERY=\"$BATTERY\"              # Set to 1 if your device has a battery or UPS" >> /mnt/etc/vapour-os/device.conf
 echo "ACCELEROMETER=\"$ACCELEROMETER\"  # Set to 1 if your portable device has an accelerometer" >> /mnt/etc/vapour-os/device.conf
+echo "DISPLAY_SCALE=$DISPLAY_SCALE" > /mnt/etc/vapour-os/display.conf
 
 # Copy other options (initial setup only)
 cp $SCRIPT_DIR/options.conf /mnt/mnt/options.conf

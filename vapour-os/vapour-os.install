@@ -6,7 +6,6 @@ post_install() {
 	[ -z GTK_USE_PORTAL ] && echo "GTK_USE_PORTAL=1" >> /etc/environment
 	/opt/vapour-os/patchconfigs
 	setterm -cursor on > /etc/issue
-	cp -r /opt/vapour-os/configs/* /etc
 	sync
 }
 post_upgrade() {

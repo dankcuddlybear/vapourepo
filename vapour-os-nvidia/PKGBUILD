@@ -1,6 +1,6 @@
 pkgname=vapour-os-nvidia
 pkgver=0.1
-pkgrel=1
+pkgrel=2
 pkgdesc='Vapour OS Nvidia drivers for OpenGL, Vulkan, OpenCL, CUDA and hardware video acceleration.'
 arch=(x86_64)
 url='https://github.com/dankcuddlybear/Vapour-OS'

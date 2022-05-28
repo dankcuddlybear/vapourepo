@@ -5,8 +5,7 @@ pkgdesc='Vapour OS Nvidia drivers for OpenGL, Vulkan, OpenCL, CUDA and hardware 
 arch=(x86_64)
 url='https://github.com/dankcuddlybear/Vapour-OS'
 backup=(etc/X11/xorg.conf.d/20-nvidia.conf)
-depends=('cuda'
-	'nvidia-dkms'
+depends=('nvidia-dkms'
 	'lib32-nvidia-utils'
 	'lib32-opencl-nvidia'
 	'opencl-nvidia'

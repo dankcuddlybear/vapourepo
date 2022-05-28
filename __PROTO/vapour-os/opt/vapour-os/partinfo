@@ -1,2 +1,0 @@
-ROOT_DEV=$(mount | grep -sm 1 "on / type ext4" | cut -d ' ' -f 1)
-ROOT_UUID=$(blkid $ROOT_DEV | cut -d ' ' -f 3 | cut -c7-42)

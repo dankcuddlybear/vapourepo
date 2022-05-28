@@ -40,3 +40,10 @@ optdepends=('amd-ucode: AMD microcode'
 	'vapour-os-printing: CUPS printing and printer drivers'
 	'vapour-os-xfce: XFCE X11 desktop and utilities'
 )
+source=('vapour-os-files.tar.gz')
+sha512sums=('f1fbe4d07551a59163fe5116e9a2c8f6a0430350a7bffcb92da6e0bb9ad999f5d3ec93013ec40d59b4bb478416eb41dcaafafac9694f359f3854ecf95961ccb9')
+package() {
+	mv $srcdir/etc $pkgdir
+	mv $srcdir/opt $pkgdir
+	mv $srcdir/usr $pkgdir
+}

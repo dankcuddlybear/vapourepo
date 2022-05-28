@@ -11,7 +11,7 @@ install=vapour-os-portable.install
 source=('vapour-os-portable-files.tar.gz')
 sha512sums=('be4f0823bcc699929aa837b00250b4d5b16144441fbef0bbb81b8447211c27adba81cf0b1233fd2c5cef30bb7ee35ce7b68a2285434b13d95573b7e4f7c3baa9')
 package() {
-	mkdir $pkgdir/etc $pkgdir/usr/lib/systemd/system/upower.service.d
+	mkdir -p $pkgdir/etc $pkgdir/usr/lib/systemd/system/upower.service.d
 	cp $srcdir/auto-cpufreq.conf $pkgdir/etc/auto-cpufreq.conf
 	cp $srcdir/override.conf $pkgdir/usr/lib/systemd/system/upower.service.d/auto-cpufreq.conf
 }

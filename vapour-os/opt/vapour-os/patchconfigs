@@ -1,0 +1,4 @@
+#!/bin/sh
+patch /etc/ananicy.d/ananicy.conf /opt/vapour-os/patches/ananicy.conf.patch
+patch /etc/nanorc /opt/vapour-os/patches/nanorc.patch
+patch /etc/nsswitch.conf /opt/vapour-os/patches/nsswitch.conf.patch

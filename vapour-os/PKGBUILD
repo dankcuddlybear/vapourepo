@@ -1,6 +1,6 @@
 pkgname=vapour-os
 pkgver=0.1
-pkgrel=1
+pkgrel=2
 pkgdesc='Vapour OS core system'
 arch=(x86_64)
 url='https://github.com/dankcuddlybear/Vapour-OS'

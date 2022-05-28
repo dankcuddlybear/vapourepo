@@ -3,7 +3,7 @@
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )  # Get script directory
 . $SCRIPT_DIR/options.conf # Load options
 loadkeys $KEYMAP # Load keymap
-[ $DISPLAY_SCALE > 100 ] && setfont latarcyrheb-sun32 # Load extra large font if display is HiDPI
+[ $DISPLAY_SCALE -gt 100 ] && setfont latarcyrheb-sun32 # Load extra large font if display is HiDPI
 timedatectl set-ntp true # Ensure system clock is accurate
 
 # HARDWARE CHECKER - gathers necessary hardware info and aborts installation if system requirements are not met.
@@ -120,43 +120,56 @@ read -p "When you are ready, press enter to continue or CTRL+C to abort installa
 
 # Unmount any mounted filesystems
 sync
-unmount /mnt/mnt &> /dev/null
+echo "Unmounting filesystems..."
 umount $DEV_BOOT &> /dev/null
 [ ! -z $DEV_HOME ] && umount $DEV_HOME &> /dev/null
 [ ! -z $DEV_MEDIA ] && umount $DEV_MEDIA &> /dev/null
 [ ! -z $DEV_PUBLIC ] && umount $DEV_PUBLIC &> /dev/null
 umount $DEV_ROOT &> /dev/null
 # Format any filesystems marked for formatting
-[ $FORMAT_ROOT == 1 ] && mke2fs -L arch $DEV_ROOT
-[ $FORMAT_BOOT == 1 ] && mkfs.fat -F 32 -n boot $DEV_BOOT
-[ ! -z $DEV_HOME ] && [ $FORMAT_HOME == 1 ] && mke2fs -L home $DEV_HOME
-[ ! -z $DEV_MEDIA ] && [ $FORMAT_MEDIA == 1 ] && mke2fs -L media $DEV_MEDIA
-[ ! -z $DEV_PUBLIC ] [ $FORMAT_PUBLIC == 1 ] && mke2fs -L public $DEV_PUBLIC
+[ $FORMAT_ROOT == 1 ] || [ $FORMAT_BOOT == 1 ] || [ $FORMAT_HOME == 1 ] || \
+[ $FORMAT_MEDIA == 1 ] || [ $FORMAT_PUBLIC == 1 ] && echo "Formatting partitions..."
+[ $FORMAT_ROOT == 1 ] && mke2fs -L $LABEL_ROOT $DEV_ROOT
+[ $FORMAT_BOOT == 1 ] && mkfs.fat -F 32 -n $LABEL_BOOT $DEV_BOOT
+[ ! -z $DEV_HOME ] && [ $FORMAT_HOME == 1 ] && mke2fs -L $LABEL_HOME $DEV_HOME
+[ ! -z $DEV_MEDIA ] && [ $FORMAT_MEDIA == 1 ] && mke2fs -L $LABEL_MEDIA $DEV_MEDIA
+[ ! -z $DEV_PUBLIC ] && [ $FORMAT_PUBLIC == 1 ] && mke2fs -L $LABEL_PUBLIC $DEV_PUBLIC
 # Tune filesystems
+echo "Tuning filesystems..."
 tune2fs -O fast_commit $DEV_ROOT
 tune2fs -c 1 $DEV_ROOT  # Perform fsck every mount
 [ ! -z $DEV_HOME ] && tune2fs -O fast_commit $DEV_HOME
 [ ! -z $DEV_MEDIA ] && tune2fs -O fast_commit $DEV_MEDIA
 [ ! -z $DEV_PUBLIC ] && tune2fs -O fast_commit $DEV_PUBLIC
+# Set boot flag on ESP
+DEV_BOOT=$(readlink -f $DEV_BOOT)
+if [ ${DEV_BOOT:5:2} == "hd" ] || [ ${DEV_BOOT:5:2} == "sd" ] || [ ${DEV_BOOT:5:2} == "vd" ]; then
+	ESPDISK=${DEV_BOOT:0:8}
+	ESPPART=${DEV_BOOT:8:3}
+elif [ ${DEV_BOOT:5:4} == "nvme" ]; then
+	ESPDISK=${DEV_BOOT:0:12}
+	ESPPART=${DEV_BOOT:13:3}
+elif [ ${DEV_BOOT:5:6} == "mmcblk" ]; then
+	ESPDISK=${DEV_BOOT:0:12}
+	ESPPART=${DEV_BOOT:13:3}
+else echo "[ERROR] Error detecting EFI system partition!"; exit 1; fi
+parted $ESPDISK set $ESPPART boot on 1> /dev/null
 # Mount and clear root filesystem
+echo "Mounting filesystems..."
 mount $DEV_ROOT /mnt || exit 1
-rm -rf /mnt/bin /mnt/etc /mnt/opt /mnt/root /mnt/usr /mnt/var
+[ $FORMAT_ROOT != 1 ] && echo "Clearing root filesystem" && rm -rf /mnt/bin /mnt/dev /mnt/etc /mnt/lib /mnt/lib64 /mnt/mnt /mnt/opt /mnt/proc /mnt/root /mnt/run /mnt/sbin /mnt/sys /mnt/tmp /mnt/usr /mnt/var
 # Create mount points
-mkdir /mnt/boot
-mkdir /mnt/public
+mkdir /mnt/boot &> /dev/null
+mkdir /mnt/public &> /dev/null
 [ ! -z $DEV_HOME ] && mkdir /mnt/home
 [ ! -z $DEV_MEDIA ] && mkdir /mnt/media
 # Mount and clear other filesystems
 mount $DEV_BOOT /mnt/boot || exit 1
-rm -rf /mnt/boot/*.img /mnt/boot/vmlinuz-linux-zen /mnt/boot/EFI/systemd /mnt/boot/loader
+[ $FORMAT_BOOT != 1 ] && echo "Clearing ESP (will keep Windows/MacOS bootloader)" && rm -rf /mnt/boot/*.img /mnt/boot/vmlinuz-linux-zen /mnt/boot/EFI/systemd /mnt/boot/loader
 [ ! -z $DEV_HOME ] && mount $DEV_HOME /mnt/home
 [ ! -z $DEV_MEDIA ] && mount $DEV_MEDIA /mnt/media
 [ ! -z $DEV_PUBLIC ] && mount $DEV_PUBLIC /mnt/public
 sync
-
-#########################################
-#                INSTALL                #
-#########################################
 
 # Bootstrap packages. If it fails for some reason, abort installation.
 PKG_PACSTRAP="autoconf automake base bison fakeroot gcc git make patch pkgconf sudo which"
@@ -190,7 +203,7 @@ chmod 440 /mnt/etc/sudoers
 echo "# See pacman.conf(5) manpage for all options" > /mnt/etc/pacman.conf
 echo "# GENERAL OPTIONS" >> /mnt/etc/pacman.conf
 echo "[options]" >> /mnt/etc/pacman.conf
-echo "HoldPkg = vapour-os" >> /mnt/etc/pacman.conf
+echo "HoldPkg = amd-ucode intel-ucode hdapsd vapour-os" >> /mnt/etc/pacman.conf
 echo "Architecture = auto" >> /mnt/etc/pacman.conf
 echo "" >> /mnt/etc/pacman.conf
 echo "# Pacman won't upgrade packages listed in IgnorePkg and members of IgnoreGroup" >> /mnt/etc/pacman.conf
@@ -240,8 +253,6 @@ echo "" >> /mnt/etc/pacman.conf
 
 # Create directories
 mkdir -p /mnt/etc/vapour-os
-mount -t tmpfs -o size=100M tmpfs /mnt/tmp
-
 # Copy device info
 echo "CPU=\"$CPU\"                      # \"intel\", \"amd\" or leave blank if you have neither" > /mnt/etc/vapour-os/device.conf
 echo "SSE4_2=\"$SSE4_2\"                # Set to 1 if your CPU supports SSE4.2" >> /mnt/etc/vapour-os/device.conf
@@ -252,38 +263,41 @@ echo "BATTERY=\"$BATTERY\"              # Set to 1 if your device has a battery 
 echo "ACCELEROMETER=\"$ACCELEROMETER\"  # Set to 1 if your portable device has an accelerometer" >> /mnt/etc/vapour-os/device.conf
 
 # Copy other options (initial setup only)
-cp $SCRIPT_DIR/options.conf /mnt/tmp/options.conf
+cp $SCRIPT_DIR/options.conf /mnt/mnt/options.conf
 
 # Finish initial system configuration in chroot
-echo "#!/bin/bash" > /mnt/tmp/chroot-cfg.sh
-echo "bootctl install" >> /mnt/tmp/chroot-cfg.sh																	# Install bootloader
-echo "clear; read -p \"Do you want to enable root login? (y/N) \" ANSWER" >> /mnt/tmp/chroot-cfg.sh					# Ask to enable root login
-echo "[ \$ANSWER == \"y\" ] || [ \$ANSWER == \"Y\" ] && clear && \
-echo \"Enter root password\" && passwd root" >> /mnt/tmp/chroot-cfg.sh												# If yes, set root password
-echo "useradd -m \$OWNER; echo; echo \"Enter password for user \$OWNER\"; passwd \$OWNER" >> /mnt/tmp/chroot-cfg.sh	# Set owner's password
-echo "gpasswd -a \$OWNER video; gpasswd -a \$OWNER audio; gpasswd -a \$OWNER wheel" >> /mnt/tmp/chroot-cfg.sh		# Add owner to video, audio and wheel groups
-echo "cd /tmp; sudo -u $OWNER git clone https://aur.archlinux.org/yay.git || exit 1" >> /mnt/tmp/chroot-cfg.sh		# Donwload yay PKGBUILD
-echo "cd yay; sudo -U $OWNER makepkg -cirs || exit 1" >> /mnt/tmp/chroot-cfg.sh										# Install yay
-echo "cd ../; rm -rf yay" >> /mnt/tmp/chroot-cfg.sh																	# Clean up
-echo "pacman-key --recv-key FBA220DFC880C036 --keyserver keyserver.ubuntu.com || exit 1" >> /mnt/tmp/chroot-cfg.sh	# Fetch keys for Chaotic-AUR
-echo "pacman-key --lsign-key FBA220DFC880C036" >> /mnt/tmp/chroot-cfg.sh											# Locally sign keys for Chaotic-AUR
+echo "#!/bin/bash" > /mnt/mnt/chroot-cfg.sh
+echo "bootctl install --esp-path=/boot" >> /mnt/mnt/chroot-cfg.sh													# Install bootloader
+echo "read -p \"Do you want to enable root login? (y/N) \" ANSWER" >> /mnt/mnt/chroot-cfg.sh						# Ask to enable root login
+echo "if [ \$ANSWER == \"y\" ] || [ \$ANSWER == \"Y\" ]; then CONTINUE=0; while [ \$CONTINUE == 0 ]; do \
+echo \"Enter root password\"; passwd root && CONTINUE=1; done; fi" >> /mnt/mnt/chroot-cfg.sh						# If yes, set root password
+echo "useradd -m $OWNER; echo; CONTINUE=0; while [ \$CONTINUE == 0 ]; do \
+echo \"Enter password for user $OWNER\"; passwd $OWNER && CONTINUE=1; done" >> /mnt/mnt/chroot-cfg.sh				# Set owner's password
+echo "gpasswd -a $OWNER video; gpasswd -a $OWNER audio; gpasswd -a $OWNER wheel" >> /mnt/mnt/chroot-cfg.sh			# Add owner to video, audio and wheel groups
+echo "cd /home/$OWNER; rm -rf yay; \
+sudo -u $OWNER git clone https://aur.archlinux.org/yay.git || exit 1" >> /mnt/mnt/chroot-cfg.sh 					# Download yay PKGBUILD
+echo "cd yay; sudo -u $OWNER makepkg -cirs || exit 1" >> /mnt/mnt/chroot-cfg.sh										# Install yay
+echo "cd /; rm -rf /home/$OWNER/yay" >> /mnt/mnt/chroot-cfg.sh														# Clean up
+echo "pacman-key --recv-key FBA220DFC880C036 --keyserver keyserver.ubuntu.com || exit 1" >> /mnt/mnt/chroot-cfg.sh	# Fetch keys for Chaotic-AUR
+echo "pacman-key --lsign-key FBA220DFC880C036" >> /mnt/mnt/chroot-cfg.sh											# Locally sign keys for Chaotic-AUR
 echo "pacman --noconfirm -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst' \
-'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst' || exit 1" >> /mnt/tmp/chroot-cfg.sh		# Install Chaotic-AUR keyring and mirrorlist
-echo "echo \"[chaotic-aur]\" >> /etc/pacman.conf" >> /mnt/tmp/chroot-cfg.sh											# Add Chaotic-AUR repo to pacman.conf
-echo "echo \"Include = /etc/pacman.d/chaotic-mirrorlist\" >> /etc/pacman.conf" >> /mnt/tmp/chroot-cfg.sh			# Add Chaotic-AUR repo to pacman.conf
-echo "echo \"\" >> /etc/pacman.conf" >> /mnt/tmp/chroot-cfg.sh
-echo "echo \"[vapourepo]\" >> /etc/pacman.conf" >> /mnt/tmp/chroot-cfg.sh																	# Add Vapourepo to pacman.conf
-echo "echo \"SigLevel = Optional DatabaseOptional\" >> /etc/pacman.conf" >> /mnt/tmp/chroot-cfg.sh											# Add Vapourepo to pacman.conf
-echo "echo \"Server = https://raw.githubusercontent.com/dankcuddlybear/\\\$repo/main/__PKG\" >> /etc/pacman.conf" >> /mnt/tmp/chroot-cfg.sh	# Add Vapourepo to pacman.conf
-echo "pacman --asdeps -D $PKG_PACSTRAP chaotic-keyring chaotic-mirrorlist yay-bin " >> /mnt/tmp/chroot-cfg.sh		# Set explicitly installed packages to "dependency"
-echo "sudo -U $OWNER yay -Syu vapour-os || exit 1" >> /mnt/tmp/chroot-cfg.sh										# Finish installing Vapour OS
-echo "gpasswd -a $OWNER realtime" >> /mnt/tmp/chroot-cfg.sh															# Add owner to realtime group
-echo "setterm -cursor on > /etc/issue" >> /mnt/tmp/chroot-cfg.sh													# Fix for no cursor in TTY
-echo "/opt/vapour-os/voscfg" >> /mnt/tmp/chroot-cfg.sh																# Configure Vapour OS
-echo "sync" >> /mnt/tmp/chroot-cfg.sh																				# Force writes to complete
-chmod +x /mnt/tmp/chroot-cfg.sh
+'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst' || exit 1" >> /mnt/mnt/chroot-cfg.sh		# Install Chaotic-AUR keyring and mirrorlist
+echo "echo \"[chaotic-aur]\" >> /etc/pacman.conf" >> /mnt/mnt/chroot-cfg.sh											# Add Chaotic-AUR repo to pacman.conf
+echo "echo \"Include = /etc/pacman.d/chaotic-mirrorlist\" >> /etc/pacman.conf" >> /mnt/mnt/chroot-cfg.sh			# Add Chaotic-AUR repo to pacman.conf
+echo "echo \"\" >> /etc/pacman.conf" >> /mnt/mnt/chroot-cfg.sh
+echo "echo \"[vapourepo]\" >> /etc/pacman.conf" >> /mnt/mnt/chroot-cfg.sh											# Add Vapourepo to pacman.conf
+echo "echo \"SigLevel = Optional DatabaseOptional\" >> /etc/pacman.conf" >> /mnt/mnt/chroot-cfg.sh					# Add Vapourepo to pacman.conf
+echo "echo \"Server = https://raw.githubusercontent.com/dankcuddlybear/\\\$repo/main/__PKG\" \
+>> /etc/pacman.conf" >> /mnt/mnt/chroot-cfg.sh 																		# Add Vapourepo to pacman.conf
+echo "pacman --asdeps -D $PKG_PACSTRAP chaotic-keyring chaotic-mirrorlist yay" >> /mnt/mnt/chroot-cfg.sh			# Set explicitly installed packages to "dependency"
+echo "sudo -u $OWNER yay -Syu vapour-os || exit 1" >> /mnt/mnt/chroot-cfg.sh										# Finish installing Vapour OS
+echo "gpasswd -a $OWNER realtime" >> /mnt/mnt/chroot-cfg.sh															# Add owner to realtime group
+echo "setterm -cursor on > /etc/issue" >> /mnt/mnt/chroot-cfg.sh													# Fix for no cursor in TTY
+echo "sync" >> /mnt/mnt/chroot-cfg.sh																				# Force writes to complete
+chmod +x /mnt/mnt/chroot-cfg.sh
 sync
 arch-chroot /mnt '/mnt/chroot-cfg.sh' || exit 1
+rm /mnt/mnt/chroot-cfg.sh
 
 # Reconfigure sudo
 echo "Defaults insults" > /mnt/etc/sudoers

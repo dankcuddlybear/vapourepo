@@ -1,0 +1,272 @@
+#!/bin/sh
+# Vapour OS config tool (CLI). Configure various critical system settings.
+# This script will run once after installing Vapour OS.
+# If you didn't use the live USB installer, your system will work but some settings will be unset. You will need to run voscfg again.
+[ $(whoami) != "root" ] && echo "[ERROR] You must run this script with root priviliges." && exit 1
+. /etc/vapour-os/display.conf
+. /etc/locale.conf
+. /etc/vconsole.conf
+. /tmp/options.conf
+unset CFG_PARTIAL CFG_LOCALE CFG_TIMEZONE CFG_KEYMAP CFG_XKEYMAP CFG_SCALE CFG_NETWORK CFG_FSTAB CFG_BOOTLOADER CFG_INITRAMFS
+[[ $- != *i* ]] && INTERACTIVE=0 || INTERACTIVE=1
+
+PrintHelp() {
+echo "Usage: $0 [OPTIONS]"
+echo "    -h --help     Show this info"
+echo "    --auto        Auto-configure missing options (no user input)"
+echo "    --locale      Set system language and locale"
+echo "    --timezone    Set system time zone"
+echo "    --keymap      Set console keyboard layout"
+echo "    --xkeymap     Set X11 keyboard layout. Warning: xkeymaps are named differently from console keymaps"
+echo "    --scale       Set X11 display scaling and console font size"
+echo "    --network     Configure hostname and other network settings"
+echo "    --bootloader: Edit kernel parameters and update bootloader entries with package provided parameters"
+echo "    --intiramfs:  Update initramfs with package provided changes"
+}
+while getopts ":h" option; do
+	case $option in
+		h | help)
+			PrintHelp
+			exit;;
+		auto)
+			INTERACTIVE=0;;
+		locale)
+			CFG_LOCALE=1
+			CFG_PARTIAL=1;;
+		timezone)
+			CFG_TIMEZONE=1
+			CFG_PARTIAL=1;;
+		keymap)
+			CFG_KEYMAP=1
+			CFG_PARTIAL=1;;
+		xkeymap)
+			CFG_XKEYMAP=1
+			CFG_PARTIAL=1;;
+		scale)
+			CFG_SCALE=1
+			CFG_PARTIAL=1;;
+		network)
+			CFG_NETWORK=1
+			CFG_PARTIAL=1;;
+		bootloader)
+			CFG_BOOTLOADER=1
+			CFG_PARTIAL=1;;
+		initramfs)
+			CFG_INITRAMFS=1
+			CFG_PARTIAL=1;;
+		\?)
+			echo "[ERROR] Invalid option"
+			PrintHelp
+			exit 1;;
+	esac
+done
+echo "INTERACTIVE=$INTERACTIVE"
+echo "CFG_LOCALE=$CFG_LOCALE"
+echo "CFG_TIMEZONE=$CFG_TIMEZONE"
+echo "CFG_KEYMAP=$CFG_KEYMAP"
+echo "CFG_XKEYMAP=$CFG_XKEYMAP"
+echo "CFG_BOOTLOADER=$CFG_BOOTLOADER"
+echo "CFG_INITRAMFS=$CFG_INITRAMFS"
+exit
+
+NetConfig() {
+	echo $1 > /etc/hostname
+	echo "127.0.0.1 localhost" > /etc/hosts
+	echo "::1 localhost" >> /etc/hosts
+	echo "127.0.1.1 $1" >> /etc/hosts
+}
+
+SetLocale() {
+	echo "$1.UTF-8 UTF-8" > /etc/locale.gen
+	echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen
+	echo "" >> /etc/locale.gen
+	locale-gen
+	echo "LANG=$1.UTF-8" > /etc/locale.conf
+	echo "LC_ALL=$1.UTF-8" >> /etc/locale.conf
+	echo "LC_CTYPE=$1.UTF-8" >> /etc/locale.conf
+	echo "LC_NUMERIC=$1.UTF-8" >> /etc/locale.conf
+	echo "LC_TIME=$1.UTF-8" >> /etc/locale.conf
+	echo "LC_COLLATE=$1.UTF-8" >> /etc/locale.conf
+	echo "LC_MONETARY=$1.UTF-8" >> /etc/locale.conf
+	echo "LC_MESSAGES=$1.UTF-8" >> /etc/locale.conf
+	echo "LC_PAPER=$1.UTF-8" >> /etc/locale.conf
+	echo "LC_NAME=$1.UTF-8" >> /etc/locale.conf
+	echo "LC_ADDRESS=$1.UTF-8" >> /etc/locale.conf
+	echo "LC_TELEPHONE=$1.UTF-8" >> /etc/locale.conf
+	echo "LC_MEASUREMENT=$1.UTF-8" >> /etc/locale.conf
+	echo "LC_IDENTIFICATION=$1.UTF-8" >> /etc/locale.conf
+	echo "" >> /etc/locale.gen
+}
+
+# Language and locale
+if [ $INTERACTIVE == 0 ]; then
+	if [ ! -f /etc/locale.conf ]; then
+		if [ -z $LOCALE ]; then echo "[WARNING] Locale not set. Please run /opt/vapour-os/vosconfig"
+		else SetLocale $LOCALE; fi
+	fi
+else
+	if [ -z $CFG_PARTIAL ] || [ ! -z $CFG_LOCALE ]; then
+		clear; CONTINUE=0; while [ $CONTINUE == 0 ]; do
+			read -p "Enter locale keymap (or type l to list locales): " LOCALE
+			if [ $LOCALE == "l" ] || [ $LOCALE == "L" ]; then ls -d /usr/share/locale/*/ | sed 's/\/usr\/share\/locale\///g' | sed 's/\///g' | less -X
+			else
+				if [ -d /usr/share/locale/LOCALE ]; then
+					SetLocale $LOCALE
+					CONTINUE=1
+				else echo "Invalid locale!"
+			fi
+		done
+	fi
+fi
+
+# Timezone
+if [ $INTERACTIVE == 0 ]; then
+	if [ ! -f /etc/localtime ]; then
+		if [ -z $TIMEZONE ]; then echo "[WARNING] Time zone not set. Please run /opt/vapour-os/vosconfig"
+		else timedatectl set-timezone $TIMEZONE; fi
+	fi
+else
+	if [ -z $CFG_PARTIAL ] || [ ! -z $CFG_TIMEZONE ]; then
+		clear; CONTINUE=0; while [ $CONTINUE == 0 ]; do
+			read -p "Enter your timezone (or type l to list timezones): " TIMEZONE
+			if [ $TIMEZONE == "l" ] || [ $TIMEZONE == "L" ]; then timedatectl list-timezones
+			else timedatectl set-timezone $TIMEZONE && CONTINUE=1; fi
+		done
+	fi
+fi
+
+# Console keymap
+if [ $INTERACTIVE == 0 ]; then
+	if [ ! -f /etc/vconsole.conf ]; then
+		if [ -z $KEYMAP ]; then echo "[WARNING] Console keymap not set - will default to \"us\" (United States). Please run /opt/vapour-os/vosconfig"
+		else localectl set-keymap $KEYMAP; fi
+	fi
+else
+	if [ -z $CFG_PARTIAL ] || [ ! -z $CFG_KEYMAP ]; then
+		clear; CONTINUE=0; while [ $CONTINUE == 0 ]; do
+			read -p "Enter console keymap (or type l to list keymaps): " KEYMAP
+			if [ $KEYMAP == "l" ] || [ $KEYMAP == "L" ]; then localectl list-keymaps
+			else rm /etc/vconsole.conf; localectl set-keymap $KEYMAP && CONTINUE=1; fi
+		done
+	fi
+fi
+
+# X11 keymap
+if [ $INTERACTIVE == 0 ]; then
+	if [ ! -f /etc/X11/xorg.conf.d/00-keyboard.conf ]; then
+		if [ -z XKEYMAP ]; then echo "[WARNING] X11 keymap not set - will default to \"us\" (United States). Please run /opt/vapour-os/vosconfig"
+		else localectl set-x11-keymap; fi
+	fi
+else
+	if [ -z $CFG_PARTIAL ] || [ ! -z $CFG_XKEYMAP ]; then
+		clear; CONTINUE=0; while [ $CONTINUE == 0 ]; do
+			read -p "Enter X11 keymap (or type l to list keymaps): " XKEYMAP
+			if [ $XKEYMAP == "l" ] || [ $XKEYMAP == "L" ]; then localectl list-x11-keymap-layouts
+			else localectl set-x11-keymap $XKEYMAP && CONTINUE=1; fi
+		done
+	fi
+fi
+
+# Network
+if [ $INTERACTIVE == 0 ]; then
+	if [ ! -f /etc/hostname ] || [ ! -f /etc/hosts ]; then
+		if [ -z $HOSTNAME ]; then echo "[WARNING] Hostname/hosts not set. Please run /opt/vapour-os/vosconfig"
+		else NetConfig $HOSTNAME; fi
+	fi
+else
+	if [ -z $CFG_PARTIAL ] || [ ! -z $CFG_NETWORK ]; then
+		read -p "Enter hostname for this machine: " HOSTNAME
+		NetConfig $HOSTNAME
+	fi
+fi
+
+# Display scale
+if [ $INTERACTIVE == 0 ]; then
+	if [ -z $DISPLAY_SCALE ]; then
+		if [ -z $DISPLAY_SCALE ]; then
+			echo "[WARNING] DISPLAY_SCALE not set in /etc/vapour-os/device.conf - setting to 100 (percent). If you wish to change this run /opt/vapour-os/vosconfig"
+			DISPLAY_SCALE=100
+		fi
+	fi
+else
+	if [ -z $CFG_PARTIAL ] || [ ! -z $CFG_SCALE ]; then
+		clear; CONTINUE=0; while [ $CONTINUE == 0 ]; do
+			read -p "Enter display scale in percent (25-1000): " DISPLAY_SCALE
+			if [ 25 >= DISPLAY_SCALE <= 1000 ]; then CONTINUE=1
+			else clear echo "Must be a whole number between 25 and 1000 (inclusive)"; fi
+		done
+	fi
+fi
+echo "DISPLAY_SCALE=$DISPLAY_SCALE" > /etc/vapour-os/display.conf
+# Calculate font size
+[ $DISPLAY_SCALE < 81 ] && CONSOLEFONT="ter-112n"
+[ 81 <= $DISPLAY_SCALE < 94 ] && CONSOLEFONT="ter-114b"
+[ 94 <= $DISPLAY_SCALE < 106 ] && CONSOLEFONT="ter-116b"
+[ 106 <= $DISPLAY_SCALE < 119 ] && CONSOLEFONT="ter-118b"
+[ 119 <= $DISPLAY_SCALE < 131 ] && CONSfilesOLEFONT="ter-120b"
+[ 131 <= $DISPLAY_SCALE < 144 ] && CONSOLEFONT="ter-122b"
+[ 144 <= $DISPLAY_SCALE < 162 ] && CONSOLEFONT="ter-124b"
+[ 162 <= $DISPLAY_SCALE < 188 ] && CONSOLEFONT="ter-128b"
+[ 188 <= $DISPLAY_SCALE ] && CONSOLEFONT="ter-132b"
+echo "FONT=$CONSOLEFONT" >> /etc/vconsole.conf
+# Calculate X cursor size
+[ $DISPLAY_SCALE < 117 ] && XCURSOR_SIZE=24
+[ 117 <= $DISPLAY_SCALE < 159 ] && XCURSOR_SIZE=32
+[ 159 <= $DISPLAY_SCALE < 234 ] && XCURSOR_SIZE=48
+[ 234 <= $DISPLAY_SCALE < 334 ] && XCURSOR_SIZE=64
+[ 334 <= $DISPLAY_SCALE ] && XCURSOR_SIZE=96
+
+# Bootloader
+if [ -z $CFG_PARTIAL ] || [ ! -z $CFG_BOOTLOADER ]; then
+	. /opt/vapour-os/partinfo # Find UUID of root partition
+	unset KPARAMS
+	unset KPARAMS_GRAPHICAL
+	# Read additional kernel parameters in /opt/vapour-os/kparams.d
+	KPARAMS=$(cat /opt/vapour-os/kparams.d/main)
+	KPARAMS_GRAPHICAL=$(cat /opt/vapour-os/kparams.d/graphical)
+	mkdir -p /boot/loader/entries
+	# Configure bootloader
+	echo "default arch.conf" > /boot/loader/loader.conf
+	echo "timeout 2" >> /boot/loader/loader.conf
+	echo "console-mode keep" >> /boot/loader/loader.conf
+	echo "editor no" >> /boot/loader/loader.conf
+	echo "auto-firmware no" >> /boot/loader/loader.conf
+	echo "random-seed-mode always" >> /boot/loader/loader.conf
+	# Create default bootloader entry
+	echo "title Arch Linux" > /mnt/boot/loader/entries/arch.conf
+	echo "linux /vmlinuz-linux-zen" >> /mnt/boot/loader/entries/arch.conf
+	[ -f /boot/amd-ucode.img ] && echo "initrd /amd-ucode.img" >> /mnt/boot/loader/entries/arch.conf
+	[ -f /boot/intel-ucode.img ] && echo "initrd /intel-ucode.img" >> /mnt/boot/loader/entries/arch.conf
+	echo "initrd /initramfs-linux-zen.img" >> /mnt/boot/loader/entries/arch.conf
+	echo "options $KPARAMS $KPARAMS_GRAPHICAL root=$ROOT_UUID" >> /mnt/boot/loader/entries/arch.conf
+	# Create bootloader entry (fallback initramfs)
+	echo "title Arch Linux (fallback initramfs)" > /mnt/boot/loader/entries/arch-fallback.conf
+	echo "linux /vmlinuz-linux-zen" >> /mnt/boot/loader/entries/arch-fallback.conf
+	[ -f /boot/amd-ucode.img ] && echo "initrd /amd-ucode.img" >> /mnt/boot/loader/entries/arch.conf
+	[ -f /boot/intel-ucode.img ] && echo "initrd /intel-ucode.img" >> /mnt/boot/loader/entries/arch-fallback.conf
+	echo "initrd /initramfs-linux-zen-fallback.img" >> /mnt/boot/loader/entries/arch.conf
+	echo "options $KPARAMS root=$ROOT_UUID" >> /mnt/boot/loader/entries/arch.conf
+fi
+
+# Initramfs
+if [ -z $CFG_PARTIAL ] || [ ! -z $CFG_INITRAMFS ]; then
+	[ -f /usr/bin/plymouth ] && GRAPHICAL=1
+	echo "# This file was automatically generated by voscfg. Any changes to this file may be lost next time voscfg is run." > /etc/mkinitcpio.conf
+	if [ $GRAPHICAL == 1 ]; then
+		[ $GPU0 == "intel" ] && echo "MODULES=(i915)" >> /etc/mkinitcpio.conf
+		[ $GPU0 == "amd" ] && echo "MODULES=(amdgpu)" >> /etc/mkinitcpio.conf
+		[ $GPU0 == "nvidia" ] && echo "MODULES=(nvidia)" >> /etc/mkinitcpio.conf
+	else
+		echo "MODULES=()" >> /etc/mkinitcpio.conf
+	fi
+	echo "BINARIES=()" >> /etc/mkinitcpio.conf
+	echo "FILES=()" >> /etc/mkinitcpio.conf
+	if [ $GRAPHICAL == 1 ]; then
+		echo "HOOKS=(autodetect base systemd sd-vconsole modconf sd-plymouth block filesystems keyboard fsck)" >> /etc/mkinitcpio.conf
+	else
+		echo "HOOKS=(autodetect base systemd sd-vconsole modconf block filesystems keyboard fsck)" >> /etc/mkinitcpio.conf
+	fi
+	echo "COMPRESSION=\"zstd\"" >> /etc/mkinitcpio.conf
+	rm /boot/initramfs-*.img
+	mkinitcpio -P
+fi

@@ -41,7 +41,7 @@ optdepends=('amd-ucode: AMD microcode'
 	'vapour-os-xfce: XFCE X11 desktop and utilities'
 )
 source=('vapour-os-files.tar.gz')
-sha512sums=('f1fbe4d07551a59163fe5116e9a2c8f6a0430350a7bffcb92da6e0bb9ad999f5d3ec93013ec40d59b4bb478416eb41dcaafafac9694f359f3854ecf95961ccb9')
+sha512sums=('179481cc66dc612faa4374c40792fdbf623884127f35b9e8634c8e7c8be9dbae9f789d80709686b637906fb7351f606835995b5ac4fc8ff860338171fb9b9fa3')
 package() {
 	mv $srcdir/etc $pkgdir
 	mv $srcdir/opt $pkgdir

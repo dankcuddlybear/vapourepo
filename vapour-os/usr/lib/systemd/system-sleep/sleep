@@ -1,5 +1,0 @@
-#!/bin/sh
-case $1 in post)
-    udevadm trigger --subsystem-match="block"
-    ;;
-esac

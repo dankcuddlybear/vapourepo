@@ -1,5 +1,5 @@
 pkgname=vapour-os-gaming
-pkgver=0.1
+pkgver=0.2
 pkgrel=1
 pkgdesc='Vapour OS game libraries for 64 bit/32 bit Windows and Linux game compatibility'
 arch=(x86_64)
@@ -7,7 +7,7 @@ url='https://github.com/dankcuddlybear/Vapour-OS'
 backup=(etc/drirc)
 depends=('dxvk-bin'
 	'gamemode'
-#	'joystickwake'
+	'joystickwake'
 	'lib32-gamemode'
 	'lib32-gst-plugins-base'
 	'lib32-gst-plugins-good'
@@ -26,7 +26,7 @@ depends=('dxvk-bin'
 	'wine-ge-custom'
 	'wine-mono'
 	'wine-nine'
-#    'xone-dkms'
+    'xone-dkms'
 )
 source=('vapour-os-gaming-files.tar.gz')
 sha512sums=('2b98408451b075c5f48c9407f1c69f32d836c49dfdab452761aab73f4cb341a4148be3c3e4315771d96d68661d4a35f911ebc74aeb55a14bb8dacb09bfdc6e04')

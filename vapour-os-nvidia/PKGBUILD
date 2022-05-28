@@ -1,15 +1,20 @@
 pkgname=vapour-os-nvidia
 pkgver=0.1
 pkgrel=1
-pkgdesc='Vapour OS Nvidia drivers for OpenGL, Vulkan, OpenCL and hardware video acceleration.'
+pkgdesc='Vapour OS Nvidia drivers for OpenGL, Vulkan, OpenCL, CUDA and hardware video acceleration.'
 arch=(x86_64)
 url='https://github.com/dankcuddlybear/Vapour-OS'
 backup=(etc/X11/xorg.conf.d/20-nvidia.conf)
-depends=('nvidia-dkms'
+depends=('cuda'
+	'nvidia-dkms'
 	'lib32-nvidia-utils'
 	'lib32-opencl-nvidia'
 	'opencl-nvidia'
 )
-optdepends=('cuda: CUDA runtime library and CUDA toolkit'
-	'nvidia-prime: Run graphically intensive applications on the dedicated Nvidia GPU'
-)
+optdepends=('nvidia-prime: Run graphically intensive applications on the dedicated Nvidia GPU')
+source=('vapour-os-nvidia-files.tar.gz')
+sha512sums=('9513fe97701585bb0d9abaf5710d1547aa59bd4c5b4868cf7b0c88e52e38982eda557206e2bf11cebbd71fd81e5fb40d1631ef5e9b889bf23dbf7ef6f392ab87')
+package() {
+	mv $srcdir/etc $pkgdir
+	mv $srcdir/usr $pkgdir
+}

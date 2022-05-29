@@ -1,6 +1,6 @@
 pkgname=vapour-os-nvidia
 pkgver=0.1
-pkgrel=3
+pkgrel=4
 pkgdesc='Vapour OS Nvidia drivers for OpenGL, Vulkan, OpenCL and hardware video acceleration.'
 arch=(x86_64)
 url='https://github.com/dankcuddlybear/Vapour-OS'
@@ -10,6 +10,7 @@ depends=('nvidia-dkms'
 	'lib32-opencl-nvidia'
 	'opencl-nvidia'
 )
+provides=('vapour-os-gpudriver')
 optdepends=('nvidia-prime: Run graphically intensive applications on the dedicated Nvidia GPU')
 source=('vapour-os-nvidia-files.tar.gz')
 sha512sums=('9513fe97701585bb0d9abaf5710d1547aa59bd4c5b4868cf7b0c88e52e38982eda557206e2bf11cebbd71fd81e5fb40d1631ef5e9b889bf23dbf7ef6f392ab87')

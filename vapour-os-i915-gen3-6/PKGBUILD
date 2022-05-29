@@ -1,6 +1,6 @@
 pkgname=vapour-os-i915-gen3-6
 pkgver=0.1
-pkgrel=1
+pkgrel=2
 pkgdesc='Vapour OS Intel GPU drivers for OpenGL, Vulkan, OpenCL and hardware video acceleration. For gen 3 (Ivy Bridge) up to gen 6 (Skylake/Kabylake). WARNING: Some module options taint the kernel.'
 arch=(x86_64)
 url='https://github.com/dankcuddlybear/Vapour-OS'
@@ -13,6 +13,8 @@ depends=('intel-opencl-runtime'
     'vulkan-intel'
     'xf86-video-intel'
 )
+provides=('vapour-os-gpudriver')
+conflicts=('vapour-os-i915')
 source=('vapour-os-i915-gen3-6-files.tar.gz')
 sha512sums=('9848ca9fe4f320a132d2110bbd53e497e979f07d86268de3fc6fba8d5679531cd60e9191244fdf193b5465b9858dd656ae5785c4add55707d1f8a726d52b7302')
 package() {

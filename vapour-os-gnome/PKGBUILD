@@ -1,6 +1,6 @@
-pkgname=vapour-os-kde
+pkgname=vapour-os-gnome
 pkgver=0.1
-pkgrel=1
+pkgrel=2
 pkgdesc='Vapour OS GNOME X11/Wayland shell'
 arch=(any)
 url='https://github.com/dankcuddlybear/Vapour-OS'
@@ -36,5 +36,6 @@ depends=('eog'
     'seahorse-nautilus'
     'sushi'
     'sysprof'
+    'vapour-os-gui'
     'xdg-user-dirs-gtk'
 )

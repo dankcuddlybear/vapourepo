@@ -1,6 +1,6 @@
 pkgname=vapour-os
 pkgver=0.2
-pkgrel=3
+pkgrel=4
 pkgdesc='Vapour OS core system'
 arch=(x86_64)
 url='https://github.com/dankcuddlybear/Vapour-OS'
@@ -41,7 +41,7 @@ optdepends=('amd-ucode: AMD microcode'
 	'vapour-os-xfce: XFCE X11 desktop and utilities'
 )
 source=('vapour-os-files.tar.gz')
-sha512sums=('8bd48fd94df3af155aeadb1a683cc9e23e112f9ef299e87dd28742dc7fef01ce3c26537155b86452ca46b5e704040f9c8581bd7766ae790965cb823c8050399f')
+sha512sums=('64ffc2192ededdb2b91939bdc66ab7d5f11bd3d04b6e3958c682224169ed70324302ebc191efe29cd8cb28e28e8484968e9f0a642ec8e187cf510e525082c8b0')
 package() {
 	mv $srcdir/etc $pkgdir
 	mv $srcdir/opt $pkgdir

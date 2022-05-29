@@ -196,7 +196,7 @@ UUID_BOOT=$(blkid -o value -s UUID $DEV_BOOT)
 
 # Generate /etc/fstab for new system
 echo "UUID=$UUID_ROOT / ext4 rw,lazytime 0 1" > /mnt/etc/fstab
-echo "UUID=$UUID_BOOT / vfat rw,noatime,noexec,noauto,x-systemd.automount,dmask=0022,fmask=133,codepage=437,iocharset=ascii,shortname=mixed,utf8,errors=remount-ro 0 2" >> /mnt/etc/fstab
+echo "UUID=$UUID_BOOT /boot vfat rw,noatime,noexec,noauto,x-systemd.automount,dmask=0022,fmask=133,codepage=437,iocharset=ascii,shortname=mixed,utf8,errors=remount-ro 0 2" >> /mnt/etc/fstab
 [ ! -z $DEV_HOME ] && echo "UUID=$UUID_ROOT / ext4 rw,noatime,noauto,x-systemd.automount 0 1" >> /mnt/etc/fstab
 [ ! -z $DEV_MEDIA ] && echo "UUID=$UUID_ROOT / ext4 rw,noatime,noauto,x-systemd.automount 0 1" >> /mnt/etc/fstab
 [ ! -z $DEV_PUBLIC ] && echo "UUID=$UUID_ROOT / ext4 rw,noatime,noauto,x-systemd.automount 0 1" >> /mnt/etc/fstab

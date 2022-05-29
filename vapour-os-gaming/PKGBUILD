@@ -1,6 +1,6 @@
 pkgname=vapour-os-gaming
 pkgver=0.2
-pkgrel=2
+pkgrel=3
 pkgdesc='Vapour OS game libraries for 64 bit/32 bit Windows and Linux game compatibility'
 arch=(x86_64)
 url='https://github.com/dankcuddlybear/Vapour-OS'

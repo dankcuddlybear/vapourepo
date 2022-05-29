@@ -8,5 +8,7 @@ for dir in $SCRIPT_DIR/!(.git|liveusb-installer|__PKG|__PROTO)/; do
 	makepkg -cdf || exit 1
 	mv *.pkg.tar.zst ../__PKG
 	cd ../
+	[ $dir == "hackbgrt-bin" ] && rm *.zip
+	[ $dir == "intel-opencl-runtime" ] && rm *.tgz
 done
 $SCRIPT_DIR/__PKG/repo-update.sh

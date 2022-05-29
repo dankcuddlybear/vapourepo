@@ -3,7 +3,15 @@
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )  # Get script directory
 . $SCRIPT_DIR/options.conf # Load options
 loadkeys $KEYMAP # Load keymap
-[ $DISPLAY_SCALE -gt 100 ] && setfont latarcyrheb-sun32 # Load extra large font if display is HiDPI
+
+# Calculate display scale
+DISPLAY_XSCALE=$(awk "BEGIN {print $DISPLAY_XRES/$DISPLAY_WIDTH/0.04}")
+DISPLAY_XSCALE=${DISPLAY_XSCALE%.*}
+DISPLAY_YSCALE=$(awk "BEGIN {print $DISPLAY_YRES/$DISPLAY_HEIGHT/0.04}")
+DISPLAY_YSCALE=${DISPLAY_YSCALE%.*}
+((DISPLAY_XSCALE > DISPLAY_YSCALE)) && DISPLAY_SCALE=$DISPLAY_XSCALE || DISPLAY_SCALE=$DISPLAY_YSCALE
+
+(($DISPLAY_XSCALE > 100)) || (($DISPLAY_YSCALE > 100)) && setfont latarcyrheb-sun32 # Load extra large font if display is HiDPI
 timedatectl set-ntp true # Ensure system clock is accurate
 
 # HARDWARE CHECKER - gathers necessary hardware info and aborts installation if system requirements are not met.
@@ -261,7 +269,10 @@ echo "GPU1=\"$GPU1\"                    # \"amd\", \"nvidia\" or leave blank if 
 echo "PORTABLE=\"$PORTABLE\"            # Set to 1 if your device is portable" >> /mnt/etc/vapour-os/device.conf
 echo "BATTERY=\"$BATTERY\"              # Set to 1 if your device has a battery or UPS" >> /mnt/etc/vapour-os/device.conf
 echo "ACCELEROMETER=\"$ACCELEROMETER\"  # Set to 1 if your portable device has an accelerometer" >> /mnt/etc/vapour-os/device.conf
-echo "DISPLAY_SCALE=$DISPLAY_SCALE" > /mnt/etc/vapour-os/display.conf
+echo "DISPLAY_WIDTH=$DISPLAY_WIDTH" > /mnt/etc/vapour-os/display.conf
+echo "DISPLAY_HEIGHT=$DISPLAY_HEIGHT" >> /mnt/etc/vapour-os/display.conf
+echo "DISPLAY_XRES=$DISPLAY_XRES" >> /mnt/etc/vapour-os/display.conf
+echo "DISPLAY_YRES=$DISPLAY_YRES" >> /mnt/etc/vapour-os/display.conf
 
 # Copy other options (initial setup only)
 cp $SCRIPT_DIR/options.conf /mnt/mnt/options.conf

@@ -6,16 +6,8 @@ post_install() {
 	[ -z GTK_USE_PORTAL ] && echo "GTK_USE_PORTAL=1" >> /etc/environment
 	/opt/vapour-os/patchconfigs
 	setterm -cursor on > /etc/issue
-	sync
-}
-post_upgrade() {
-	/opt/vapour-os/patchconfigs
-	sync
 }
 pre_remove() {
 	systemctl --now disable ananicy-cpp.service avahi-daemon.service fstrim.timer irqbalance.service rtirq.service
 	echo "Core systemd units disabled and offline"
-}
-post_remove() {
-	sync
 }

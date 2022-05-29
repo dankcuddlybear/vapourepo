@@ -1,6 +1,6 @@
 pkgname=vapour-os-kde
 pkgver=0.1
-pkgrel=1
+pkgrel=2
 pkgdesc='Vapour OS KDE Plasma X11 desktop environment'
 arch=(any)
 url='https://github.com/dankcuddlybear/Vapour-OS'

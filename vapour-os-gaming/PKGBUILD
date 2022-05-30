@@ -1,9 +1,9 @@
 pkgname=vapour-os-gaming
 pkgver=0.2
-pkgrel=3
+pkgrel=4
 pkgdesc='Vapour OS game libraries for 64 bit/32 bit Windows and Linux game compatibility'
 arch=(x86_64)
-url='https://github.com/dankcuddlybear/Vapour-OS'
+url='https://github.com/dankcuddlybear/vapourepo'
 backup=(etc/drirc)
 depends=(#'dxvk-bin'
 	'gamemode'
@@ -31,9 +31,3 @@ depends=(#'dxvk-bin'
 	'wine-nine'
     'xone-dkms'
 )
-source=('vapour-os-gaming-files.tar.gz')
-sha512sums=('2b98408451b075c5f48c9407f1c69f32d836c49dfdab452761aab73f4cb341a4148be3c3e4315771d96d68661d4a35f911ebc74aeb55a14bb8dacb09bfdc6e04')
-package() {
-	mkdir $pkgdir/etc
-	mv $srcdir/drirc $pkgdir/etc/drirc
-}

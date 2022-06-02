@@ -1,8 +1,0 @@
-post_install() {
-    systemctl --now enable auto-cpufreq.service
-    echo "Auto-cpufreq enabled and online"
-}
-pre_remove() {
-    systemctl --now disable auto-cpufreq.service
-    echo "Auto-cpufreq enabled and online"
-}

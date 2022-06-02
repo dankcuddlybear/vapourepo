@@ -1,0 +1,15 @@
+--- ananicy.conf	2022-05-28 23:09:50.972208812 +0100
++++ ananicy.conf.new	2022-05-28 22:58:34.867641349 +0100
+@@ -5,9 +5,9 @@
+ check_freq=10
+ 
+ # Verbose msg: true/false
+-cgroup_load=true
+-type_load=true
+-rule_load=true
++cgroup_load=false
++type_load=false
++rule_load=false
+ 
+ apply_nice=true
+ apply_ioclass=true

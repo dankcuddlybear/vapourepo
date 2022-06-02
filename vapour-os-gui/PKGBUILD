@@ -6,7 +6,6 @@ arch=(any)
 url='https://github.com/dankcuddlybear/Vapour-OS'
 depends=('pipewire-alsa'
     'pipewire-jack'
-    'pipewire-media-session'
     'pipewire-pulse'
     'pipewire-v4l2'
     'pipewire-zeroconf'

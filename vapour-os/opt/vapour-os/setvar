@@ -1,0 +1,85 @@
+#!/bin/sh
+# Convert positional parameters to easily readable variables (also makes functions work properly)
+MODE=$1
+FILENAME="$2"
+VAR=$3
+VALUE="$4"
+PrintHelp() {
+	echo "Usage: setvar <mode> <file> <var> <value>"
+	echo "Mode:"
+	echo "    set <value> Set value of var. If var does not exist it will be created."
+	echo "    delete      Delete var from file."
+	echo "    query       Print value of var."
+	echo "Examples:"
+	echo "    setvar set /etc/environment XCURSOR_SIZE 24"
+	echo "    setvar delete /etc/environment XCURSOR_SIZE"
+	echo "    setvar query /etc/environment XCURSOR_SIZE"
+}
+# Error handling
+[ -z $MODE ] && echo "[ERROR] You must specify a mode!" && PrintHelp && exit 1
+[ -z $FILENAME ] && echo "[ERROR] You must specify a file name!" && PrintHelp && exit 1
+[ ! -f "$FILENAME" ] && echo "[ERROR] File $FILENAME does not exist!" && exit 1
+[ -z $VAR ] && echo "[ERROR] You must specify a variable to read/write!" && PrintHelp && exit 1
+
+VARLEN=${#VAR} # Length of specified var name
+IFS=$'\n' # Set delimiter to newline instead of space (default)
+FILE=$(cat "$FILENAME") # Read file contents
+
+
+# SET: Read file line-by-line until it finds the line with key matching the one specified
+# When it does, set $SEARCH to the current line and $REPLACE to "$2=$4"
+# Then edit the file in-place with sed
+
+# TOGGLE: Read file line-by-line until it finds the line with key matching the one specified
+# When it does, set $SEARCH to the current line.
+# Check the current value. If it is 1, set $REPLACE to "$2=0", otherwise set $REPLACE to "$2=1"
+# Then edit the file in-place with sed.
+
+# Delete: Read entire file line-by-line.
+# Then, write the entire file again line-by-line, skipping any lines containing $2 (specified var)
+
+# Query: Read file line-by-line until it finds the line with key matching the one specified
+# Then, print that line to stdout and exit
+
+
+Search() {
+	for LINE in $FILE; do # Read file line-by-line...
+		if [ ${LINE:0:VARLEN} == $VAR ]; then # ...until it finds line with specified key
+			SEARCH=$LINE # Set $SEARCH to the current line
+		fi
+	done
+}
+
+# Add newline to end of file if it doesn't have one (stackoverflow.com/a/34944104)
+AddNewLine() {
+	if [[ -s "$FILENAME" && -z "$(tail -c 1 "$FILENAME")" ]]; then # If file ends with newline...
+		: # Do nothing
+	else
+		echo "" >> $FILENAME # Otherwise add one
+	fi
+}
+
+if [ $MODE == "set" ]; then
+	Search
+	REPLACE="$VAR=$VALUE" # Set $REPLACE to "$2=$4"
+	if [ -z $SEARCH ]; then # If search result is empty...
+		AddNewLine
+		echo "$REPLACE" >> $FILENAME # Add the variable to the file
+	else
+		sed -i "s/$SEARCH/$REPLACE/g" $FILENAME # Otherwise edit the file in-place with sed
+	fi
+elif [ $MODE == "delete" ]; then
+	Search
+	FIRSTLINE=1
+	for LINE in $FILE; do # Write entire file again...
+		if [ $LINE != $SEARCH ]; then # ...skipping any lines containing specified var ($2)
+			if [ $FIRSTLINE == 1 ]; then # If this is the first line, overwrite the file
+				echo $LINE > $FILENAME
+				FIRSTLINE=0
+			else echo $LINE >> $FILENAME; fi # Otherwise append to the file
+		fi
+	done
+elif [ $MODE == "query" ]; then
+	Search
+	echo ${SEARCH:VARLEN+1}
+else echo "[ERROR] Invalid mode!"; PrintHelp; exit 1; fi

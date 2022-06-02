@@ -3,15 +3,7 @@
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )  # Get script directory
 . $SCRIPT_DIR/options.conf # Load options
 loadkeys $KEYMAP # Load keymap
-
-# Calculate display scale
-DISPLAY_XSCALE=$(awk "BEGIN {print $DISPLAY_XRES/$DISPLAY_WIDTH/0.04}")
-DISPLAY_XSCALE=${DISPLAY_XSCALE%.*}
-DISPLAY_YSCALE=$(awk "BEGIN {print $DISPLAY_YRES/$DISPLAY_HEIGHT/0.04}")
-DISPLAY_YSCALE=${DISPLAY_YSCALE%.*}
-((DISPLAY_XSCALE > DISPLAY_YSCALE)) && DISPLAY_SCALE=$DISPLAY_XSCALE || DISPLAY_SCALE=$DISPLAY_YSCALE
-
-(($DISPLAY_XSCALE > 100)) || (($DISPLAY_YSCALE > 100)) && setfont latarcyrheb-sun32 # Load extra large font if display is HiDPI
+(($DISPLAY_SCALE > 100)) && setfont latarcyrheb-sun32 # Load extra large font if display is HiDPI
 timedatectl set-ntp true # Ensure system clock is accurate
 
 # HARDWARE CHECKER - gathers necessary hardware info and aborts installation if system requirements are not met.
@@ -127,7 +119,6 @@ echo
 read -p "When you are ready, press enter to continue or CTRL+C to abort installation." CONTINUE
 
 # Unmount any mounted filesystems
-sync
 echo "Unmounting filesystems..."
 umount $DEV_BOOT &> /dev/null
 [ ! -z $DEV_HOME ] && umount $DEV_HOME &> /dev/null
@@ -187,64 +178,38 @@ PKG_PACSTRAP="autoconf automake base bison fakeroot gcc git make patch pkgconf s
 pacstrap /mnt $PKG_PACSTRAP || exit 1
 sync
 
-# Get filesystem UUIDs
+# Generate /etc/fstab for new system
 UUID_ROOT=$(blkid -o value -s UUID $DEV_ROOT)
 UUID_BOOT=$(blkid -o value -s UUID $DEV_BOOT)
 [ ! -z $DEV_HOME ] && UUID_HOME=$(blkid -o value -s UUID $DEV_HOME)
 [ ! -z $DEV_MEDIA ] && UUID_MEDIA=$(blkid -o value -s UUID $DEV_MEDIA)
 [ ! -z $DEV_PUBLIC ] && UUID_PUBLIC=$(blkid -o value -s UUID $DEV_PUBLIC)
-
-# Generate /etc/fstab for new system
 echo "UUID=$UUID_ROOT / ext4 rw,lazytime 0 1" > /mnt/etc/fstab
 echo "UUID=$UUID_BOOT /boot vfat rw,noatime,noexec,noauto,x-systemd.automount,dmask=0022,fmask=133,codepage=437,iocharset=ascii,shortname=mixed,utf8,errors=remount-ro 0 2" >> /mnt/etc/fstab
 [ ! -z $DEV_HOME ] && echo "UUID=$UUID_ROOT / ext4 rw,noatime,noauto,x-systemd.automount 0 1" >> /mnt/etc/fstab
 [ ! -z $DEV_MEDIA ] && echo "UUID=$UUID_ROOT / ext4 rw,noatime,noauto,x-systemd.automount 0 1" >> /mnt/etc/fstab
 [ ! -z $DEV_PUBLIC ] && echo "UUID=$UUID_ROOT / ext4 rw,noatime,noauto,x-systemd.automount 0 1" >> /mnt/etc/fstab
 
-# Configure sudo
+# Configure Sudo (don't ask for password for automated install)
 echo "root ALL=(ALL:ALL) ALL" > /mnt/etc/sudoers
 echo "%wheel ALL=(ALL:ALL) NOPASSWD:ALL" >> /mnt/etc/sudoers
 echo "@includedir /etc/sudoers.d" >> /mnt/etc/sudoers
 chmod 440 /mnt/etc/sudoers
 
 # Configure pacman
-echo "# See pacman.conf(5) manpage for all options" > /mnt/etc/pacman.conf
-echo "# GENERAL OPTIONS" >> /mnt/etc/pacman.conf
 echo "[options]" >> /mnt/etc/pacman.conf
 echo "HoldPkg = amd-ucode intel-ucode hdapsd vapour-os" >> /mnt/etc/pacman.conf
 echo "Architecture = auto" >> /mnt/etc/pacman.conf
-echo "" >> /mnt/etc/pacman.conf
-echo "# Pacman won't upgrade packages listed in IgnorePkg and members of IgnoreGroup" >> /mnt/etc/pacman.conf
 echo "#IgnorePkg = " >> /mnt/etc/pacman.conf
 echo "#IgnoreGroup = " >> /mnt/etc/pacman.conf
 echo "#NoUpgrade = " >> /mnt/etc/pacman.conf
 echo "#NoExtract = " >> /mnt/etc/pacman.conf
-echo "" >> /mnt/etc/pacman.conf
-echo "# Misc options" >> /mnt/etc/pacman.conf
 echo "Color" >> /mnt/etc/pacman.conf
 echo "CheckSpace" >> /mnt/etc/pacman.conf
 echo "ParallelDownloads = $(nproc)" >> /mnt/etc/pacman.conf
-echo "" >> /mnt/etc/pacman.conf
-echo "# By default, pacman accepts packages signed by keys that its local keyring trusts (see pacman-key and its man page), as well as unsigned packages." >> /mnt/etc/pacman.conf
 echo "SigLevel = Required DatabaseOptional" >> /mnt/etc/pacman.conf
 echo "LocalFileSigLevel = Optional" >> /mnt/etc/pacman.conf
 echo "#RemoteFileSigLevel = Required" >> /mnt/etc/pacman.conf
-echo "" >> /mnt/etc/pacman.conf
-echo "# NOTE: You must run 'pacman-key --init' before first using pacman; the local keyring can then be populated with the keys of all official Arch Linux packagers with 'pacman-key --populate archlinux'." >> /mnt/etc/pacman.conf
-echo "" >> /mnt/etc/pacman.conf
-echo "# REPOSITORIES" >> /mnt/etc/pacman.conf
-echo "#   - can be defined here or included from another file" >> /mnt/etc/pacman.conf
-echo "#   - pacman will search repositories in the order defined here" >> /mnt/etc/pacman.conf
-echo "#   - local/custom mirrors can be added here or in separate files" >> /mnt/etc/pacman.conf
-echo "#   - repositories listed first will take precedence when packages have identical names, regardless of version number" >> /mnt/etc/pacman.conf
-echo "#   - URLs will have \$repo replaced by the name of the current repo" >> /mnt/etc/pacman.conf
-echo "#   - URLs will have \$arch replaced by the name of the architecture" >> /mnt/etc/pacman.conf
-echo "# Repository entries are of the format:" >> /mnt/etc/pacman.conf
-echo "#   [repo-name]" >> /mnt/etc/pacman.conf
-echo "#   Server = ServerName" >> /mnt/etc/pacman.conf
-echo "#   Include = IncludePath" >> /mnt/etc/pacman.conf
-echo "# The header [repo-name] is crucial - it must be present and uncommented to enable the repo." >> /mnt/etc/pacman.conf
-echo "# The testing repositories are disabled by default. To enable, uncomment the repo name header and Include lines. You can add preferred servers immediately after the header, and they will be used before the default mirrors." >> /mnt/etc/pacman.conf
 echo "" >> /mnt/etc/pacman.conf
 echo "[core]" >> /mnt/etc/pacman.conf
 echo "Include = /etc/pacman.d/mirrorlist" >> /mnt/etc/pacman.conf
@@ -259,57 +224,76 @@ echo "[multilib]" >> /mnt/etc/pacman.conf
 echo "Include = /etc/pacman.d/mirrorlist" >> /mnt/etc/pacman.conf
 echo "" >> /mnt/etc/pacman.conf
 
-# Create directories
+# Copy installer options
 mkdir -p /mnt/etc/vapour-os
 # Copy device info
 echo "CPU=\"$CPU\"                      # \"intel\", \"amd\" or leave blank if you have neither" > /mnt/etc/vapour-os/device.conf
 echo "SSE4_2=\"$SSE4_2\"                # Set to 1 if your CPU supports SSE4.2" >> /mnt/etc/vapour-os/device.conf
+echo "RAM=$RAM"
 echo "GPU0=\"$GPU0\"                    # \"intel\", \"amd\", \"nvidia\" or leave blank if you don't have a GPU" >> /mnt/etc/vapour-os/device.conf
 echo "GPU1=\"$GPU1\"                    # \"amd\", \"nvidia\" or leave blank if you don't have a second GPU" >> /mnt/etc/vapour-os/device.conf
 echo "PORTABLE=\"$PORTABLE\"            # Set to 1 if your device is portable" >> /mnt/etc/vapour-os/device.conf
 echo "BATTERY=\"$BATTERY\"              # Set to 1 if your device has a battery or UPS" >> /mnt/etc/vapour-os/device.conf
 echo "ACCELEROMETER=\"$ACCELEROMETER\"  # Set to 1 if your portable device has an accelerometer" >> /mnt/etc/vapour-os/device.conf
-echo "DISPLAY_WIDTH=$DISPLAY_WIDTH" > /mnt/etc/vapour-os/display.conf
-echo "DISPLAY_HEIGHT=$DISPLAY_HEIGHT" >> /mnt/etc/vapour-os/display.conf
-echo "DISPLAY_XRES=$DISPLAY_XRES" >> /mnt/etc/vapour-os/display.conf
-echo "DISPLAY_YRES=$DISPLAY_YRES" >> /mnt/etc/vapour-os/display.conf
-
-# Copy other options (initial setup only)
-cp $SCRIPT_DIR/options.conf /mnt/mnt/options.conf
 
 # Finish initial system configuration in chroot
-echo "#!/bin/bash" > /mnt/mnt/chroot-cfg.sh
-echo "bootctl install --esp-path=/boot" >> /mnt/mnt/chroot-cfg.sh													# Install bootloader
-echo "read -p \"Do you want to enable root login? (y/N) \" ANSWER" >> /mnt/mnt/chroot-cfg.sh						# Ask to enable root login
-echo "if [ \$ANSWER == \"y\" ] || [ \$ANSWER == \"Y\" ]; then CONTINUE=0; while [ \$CONTINUE == 0 ]; do \
-echo \"Enter root password\"; passwd root && CONTINUE=1; done; fi" >> /mnt/mnt/chroot-cfg.sh						# If yes, set root password
-echo "useradd -m $OWNER; echo; CONTINUE=0; while [ \$CONTINUE == 0 ]; do \
-echo \"Enter password for user $OWNER\"; passwd $OWNER && CONTINUE=1; done" >> /mnt/mnt/chroot-cfg.sh				# Set owner's password
-echo "gpasswd -a $OWNER video; gpasswd -a $OWNER audio; gpasswd -a $OWNER wheel" >> /mnt/mnt/chroot-cfg.sh			# Add owner to video, audio and wheel groups
-echo "cd /home/$OWNER; rm -rf yay; \
-sudo -u $OWNER git clone https://aur.archlinux.org/yay.git || exit 1" >> /mnt/mnt/chroot-cfg.sh 					# Download yay PKGBUILD
-echo "cd yay; sudo -u $OWNER makepkg -cirs || exit 1" >> /mnt/mnt/chroot-cfg.sh										# Install yay
-echo "cd /; rm -rf /home/$OWNER/yay" >> /mnt/mnt/chroot-cfg.sh														# Clean up
-echo "pacman-key --recv-key FBA220DFC880C036 --keyserver keyserver.ubuntu.com || exit 1" >> /mnt/mnt/chroot-cfg.sh	# Fetch keys for Chaotic-AUR
-echo "pacman-key --lsign-key FBA220DFC880C036" >> /mnt/mnt/chroot-cfg.sh											# Locally sign keys for Chaotic-AUR
-echo "pacman --noconfirm -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst' \
-'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst' || exit 1" >> /mnt/mnt/chroot-cfg.sh		# Install Chaotic-AUR keyring and mirrorlist
-echo "echo \"[chaotic-aur]\" >> /etc/pacman.conf" >> /mnt/mnt/chroot-cfg.sh											# Add Chaotic-AUR repo to pacman.conf
-echo "echo \"Include = /etc/pacman.d/chaotic-mirrorlist\" >> /etc/pacman.conf" >> /mnt/mnt/chroot-cfg.sh			# Add Chaotic-AUR repo to pacman.conf
-echo "echo \"\" >> /etc/pacman.conf" >> /mnt/mnt/chroot-cfg.sh
-echo "echo \"[vapourepo]\" >> /etc/pacman.conf" >> /mnt/mnt/chroot-cfg.sh											# Add Vapourepo to pacman.conf
-echo "echo \"SigLevel = Optional DatabaseOptional\" >> /etc/pacman.conf" >> /mnt/mnt/chroot-cfg.sh					# Add Vapourepo to pacman.conf
-echo "echo \"Server = https://raw.githubusercontent.com/dankcuddlybear/\\\$repo/main/__PKG\" \
->> /etc/pacman.conf" >> /mnt/mnt/chroot-cfg.sh 																		# Add Vapourepo to pacman.conf
-echo "pacman --asdeps -D $PKG_PACSTRAP chaotic-keyring chaotic-mirrorlist yay" >> /mnt/mnt/chroot-cfg.sh			# Set explicitly installed packages to "dependency"
-echo "sudo -u $OWNER yay -Syu vapour-os || exit 1" >> /mnt/mnt/chroot-cfg.sh										# Finish installing Vapour OS
-echo "gpasswd -a $OWNER realtime" >> /mnt/mnt/chroot-cfg.sh															# Add owner to realtime group
-echo "setterm -cursor on > /etc/issue" >> /mnt/mnt/chroot-cfg.sh													# Fix for no cursor in TTY
-echo "sync" >> /mnt/mnt/chroot-cfg.sh																				# Force writes to complete
-chmod +x /mnt/mnt/chroot-cfg.sh
+echo "#!/bin/bash" > /mnt/etc/vapour-os/chroot-cfg
+echo ". /etc/vapour-os/install.conf" >> /mnt/etc/vapour-os/chroot-cfg
+# Add CHaotic-AUR repo
+echo "pacman-key --recv-key FBA220DFC880C036 --keyserver keyserver.ubuntu.com || exit 1" >> /mnt/etc/vapour-os/chroot-cfg
+echo "pacman-key --lsign-key FBA220DFC880C036" >> /mnt/etc/vapour-os/chroot-cfg
+echo "pacman --noconfirm --asdeps -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst' \
+'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst' || exit 1" >> /mnt/etc/vapour-os/chroot-cfg
+echo "echo \"[chaotic-aur]\" >> /etc/pacman.conf" >> /mnt/etc/vapour-os/chroot-cfg
+echo "echo \"Include = /etc/pacman.d/chaotic-mirrorlist\" >> /etc/pacman.conf" >> /mnt/etc/vapour-os/chroot-cfg
+echo "echo \"\" >> /etc/pacman.conf" >> /mnt/etc/vapour-os/chroot-cfg
+# Add Vapour OS repo
+echo "echo \"[vapourepo]\" >> /etc/pacman.conf" >> /mnt/etc/vapour-os/chroot-cfg
+echo "echo \"SigLevel = Optional DatabaseOptional\" >> /etc/pacman.conf" >> /mnt/etc/vapour-os/chroot-cfg
+echo "echo \"Server = https://raw.githubusercontent.com/dankcuddlybear/\\\$repo/main/__PKG\" >> /etc/pacman.conf" >> /mnt/etc/vapour-os/chroot-cfg
+# Install Vapour OS
+echo "pacman -Syu vapour-os || exit 1"
+# Configure users
+echo "read -p \"Do you want to enable root login? (y/N) \" ANSWER" >> /mnt/etc/vapour-os/chroot-cfg
+echo "if [ \$ANSWER == \"y\" ] || [ \$ANSWER == \"Y\" ]; then" >> /mnt/etc/vapour-os/chroot-cfg
+echo "    CONTINUE=0" >> /mnt/etc/vapour-os/chroot-cfg
+echo "    while [ \$CONTINUE == 0 ]; do" >> /mnt/etc/vapour-os/chroot-cfg
+echo "        echo \"Enter root password\"" >> /mnt/etc/vapour-os/chroot-cfg
+echo "        passwd root && CONTINUE=1" >> /mnt/etc/vapour-os/chroot-cfg
+echo "    done" >> /mnt/etc/vapour-os/chroot-cfg
+echo "fi" >> /mnt/etc/vapour-os/chroot-cfg
+echo "useradd -m $OWNER" >> /mnt/etc/vapour-os/chroot-cfg
+echo "gpasswd -a $OWNER audio" >> /mnt/etc/vapour-os/chroot-cfg
+echo "gpasswd -a $OWNER games" >> /mnt/etc/vapour-os/chroot-cfg
+echo "gpasswd -a $OWNER input" >> /mnt/etc/vapour-os/chroot-cfg
+echo "gpasswd -a $OWNER network" >> /mnt/etc/vapour-os/chroot-cfg
+echo "gpasswd -a $OWNER realtime" >> /mnt/etc/vapour-os/chroot-cfg
+echo "gpasswd -a $OWNER video" >> /mnt/etc/vapour-os/chroot-cfg
+echo "gpasswd -a $OWNER ftp" >> /mnt/etc/vapour-os/chroot-cfg
+echo "gpasswd -a $OWNER http" >> /mnt/etc/vapour-os/chroot-cfg
+echo "gpasswd -a $OWNER wheel" >> /mnt/etc/vapour-os/chroot-cfg
+echo "echo" >> /mnt/etc/vapour-os/chroot-cfg
+echo "CONTINUE=0" >> /mnt/etc/vapour-os/chroot-cfg
+echo "while [ \$CONTINUE == 0 ]; do" >> /mnt/etc/vapour-os/chroot-cfg
+echo "    echo \"Enter password for user $OWNER\"" >> /mnt/etc/vapour-os/chroot-cfg
+echo "    passwd $OWNER && CONTINUE=1" >> /mnt/etc/vapour-os/chroot-cfg
+echo "done" >> /mnt/etc/vapour-os/chroot-cfg
+# Install optional software
+echo "FAIL=1" >> /mnt/etc/vapour-os/chroot-cfg
+echo "while [ \$FAIL == 1 ]; do" >> /mnt/etc/vapour-os/chroot-cfg
+echo "    sudo -u $OWNER yay --needed -Syu $EXTRA_SOFTWARE && FAIL=0 || FAIL=1" >> /mnt/etc/vapour-os/chroot-cfg
+echo "    if [ \$FAIL == 1 ]; then" >> /mnt/etc/vapour-os/chroot-cfg
+echo "        read -p \"[ERROR] Failed to install some extra software. Would you like to try again?\" ANSWER" >> /mnt/etc/vapour-os/chroot-cfg
+echo "        if [ \$ANSWER == \"y\" ] || [ \$ANSWER == \"Y\" ]; then FAIL=0; fi" >> /mnt/etc/vapour-os/chroot-cfg
+echo "    fi" >> /mnt/etc/vapour-os/chroot-cfg
+echo "done" >> /mnt/etc/vapour-os/chroot-cfg
+echo "sync" >> /mnt/etc/vapour-os/chroot-cfg
+chmod +x /mnt/etc/vapour-os/chroot-cfg
+
+# Begin chroot install
 sync
-arch-chroot /mnt '/mnt/chroot-cfg.sh' || exit 1
-rm /mnt/mnt/chroot-cfg.sh
+arch-chroot /mnt '/etc/vapour-os/chroot-cfg' || exit 1
+rm /mnt/etc/vapour-os/chroot-cfg
 
 # Reconfigure sudo
 echo "Defaults insults" > /mnt/etc/sudoers
@@ -320,6 +304,5 @@ chmod 440 /mnt/etc/sudoers
 
 # The system is now bootable
 sync
-echo
 echo "Installation complete! Please reboot into the new system to finish setting it up."
 echo "[WARNING] Your hardware info has been saved to /mnt/etc/vapour-os/device.conf - please make sure all settings are correct."

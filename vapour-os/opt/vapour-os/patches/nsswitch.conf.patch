@@ -1,0 +1,11 @@
+--- nsswitch.conf	2021-12-07 02:41:28.000000000 +0000
++++ nsswitch.conf.new	2022-05-29 00:02:36.181640601 +0100
+@@ -8,7 +8,7 @@
+ 
+ publickey: files
+ 
+-hosts: mymachines resolve [!UNAVAIL=return] files myhostname dns
++hosts: mymachines myhostname mdns_minimal [NOTFOUND=return] resolve [!UNAVAIL=return] files myhostname dns wins
+ networks: files
+ 
+ protocols: files

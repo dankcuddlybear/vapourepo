@@ -1,6 +1,6 @@
 pkgname=vapour-os
 pkgver=0.2
-pkgrel=5
+pkgrel=6
 pkgdesc='Vapour OS core system'
 arch=(x86_64)
 url='https://github.com/dankcuddlybear/Vapour-OS'
@@ -11,7 +11,7 @@ depends=(
 	# Compilers/makedepends
 	'autoconf' 'automake' 'bison' 'fakeroot' 'gcc' 'git' 'linux-zen-headers' 'make' 'patch' 'pkgconf' 'which' 'yay'
 	# Power saving, hardware protection, safety features
-	'hdparm'
+	'auto-cpufreq' 'hdparm'
 	# Performance enhancements
 	'ananicy-cpp' 'ananicy-rules-git' 'irqbalance' 'realtime-privileges' 'rtirq'
 	# Filesystems
@@ -21,27 +21,25 @@ depends=(
 	# Networking
 	'networkmanager' 'nss-mdns' 'wireless-regdb'
 	# Utilities
-	'man-db' 'man-pages'
+	'htop' 'man-db' 'man-pages' 'nano-syntax-highlighting'
 	# Terminal font for HiDPI/LoDPI support
 	'terminus-font'
+	# Chaotic-AUR
+	'chaotic-keyring' 'chaotic-mirrorlist'
 )
-optdepends=('amd-ucode: AMD microcode'
-	'intel-ucode: Intel microcode'
-	'vapour-os-amdgpu: AMD GPU drivers'
+optdepends=('amd-ucode: Fixes for AMD CPUs'
+	'hdapsd: Drop protection for mechanical HDDs in laptops (requires accelerometer)'
+	'intel-ucode: Fixes for Intel CPUs'
 	'vapour-os-bootscreen: Graphical boot screen'
 	'vapour-os-gaming: Windows/Linux gaming libraries and software'
 	'vapour-os-gnome: GNOME X11/Wayland shell and utilities'
-	'vapour-os-gui: X11 GUI with Pipewire sound server'
-	'vapour-os-i915: Intel GPU drivers'
-	'vapour-os-i915-gen3-6: Intel GPU drivers (gen 3-6)'
 	'vapour-os-kde: KDE X11 desktop and utilities'
 	'vapour-os-multimedia: Audio/video codecs and disc support'
-	'vapour-os-portable: For portable devices like laptops or handheld PCs'
-	'vapour-os-printing: CUPS printing and printer drivers'
+	'vapour-os-printing: CUPS print services and drivers'
 	'vapour-os-xfce: XFCE X11 desktop and utilities'
 )
 source=('vapour-os-files.tar.gz')
-sha512sums=('78e8d70af01cc083e55982686e6d24187fab694526575f841b01a1d22786d5a86b95d15971214fc9f858857c6b9093f616500d5979a1537965909eef105acf61')
+sha512sums=('')
 package() {
 	mv $srcdir/etc $pkgdir
 	mv $srcdir/opt $pkgdir

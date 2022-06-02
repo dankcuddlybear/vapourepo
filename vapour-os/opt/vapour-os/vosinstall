@@ -1,0 +1,51 @@
+#!/bin/bash
+# Finish installing/updating Vapour OS.
+# Will try and automatically configure other settings,
+# like display size/drivers etc if using the liveUSB
+# installer.
+[ $(whoami) != "root" ] && echo "[ERROR] You must run this script with root priviliges." && exit 1
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+MODE=$1; [ -z $MODE ] && MODE="upgrade"
+if [ $MODE != "upgrade" ] && [ $MODE != "install" ]; then
+	echo "[ERROR] Invalid mode!"
+	echo "Upgrade: $0 upgrade"
+	echo "Fresh install/reinstall: $0 install (may change some system settings)"
+	echo "(not added yet) Uninstall: $0 uninstall"
+	echo "No mode specified assumes upgrade."
+	echo "Never reinstall/uninstall unless you know what you're doing."
+	exit 1
+fi
+
+Upgrade() {
+	# Set default environment variables without changing existing settings.
+	[ -z $(/opt/vapour-os/setvar /etc/environment EDITOR query) ] && /opt/vapour-os/setvar /etc/environment EDITOR set "/usr/bin/nano"
+	[ -z $(/opt/vapour-os/setvar /etc/environment GTK_USE_PORTAL query) ] && /opt/vapour-os/setvar /etc/environment GTK_USE_PORTAL set "1"
+	
+	# Final step: enable core systemd units immediately, then sync disk writes
+	systemctl --now enable "ananicy-cpp.service auto-cpufreq.service avahi-daemon.service fstrim.timer irqbalance.service NetworkManager.service rtirq.service"
+	sync
+}
+Install() {
+	## Overwrite configs owned by other packages (preserve target permissions).
+	/opt/vapour-os/installconfig /opt/vapour-os/etc /etc
+	
+	## Write /etc/issue
+	echo "____   ____                                   ________    _________" >> /etc/issue
+	echo "\\   \\ /   /____  ______   ____  __ _________  \\_____  \\  /   _____/" >> /etc/issue
+	echo " \\   Y   /\\__  \\ \\____ \\ /  _ \\|  |  \\_  __ \\  /   |   \\ \\_____  \\" >> /etc/issue
+	echo "  \\     /  / __ \\|  |_> >  <_> )  |  /|  | \\/ /    |    \\/        \\" >> /etc/issue
+	echo "   \\___/  (____  /   __/ \\____/|____/ |__|    \\_______  /_______  /" >> /etc/issue
+	echo "               \\/|__|                                 \\/        \\/" >> /etc/issue
+	echo "/dev/\\l" >> /etc/issue
+	echo "\\n \\r \\m" >> /etc/issue
+	echo "\\d \\t" >> /etc/issue
+	echo "" >> /etc/issue
+	echo "Welcome! \\u logged in." >> /etc/issue
+	setterm -cursor on >> /etc/issue # Silent boot cursor fix
+	
+	bootctl install --esp-path=/boot
+	Upgrade
+}
+
+[ $MODE == "install" ] && Install
+[ $MODE == "upgrade" ] && Upgrade

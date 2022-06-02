@@ -1,7 +1,6 @@
 post_install() {
 	/opt/vapour-os/vosinstall install
 }
-
 post_upgrade() {
 	/opt/vapour-os/vosinstall upgrade
 }

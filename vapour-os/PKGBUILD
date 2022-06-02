@@ -1,9 +1,9 @@
 pkgname=vapour-os
-pkgver=0.2
-pkgrel=6
+pkgver=0.3
+pkgrel=1
 pkgdesc='Vapour OS core system'
 arch=(x86_64)
-url='https://github.com/dankcuddlybear/Vapour-OS'
+url='https://github.com/dankcuddlybear/vapourepo'
 install=vapour-os.install
 depends=(
 	# Minimal bootable system

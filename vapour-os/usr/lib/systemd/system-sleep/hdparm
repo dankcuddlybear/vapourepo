@@ -1,6 +1,0 @@
-#!/bin/sh
-case $1 in post)
-	# Reload Udev rules for block devices (sleep fix for HDparm)
-	udevadm trigger --subsystem-match="block"
-	;;
-esac

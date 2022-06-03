@@ -12,5 +12,4 @@ sha512sums=('30d67aaa0e76972e9db9ce9d18c1ca5fab174f24cc40a5b444eb5eac42eb56058d8
 package() {
 	mkdir -p $pkgdir/boot/EFI/HackBGRT $pkgdir/opt/vapour-os/kparams.d
 	mv $srcdir/HackBGRT-1.5.1/bootx64.efi $pkgdir/boot/EFI/HackBGRT/bootx64.efi
-	mv $srcdir/kparams $pkgdir/opt/vapour-os/kparams.d/silent
 }

@@ -226,6 +226,7 @@ echo "" >> /mnt/etc/pacman.conf
 
 # Copy installer options
 mkdir -p /mnt/etc/vapour-os
+cp $SCRIPT_DIR/options.conf /mnt/etc/vapour-os/install.conf
 # Copy device info
 echo "CPU=\"$CPU\"                      # \"intel\", \"amd\" or leave blank if you have neither" > /mnt/etc/vapour-os/device.conf
 echo "SSE4_2=\"$SSE4_2\"                # Set to 1 if your CPU supports SSE4.2" >> /mnt/etc/vapour-os/device.conf

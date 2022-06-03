@@ -1,6 +1,6 @@
 pkgname=vapour-os-gui
-pkgver=0.1
-pkgrel=3
+pkgver=0.2
+pkgrel=1
 pkgdesc='X11 and Pipewire sound server base package for Vapour OS'
 arch=(any)
 url='https://github.com/dankcuddlybear/Vapour-OS'

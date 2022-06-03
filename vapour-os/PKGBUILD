@@ -1,6 +1,6 @@
 pkgname=vapour-os
 pkgver=0.3
-pkgrel=1
+pkgrel=2
 pkgdesc='Vapour OS core system'
 arch=(x86_64)
 url='https://github.com/dankcuddlybear/vapourepo'
@@ -39,7 +39,7 @@ optdepends=('amd-ucode: Fixes for AMD CPUs'
 	'vapour-os-xfce: XFCE X11 desktop and utilities'
 )
 source=('vapour-os-files.tar.gz')
-sha512sums=('7ebef03ecbb682fac0472c071c2b85e3c497e6774852aeffe80928a038077359cde3316659851ded394a91017b1bd828b96bc2e615c7806a9405a92862840671')
+sha512sums=('6a55093db7c3be511d5c4e07deb0a251a6c6f9b8fbaf924975b59050a35f98296f600f91407c9ba3a484915caaebad6277e257d904cd9506c221a34113207ad7')
 package() {
 	mv $srcdir/etc $pkgdir
 	mv $srcdir/opt $pkgdir

@@ -1,6 +1,6 @@
 pkgname=vapour-os-gaming
-pkgver=0.2
-pkgrel=5
+pkgver=0.3
+pkgrel=1
 pkgdesc='Vapour OS game libraries for 64 bit/32 bit Windows and Linux game compatibility'
 arch=(x86_64)
 url='https://github.com/dankcuddlybear/vapourepo'
@@ -9,11 +9,28 @@ depends=(#'dxvk-bin'
 	'gamemode'
 	'joystickwake'
 	'lib32-gamemode'
-	
 	'lib32-gst-plugins-base'
-	
-	
-	# Good GST plugins 
+	'lib32-libxslt'
+	'lib32-mangohud'
+	'lib32-ocl-icd'
+	'lib32-pipewire-jack'
+	'lib32-vkd3d'
+	'lib32-vulkan-mesa-layers'
+	'mangohud'
+	'ocl-icd'
+	'proton-ge-custom'
+	'steam-native-runtime'
+	'vapour-os-gui'
+	'vapour-os-multimedia'
+	'vkd3d'
+	'winetricks'
+	'wine-gecko'
+	'wine-ge-custom'
+	'wine-mono'
+	'wine-nine'
+    'xone-dkms'
+    
+    # Good GST plugins 
 	'lib32-aalib'
 	'lib32-cairo'
 	'lib32-flac'
@@ -38,26 +55,4 @@ depends=(#'dxvk-bin'
 	'lib32-twolame'
 	'lib32-v4l-utils'
 	'lib32-wavpack'
-	
-	
-	'lib32-gst-plugins-good'
-	'lib32-libxslt'
-	'lib32-mangohud'
-	'lib32-ocl-icd'
-	'lib32-pipewire-jack'
-	'lib32-vkd3d'
-	'lib32-vulkan-mesa-layers'
-	'mangohud'
-	'ocl-icd'
-	'proton-ge-custom'
-	'steam-native-runtime'
-	'vapour-os-gui'
-	'vapour-os-multimedia'
-	'vkd3d'
-	'winetricks'
-	'wine-gecko'
-	'wine-ge-custom'
-	'wine-mono'
-	'wine-nine'
-    'xone-dkms'
 )

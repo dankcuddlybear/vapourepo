@@ -301,6 +301,7 @@ echo "Defaults insults" > /mnt/etc/sudoers
 echo "root ALL=(ALL:ALL) ALL" >> /mnt/etc/sudoers
 echo "%wheel ALL=(ALL:ALL) ALL" >> /mnt/etc/sudoers
 echo "@includedir /etc/sudoers.d" >> /mnt/etc/sudoers
+echo >> /mnt/etc/sudoers
 chmod 440 /mnt/etc/sudoers
 
 # The system is now bootable

@@ -1,6 +1,6 @@
 pkgname=vapour-os-gui
 pkgver=0.3
-pkgrel=2
+pkgrel=3
 pkgdesc='X11 and Pipewire sound server base package for Vapour OS'
 arch=(any)
 url='https://github.com/dankcuddlybear/Vapour-OS'
@@ -19,7 +19,7 @@ optdepends=('vapour-os-amdgpu: AMD GPU drivers'
     'vapour-os-xfce: XFCE X11 desktop and utilities'
 )
 source=('vapour-os-gui-files.tar.gz')
-sha512sums=('f9c25dc88b936da225be42c0a8b01cee5577638a7f34dbf869cfd65babacf1c7ff05eb73a2e196e03ef1e5eeb7298949eb2eeec8bce5bd545d8b7c35900b7923')
+sha512sums=('4c223267b0babdeb7379a8e80d965e50bd281ab2327bd161d7d37d0a158b90a418cd4bbb28f81b1680e22a24b27ac94552355931bf6a85af49cdddb4075d1f4e')
 package() {
 	mv $srcdir/etc $pkgdir
 	mv $srcdir/usr $pkgdir

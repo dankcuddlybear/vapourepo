@@ -128,11 +128,11 @@ umount "$DEV_ROOT"
 # Format any filesystems marked for formatting
 [ $FORMAT_ROOT == 1 ] || [ $FORMAT_BOOT == 1 ] || [ $FORMAT_HOME == 1 ] || \
 [ $FORMAT_MEDIA == 1 ] || [ $FORMAT_PUBLIC == 1 ] && echo "Formatting partitions..."
-[ $FORMAT_ROOT == 1 ] && mkfs.ext4 -L "$LABEL_ROOT" ""$DEV_ROOT""
-[ $FORMAT_BOOT == 1 ] && mkfs.fat -F 32 -n "$LABEL_BOOT" ""$DEV_BOOT""
-[ ! -z "$DEV_HOME" ] && [ $FORMAT_HOME == 1 ] && mke2fs -L "$LABEL_HOME" ""$DEV_HOME""
-[ ! -z "$DEV_MEDIA" ] && [ $FORMAT_MEDIA == 1 ] && mke2fs -L "$LABEL_MEDIA" "$DEV_MEDIA"
-[ ! -z "$DEV_PUBLIC" ] && [ $FORMAT_PUBLIC == 1 ] && mke2fs -L "$LABEL_PUBLIC" "$DEV_PUBLIC"
+if [ $FORMAT_ROOT == 1 ]; then mkfs.ext4 -L "$LABEL_ROOT" "$DEV_ROOT" || exit 1;  fi
+if [ $FORMAT_BOOT == 1 ]; then mkfs.fat -F 32 -n "$LABEL_BOOT" "$DEV_BOOT" || exit 1; fi
+if [ ! -z "$DEV_HOME" ]; then [ $FORMAT_HOME == 1 ] && mkfs.ext4 -L "$LABEL_HOME" ""$DEV_HOME"" || exit 1; fi
+if [ ! -z "$DEV_MEDIA" ]; then [ $FORMAT_MEDIA == 1 ] && mkfs.ext4 -L "$LABEL_MEDIA" "$DEV_MEDIA" || exit 1; fi
+if [ ! -z "$DEV_PUBLIC" ]; then [ $FORMAT_PUBLIC == 1 ] && mkfs.ext4 -L "$LABEL_PUBLIC" "$DEV_PUBLIC" || exit 1; fi
 # Tune filesystems
 echo "Tuning filesystems..."
 tune2fs -O fast_commit "$DEV_ROOT"
@@ -172,9 +172,9 @@ sync
 
 # Bootstrap packages. If it fails for some reason, abort installation.
 PKG_PACSTRAP="autoconf automake base bison fakeroot gcc git make patch pkgconf sudo which"
-[ $CPU == "amd" ] && PKG_PACSTRAP="$PKG_PACSTRAP amd-ucode"
-[ $CPU == "intel" ] && PKG_PACSTRAP="$PKG_PACSTRAP intel-ucode"
-[ $ACCELEROMETER == 1 ] && PKG_PACSTRAP="$PKG_PACSTRAP hdapsd"
+[ $CPU == "amd" ] && PKG_PACSTRAP_EXTRA="amd-ucode"
+[ $CPU == "intel" ] && PKG_PACSTRAP_EXTRA="intel-ucode"
+[ $ACCELEROMETER == 1 ] && PKG_PACSTRAP_EXTRA="$PKG_PACSTRAP_EXTRA hdapsd"
 pacstrap /mnt $PKG_PACSTRAP || exit 1
 sync
 
@@ -241,8 +241,7 @@ echo ". /etc/vapour-os/install.conf" >> /mnt/etc/vapour-os/chroot-cfg
 # Add CHaotic-AUR repo
 echo "pacman-key --recv-key FBA220DFC880C036 --keyserver keyserver.ubuntu.com || exit 1" >> /mnt/etc/vapour-os/chroot-cfg
 echo "pacman-key --lsign-key FBA220DFC880C036" >> /mnt/etc/vapour-os/chroot-cfg
-echo "pacman --noconfirm --asdeps -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst' \
-'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst' || exit 1" >> /mnt/etc/vapour-os/chroot-cfg
+echo "pacman --noconfirm --asdeps -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst' 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst' || exit 1" >> /mnt/etc/vapour-os/chroot-cfg
 echo "echo \"[chaotic-aur]\" >> /etc/pacman.conf" >> /mnt/etc/vapour-os/chroot-cfg
 echo "echo \"Include = /etc/pacman.d/chaotic-mirrorlist\" >> /etc/pacman.conf" >> /mnt/etc/vapour-os/chroot-cfg
 echo "echo \"\" >> /etc/pacman.conf" >> /mnt/etc/vapour-os/chroot-cfg
@@ -251,39 +250,33 @@ echo "echo \"[vapourepo]\" >> /etc/pacman.conf" >> /mnt/etc/vapour-os/chroot-cfg
 echo "echo \"SigLevel = Optional DatabaseOptional\" >> /etc/pacman.conf" >> /mnt/etc/vapour-os/chroot-cfg
 echo "echo \"Server = https://raw.githubusercontent.com/dankcuddlybear/\\\$repo/main/__PKG\" >> /etc/pacman.conf" >> /mnt/etc/vapour-os/chroot-cfg
 # Install Vapour OS
-echo "pacman --asdeps -D $PKG_PACSTRAP"
+echo "pacman --asdeps -D $PKG_PACSTRAP" >> /mnt/etc/vapour-os/chroot-cfg
 echo "pacman --needed --noconfirm -Syu vapour-os || exit 1" >> /mnt/etc/vapour-os/chroot-cfg
 # Configure users
-echo "read -p \"Do you want to enable root login? (y/N) \" ANSWER" >> /mnt/etc/vapour-os/chroot-cfg
-echo "if [ -z \$ANSWER ] || [ \$ANSWER != \"y\" ] || [ \$ANSWER != \"Y\" ]; then" >> /mnt/etc/vapour-os/chroot-cfg
-echo "    :" >> /mnt/etc/vapour-os/chroot-cfg
-echo "else" >> /mnt/etc/vapour-os/chroot-cfg
-echo "    CONTINUE=0" >> /mnt/etc/vapour-os/chroot-cfg
-echo "    while [ \$CONTINUE == 0 ]; do" >> /mnt/etc/vapour-os/chroot-cfg
-echo "        echo \"Enter root password\"" >> /mnt/etc/vapour-os/chroot-cfg
-echo "        passwd root && CONTINUE=1" >> /mnt/etc/vapour-os/chroot-cfg
-echo "    done" >> /mnt/etc/vapour-os/chroot-cfg
-echo "fi" >> /mnt/etc/vapour-os/chroot-cfg
-echo "useradd -m $OWNER" >> /mnt/etc/vapour-os/chroot-cfg
-echo "gpasswd -a $OWNER audio" >> /mnt/etc/vapour-os/chroot-cfg
-echo "gpasswd -a $OWNER games" >> /mnt/etc/vapour-os/chroot-cfg
-echo "gpasswd -a $OWNER input" >> /mnt/etc/vapour-os/chroot-cfg
-echo "gpasswd -a $OWNER network" >> /mnt/etc/vapour-os/chroot-cfg
-echo "gpasswd -a $OWNER realtime" >> /mnt/etc/vapour-os/chroot-cfg
-echo "gpasswd -a $OWNER video" >> /mnt/etc/vapour-os/chroot-cfg
-echo "gpasswd -a $OWNER ftp" >> /mnt/etc/vapour-os/chroot-cfg
-echo "gpasswd -a $OWNER http" >> /mnt/etc/vapour-os/chroot-cfg
-echo "gpasswd -a $OWNER wheel" >> /mnt/etc/vapour-os/chroot-cfg
+echo "CONTINUE=0" >> /mnt/etc/vapour-os/chroot-cfg
+echo "while [ \$CONTINUE == 0 ]; do" >> /mnt/etc/vapour-os/chroot-cfg
+echo "    echo \"Enter root password\"" >> /mnt/etc/vapour-os/chroot-cfg
+echo "    passwd root && CONTINUE=1" >> /mnt/etc/vapour-os/chroot-cfg
+echo "done" >> /mnt/etc/vapour-os/chroot-cfg
+echo "useradd -m \$OWNER" >> /mnt/etc/vapour-os/chroot-cfg
+echo "gpasswd -a \$OWNER audio" >> /mnt/etc/vapour-os/chroot-cfg
+echo "gpasswd -a \$OWNER ftp" >> /mnt/etc/vapour-os/chroot-cfg
+echo "gpasswd -a \$OWNER games" >> /mnt/etc/vapour-os/chroot-cfg
+echo "gpasswd -a \$OWNER http" >> /mnt/etc/vapour-os/chroot-cfg
+echo "gpasswd -a \$OWNER input" >> /mnt/etc/vapour-os/chroot-cfg
+echo "gpasswd -a \$OWNER realtime" >> /mnt/etc/vapour-os/chroot-cfg
+echo "gpasswd -a \$OWNER video" >> /mnt/etc/vapour-os/chroot-cfg
+echo "gpasswd -a \$OWNER wheel" >> /mnt/etc/vapour-os/chroot-cfg
 echo "echo" >> /mnt/etc/vapour-os/chroot-cfg
 echo "CONTINUE=0" >> /mnt/etc/vapour-os/chroot-cfg
 echo "while [ \$CONTINUE == 0 ]; do" >> /mnt/etc/vapour-os/chroot-cfg
-echo "    echo \"Enter password for user $OWNER\"" >> /mnt/etc/vapour-os/chroot-cfg
-echo "    passwd $OWNER && CONTINUE=1" >> /mnt/etc/vapour-os/chroot-cfg
+echo "    echo \"Enter password for user \$OWNER\"" >> /mnt/etc/vapour-os/chroot-cfg
+echo "    passwd \$OWNER && CONTINUE=1" >> /mnt/etc/vapour-os/chroot-cfg
 echo "done" >> /mnt/etc/vapour-os/chroot-cfg
 # Install optional software
 echo "FAIL=1" >> /mnt/etc/vapour-os/chroot-cfg
 echo "while [ \$FAIL == 1 ]; do" >> /mnt/etc/vapour-os/chroot-cfg
-echo "    sudo -u $OWNER yay --needed -Syu $EXTRA_SOFTWARE && FAIL=0 || FAIL=1" >> /mnt/etc/vapour-os/chroot-cfg
+echo "    sudo -u \$OWNER yay --needed -Syu \$EXTRA_SOFTWARE && FAIL=0 || FAIL=1" >> /mnt/etc/vapour-os/chroot-cfg
 echo "    if [ \$FAIL == 1 ]; then" >> /mnt/etc/vapour-os/chroot-cfg
 echo "        read -p \"[ERROR] Failed to install some extra software. Would you like to try again? (Y/n) \" ANSWER" >> /mnt/etc/vapour-os/chroot-cfg
 echo "        if [ -z \$ANSWER ] || [ \$ANSWER != \"y\" ] && [ \$ANSWER != \"Y\" ]; then FAIL=0; fi" >> /mnt/etc/vapour-os/chroot-cfg

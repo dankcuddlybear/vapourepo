@@ -1,10 +1,10 @@
 #!/bin/bash
-[ $(whoami) != "root" ] && echo "[ERROR] You must run this script with root priviliges." && exit 1 # Do not run without root priviliges
-SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )  # Get script directory
-. $SCRIPT_DIR/options.conf # Load options
-loadkeys $KEYMAP # Load keymap
-(($DISPLAY_SCALE > 100)) && setfont latarcyrheb-sun32 # Load extra large font if display is HiDPI
-timedatectl set-ntp true # Ensure system clock is accurate
+[ $(whoami) != "root" ] && echo "[ERROR] You must run this script with root priviliges." && exit 1
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+. $SCRIPT_DIR/options.conf
+loadkeys $KEYMAP
+setfont latarcyrheb-sun32
+timedatectl set-ntp true
 
 # HARDWARE CHECKER - gathers necessary hardware info and aborts installation if system requirements are not met.
 echo "Checking hardware..."
@@ -33,9 +33,9 @@ else
 fi
 # RAM checker
 RAM=$(($(getconf _PHYS_PAGES) * $(getconf PAGE_SIZE)))
-if [ $RAM -lt 134217728 ]; then
+if [ $RAM -lt 268435456 ]; then
     echo "Found $(expr $RAM / 1048576)MiB RAM"
-    echo "[ERROR] At least 128MiB of RAM is required for minimal installation (with no GUI)"
+    echo "[ERROR] At least 256MiB of RAM is required for minimal installation (with no GUI)"
     exit 1
 elif [ $RAM -lt 1073741824 ]; then
     echo "Found $(expr $RAM / 1048576)MiB RAM"
@@ -120,28 +120,28 @@ read -p "When you are ready, press enter to continue or CTRL+C to abort installa
 
 # Unmount any mounted filesystems
 echo "Unmounting filesystems..."
-umount $DEV_BOOT &> /dev/null
-[ ! -z $DEV_HOME ] && umount $DEV_HOME &> /dev/null
-[ ! -z $DEV_MEDIA ] && umount $DEV_MEDIA &> /dev/null
-[ ! -z $DEV_PUBLIC ] && umount $DEV_PUBLIC &> /dev/null
-umount $DEV_ROOT &> /dev/null
+umount "$DEV_BOOT"
+[ ! -z "$DEV_HOME" ] && umount "$DEV_HOME"
+[ ! -z "$DEV_MEDIA" ] && umount "$DEV_MEDIA"
+[ ! -z "$DEV_PUBLIC" ] && umount "$DEV_PUBLIC"
+umount "$DEV_ROOT"
 # Format any filesystems marked for formatting
 [ $FORMAT_ROOT == 1 ] || [ $FORMAT_BOOT == 1 ] || [ $FORMAT_HOME == 1 ] || \
 [ $FORMAT_MEDIA == 1 ] || [ $FORMAT_PUBLIC == 1 ] && echo "Formatting partitions..."
-[ $FORMAT_ROOT == 1 ] && mke2fs -L $LABEL_ROOT $DEV_ROOT
-[ $FORMAT_BOOT == 1 ] && mkfs.fat -F 32 -n $LABEL_BOOT $DEV_BOOT
-[ ! -z $DEV_HOME ] && [ $FORMAT_HOME == 1 ] && mke2fs -L $LABEL_HOME $DEV_HOME
-[ ! -z $DEV_MEDIA ] && [ $FORMAT_MEDIA == 1 ] && mke2fs -L $LABEL_MEDIA $DEV_MEDIA
-[ ! -z $DEV_PUBLIC ] && [ $FORMAT_PUBLIC == 1 ] && mke2fs -L $LABEL_PUBLIC $DEV_PUBLIC
+[ $FORMAT_ROOT == 1 ] && mkfs.ext4 -L "$LABEL_ROOT" ""$DEV_ROOT""
+[ $FORMAT_BOOT == 1 ] && mkfs.fat -F 32 -n "$LABEL_BOOT" ""$DEV_BOOT""
+[ ! -z "$DEV_HOME" ] && [ $FORMAT_HOME == 1 ] && mke2fs -L "$LABEL_HOME" ""$DEV_HOME""
+[ ! -z "$DEV_MEDIA" ] && [ $FORMAT_MEDIA == 1 ] && mke2fs -L "$LABEL_MEDIA" "$DEV_MEDIA"
+[ ! -z "$DEV_PUBLIC" ] && [ $FORMAT_PUBLIC == 1 ] && mke2fs -L "$LABEL_PUBLIC" "$DEV_PUBLIC"
 # Tune filesystems
 echo "Tuning filesystems..."
-tune2fs -O fast_commit $DEV_ROOT
-tune2fs -c 1 $DEV_ROOT  # Perform fsck every mount
-[ ! -z $DEV_HOME ] && tune2fs -O fast_commit $DEV_HOME
-[ ! -z $DEV_MEDIA ] && tune2fs -O fast_commit $DEV_MEDIA
-[ ! -z $DEV_PUBLIC ] && tune2fs -O fast_commit $DEV_PUBLIC
+tune2fs -O fast_commit "$DEV_ROOT"
+tune2fs -c 1 "$DEV_ROOT"  # Perform fsck every mount
+[ ! -z "$DEV_HOME" ] && tune2fs -O fast_commit "$DEV_HOME"
+[ ! -z "$DEV_MEDIA" ] && tune2fs -O fast_commit "$DEV_MEDIA"
+[ ! -z "$DEV_PUBLIC" ] && tune2fs -O fast_commit "$DEV_PUBLIC"
 # Set boot flag on ESP
-DEV_BOOT=$(readlink -f $DEV_BOOT)
+DEV_BOOT=$(readlink -f "$DEV_BOOT")
 if [ ${DEV_BOOT:5:2} == "hd" ] || [ ${DEV_BOOT:5:2} == "sd" ] || [ ${DEV_BOOT:5:2} == "vd" ]; then
 	ESPDISK=${DEV_BOOT:0:8}
 	ESPPART=${DEV_BOOT:8:3}
@@ -155,19 +155,19 @@ else echo "[ERROR] Error detecting EFI system partition!"; exit 1; fi
 parted $ESPDISK set $ESPPART boot on 1> /dev/null
 # Mount and clear root filesystem
 echo "Mounting filesystems..."
-mount $DEV_ROOT /mnt || exit 1
+mount "$DEV_ROOT" /mnt || exit 1
 [ $FORMAT_ROOT != 1 ] && echo "Clearing root filesystem" && rm -rf /mnt/bin /mnt/dev /mnt/etc /mnt/lib /mnt/lib64 /mnt/mnt /mnt/opt /mnt/proc /mnt/root /mnt/run /mnt/sbin /mnt/sys /mnt/tmp /mnt/usr /mnt/var
 # Create mount points
 mkdir /mnt/boot &> /dev/null
 mkdir /mnt/public &> /dev/null
-[ ! -z $DEV_HOME ] && mkdir /mnt/home
-[ ! -z $DEV_MEDIA ] && mkdir /mnt/media
+[ ! -z "$DEV_HOME" ] && mkdir /mnt/home
+[ ! -z "$DEV_MEDIA" ] && mkdir /mnt/media
 # Mount and clear other filesystems
-mount $DEV_BOOT /mnt/boot || exit 1
+mount "$DEV_BOOT" /mnt/boot || exit 1
 [ $FORMAT_BOOT != 1 ] && echo "Clearing ESP (will keep Windows/MacOS bootloader)" && rm -rf /mnt/boot/*.img /mnt/boot/vmlinuz-linux-zen /mnt/boot/EFI/systemd /mnt/boot/loader
-[ ! -z $DEV_HOME ] && mount $DEV_HOME /mnt/home
-[ ! -z $DEV_MEDIA ] && mount $DEV_MEDIA /mnt/media
-[ ! -z $DEV_PUBLIC ] && mount $DEV_PUBLIC /mnt/public
+[ ! -z "$DEV_HOME" ] && mount "$DEV_HOME" /mnt/home
+[ ! -z "$DEV_MEDIA" ] && mount "$DEV_MEDIA" /mnt/media
+[ ! -z "$DEV_PUBLIC" ] && mount "$DEV_PUBLIC" /mnt/public
 sync
 
 # Bootstrap packages. If it fails for some reason, abort installation.
@@ -179,16 +179,16 @@ pacstrap /mnt $PKG_PACSTRAP || exit 1
 sync
 
 # Generate /etc/fstab for new system
-UUID_ROOT=$(blkid -o value -s UUID $DEV_ROOT)
-UUID_BOOT=$(blkid -o value -s UUID $DEV_BOOT)
-[ ! -z $DEV_HOME ] && UUID_HOME=$(blkid -o value -s UUID $DEV_HOME)
-[ ! -z $DEV_MEDIA ] && UUID_MEDIA=$(blkid -o value -s UUID $DEV_MEDIA)
-[ ! -z $DEV_PUBLIC ] && UUID_PUBLIC=$(blkid -o value -s UUID $DEV_PUBLIC)
+UUID_ROOT=$(blkid -o value -s UUID "$DEV_ROOT")
+UUID_BOOT=$(blkid -o value -s UUID "$DEV_BOOT")
+[ ! -z "$DEV_HOME" ] && UUID_HOME=$(blkid -o value -s UUID "$DEV_HOME")
+[ ! -z "$DEV_MEDIA" ] && UUID_MEDIA=$(blkid -o value -s UUID "$DEV_MEDIA")
+[ ! -z "$DEV_PUBLIC" ] && UUID_PUBLIC=$(blkid -o value -s UUID "$DEV_PUBLIC")
 echo "UUID=$UUID_ROOT / ext4 rw,lazytime 0 1" > /mnt/etc/fstab
 echo "UUID=$UUID_BOOT /boot vfat rw,noatime,noexec,noauto,x-systemd.automount,dmask=0022,fmask=133,codepage=437,iocharset=ascii,shortname=mixed,utf8,errors=remount-ro 0 2" >> /mnt/etc/fstab
-[ ! -z $DEV_HOME ] && echo "UUID=$UUID_ROOT / ext4 rw,noatime,noauto,x-systemd.automount 0 1" >> /mnt/etc/fstab
-[ ! -z $DEV_MEDIA ] && echo "UUID=$UUID_ROOT / ext4 rw,noatime,noauto,x-systemd.automount 0 1" >> /mnt/etc/fstab
-[ ! -z $DEV_PUBLIC ] && echo "UUID=$UUID_ROOT / ext4 rw,noatime,noauto,x-systemd.automount 0 1" >> /mnt/etc/fstab
+[ ! -z "$DEV_HOME" ] && echo "UUID=$UUID_ROOT / ext4 rw,noatime,noauto,x-systemd.automount 0 1" >> /mnt/etc/fstab
+[ ! -z "$DEV_MEDIA" ] && echo "UUID=$UUID_ROOT / ext4 rw,noatime,noauto,x-systemd.automount 0 1" >> /mnt/etc/fstab
+[ ! -z "$DEV_PUBLIC" ] && echo "UUID=$UUID_ROOT / ext4 rw,noatime,noauto,x-systemd.automount 0 1" >> /mnt/etc/fstab
 
 # Configure Sudo (don't ask for password for automated install)
 echo "root ALL=(ALL:ALL) ALL" > /mnt/etc/sudoers
@@ -197,19 +197,17 @@ echo "@includedir /etc/sudoers.d" >> /mnt/etc/sudoers
 chmod 440 /mnt/etc/sudoers
 
 # Configure pacman
-echo "[options]" >> /mnt/etc/pacman.conf
+echo "[options]" > /mnt/etc/pacman.conf
 echo "HoldPkg = amd-ucode intel-ucode hdapsd vapour-os" >> /mnt/etc/pacman.conf
 echo "Architecture = auto" >> /mnt/etc/pacman.conf
 echo "#IgnorePkg = " >> /mnt/etc/pacman.conf
 echo "#IgnoreGroup = " >> /mnt/etc/pacman.conf
 echo "#NoUpgrade = " >> /mnt/etc/pacman.conf
-echo "#NoExtract = " >> /mnt/etc/pacman.conf
 echo "Color" >> /mnt/etc/pacman.conf
 echo "CheckSpace" >> /mnt/etc/pacman.conf
 echo "ParallelDownloads = $(nproc)" >> /mnt/etc/pacman.conf
 echo "SigLevel = Required DatabaseOptional" >> /mnt/etc/pacman.conf
 echo "LocalFileSigLevel = Optional" >> /mnt/etc/pacman.conf
-echo "#RemoteFileSigLevel = Required" >> /mnt/etc/pacman.conf
 echo "" >> /mnt/etc/pacman.conf
 echo "[core]" >> /mnt/etc/pacman.conf
 echo "Include = /etc/pacman.d/mirrorlist" >> /mnt/etc/pacman.conf
@@ -230,7 +228,7 @@ cp $SCRIPT_DIR/options.conf /mnt/etc/vapour-os/install.conf
 # Copy device info
 echo "CPU=\"$CPU\"                      # \"intel\", \"amd\" or leave blank if you have neither" > /mnt/etc/vapour-os/device.conf
 echo "SSE4_2=\"$SSE4_2\"                # Set to 1 if your CPU supports SSE4.2" >> /mnt/etc/vapour-os/device.conf
-echo "RAM=$RAM"
+echo "RAM=$RAM" >> /mnt/etc/vapour-os/device.conf
 echo "GPU0=\"$GPU0\"                    # \"intel\", \"amd\", \"nvidia\" or leave blank if you don't have a GPU" >> /mnt/etc/vapour-os/device.conf
 echo "GPU1=\"$GPU1\"                    # \"amd\", \"nvidia\" or leave blank if you don't have a second GPU" >> /mnt/etc/vapour-os/device.conf
 echo "PORTABLE=\"$PORTABLE\"            # Set to 1 if your device is portable" >> /mnt/etc/vapour-os/device.conf
@@ -253,10 +251,13 @@ echo "echo \"[vapourepo]\" >> /etc/pacman.conf" >> /mnt/etc/vapour-os/chroot-cfg
 echo "echo \"SigLevel = Optional DatabaseOptional\" >> /etc/pacman.conf" >> /mnt/etc/vapour-os/chroot-cfg
 echo "echo \"Server = https://raw.githubusercontent.com/dankcuddlybear/\\\$repo/main/__PKG\" >> /etc/pacman.conf" >> /mnt/etc/vapour-os/chroot-cfg
 # Install Vapour OS
-echo "pacman -Syu vapour-os || exit 1"
+echo "pacman --asdeps -D $PKG_PACSTRAP"
+echo "pacman --needed --noconfirm -Syu vapour-os || exit 1" >> /mnt/etc/vapour-os/chroot-cfg
 # Configure users
 echo "read -p \"Do you want to enable root login? (y/N) \" ANSWER" >> /mnt/etc/vapour-os/chroot-cfg
-echo "if [ \$ANSWER == \"y\" ] || [ \$ANSWER == \"Y\" ]; then" >> /mnt/etc/vapour-os/chroot-cfg
+echo "if [ -z \$ANSWER ] || [ \$ANSWER != \"y\" ] || [ \$ANSWER != \"Y\" ]; then" >> /mnt/etc/vapour-os/chroot-cfg
+echo "    :" >> /mnt/etc/vapour-os/chroot-cfg
+echo "else" >> /mnt/etc/vapour-os/chroot-cfg
 echo "    CONTINUE=0" >> /mnt/etc/vapour-os/chroot-cfg
 echo "    while [ \$CONTINUE == 0 ]; do" >> /mnt/etc/vapour-os/chroot-cfg
 echo "        echo \"Enter root password\"" >> /mnt/etc/vapour-os/chroot-cfg
@@ -284,8 +285,8 @@ echo "FAIL=1" >> /mnt/etc/vapour-os/chroot-cfg
 echo "while [ \$FAIL == 1 ]; do" >> /mnt/etc/vapour-os/chroot-cfg
 echo "    sudo -u $OWNER yay --needed -Syu $EXTRA_SOFTWARE && FAIL=0 || FAIL=1" >> /mnt/etc/vapour-os/chroot-cfg
 echo "    if [ \$FAIL == 1 ]; then" >> /mnt/etc/vapour-os/chroot-cfg
-echo "        read -p \"[ERROR] Failed to install some extra software. Would you like to try again?\" ANSWER" >> /mnt/etc/vapour-os/chroot-cfg
-echo "        if [ \$ANSWER == \"y\" ] || [ \$ANSWER == \"Y\" ]; then FAIL=0; fi" >> /mnt/etc/vapour-os/chroot-cfg
+echo "        read -p \"[ERROR] Failed to install some extra software. Would you like to try again? (Y/n) \" ANSWER" >> /mnt/etc/vapour-os/chroot-cfg
+echo "        if [ -z \$ANSWER ] || [ \$ANSWER != \"y\" ] && [ \$ANSWER != \"Y\" ]; then FAIL=0; fi" >> /mnt/etc/vapour-os/chroot-cfg
 echo "    fi" >> /mnt/etc/vapour-os/chroot-cfg
 echo "done" >> /mnt/etc/vapour-os/chroot-cfg
 echo "sync" >> /mnt/etc/vapour-os/chroot-cfg

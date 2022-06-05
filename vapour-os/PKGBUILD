@@ -1,6 +1,6 @@
 pkgname=vapour-os
 pkgver=0.3
-pkgrel=2
+pkgrel=3
 pkgdesc='Vapour OS core system'
 arch=(x86_64)
 url='https://github.com/dankcuddlybear/vapourepo'
@@ -21,7 +21,7 @@ depends=(
 	# Networking
 	'networkmanager' 'nss-mdns' 'wireless-regdb'
 	# Utilities
-	'htop' 'man-db' 'man-pages' 'nano-syntax-highlighting'
+	'bc' 'htop' 'man-db' 'man-pages' 'nano-syntax-highlighting'
 	# Terminal font for HiDPI/LoDPI support
 	'terminus-font'
 	# Chaotic-AUR
@@ -39,7 +39,7 @@ optdepends=('amd-ucode: Fixes for AMD CPUs'
 	'vapour-os-xfce: XFCE X11 desktop and utilities'
 )
 source=('vapour-os-files.tar.gz')
-sha512sums=('6a55093db7c3be511d5c4e07deb0a251a6c6f9b8fbaf924975b59050a35f98296f600f91407c9ba3a484915caaebad6277e257d904cd9506c221a34113207ad7')
+sha512sums=('fb9455cbefc5f23f26a259c4597a2a58bb19e459c0cdc3c263ab8377e1cbf21dcea2d01d5a66aa2a0ab6291c596cc7113c8cdd72236fcadee2cd305c88d6d2bb')
 package() {
 	mv $srcdir/etc $pkgdir
 	mv $srcdir/opt $pkgdir

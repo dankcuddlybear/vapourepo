@@ -1,6 +1,7 @@
+# Maintainer: dankcuddlybear <dankcuddlybear@protonmail.com>
 pkgname=vapour-os-nvidia
 pkgver=0.1
-pkgrel=4
+pkgrel=6
 pkgdesc='Vapour OS Nvidia drivers for OpenGL, Vulkan, OpenCL and hardware video acceleration.'
 arch=(x86_64)
 url='https://github.com/dankcuddlybear/Vapour-OS'
@@ -9,12 +10,14 @@ depends=('nvidia-dkms'
 	'lib32-nvidia-utils'
 	'lib32-opencl-nvidia'
 	'opencl-nvidia'
+    'vapour-os-gui'
 )
 provides=('vapour-os-gpudriver')
 optdepends=('nvidia-prime: Run graphically intensive applications on the dedicated Nvidia GPU')
-source=('vapour-os-nvidia-files.tar.gz')
-sha512sums=('9513fe97701585bb0d9abaf5710d1547aa59bd4c5b4868cf7b0c88e52e38982eda557206e2bf11cebbd71fd81e5fb40d1631ef5e9b889bf23dbf7ef6f392ab87')
 package() {
-	mv "$srcdir/etc" "$pkgdir"
-	mv "$srcdir/usr" "$pkgdir"
+	cd "$srcdir"
+	cd ../
+	filesdir="$(pwd)/files"
+	cp -r "$filesdir/etc" "$pkgdir"
+	cp -r "$filesdir/usr" "$pkgdir"
 }

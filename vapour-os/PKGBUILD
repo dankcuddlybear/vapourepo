@@ -1,6 +1,7 @@
+# Maintainer: dankcuddlybear <dankcuddlybear@protonmail.com>
 pkgname=vapour-os
 pkgver=0.3
-pkgrel=5
+pkgrel=7
 pkgdesc='Vapour OS core system'
 arch=(x86_64)
 url='https://github.com/dankcuddlybear/vapourepo'
@@ -38,8 +39,6 @@ optdepends=('amd-ucode: Fixes for AMD CPUs'
 	'vapour-os-printing: CUPS print services and drivers'
 	'vapour-os-xfce: XFCE X11 desktop and utilities'
 )
-#source=('vapour-os-files.tar.gz')
-#sha512sums=('67ab3c3f88aaa2baaf8f64368c1413745ce7e6ed63d303d5928b6e3ea0eebbdd5a821a23dc9af3d8f8bc050661c989b9bacbcca39dc6fe868f10f9fc525a5392')
 package() {
 	cd "$srcdir"
 	cd ../

@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Exec=/usr/bin/sh -c 'sleep 5; qdbus org.kde.kglobalaccel /component/kmix invokeShortcut "mute"; sleep 3; qdbus org.kde.kglobalaccel /component/kmix invokeShortcut "mute"'
+NoDisplay=true
+Name=Pipewire fix for no audio on startup (KDE)
+OnlyShowIn=KDE

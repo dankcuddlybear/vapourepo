@@ -1,6 +1,7 @@
+# Maintainer: dankcuddlybear <dankcuddlybear@protonmail.com>
 pkgname=vapour-os-multimedia
 pkgver=0.1
-pkgrel=1
+pkgrel=3
 pkgdesc='Vapour OS audio/video codecs'
 arch=(any)
 url='https://github.com/dankcuddlybear/Vapour-OS'
@@ -12,9 +13,9 @@ depends=('gst-plugins-bad'
     'libtiger'
     'vapour-os-gui'
 )
-source=('vapour-os-multimedia-files.tar.gz')
-sha512sums=('a67cde6768d949f189fd9b5c8e1ce6caa1b112070e0398904cb2710ff601dd694011ddd0d1a83a909f402c4567317b16481c23d073ce9354c90b81202664ae7e')
 package() {
-	mkdir -p "$pkgdir/usr/lib/modules-load.d"
-	mv "$srcdir/modules-load.conf" $pkgdir/usr/lib/modules-load.d/disc.conf"
+	cd "$srcdir"
+	cd ../
+	filesdir="$(pwd)/files"
+	cp -r "$filesdir/usr" "$pkgdir"
 }

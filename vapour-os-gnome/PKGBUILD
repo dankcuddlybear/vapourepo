@@ -1,6 +1,7 @@
+# Maintainer: dankcuddlybear <dankcuddlybear@protonmail.com>
 pkgname=vapour-os-gnome
 pkgver=0.1
-pkgrel=2
+pkgrel=3
 pkgdesc='Vapour OS GNOME X11/Wayland shell'
 arch=(any)
 url='https://github.com/dankcuddlybear/Vapour-OS'

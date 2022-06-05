@@ -1,6 +1,7 @@
+# Maintainer: dankcuddlybear <dankcuddlybear@protonmail.com>
 pkgname=vapour-os-kde
 pkgver=0.1
-pkgrel=2
+pkgrel=3
 pkgdesc='Vapour OS KDE Plasma X11 desktop environment'
 arch=(any)
 url='https://github.com/dankcuddlybear/Vapour-OS'
@@ -52,14 +53,10 @@ depends=('ark'
     'xdg-desktop-portal-kde'
     'yakuake'
 )
-source=('vapour-os-kde-files.tar.gz')
-sha512sums=('d4e44403c44d6fdb190160dd9b818c0c4aebc5bd0288a8816366c0da9535606f838d2a05b048c1e65a7983877e7be60cd656b9c2ff884286ee9156529473b026')
 package() {
-	mkdir -p "$pkgdir/etc/xdg/autostart" "$pkgdir/usr/share/plymouth/themes/breeze"
-	mv "$srcdir/pipewire-fix-kde.desktop" "$pkgdir/etc/xdg/autostart/pipewire-fix-kde.desktop"
-	mv "$srcdir/breeze.plymouth" "$pkgdir/usr/share/plymouth/themes/breeze/breeze.plymouth"
-	mv "$srcdir/bullet.png" "$pkgdir/usr/share/plymouth/themes/breeze/bullet.png"
-	mv "$srcdir/entry.png" "$pkgdir/usr/share/plymouth/themes/breeze/entry.png"
-	mv "$srcdir/script" "$pkgdir/usr/share/plymouth/themes/breeze/script"
-	mv "$srcdir/spinner.png" "$pkgdir/usr/share/plymouth/themes/breeze/spinner.png"
+	cd "$srcdir"
+	cd ../
+	filesdir="$(pwd)/files"
+	cp -r "$filesdir/etc" "$pkgdir"
+	cp -r "$filesdir/usr" "$pkgdir"
 }

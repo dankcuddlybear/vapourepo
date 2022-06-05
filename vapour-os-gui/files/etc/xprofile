@@ -1,0 +1,10 @@
+# Load scripts from /etc/xprofile.d
+if test -d /etc/xprofile.d/; then
+	for xprofile in /etc/xprofile.d/*.sh; do
+		test -r "$xprofile" && . "x$profile"
+	done
+	unset xprofile
+fi
+
+# Set DPI
+xrandr --dpi $QT_FONT_DPI

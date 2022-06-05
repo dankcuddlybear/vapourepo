@@ -1,27 +1,27 @@
 # Maintainer: dankcuddlybear <dankcuddlybear@protonmail.com>
 pkgname=vapour-os-gui
 pkgver=0.3
-pkgrel=3
-pkgdesc='X11 and Pipewire sound server base package for Vapour OS'
+pkgrel=4
+pkgdesc='Vapour OS GUI libs - uses X11 and Pipewire.'
 arch=(any)
 url='https://github.com/dankcuddlybear/Vapour-OS'
 depends=('pipewire-alsa'
-    'pipewire-jack'
-    'pipewire-pulse'
-    'pipewire-v4l2'
-    'pipewire-zeroconf'
-    'vapour-os-gpudriver'
-    'xorg-server'
+	'pipewire-jack'
+	'pipewire-pulse'
+	'pipewire-v4l2'
+	'pipewire-zeroconf'
+	'vapour-os'
+	'xorg-server'
 )
-optdepends=('vapour-os-amdgpu: AMD GPU drivers'
-    'vapour-os-gaming: Windows/Linux gaming libraries and software'
-    'vapour-os-gnome: GNOME X11/Wayland shell and utilities'
-    'vapour-os-kde: KDE X11 desktop and utilities'
-    'vapour-os-xfce: XFCE X11 desktop and utilities'
+optdepends=('vapour-os-gaming: Windows/Linux gaming libraries and software'
+	'vapour-os-gnome: GNOME X11/Wayland shell and utilities'
+	'vapour-os-kde: KDE X11 desktop and utilities'
+	'vapour-os-xfce: XFCE X11 desktop and utilities'
 )
-source=('vapour-os-gui-files.tar.gz')
-sha512sums=('4c223267b0babdeb7379a8e80d965e50bd281ab2327bd161d7d37d0a158b90a418cd4bbb28f81b1680e22a24b27ac94552355931bf6a85af49cdddb4075d1f4e')
 package() {
-	mv "$srcdir/etc" "$pkgdir"
-	mv "$srcdir/usr" "$pkgdir"
+	cd "$srcdir"
+	cd ../
+	filesdir="$(pwd)/files"
+	cp -r "$filesdir/etc" "$pkgdir"
+	cp -r "$filesdir/usr" "$pkgdir"
 }

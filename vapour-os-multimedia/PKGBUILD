@@ -1,7 +1,7 @@
 # Maintainer: dankcuddlybear <dankcuddlybear@protonmail.com>
 pkgname=vapour-os-multimedia
 pkgver=0.1
-pkgrel=3
+pkgrel=4
 pkgdesc='Vapour OS audio/video codecs'
 arch=(any)
 url='https://github.com/dankcuddlybear/Vapour-OS'
@@ -11,7 +11,6 @@ depends=('gst-plugins-bad'
     'gst-plugins-ugly'
     'libdvdcss'
     'libtiger'
-    'vapour-os-gui'
 )
 package() {
 	cd "$srcdir"

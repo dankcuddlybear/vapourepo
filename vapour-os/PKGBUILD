@@ -1,7 +1,7 @@
 # Maintainer: dankcuddlybear <dankcuddlybear@protonmail.com>
 pkgname=vapour-os
 pkgver=0.3
-pkgrel=7
+pkgrel=8
 pkgdesc='Vapour OS core system'
 arch=(x86_64)
 url='https://github.com/dankcuddlybear/vapourepo'
@@ -34,6 +34,7 @@ optdepends=('amd-ucode: Fixes for AMD CPUs'
 	'vapour-os-bootscreen: Graphical boot screen'
 	'vapour-os-gaming: Windows/Linux gaming libraries and software'
 	'vapour-os-gnome: GNOME X11/Wayland shell and utilities'
+	'vapour-os-gui: Basic GUI with X11 and Pipewire'
 	'vapour-os-kde: KDE X11 desktop and utilities'
 	'vapour-os-multimedia: Audio/video codecs and disc support'
 	'vapour-os-printing: CUPS print services and drivers'

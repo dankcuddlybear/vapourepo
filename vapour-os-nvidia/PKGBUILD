@@ -15,6 +15,6 @@ optdepends=('nvidia-prime: Run graphically intensive applications on the dedicat
 source=('vapour-os-nvidia-files.tar.gz')
 sha512sums=('9513fe97701585bb0d9abaf5710d1547aa59bd4c5b4868cf7b0c88e52e38982eda557206e2bf11cebbd71fd81e5fb40d1631ef5e9b889bf23dbf7ef6f392ab87')
 package() {
-	mv $srcdir/etc $pkgdir
-	mv $srcdir/usr $pkgdir
+	mv "$srcdir/etc" "$pkgdir"
+	mv "$srcdir/usr" "$pkgdir"
 }

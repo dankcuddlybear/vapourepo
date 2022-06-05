@@ -1,0 +1,23 @@
+#!/bin/sh
+[ $(whoami) != "root" ] && echo "[ERROR] You must run this script with root priviliges." && exit 1
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+[ -z $1 ] && echo "[ERROR] You must specify a locale!" && exit 1
+echo "$1.UTF-8 UTF-8" > /etc/locale.gen
+echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen
+echo "" >> /etc/locale.gen
+locale-gen
+echo "LANG=$1.UTF-8" > /etc/locale.conf
+echo "LC_ALL=$1.UTF-8" >> /etc/locale.conf
+echo "LC_CTYPE=$1.UTF-8" >> /etc/locale.conf
+echo "LC_NUMERIC=$1.UTF-8" >> /etc/locale.conf
+echo "LC_TIME=$1.UTF-8" >> /etc/locale.conf
+echo "LC_COLLATE=$1.UTF-8" >> /etc/locale.conf
+echo "LC_MONETARY=$1.UTF-8" >> /etc/locale.conf
+echo "LC_MESSAGES=$1.UTF-8" >> /etc/locale.conf
+echo "LC_PAPER=$1.UTF-8" >> /etc/locale.conf
+echo "LC_NAME=$1.UTF-8" >> /etc/locale.conf
+echo "LC_ADDRESS=$1.UTF-8" >> /etc/locale.conf
+echo "LC_TELEPHONE=$1.UTF-8" >> /etc/locale.conf
+echo "LC_MEASUREMENT=$1.UTF-8" >> /etc/locale.conf
+echo "LC_IDENTIFICATION=$1.UTF-8" >> /etc/locale.conf
+echo "" >> /etc/locale.conf

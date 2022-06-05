@@ -19,6 +19,6 @@ provides=('vapour-os-gpudriver')
 source=('vapour-os-amdgpu-files.tar.gz')
 sha512sums=('cb38ec7b85675e81ad649129b60066d04d35d8686ac503bd7348dd07711c441710fa60948bec240e42bea7d8fbc9305c76584f19fa6cafc2730aa029fd2aabfc')
 package() {
-	mkdir -p $pkgdir/etc/X11/xorg.conf.d
-	mv $srcdir/20-amdgpu.conf $pkgdir/etc/X11/xorg.conf.d/20-amdgpu.conf
+	mkdir -p "$pkgdir/etc/X11/xorg.conf.d"
+	mv "$srcdir/20-amdgpu.conf" "$pkgdir/etc/X11/xorg.conf.d/20-amdgpu.conf"
 }

@@ -1,0 +1,8 @@
+#!/bin/sh
+[ $(whoami) != "root" ] && echo "[ERROR] You must run this script with root priviliges." && exit 1
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+KEYMAP=$1
+[ -z $KEYMAP ] && echo "[ERROR] You must specify a keymap!" && exit 1
+rm /etc/X11/xorg.conf.d/00-keyboard.conf &> /dev/null
+$SCRIPT_DIR/setvar delete /etc/vconsole.conf KEYMAP
+localectl set-keymap $KEYMAP

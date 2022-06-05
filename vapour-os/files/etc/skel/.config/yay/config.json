@@ -1,0 +1,20 @@
+{
+	"redownload": "no",
+	"rebuild": "no",
+	"answerclean": "None",
+	"answerdiff": "None",
+	"answeredit": "None",
+	"answerupgrade": "None",
+	"removemake": "yes",
+	"devel": true,
+	"cleanAfter": false,
+	"provides": true,
+	"pgpfetch": true,
+	"upgrademenu": false,
+	"cleanmenu": false,
+	"diffmenu": false,
+	"editmenu": false,
+	"combinedupgrade": true,
+	"useask": false,
+	"batchinstall": true
+}

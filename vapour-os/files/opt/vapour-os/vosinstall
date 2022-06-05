@@ -1,0 +1,64 @@
+#!/bin/bash
+# Finish installing/updating Vapour OS.
+# Will try and automatically configure other settings,
+# like display size/drivers etc if using the liveUSB
+# installer.
+[ $(whoami) != "root" ] && echo "[ERROR] You must run this script with root priviliges." && exit 1
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+MODE=$1; [ -z $MODE ] && MODE="upgrade"
+if [ $MODE != "upgrade" ] && [ $MODE != "install" ]; then
+	echo "[ERROR] Invalid mode!"
+	echo "Upgrade: $0 upgrade"
+	echo "Fresh install/reinstall: $0 install (may change some system settings)"
+	echo "(not added yet) Uninstall: $0 uninstall"
+	echo "No mode specified assumes upgrade."
+	echo "Never reinstall/uninstall unless you know what you're doing."
+	exit 1
+fi
+
+Upgrade() {
+	# Set default environment variables
+	[ -z $($SCRIPT_DIR/setvar query /etc/environment EDITOR) ] && $SCRIPT_DIR/setvar set /etc/environment EDITOR "/usr/bin/nano"
+	[ -z $($SCRIPT_DIR/setvar query /etc/environment GTK_USE_PORTAL) ] && $SCRIPT_DIR/setvar set /etc/environment GTK_USE_PORTAL "1"
+	
+	# Final step: enable core systemd units immediately, then sync disk writes
+	systemctl --now enable ananicy-cpp.service auto-cpufreq.service avahi-daemon.service fstrim.timer irqbalance.service NetworkManager.service rtirq.service rtkit.service
+	sync
+}
+Install() {
+	## Overwrite configs owned by other packages (preserve target permissions).
+	$SCRIPT_DIR/installconfig /opt/vapour-os/etc /etc
+	
+	## Write /etc/issue
+	echo "____   ____                                   ________    _________" > /etc/issue
+	echo "\\\\   \\\\ /   /____  ______   ____  __ _________  \\\\_____  \\\\  /   _____/" >> /etc/issue
+	echo " \\\\   Y   /\\\\__  \\\\ \\\\____ \\\\ /  _ \\\\|  |  \\\\_  __ \\\\  /   |   \\\\ \\\\_____  \\\\" >> /etc/issue
+	echo "  \\\\     /  / __ \\\\|  |_> >  <_> )  |  /|  | \\\\/ /    |    \\\\/        \\\\" >> /etc/issue
+	echo "   \\\\___/  (____  /   __/ \\\\____/|____/ |__|    \\\\_______  /_______  /" >> /etc/issue
+	echo "               \\\\/|__|                                 \\\\/        \\\\/" >> /etc/issue
+	echo "\\n \\r \\m" >> /etc/issue
+	echo "\\d \\t" >> /etc/issue
+	echo "/dev/\\l" >> /etc/issue
+	echo "" >> /etc/issue
+	echo "Welcome! (\\u) currently logged in." >> /etc/issue
+	setterm -cursor on >> /etc/issue # Silent boot cursor fix
+	
+	# Configure system using settings from /etc/vapour-os/install.conf
+	if [ -f /etc/vapour-os/install.conf ]; then
+		. /etc/vapour-os/install.conf
+		$SCRIPT_DIR/locale $LOCALE
+		$SCRIPT_DIR/keymap $KEYMAP
+		$SCRIPT_DIR/timezone $TIMEZONE
+		$SCRIPT_DIR/display $DISPLAY_SIZE
+		$SCRIPT_DIR/hostname $HOST_NAME
+		$SCRIPT_DIR/regdomain $REGDOMAIN
+	fi
+	$SCRIPT_DIR/initramfs
+	$SCRIPT_DIR/bootloader
+	
+	bootctl install --esp-path=/boot
+	Upgrade
+}
+
+[ $MODE == "install" ] && Install
+[ $MODE == "upgrade" ] && Upgrade

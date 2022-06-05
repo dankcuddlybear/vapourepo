@@ -19,7 +19,7 @@ source=('vapour-os-i915-gen3-6-files.tar.gz')
 sha512sums=('9848ca9fe4f320a132d2110bbd53e497e979f07d86268de3fc6fba8d5679531cd60e9191244fdf193b5465b9858dd656ae5785c4add55707d1f8a726d52b7302')
 package() {
 	mkdir -p $pkgdir/etc/X11/xorg.conf.d $pkgdir/usr/lib/modprobe.d $pkgdir/usr/lib/sysctl.d
-	mv $srcdir/xorg.conf $pkgdir/etc/X11/xorg.conf.d/20-intel.conf
-	mv $srcdir/modprobe.conf $pkgdir/usr/lib/modprobe.d/i915.conf
-	mv $srcdir/sysctl.conf $pkgdir/usr/lib/sysctl.d/i915.conf
+	mv "$srcdir/xorg.conf" "$pkgdir/etc/X11/xorg.conf.d/20-intel.conf"
+	mv "$srcdir/modprobe.conf" "$pkgdir/usr/lib/modprobe.d/i915.conf"
+	mv "$srcdir/sysctl.conf" "$pkgdir/usr/lib/sysctl.d/i915.conf"
 }

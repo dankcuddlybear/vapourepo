@@ -1,25 +1,29 @@
 #!/bin/sh
 [ $(whoami) != "root" ] && echo "[ERROR] You must run this script with root priviliges." && exit 1
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-LOCALE=$!
+LOCALE=$1
 [ -z $LOCALE ] && echo "[ERROR] You must specify a locale!" && exit 1
 localectl set-locale $LOCALE
 echo "$LOCALE.UTF-8 UTF-8" > /etc/locale.gen
 echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen
 echo "" >> /etc/locale.gen
 locale-gen
-echo "LANG=$LOCALE" > /etc/locale.conf
-echo "LC_ALL=$LOCALE" >> /etc/locale.conf
-echo "LC_CTYPE=$LOCALE" >> /etc/locale.conf
-echo "LC_NUMERIC=$LOCALE" >> /etc/locale.conf
-echo "LC_TIME=$LOCALE" >> /etc/locale.conf
-echo "LC_COLLATE=$LOCALE" >> /etc/locale.conf
-echo "LC_MONETARY=$LOCALE" >> /etc/locale.conf
-echo "LC_MESSAGES=$LOCALE" >> /etc/locale.conf
-echo "LC_PAPER=$LOCALE" >> /etc/locale.conf
-echo "LC_NAME=$LOCALE" >> /etc/locale.conf
-echo "LC_ADDRESS=$LOCALE" >> /etc/locale.conf
-echo "LC_TELEPHONE=$LOCALE" >> /etc/locale.conf
-echo "LC_MEASUREMENT=$LOCALE" >> /etc/locale.conf
-echo "LC_IDENTIFICATION=$LOCALE" >> /etc/locale.conf
+echo "LANG=$LOCALE.UTF-8" > /etc/locale.conf
+echo "LANGUAGE=$LOCALE:en_US:en" >> /etc/locale.conf
+echo "LC_CTYPE=$LOCALE.UTF-8" >> /etc/locale.conf
+echo "LC_NUMERIC=$LOCALE.UTF-8" >> /etc/locale.conf
+echo "LC_TIME=$LOCALE.UTF-8" >> /etc/locale.conf
+echo "LC_COLLATE=C" >> /etc/locale.conf
+echo "LC_MONETARY=$LOCALE.UTF-8" >> /etc/locale.conf
+echo "LC_MESSAGES=$LOCALE.UTF-8" >> /etc/locale.conf
+echo "LC_PAPER=$LOCALE.UTF-8" >> /etc/locale.conf
+echo "LC_NAME=$LOCALE.UTF-8" >> /etc/locale.conf
+echo "LC_ADDRESS=$LOCALE.UTF-8" >> /etc/locale.conf
+echo "LC_TELEPHONE=$LOCALE.UTF-8" >> /etc/locale.conf
+echo "LC_MEASUREMENT=$LOCALE.UTF-8" >> /etc/locale.conf
+echo "LC_IDENTIFICATION=$LOCALE.UTF-8" >> /etc/locale.conf
 echo "" >> /etc/locale.conf
+
+# Make locale changes immediate
+unset LANG
+source /etc/profile.d/locale.sh

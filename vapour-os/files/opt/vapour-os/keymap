@@ -3,6 +3,14 @@
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 KEYMAP=$1
 [ -z $KEYMAP ] && echo "[ERROR] You must specify a keymap!" && exit 1
-rm /etc/X11/xorg.conf.d/00-keyboard.conf &> /dev/null
-$SCRIPT_DIR/setvar delete /etc/vconsole.conf KEYMAP
+
 localectl set-keymap $KEYMAP
+XKEYMAP=$(localectl | grep -sm 1 "X11 Layout" | cut -c19-30)
+$SCRIPT_DIR/setvar set /etc/vconsole.conf KEYMAP $KEYMAP
+
+# Create X11 keyboard config
+echo "Section \"InputClass\"" > /etc/X11/xorg.conf.d/00-keyboard.conf
+echo "    Identifier \"system-keyboard\"" >> /etc/X11/xorg.conf.d/00-keyboard.conf
+echo "    MatchIsKeyboard \"on\"" >> /etc/X11/xorg.conf.d/00-keyboard.conf
+echo "    Option \"XkbLayout\" \"$XKEYMAP\"" >> /etc/X11/xorg.conf.d/00-keyboard.conf
+echo "EndSection" >> /etc/X11/xorg.conf.d/00-keyboard.conf

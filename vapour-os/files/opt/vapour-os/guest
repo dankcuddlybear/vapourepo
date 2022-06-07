@@ -1,0 +1,31 @@
+#!/bin/sh
+[ $(whoami) != "root" ] && echo "[ERROR] You must run this script with root priviliges." && exit 1
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+GUEST=$1
+[ -z $GUEST ] && echo "[WARNING] Leaving guest unchanged" && exit 0
+[ $GUEST != 1 ] || [ $GUEST != 0 ] && 
+
+RemoveGuest() {
+	pkill -9 -u guest
+	userdel -f guest
+	umount -f /home/guest
+	rm -rf /home/guest
+	$SCRIPT_DIR/fstab
+}
+
+AddGuest() {
+	echo "## Guest home"
+	echo "tmpfs /home/guest tmpfs rw,nodev,nosuid,size=1G 0 0" >> /etc/fstab
+	echo "" >> /etc/fstab
+	systemctl daemon-reload
+	mkdir /home/guest
+	mount /home/guest
+	useradd guest
+	chmod 700 /home/guest
+	chown -R guest:guest /home/guest
+	passwd -d guest
+}
+
+if [ $GUEST == 1 ]; then RemoveGuest &&	AddGuest
+elif [ $GUEST == 0 ]; then RemoveGuest
+else echo "[ERROR] Invalid value! (must be 1 or 0)"; exit 1; fi

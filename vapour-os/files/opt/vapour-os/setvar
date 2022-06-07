@@ -17,7 +17,7 @@ PrintHelp() {
 }
 # Error handling
 [ -z $MODE ] && echo "[ERROR] You must specify a mode!" && PrintHelp && exit 1
-[ -z $FILENAME ] && echo "[ERROR] You must specify a file name!" && PrintHelp && exit 1
+[ -z "$FILENAME" ] && echo "[ERROR] You must specify a file name!" && PrintHelp && exit 1
 [ ! -f "$FILENAME" ] && touch "$FILENAME"
 [ -z $VAR ] && echo "[ERROR] You must specify a variable to read/write!" && PrintHelp && exit 1
 
@@ -27,8 +27,8 @@ FILE=$(cat "$FILENAME") # Read file contents
 
 Search() {
 	for LINE in $FILE; do # Read file line-by-line...
-		if [ ${LINE:0:VARLEN} == $VAR ]; then # ...until it finds line with specified key
-			SEARCH=$LINE # Set $SEARCH to the current line
+		if [ "${LINE:0:VARLEN}" == $VAR ]; then # ...until it finds line with specified key
+			SEARCH="$LINE" # Set $SEARCH to the current line
 		fi
 	done
 }
@@ -38,14 +38,14 @@ AddNewLine() {
 	if [[ -s "$FILENAME" && -z "$(tail -c 1 "$FILENAME")" ]]; then # If file ends with newline...
 		: # Do nothing
 	else
-		echo "" >> $FILENAME # Otherwise add one
+		echo "" >> "$FILENAME" # Otherwise add one
 	fi
 }
 
 if [ $MODE == "set" ]; then
 	Search
 	REPLACE="$VAR=$VALUE" # Set $REPLACE to "$2=$4"
-	if [ -z $SEARCH ]; then # If search result is empty...
+	if [ -z "$SEARCH" ]; then # If search result is empty...
 		AddNewLine
 		echo "$REPLACE" >> $FILENAME # Add the variable to the file
 	else
@@ -55,11 +55,11 @@ elif [ $MODE == "delete" ]; then
 	Search
 	FIRSTLINE=1
 	for LINE in $FILE; do # Write entire file again...
-		if [ $LINE != $SEARCH ]; then # ...skipping any lines containing specified var ($2)
+		if [ "$LINE" != "$SEARCH" ]; then # ...skipping any lines containing specified var ($2)
 			if [ $FIRSTLINE == 1 ]; then # If this is the first line, overwrite the file
-				echo $LINE > $FILENAME
+				echo "$LINE" > $FILENAME
 				FIRSTLINE=0
-			else echo $LINE >> $FILENAME; fi # Otherwise append to the file
+			else echo "$LINE" >> $FILENAME; fi # Otherwise append to the file
 		fi
 	done
 elif [ $MODE == "query" ]; then

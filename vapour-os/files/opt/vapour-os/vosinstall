@@ -43,7 +43,10 @@ Install() {
 	echo "Welcome! (\\u) currently logged in." >> /etc/issue
 	setterm -cursor on >> /etc/issue # Silent boot cursor fix
 	
-	# Configure system using settings from /etc/vapour-os/install.conf
+	# Configure system settings
+	$SCRIPT_DIR/fstab
+	$SCRIPT_DIR/initramfs
+	$SCRIPT_DIR/bootloader
 	if [ -f /etc/vapour-os/install.conf ]; then
 		. /etc/vapour-os/install.conf
 		$SCRIPT_DIR/locale $LOCALE
@@ -52,9 +55,8 @@ Install() {
 		$SCRIPT_DIR/display $DISPLAY_SIZE
 		$SCRIPT_DIR/hostname $HOST_NAME
 		$SCRIPT_DIR/regdomain $REGDOMAIN
+		$SCRIPT_DIR/guest $GUEST
 	fi
-	$SCRIPT_DIR/initramfs
-	$SCRIPT_DIR/bootloader
 	
 	bootctl install --esp-path=/boot
 	Upgrade

@@ -1,6 +1,6 @@
 # Maintainer: dankcuddlybear <dankcuddlybear@protonmail.com>
 pkgname=vapour-os
-pkgver=1.0
+pkgver=1.1.1
 pkgrel=1
 pkgdesc='Vapour OS core system'
 arch=(x86_64)
@@ -22,7 +22,7 @@ depends=(
 	# Networking
 	'networkmanager' 'nss-mdns' 'wireless-regdb'
 	# Utilities
-	'bc' 'htop' 'man-db' 'man-pages'
+	'bc' 'htop' 'man-db' 'man-pages' 'perl'
 	# Terminal font for HiDPI/LoDPI support
 	'terminus-font'
 	# Chaotic-AUR

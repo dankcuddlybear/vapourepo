@@ -179,22 +179,28 @@ pacstrap /mnt $PKG_PACSTRAP || exit 1
 sync
 
 # Generate /etc/fstab for new system
-UUID_ROOT=$(blkid -o value -s UUID "$DEV_ROOT")
-UUID_BOOT=$(blkid -o value -s UUID "$DEV_BOOT")
-[ ! -z "$DEV_HOME" ] && UUID_HOME=$(blkid -o value -s UUID "$DEV_HOME")
-[ ! -z "$DEV_MEDIA" ] && UUID_MEDIA=$(blkid -o value -s UUID "$DEV_MEDIA")
-[ ! -z "$DEV_PUBLIC" ] && UUID_PUBLIC=$(blkid -o value -s UUID "$DEV_PUBLIC")
-echo "UUID=$UUID_ROOT / ext4 rw,lazytime 0 1" > /mnt/etc/fstab
-echo "UUID=$UUID_BOOT /boot vfat rw,noatime,noexec,noauto,x-systemd.automount,dmask=0022,fmask=133,codepage=437,iocharset=ascii,shortname=mixed,utf8,errors=remount-ro 0 2" >> /mnt/etc/fstab
-[ ! -z "$DEV_HOME" ] && echo "UUID=$UUID_ROOT / ext4 rw,noatime,noauto,x-systemd.automount 0 1" >> /mnt/etc/fstab
-[ ! -z "$DEV_MEDIA" ] && echo "UUID=$UUID_ROOT / ext4 rw,noatime,noauto,x-systemd.automount 0 1" >> /mnt/etc/fstab
-[ ! -z "$DEV_PUBLIC" ] && echo "UUID=$UUID_ROOT / ext4 rw,noatime,noauto,x-systemd.automount 0 1" >> /mnt/etc/fstab
+ROOT_UUID=$(blkid -o value -s UUID "$DEV_ROOT")
+BOOT_UUID=$(blkid -o value -s UUID "$DEV_BOOT")
+[ ! -z "$DEV_HOME" ] && HOME_UUID=$(blkid -o value -s UUID "$DEV_HOME")
+[ ! -z "$DEV_MEDIA" ] && MEDIA_UUID=$(blkid -o value -s UUID "$DEV_MEDIA")
+[ ! -z "$DEV_PUBLIC" ] && PUBLIC_UUID=$(blkid -o value -s UUID "$DEV_PUBLIC")
+echo "# Root (/) partition"
+echo "UUID=$ROOT_UUID / ext4 rw,lazytime 0 1" > /mnt/etc/fstab
+echo "# Boot partition (ESP)"
+echo "UUID=$BOOT_UUID /boot vfat rw,noatime,noexec,noauto,x-systemd.automount,dmask=0022,fmask=133,codepage=437,iocharset=ascii,shortname=mixed,utf8,errors=remount-ro 0 2" >> /mnt/etc/fstab
+[ ! -z "$DEV_HOME" ] && \ echo ""
+echo "UUID=$HOME_UUID / ext4 rw,noatime,noauto,x-systemd.automount 0 1" >> /mnt/etc/fstab
+[ ! -z "$DEV_MEDIA" ] && echo "UUID=$ROOT_UUID / ext4 rw,noatime,noauto,x-systemd.automount 0 1" >> /mnt/etc/fstab
+[ ! -z "$DEV_PUBLIC" ] && echo "UUID=$ROOT_UUID / ext4 rw,noatime,noauto,x-systemd.automount 0 1" >> /mnt/etc/fstab
 
 # Configure Sudo (don't ask for password for automated install)
 echo "root ALL=(ALL:ALL) ALL" > /mnt/etc/sudoers
 echo "%wheel ALL=(ALL:ALL) NOPASSWD:ALL" >> /mnt/etc/sudoers
 echo "@includedir /etc/sudoers.d" >> /mnt/etc/sudoers
 chmod 440 /mnt/etc/sudoers
+echo "$OWNER ALL=(ALL:ALL) ALL" > "/mnt/etc/sudoers.d/$OWNER"
+echo >> "/mnt/etc/sudoers.d/$OWNER"
+chmod 440 "/mnt/etc/sudoers.d/$OWNER"
 
 # Configure pacman
 echo "[options]" > /mnt/etc/pacman.conf
@@ -250,22 +256,20 @@ echo "echo \"[vapourepo]\" >> /etc/pacman.conf" >> /mnt/etc/vapour-os/chroot-cfg
 echo "echo \"SigLevel = Optional DatabaseOptional\" >> /etc/pacman.conf" >> /mnt/etc/vapour-os/chroot-cfg
 echo "echo \"Server = https://raw.githubusercontent.com/dankcuddlybear/\\\$repo/main/__PKG\" >> /etc/pacman.conf" >> /mnt/etc/vapour-os/chroot-cfg
 # Install Vapour OS
-echo "pacman --asdeps -D $PKG_PACSTRAP" >> /mnt/etc/vapour-os/chroot-cfg
 echo "pacman --needed --noconfirm -Syu vapour-os || exit 1" >> /mnt/etc/vapour-os/chroot-cfg
-# Configure users
+echo "pacman --asdeps -D $PKG_PACSTRAP" >> /mnt/etc/vapour-os/chroot-cfg
+# Install GUI base libs
+if [ ! -z $GRAPHICAL ]; then
+	if [ $GRAPHICAL == 1 ]; then echo "pacman --needed --noconfirm -Syu vapour-os-gui || exit 1" >> /mnt/etc/vapour-os/chroot-cfg
+	elif [ $GRAPHICAL == 2 ]; then echo "pacman --needed --noconfirm -Syu lib32-vapour-os-gui || exit 1" >> /mnt/etc/vapour-os/chroot-cfg
+fi
+# Configure owner user
 echo "CONTINUE=0" >> /mnt/etc/vapour-os/chroot-cfg
-echo "while [ \$CONTINUE == 0 ]; do" >> /mnt/etc/vapour-os/chroot-cfg
-echo "    echo \"Enter root password\"" >> /mnt/etc/vapour-os/chroot-cfg
-echo "    passwd root && CONTINUE=1" >> /mnt/etc/vapour-os/chroot-cfg
-echo "done" >> /mnt/etc/vapour-os/chroot-cfg
 echo "useradd -m \$OWNER" >> /mnt/etc/vapour-os/chroot-cfg
-echo "gpasswd -a \$OWNER audio" >> /mnt/etc/vapour-os/chroot-cfg
 echo "gpasswd -a \$OWNER ftp" >> /mnt/etc/vapour-os/chroot-cfg
 echo "gpasswd -a \$OWNER games" >> /mnt/etc/vapour-os/chroot-cfg
 echo "gpasswd -a \$OWNER http" >> /mnt/etc/vapour-os/chroot-cfg
-echo "gpasswd -a \$OWNER input" >> /mnt/etc/vapour-os/chroot-cfg
 echo "gpasswd -a \$OWNER realtime" >> /mnt/etc/vapour-os/chroot-cfg
-echo "gpasswd -a \$OWNER video" >> /mnt/etc/vapour-os/chroot-cfg
 echo "gpasswd -a \$OWNER wheel" >> /mnt/etc/vapour-os/chroot-cfg
 echo "echo" >> /mnt/etc/vapour-os/chroot-cfg
 echo "CONTINUE=0" >> /mnt/etc/vapour-os/chroot-cfg

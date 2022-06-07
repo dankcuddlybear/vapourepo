@@ -1,7 +1,7 @@
 # Maintainer: dankcuddlybear <dankcuddlybear@protonmail.com>
 pkgname=vapour-os-xfce
-pkgver=0.1
-pkgrel=4
+pkgver=1.1.1
+pkgrel=1
 pkgdesc='Vapour OS XFCE4 desktop and utilities'
 arch=(any)
 url='https://github.com/dankcuddlybear/Vapour-OS'
@@ -19,6 +19,7 @@ depends=('gvfs-afc'
     'thunar-archive-plugin'
     'thunar-media-tags-plugin'
     'thunar-volman'
+    'vapour-os-gui'
     'xarchiver'
     'xfce4-appfinder'
     'xfce4-battery-plugin'

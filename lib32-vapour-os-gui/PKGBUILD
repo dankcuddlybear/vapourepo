@@ -1,0 +1,12 @@
+# Maintainer: dankcuddlybear <dankcuddlybear@protonmail.com>
+pkgname=lib32-vapour-os-gui
+pkgver=1.1.1
+pkgrel=1
+pkgdesc='Vapour OS 32-bit GUI libs - uses X11 and Pipewire.'
+arch=(x86_64)
+url='https://github.com/dankcuddlybear/Vapour-OS'
+depends=('lib32-pipewire-jack'
+	'lib32-pipewire-v4l2'
+	'vapour-os-gui'
+)
+optdepends=('vapour-os-gaming: Windows/Linux gaming libraries and software')

@@ -16,7 +16,7 @@ depends=(
 	# Performance enhancements
 	'ananicy-cpp' 'ananicy-rules-git' 'irqbalance' 'realtime-privileges' 'rtirq' 'rtkit'
 	# Filesystems
-	'dosfstools' 'mtools' 'ntfs-3g'
+	'dosfstools' 'exfatprogs' 'mtools' 'ntfs-3g'
 	# Archives
 	'p7zip' 'unrar'
 	# Networking

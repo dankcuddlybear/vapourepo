@@ -1,7 +1,7 @@
 # Maintainer: dankcuddlybear <dankcuddlybear@protonmail.com>
 pkgname=vapour-os-gnome
-pkgver=0.1
-pkgrel=4
+pkgver=1.1.1
+pkgrel=1
 pkgdesc='Vapour OS GNOME X11/Wayland shell'
 arch=(any)
 url='https://github.com/dankcuddlybear/Vapour-OS'
@@ -37,5 +37,6 @@ depends=('eog'
     'seahorse-nautilus'
     'sushi'
     'sysprof'
+    'vapour-os-gui'
     'xdg-user-dirs-gtk'
 )

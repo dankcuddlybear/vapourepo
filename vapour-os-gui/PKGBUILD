@@ -1,7 +1,7 @@
 # Maintainer: dankcuddlybear <dankcuddlybear@protonmail.com>
 pkgname=vapour-os-gui
-pkgver=0.3
-pkgrel=4
+pkgver=1.1.1
+pkgrel=1
 pkgdesc='Vapour OS GUI libs - uses X11 and Pipewire.'
 arch=(any)
 url='https://github.com/dankcuddlybear/Vapour-OS'
@@ -13,7 +13,9 @@ depends=('pipewire-alsa'
 	'vapour-os'
 	'xorg-server'
 )
-optdepends=('vapour-os-gaming: Windows/Linux gaming libraries and software'
+optdepends=('lib32-vapour-os-gui: For compatibility with 32 bit graphical applications'
+	'vapour-os-gaming: Windows/Linux gaming libraries and software'
+	'vapour-os-multimedia: Multimedia codecs'
 	'vapour-os-gnome: GNOME X11/Wayland shell and utilities'
 	'vapour-os-kde: KDE X11 desktop and utilities'
 	'vapour-os-xfce: XFCE X11 desktop and utilities'

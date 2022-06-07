@@ -1,7 +1,7 @@
 # Maintainer: dankcuddlybear <dankcuddlybear@protonmail.com>
 pkgname=vapour-os-nvidia
-pkgver=0.1
-pkgrel=6
+pkgver=1.1.1
+pkgrel=1
 pkgdesc='Vapour OS Nvidia drivers for OpenGL, Vulkan, OpenCL and hardware video acceleration.'
 arch=(x86_64)
 url='https://github.com/dankcuddlybear/Vapour-OS'

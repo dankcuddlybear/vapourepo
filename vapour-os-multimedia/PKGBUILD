@@ -1,16 +1,15 @@
 # Maintainer: dankcuddlybear <dankcuddlybear@protonmail.com>
 pkgname=vapour-os-multimedia
-pkgver=0.1
-pkgrel=4
+pkgver=1.1.1
+pkgrel=1
 pkgdesc='Vapour OS audio/video codecs'
 arch=(any)
 url='https://github.com/dankcuddlybear/Vapour-OS'
-depends=('gst-plugins-bad'
-    'gst-plugins-base'
-    'gst-plugins-good'
-    'gst-plugins-ugly'
-    'libdvdcss'
-    'libtiger'
+depends=('gst-plugins-base' 'gst-plugins-ugly' 'libdvdcss' 'libtiger' 'pipewire-jack' 'vapour-os-gui'
+	## Good plugins
+	'flac' 'lame' 'libavc1394' 'libdv' 'libiec61883' 'libpulse' 'libshout' 'libvpx' 'mpg123' 'pipewire-jack' 'speex' 'taglib' 'twolame' 'v4l-utils' 'wavpack'
+	## Bad plugins
+	'aom' 'chromaprint' 'faac' 'faad2' 'fluidsynth' 'gsm' 'gst-plugins-bad-libs' 'lcms2' 'libass' 'libavtp' 'libbs2b' 'libdc1394' 'libdca' 'libde265' 'libdvdnav' 'libdvdread' 'libfdk-aac' 'libfreeaptx' 'libgme' 'libkate' 'libldac' 'liblrdf' 'libltc' 'libmicrodns' 'libmodplug' 'libmpcdec' 'libnice' 'libopenmpt' 'librsvg' 'libsndfile' 'libsrtp' 'libwebp' 'libxcb' 'libxml2' 'lilv' 'mjpegtools' 'neon' 'nettle' 'openal' 'openexr' 'openjpeg2' 'openssl' 'opus' 'pango' 'qrencode' 'rtmpdump' 'sbc' 'soundtouch' 'spandsp' 'srt' 'svt-hevc' 'vulkan-icd-loader' 'webrtc-audio-processing' 'wildmidi' 'x265' 'zbar' 'zvbi' 'zxing-cpp'
 )
 package() {
 	cd "$srcdir"

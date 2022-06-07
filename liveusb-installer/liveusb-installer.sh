@@ -256,13 +256,18 @@ echo "echo \"[vapourepo]\" >> /etc/pacman.conf" >> /mnt/etc/vapour-os/chroot-cfg
 echo "echo \"SigLevel = Optional DatabaseOptional\" >> /etc/pacman.conf" >> /mnt/etc/vapour-os/chroot-cfg
 echo "echo \"Server = https://raw.githubusercontent.com/dankcuddlybear/\\\$repo/main/__PKG\" >> /etc/pacman.conf" >> /mnt/etc/vapour-os/chroot-cfg
 # Install Vapour OS
-echo "pacman --needed --noconfirm -Syu vapour-os || exit 1" >> /mnt/etc/vapour-os/chroot-cfg
-echo "pacman --asdeps -D $PKG_PACSTRAP" >> /mnt/etc/vapour-os/chroot-cfg
-# Install GUI base libs
-if [ ! -z $GRAPHICAL ]; then
-	if [ $GRAPHICAL == 1 ]; then echo "pacman --needed --noconfirm -Syu vapour-os-gui || exit 1" >> /mnt/etc/vapour-os/chroot-cfg
-	elif [ $GRAPHICAL == 2 ]; then echo "pacman --needed --noconfirm -Syu lib32-vapour-os-gui || exit 1" >> /mnt/etc/vapour-os/chroot-cfg
-fi
+if [ ! -z $GRAPHICAL ]; then # GRAPHICAL is set
+	if [ $GRAPHICAL != 0 ]; then # Graphical system (any)
+		# Install GPU drivers if a GPU is found
+		[ -z $GPU0 ] && echo "pacman --needed --noconfirm -Syu vapour-os-gui || exit 1" >> /mnt/etc/vapour-os/chroot-cfg
+		[ $GPU0 == "intel" ] || [ $GPU1 == "intel" ] && echo "pacman --needed --noconfirm -Syu vapour-os-i915 || exit 1" >> /mnt/etc/vapour-os/chroot-cfg
+		[ $GPU0 == "amd" ] || [ $GPU1 == "amd" ] && echo "pacman --needed --noconfirm -Syu vapour-os-amdgpu || exit 1" >> /mnt/etc/vapour-os/chroot-cfg
+		[ $GPU0 == "nvidia" ] || [ $GPU1 == "nvidia" ] && echo "pacman --needed --noconfirm -Syu vapour-os-nvidia || exit 1" >> /mnt/etc/vapour-os/chroot-cfg
+		# Install 32-bit GUI libs
+		[ $GRAPHICAL == 2 ] && echo "pacman --needed --noconfirm -Syu lib32-vapour-os-gui || exit 1" >> /mnt/etc/vapour-os/chroot-cfg
+	else echo "pacman --needed --noconfirm -Syu vapour-os || exit 1" >> /mnt/etc/vapour-os/chroot-cfg; fi
+else echo "pacman --needed --noconfirm -Syu vapour-os || exit 1" >> /mnt/etc/vapour-os/chroot-cfg; fi
+echo "pacman --asdeps -D $PKG_PACSTRAP" >> /mnt/etc/vapour-os/chroot-cfg; fi
 # Configure owner user
 echo "CONTINUE=0" >> /mnt/etc/vapour-os/chroot-cfg
 echo "useradd -m \$OWNER" >> /mnt/etc/vapour-os/chroot-cfg

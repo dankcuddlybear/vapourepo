@@ -7,9 +7,8 @@ for dir in $SCRIPT_DIR/!(.git|liveusb-installer|__PKG|__PROTO)/; do
 	echo "Building $dir"
 	makepkg -cdf
 	mv *.pkg.tar.zst ../__PKG
+	[ $dir == "hackbgrt-bin" ] || [ $dir == "vapour-os-bootscreen" ] && rm *.zip
+	[ $dir == "intel-opencl-runtime" ] && rm *.tgz
 	cd ../
-	[ $dir == "hackbgrt-bin" ] && rm HackBGRT-1.5.1.zip
-	[ $dir == "intel-opencl-runtime" ] && rm l_opencl_p_18.1.0.015.tgz
-	[ $dir == "vapour-os-bootscreen" ] && rm HackBGRT-1.5.1.zip
 done
 $SCRIPT_DIR/__PKG/repo-update.sh

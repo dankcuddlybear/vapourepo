@@ -1,0 +1,9 @@
+[Trigger]
+Type = Package
+Operation = Upgrade
+Target = vapour-os
+
+[Action]
+Description = Vapour OS config
+When = PostTransaction
+Exec = /opt/vapour-os/vosinstall upgrade

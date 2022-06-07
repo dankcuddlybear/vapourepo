@@ -120,54 +120,54 @@ read -p "When you are ready, press enter to continue or CTRL+C to abort installa
 
 # Unmount any mounted filesystems
 echo "Unmounting filesystems..."
-umount "$DEV_BOOT"
-[ ! -z "$DEV_HOME" ] && umount "$DEV_HOME"
-[ ! -z "$DEV_MEDIA" ] && umount "$DEV_MEDIA"
-[ ! -z "$DEV_PUBLIC" ] && umount "$DEV_PUBLIC"
-umount "$DEV_ROOT"
+umount "$BOOT_DEV"
+[ ! -z "$HOME_DEV" ] && umount "$HOME_DEV"
+[ ! -z "$MEDIA_DEV" ] && umount "$MEDIA_DEV"
+[ ! -z "$PUBLIC_DEV" ] && umount "$PUBLIC_DEV"
+umount "$ROOT_DEV"
 # Format any filesystems marked for formatting
 [ $FORMAT_ROOT == 1 ] || [ $FORMAT_BOOT == 1 ] || [ $FORMAT_HOME == 1 ] || \
 [ $FORMAT_MEDIA == 1 ] || [ $FORMAT_PUBLIC == 1 ] && echo "Formatting partitions..."
-if [ $FORMAT_ROOT == 1 ]; then mkfs.ext4 -L "$LABEL_ROOT" "$DEV_ROOT" || exit 1;  fi
-if [ $FORMAT_BOOT == 1 ]; then mkfs.fat -F 32 -n "$LABEL_BOOT" "$DEV_BOOT" || exit 1; fi
-if [ ! -z "$DEV_HOME" ]; then [ $FORMAT_HOME == 1 ] && mkfs.ext4 -L "$LABEL_HOME" ""$DEV_HOME"" || exit 1; fi
-if [ ! -z "$DEV_MEDIA" ]; then [ $FORMAT_MEDIA == 1 ] && mkfs.ext4 -L "$LABEL_MEDIA" "$DEV_MEDIA" || exit 1; fi
-if [ ! -z "$DEV_PUBLIC" ]; then [ $FORMAT_PUBLIC == 1 ] && mkfs.ext4 -L "$LABEL_PUBLIC" "$DEV_PUBLIC" || exit 1; fi
+if [ $FORMAT_ROOT == 1 ]; then mkfs.ext4 -L "$LABEL_ROOT" "$ROOT_DEV"; fi
+if [ $FORMAT_BOOT == 1 ]; then mkfs.fat -F 32 -n "$LABEL_BOOT" "$BOOT_DEV"; fi
+if [ ! -z "$HOME_DEV" ]; then [ $FORMAT_HOME == 1 ] && mkfs.ext4 -L "$LABEL_HOME" "$HOME_DEV"; fi
+if [ ! -z "$MEDIA_DEV" ]; then [ $FORMAT_MEDIA == 1 ] && mkfs.ext4 -L "$LABEL_MEDIA" "$MEDIA_DEV"; fi
+if [ ! -z "$PUBLIC_DEV" ]; then [ $FORMAT_PUBLIC == 1 ] && mkfs.ext4 -L "$LABEL_PUBLIC" "$PUBLIC_DEV"; fi
 # Tune filesystems
 echo "Tuning filesystems..."
-tune2fs -O fast_commit "$DEV_ROOT"
-tune2fs -c 1 "$DEV_ROOT"  # Perform fsck every mount
-[ ! -z "$DEV_HOME" ] && tune2fs -O fast_commit "$DEV_HOME"
-[ ! -z "$DEV_MEDIA" ] && tune2fs -O fast_commit "$DEV_MEDIA"
-[ ! -z "$DEV_PUBLIC" ] && tune2fs -O fast_commit "$DEV_PUBLIC"
+tune2fs -O fast_commit "$ROOT_DEV"
+tune2fs -c 1 "$ROOT_DEV"  # Perform fsck every mount
+[ ! -z "$HOME_DEV" ] && tune2fs -O fast_commit "$HOME_DEV"
+[ ! -z "$MEDIA_DEV" ] && tune2fs -O fast_commit "$MEDIA_DEV"
+[ ! -z "$PUBLIC_DEV" ] && tune2fs -O fast_commit "$PUBLIC_DEV"
 # Set boot flag on ESP
-DEV_BOOT=$(readlink -f "$DEV_BOOT")
-if [ ${DEV_BOOT:5:2} == "hd" ] || [ ${DEV_BOOT:5:2} == "sd" ] || [ ${DEV_BOOT:5:2} == "vd" ]; then
-	ESPDISK=${DEV_BOOT:0:8}
-	ESPPART=${DEV_BOOT:8:3}
-elif [ ${DEV_BOOT:5:4} == "nvme" ]; then
-	ESPDISK=${DEV_BOOT:0:12}
-	ESPPART=${DEV_BOOT:13:3}
-elif [ ${DEV_BOOT:5:6} == "mmcblk" ]; then
-	ESPDISK=${DEV_BOOT:0:12}
-	ESPPART=${DEV_BOOT:13:3}
+BOOT_DEV=$(readlink -f "$BOOT_DEV")
+if [ ${BOOT_DEV:5:2} == "hd" ] || [ ${BOOT_DEV:5:2} == "sd" ] || [ ${BOOT_DEV:5:2} == "vd" ]; then
+	ESPDISK=${BOOT_DEV:0:8}
+	ESPPART=${BOOT_DEV:8:3}
+elif [ ${BOOT_DEV:5:4} == "nvme" ]; then
+	ESPDISK=${BOOT_DEV:0:12}
+	ESPPART=${BOOT_DEV:13:3}
+elif [ ${BOOT_DEV:5:6} == "mmcblk" ]; then
+	ESPDISK=${BOOT_DEV:0:12}
+	ESPPART=${BOOT_DEV:13:3}
 else echo "[ERROR] Error detecting EFI system partition!"; exit 1; fi
 parted $ESPDISK set $ESPPART boot on 1> /dev/null
 # Mount and clear root filesystem
 echo "Mounting filesystems..."
-mount "$DEV_ROOT" /mnt || exit 1
+mount "$ROOT_DEV" /mnt || exit 1
 [ $FORMAT_ROOT != 1 ] && echo "Clearing root filesystem" && rm -rf /mnt/bin /mnt/dev /mnt/etc /mnt/lib /mnt/lib64 /mnt/mnt /mnt/opt /mnt/proc /mnt/root /mnt/run /mnt/sbin /mnt/sys /mnt/tmp /mnt/usr /mnt/var
 # Create mount points
 mkdir /mnt/boot &> /dev/null
 mkdir /mnt/public &> /dev/null
-[ ! -z "$DEV_HOME" ] && mkdir /mnt/home
-[ ! -z "$DEV_MEDIA" ] && mkdir /mnt/media
+[ ! -z "$HOME_DEV" ] && mkdir /mnt/home
+[ ! -z "$MEDIA_DEV" ] && mkdir /mnt/media
 # Mount and clear other filesystems
-mount "$DEV_BOOT" /mnt/boot || exit 1
+mount "$BOOT_DEV" /mnt/boot || exit 1
 [ $FORMAT_BOOT != 1 ] && echo "Clearing ESP (will keep Windows/MacOS bootloader)" && rm -rf /mnt/boot/*.img /mnt/boot/vmlinuz-linux-zen /mnt/boot/EFI/systemd /mnt/boot/loader
-[ ! -z "$DEV_HOME" ] && mount "$DEV_HOME" /mnt/home
-[ ! -z "$DEV_MEDIA" ] && mount "$DEV_MEDIA" /mnt/media
-[ ! -z "$DEV_PUBLIC" ] && mount "$DEV_PUBLIC" /mnt/public
+[ ! -z "$HOME_DEV" ] && mount "$HOME_DEV" /mnt/home
+[ ! -z "$MEDIA_DEV" ] && mount "$MEDIA_DEV" /mnt/media
+[ ! -z "$PUBLIC_DEV" ] && mount "$PUBLIC_DEV" /mnt/public
 sync
 
 # Bootstrap packages. If it fails for some reason, abort installation.
@@ -178,27 +178,12 @@ PKG_PACSTRAP="autoconf automake base bison fakeroot gcc git make patch pkgconf s
 pacstrap /mnt $PKG_PACSTRAP || exit 1
 sync
 
-# Generate /etc/fstab for new system
-ROOT_UUID=$(blkid -o value -s UUID "$DEV_ROOT")
-BOOT_UUID=$(blkid -o value -s UUID "$DEV_BOOT")
-[ ! -z "$DEV_HOME" ] && HOME_UUID=$(blkid -o value -s UUID "$DEV_HOME")
-[ ! -z "$DEV_MEDIA" ] && MEDIA_UUID=$(blkid -o value -s UUID "$DEV_MEDIA")
-[ ! -z "$DEV_PUBLIC" ] && PUBLIC_UUID=$(blkid -o value -s UUID "$DEV_PUBLIC")
-echo "# Root (/) partition"
-echo "UUID=$ROOT_UUID / ext4 rw,lazytime 0 1" > /mnt/etc/fstab
-echo "# Boot partition (ESP)"
-echo "UUID=$BOOT_UUID /boot vfat rw,noatime,noexec,noauto,x-systemd.automount,dmask=0022,fmask=133,codepage=437,iocharset=ascii,shortname=mixed,utf8,errors=remount-ro 0 2" >> /mnt/etc/fstab
-[ ! -z "$DEV_HOME" ] && \ echo ""
-echo "UUID=$HOME_UUID / ext4 rw,noatime,noauto,x-systemd.automount 0 1" >> /mnt/etc/fstab
-[ ! -z "$DEV_MEDIA" ] && echo "UUID=$ROOT_UUID / ext4 rw,noatime,noauto,x-systemd.automount 0 1" >> /mnt/etc/fstab
-[ ! -z "$DEV_PUBLIC" ] && echo "UUID=$ROOT_UUID / ext4 rw,noatime,noauto,x-systemd.automount 0 1" >> /mnt/etc/fstab
-
 # Configure Sudo (don't ask for password for automated install)
 echo "root ALL=(ALL:ALL) ALL" > /mnt/etc/sudoers
 echo "%wheel ALL=(ALL:ALL) NOPASSWD:ALL" >> /mnt/etc/sudoers
 echo "@includedir /etc/sudoers.d" >> /mnt/etc/sudoers
 chmod 440 /mnt/etc/sudoers
-echo "$OWNER ALL=(ALL:ALL) ALL" > "/mnt/etc/sudoers.d/$OWNER"
+echo "$OWNER ALL=(ALL:ALL) NOPASSWD:ALL" > "/mnt/etc/sudoers.d/$OWNER"
 echo >> "/mnt/etc/sudoers.d/$OWNER"
 chmod 440 "/mnt/etc/sudoers.d/$OWNER"
 
@@ -267,7 +252,7 @@ if [ ! -z $GRAPHICAL ]; then # GRAPHICAL is set
 		[ $GRAPHICAL == 2 ] && echo "pacman --needed --noconfirm -Syu lib32-vapour-os-gui || exit 1" >> /mnt/etc/vapour-os/chroot-cfg
 	else echo "pacman --needed --noconfirm -Syu vapour-os || exit 1" >> /mnt/etc/vapour-os/chroot-cfg; fi
 else echo "pacman --needed --noconfirm -Syu vapour-os || exit 1" >> /mnt/etc/vapour-os/chroot-cfg; fi
-echo "pacman --asdeps -D $PKG_PACSTRAP" >> /mnt/etc/vapour-os/chroot-cfg; fi
+echo "pacman --asdeps -D $PKG_PACSTRAP" >> /mnt/etc/vapour-os/chroot-cfg
 # Configure owner user
 echo "CONTINUE=0" >> /mnt/etc/vapour-os/chroot-cfg
 echo "useradd -m \$OWNER" >> /mnt/etc/vapour-os/chroot-cfg
@@ -306,6 +291,9 @@ echo "%wheel ALL=(ALL:ALL) ALL" >> /mnt/etc/sudoers
 echo "@includedir /etc/sudoers.d" >> /mnt/etc/sudoers
 echo >> /mnt/etc/sudoers
 chmod 440 /mnt/etc/sudoers
+echo "$OWNER ALL=(ALL:ALL) ALL" > "/mnt/etc/sudoers.d/$OWNER"
+echo >> "/mnt/etc/sudoers.d/$OWNER"
+chmod 440 "/mnt/etc/sudoers.d/$OWNER"
 
 # The system is now bootable
 sync

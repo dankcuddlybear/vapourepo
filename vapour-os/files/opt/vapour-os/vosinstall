@@ -56,6 +56,7 @@ Install() {
 		$SCRIPT_DIR/hostname $HOST_NAME
 		$SCRIPT_DIR/regdomain $REGDOMAIN
 		$SCRIPT_DIR/guest $GUEST
+		$SCRIPT_DIR/dict $WORDS
 	fi
 	
 	bootctl install --esp-path=/boot

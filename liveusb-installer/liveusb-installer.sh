@@ -175,7 +175,7 @@ PKG_PACSTRAP="autoconf automake base bison fakeroot gcc git make patch pkgconf s
 [ $CPU == "amd" ] && PKG_PACSTRAP_EXTRA="amd-ucode"
 [ $CPU == "intel" ] && PKG_PACSTRAP_EXTRA="intel-ucode"
 [ $ACCELEROMETER == 1 ] && PKG_PACSTRAP_EXTRA="$PKG_PACSTRAP_EXTRA hdapsd"
-pacstrap /mnt "$PKG_PACSTRAP $PKG_PACSTRAP_EXTRA" || exit 1
+pacstrap /mnt $PKG_PACSTRAP $PKG_PACSTRAP_EXTRA || exit 1
 sync
 
 # Configure Sudo (don't ask for password for automated install)

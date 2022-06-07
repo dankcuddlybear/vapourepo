@@ -1,9 +1,3 @@
-post_install() {
-	/opt/vapour-os/vosinstall install
-}
-post_upgrade() {
-	/opt/vapour-os/vosinstall upgrade
-}
 pre_remove() {
 	systemctl --now disable ananicy-cpp.service avahi-daemon.service fstrim.timer irqbalance.service rtirq.service
 }

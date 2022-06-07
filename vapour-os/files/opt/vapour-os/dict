@@ -1,0 +1,11 @@
+#!/bin/bash
+[ $(whoami) != "root" ] && echo "[ERROR] You must run this script with root priviliges." && exit 1
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+WORDS=$1
+# Error handling
+[ -z $WORDS ] && echo "[WARNING] No words file (from /usr/share/dict) specified, will default to \"usa\"" && exit
+[ ! -f /usr/share/dict/$WORDS ] && echo "[ERROR] Words file does not exist!" && exit 1
+
+# Set words
+rm /usr/share/dict/words
+ln -sf /usr/share/dict/$WORDS /usr/share/dict/words

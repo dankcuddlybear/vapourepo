@@ -14,7 +14,7 @@ RemoveGuest() {
 }
 
 AddGuest() {
-	echo "## Guest home"
+	echo "## Guest home" >> /etc/fstab
 	echo "tmpfs /home/guest tmpfs rw,nodev,nosuid,size=1G 0 0" >> /etc/fstab
 	echo "" >> /etc/fstab
 	systemctl daemon-reload
@@ -23,7 +23,7 @@ AddGuest() {
 	useradd guest
 	chmod 700 /home/guest
 	chown -R guest:guest /home/guest
-	passwd -d guest
+	passwd -d guest &> /dev/null
 }
 
 if [ $GUEST == 1 ]; then RemoveGuest &&	AddGuest

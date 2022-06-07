@@ -1,7 +1,7 @@
 # Maintainer: dankcuddlybear <dankcuddlybear@protonmail.com>
 pkgname=vapour-os
 pkgver=1.1.1
-pkgrel=3
+pkgrel=1
 pkgdesc='Vapour OS core system'
 arch=(x86_64)
 url='https://github.com/dankcuddlybear/vapourepo'
@@ -22,7 +22,7 @@ depends=(
 	# Networking
 	'networkmanager' 'nss-mdns' 'wireless-regdb'
 	# Utilities
-	'bc' 'htop' 'man-db' 'man-pages' 'perl'
+	'bc' 'htop' 'man-db' 'man-pages' 'perl' 'nano'
 	# Chaotic-AUR
 	'chaotic-keyring' 'chaotic-mirrorlist'
 	# Misc

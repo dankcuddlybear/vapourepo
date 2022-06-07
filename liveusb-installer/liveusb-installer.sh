@@ -80,7 +80,7 @@ if [ $CHASSIS == "Portable" ] || [ $CHASSIS == "Laptop" ] || [ $CHASSIS == "Note
     if [ ! -z "$ACCELEROMETER" ]; then
         ACCELEROMETER=1
         echo "Found accelerometer"
-        echo "[WARNING] This may mess with games that support motion controls (for example, the camera keeps moving left or right in Eduke32), because the accelerometer shows up as a regular motion controller. Disable controller support for affected games, or force a different input device if possible."
+        echo "[WARNING] This may mess with some games (for example, the camera keeps moving left or right in Eduke32), because the accelerometer shows up as a regular controller. Disable controller support for affected games, or force a different input device if possible."
         WARNINGS_ISSUED=1
     fi
 else
@@ -120,11 +120,11 @@ read -p "When you are ready, press enter to continue or CTRL+C to abort installa
 
 # Unmount any mounted filesystems
 echo "Unmounting filesystems..."
-umount "$BOOT_DEV"
-[ ! -z "$HOME_DEV" ] && umount "$HOME_DEV"
-[ ! -z "$MEDIA_DEV" ] && umount "$MEDIA_DEV"
-[ ! -z "$PUBLIC_DEV" ] && umount "$PUBLIC_DEV"
-umount "$ROOT_DEV"
+umount -f "$BOOT_DEV"
+[ ! -z "$HOME_DEV" ] && umount -f "$HOME_DEV"
+[ ! -z "$MEDIA_DEV" ] && umount -f "$MEDIA_DEV"
+[ ! -z "$PUBLIC_DEV" ] && umount -f "$PUBLIC_DEV"
+umount -f "$ROOT_DEV"
 # Format any filesystems marked for formatting
 [ $FORMAT_ROOT == 1 ] || [ $FORMAT_BOOT == 1 ] || [ $FORMAT_HOME == 1 ] || \
 [ $FORMAT_MEDIA == 1 ] || [ $FORMAT_PUBLIC == 1 ] && echo "Formatting partitions..."
@@ -155,7 +155,7 @@ else echo "[ERROR] Error detecting EFI system partition!"; exit 1; fi
 parted $ESPDISK set $ESPPART boot on 1> /dev/null
 # Mount and clear root filesystem
 echo "Mounting filesystems..."
-mount "$ROOT_DEV" /mnt || exit 1
+mount "$ROOT_DEV" /mnt
 [ $FORMAT_ROOT != 1 ] && echo "Clearing root filesystem" && rm -rf /mnt/bin /mnt/dev /mnt/etc /mnt/lib /mnt/lib64 /mnt/mnt /mnt/opt /mnt/proc /mnt/root /mnt/run /mnt/sbin /mnt/sys /mnt/tmp /mnt/usr /mnt/var
 # Create mount points
 mkdir /mnt/boot &> /dev/null
@@ -163,7 +163,7 @@ mkdir /mnt/public &> /dev/null
 [ ! -z "$HOME_DEV" ] && mkdir /mnt/home
 [ ! -z "$MEDIA_DEV" ] && mkdir /mnt/media
 # Mount and clear other filesystems
-mount "$BOOT_DEV" /mnt/boot || exit 1
+mount "$BOOT_DEV" /mnt/boot
 [ $FORMAT_BOOT != 1 ] && echo "Clearing ESP (will keep Windows/MacOS bootloader)" && rm -rf /mnt/boot/*.img /mnt/boot/vmlinuz-linux-zen /mnt/boot/EFI/systemd /mnt/boot/loader
 [ ! -z "$HOME_DEV" ] && mount "$HOME_DEV" /mnt/home
 [ ! -z "$MEDIA_DEV" ] && mount "$MEDIA_DEV" /mnt/media
@@ -175,7 +175,7 @@ PKG_PACSTRAP="autoconf automake base bison fakeroot gcc git make patch pkgconf s
 [ $CPU == "amd" ] && PKG_PACSTRAP_EXTRA="amd-ucode"
 [ $CPU == "intel" ] && PKG_PACSTRAP_EXTRA="intel-ucode"
 [ $ACCELEROMETER == 1 ] && PKG_PACSTRAP_EXTRA="$PKG_PACSTRAP_EXTRA hdapsd"
-pacstrap /mnt $PKG_PACSTRAP || exit 1
+pacstrap /mnt "$PKG_PACSTRAP $PKG_PACSTRAP_EXTRA" || exit 1
 sync
 
 # Configure Sudo (don't ask for password for automated install)

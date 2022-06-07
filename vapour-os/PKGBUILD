@@ -1,7 +1,7 @@
 # Maintainer: dankcuddlybear <dankcuddlybear@protonmail.com>
 pkgname=vapour-os
 pkgver=1.1.1
-pkgrel=2
+pkgrel=3
 pkgdesc='Vapour OS core system'
 arch=(x86_64)
 url='https://github.com/dankcuddlybear/vapourepo'
@@ -23,10 +23,10 @@ depends=(
 	'networkmanager' 'nss-mdns' 'wireless-regdb'
 	# Utilities
 	'bc' 'htop' 'man-db' 'man-pages' 'perl'
-	# Terminal font for HiDPI/LoDPI support
-	'terminus-font'
 	# Chaotic-AUR
 	'chaotic-keyring' 'chaotic-mirrorlist'
+	# Misc
+	'terminus-font' 'words'
 )
 optdepends=('amd-ucode: Fixes for AMD CPUs'
 	'hdapsd: Drop protection for mechanical HDDs in laptops (requires accelerometer)'

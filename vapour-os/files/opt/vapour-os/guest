@@ -6,9 +6,9 @@ GUEST=$1
 [ $GUEST != 1 ] || [ $GUEST != 0 ] && 
 
 RemoveGuest() {
-	pkill -9 -u guest
-	userdel -f guest
-	umount -f /home/guest
+	pkill -9 -u guest &> /dev/null
+	userdel -f guest &> /dev/null
+	umount -f /home/guest &> /dev/null
 	rm -rf /home/guest
 	$SCRIPT_DIR/fstab
 }

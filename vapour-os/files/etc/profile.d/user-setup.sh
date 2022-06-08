@@ -1,9 +1,18 @@
 #!/bin/sh
 . /opt/vapour-os/diskinfo
 
-# Set XDG user dirs to /media/$USER/XDG_DIR if media partition exists, otherwise reset to defaults. Desktop ALWAYS stays in /home/$USER
-if [ ! -z $MEDIA_DEV ]; then
-	mkdir /media/$USER &> /dev/null
+# Set XDG user dirs for all users except guest
+# If the /media partition exists, create the user directory inside it (with same permissions as home directory) if it does not exist,
+# then set all XDG user dirs (except Desktop) to be inside /media/$USER.
+# If there is no /media partition, set all XDG user dirs to be inside /home/$USER instead (the default).
+if [ ! -z $MEDIA_DEV ] && [ $USER != "guest" ]; then
+	mkdir -p /media/$USER/Downloads \
+	/media/$USER/Templates \
+	/media/$USER/Public \
+	/media/$USER/Documents \
+	/media/$USER/Music \
+	/media/$USER/Pictures \
+	/media/$USER/Videos &> /dev/null
 	chmod 700 /media/user
 	[ "$(/opt/vapour-os/setvar query "/home/$USER/.config/user-dirs.dirs" XDG_DOWNLOAD_DIR)" != "\"/media/$USER/Downloads\"" ] && \
 	xdg-user-dirs-update --set DOWNLOAD "/media/$USER/Downloads"
@@ -19,7 +28,7 @@ if [ ! -z $MEDIA_DEV ]; then
 	xdg-user-dirs-update --set PICTURES "/media/$USER/Pictures"
 	[ "$(/opt/vapour-os/setvar query "/home/$USER/.config/user-dirs.dirs" XDG_VIDEOS_DIR)" != "\"/media/$USER/Videos\"" ] && \
 	xdg-user-dirs-update --set VIDEOS "/media/$USER/Videos"
-else
+elif [ $USER != "guest" ];
 	[ "$(/opt/vapour-os/setvar query "/home/$USER/.config/user-dirs.dirs" XDG_DOWNLOAD_DIR)" != "\"\$HOME/Downloads\"" ] && \
 	xdg-user-dirs-update --set DOWNLOAD "$HOME/Downloads"
 	[ "$(/opt/vapour-os/setvar query "/home/$USER/.config/user-dirs.dirs" XDG_TEMPLATES_DIR)" != "\"\$HOME/Templates\"" ] && \

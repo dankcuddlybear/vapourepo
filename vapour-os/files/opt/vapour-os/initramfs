@@ -6,7 +6,7 @@ elif [ $GPU0 == "amd" ]; then echo "MODULES=(amdgpu)" >> /etc/mkinitcpio.conf
 elif [ $GPU0 == "nvidia" ]; then echo "MODULES=(nvidia efifb)" >> /etc/mkinitcpio.conf
 else echo "MODULES=()" >> /etc/mkinitcpio.conf; fi
 echo "BINARIES=()" >> /etc/mkinitcpio.conf
-echo "FILES=()" >> /etc/mkinitcpio.conf
+echo "FILES=(/etc/initrd-release)" >> /etc/mkinitcpio.conf
 if [ -f /usr/bin/plymouth ]; then
 	echo "HOOKS=(autodetect base systemd sd-vconsole modconf sd-plymouth block filesystems keyboard fsck)" >> /etc/mkinitcpio.conf
 else

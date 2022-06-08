@@ -1,0 +1,20 @@
+[Desktop Entry]
+Comment[en_GB]=
+Comment=
+Exec=java -jar
+GenericName[en_GB]=
+GenericName=
+Icon=application-x-java-archive
+MimeType=application/x-java-archive;
+Name[en_GB]=Java Archive
+Name=Java Archive
+NoDisplay=true
+Path=
+StartupNotify=true
+Terminal=false
+TerminalOptions=
+Type=Application
+X-DBUS-ServiceName=
+X-DBUS-StartupType=
+X-KDE-SubstituteUID=false
+X-KDE-Username=

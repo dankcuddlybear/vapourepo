@@ -17,11 +17,13 @@ if [ $MODE != "upgrade" ] && [ $MODE != "install" ]; then
 fi
 
 Upgrade() {
-	# Set default environment variables
-	[ -z $($SCRIPT_DIR/setvar query /etc/environment EDITOR) ] && $SCRIPT_DIR/setvar set /etc/environment EDITOR "/usr/bin/nano"
-	[ -z $($SCRIPT_DIR/setvar query /etc/environment GTK_USE_PORTAL) ] && $SCRIPT_DIR/setvar set /etc/environment GTK_USE_PORTAL "1"
-	
-	# Final step: enable core systemd units immediately, then sync disk writes
+	# Edit /usr/lib/os-release
+	$SCRIPT_DIR/setvar set /usr/lib/os-release NAME "\"Vapour OS\""
+	$SCRIPT_DIR/setvar set /usr/lib/os-release PRETTY_NAME "\"Vapour OS\""
+	$SCRIPT_DIR/setvar set /usr/lib/os-release ID "vapour-os"
+	$SCRIPT_DIR/setvar set /usr/lib/os-release ID_LIKE "arch"
+
+	# Enable and start systemd units
 	systemctl --now enable ananicy-cpp.service auto-cpufreq.service avahi-daemon.service fstrim.timer irqbalance.service NetworkManager.service rtirq.service rtkit-daemon.service
 	sync
 }
@@ -58,6 +60,10 @@ Install() {
 		$SCRIPT_DIR/guest $GUEST
 		$SCRIPT_DIR/dict $WORDS
 	fi
+
+	# Set environment variables
+	[ -z $($SCRIPT_DIR/setvar query /etc/environment EDITOR) ] && $SCRIPT_DIR/setvar set /etc/environment EDITOR "/usr/bin/nano"
+	[ -z $($SCRIPT_DIR/setvar query /etc/environment GTK_USE_PORTAL) ] && $SCRIPT_DIR/setvar set /etc/environment GTK_USE_PORTAL "1"
 	
 	bootctl install --esp-path=/boot
 	Upgrade

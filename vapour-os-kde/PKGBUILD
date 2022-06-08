@@ -53,6 +53,7 @@ depends=('ark'
 	'xdg-desktop-portal-kde'
 	'yakuake'
 )
+backup=(etc/sddm.conf.d/kde_settings.conf)
 package() {
 	cd "$srcdir"
 	cd ../

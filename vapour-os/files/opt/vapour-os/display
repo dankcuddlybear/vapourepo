@@ -37,7 +37,8 @@ $SCRIPT_DIR/setvar set /etc/environment XCURSOR_SIZE $XCURSOR_SIZE
 $SCRIPT_DIR/setvar set /etc/environment QT_AUTO_SCREEN_SCALE_FACTOR "1"
 $SCRIPT_DIR/setvar set /etc/environment QT_FONT_DPI $DPI
 
-# Calculate and set scale for GTK and EFL apps
+# Calculate and set scale for GTK/EFL apps
 DISPLAY_SCALE=$(echo "scale=6; $DPI*(1/96)" | bc)
 $SCRIPT_DIR/setvar set /etc/environment GDK_DPI_SCALE $DISPLAY_SCALE
 $SCRIPT_DIR/setvar set /etc/environment ELM_SCALE $DISPLAY_SCALE
+$SCRIPT_DIR/setvar set /etc/environment _JAVA_OPTIONS "-Dswing.aatext=TRUE -Dawt.useSystemAAFontSettings=on -Dswing.defaultlaf=com.sun.java.swing.plaf.gtk.GTKLookAndFeel -Dswing.crossplatformlaf=com.sun.java.swing.plaf.gtk.GTKLookAndFeel"

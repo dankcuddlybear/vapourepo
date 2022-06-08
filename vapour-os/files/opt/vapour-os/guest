@@ -15,7 +15,7 @@ RemoveGuest() {
 
 AddGuest() {
 	echo "## Guest home" >> /etc/fstab
-	echo "tmpfs /home/guest tmpfs rw,nodev,nosuid,size=1G 0 0" >> /etc/fstab
+	echo "tmpfs /home/guest tmpfs rw,nodev,nosuid,size=1G,noauto,x-systemd.automount 0 0" >> /etc/fstab
 	echo "" >> /etc/fstab
 	systemctl daemon-reload
 	mkdir /home/guest

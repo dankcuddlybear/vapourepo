@@ -160,8 +160,14 @@ mount "$ROOT_DEV" /mnt
 # Create mount points
 mkdir /mnt/boot &> /dev/null
 mkdir /mnt/public &> /dev/null
-[ ! -z "$HOME_DEV" ] && mkdir /mnt/home
-[ ! -z "$MEDIA_DEV" ] && mkdir /mnt/media
+chmod 777 /mnt/public
+chmod +t /mnt/public
+[ ! -z "$HOME_DEV" ] && mkdir /mnt/home &> /dev/null
+if [ ! -z "$MEDIA_DEV" ]; then
+	mkdir /mnt/media &> /dev/null
+	chmod 777 /mnt/media
+	chmod +t /mnt/media
+fi
 # Mount and clear other filesystems
 mount "$BOOT_DEV" /mnt/boot
 [ $FORMAT_BOOT != 1 ] && echo "Clearing ESP (will keep Windows/MacOS bootloader)" && rm -rf /mnt/boot/*.img /mnt/boot/vmlinuz-linux-zen /mnt/boot/EFI/systemd /mnt/boot/loader

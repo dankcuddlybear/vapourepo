@@ -1,6 +1,6 @@
 # Maintainer: dankcuddlybear <dankcuddlybear@protonmail.com>
 pkgname=vapour-os
-pkgver=1.1.2
+pkgver=1.1.3
 pkgrel=1
 pkgdesc='Vapour OS core system'
 arch=(x86_64)

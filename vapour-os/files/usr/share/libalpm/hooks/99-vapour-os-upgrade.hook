@@ -2,7 +2,6 @@
 Type = Package
 Operation = Upgrade
 Target = vapour-os
-Target = filesystem
 
 [Action]
 Description = Vapour OS config

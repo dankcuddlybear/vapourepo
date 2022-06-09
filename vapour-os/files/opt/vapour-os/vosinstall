@@ -17,13 +17,6 @@ if [ $MODE != "upgrade" ] && [ $MODE != "install" ]; then
 fi
 
 Upgrade() {
-	# Edit /usr/lib/os-release
-	$SCRIPT_DIR/setvar set /usr/lib/os-release NAME "\"Vapour OS\""
-	$SCRIPT_DIR/setvar set /usr/lib/os-release PRETTY_NAME "\"Vapour OS\""
-	$SCRIPT_DIR/setvar set /usr/lib/os-release ID "vapour-os"
-	$SCRIPT_DIR/setvar set /usr/lib/os-release ID_LIKE "arch"
-	$SCRIPT_DIR/setvar set /usr/lib/os-release DEFAULT_HOSTNAME "vapour-os"
-
 	# Enable and start systemd units
 	systemctl --now enable ananicy-cpp.service auto-cpufreq.service avahi-daemon.service fstrim.timer irqbalance.service NetworkManager.service rtirq.service rtkit-daemon.service
 	sync

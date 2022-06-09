@@ -1,68 +1,58 @@
 #!/bin/sh
-# Convert positional parameters to easily readable variables (also makes functions work properly)
-MODE=$1
+MODE="$1"
 FILENAME="$2"
-VAR=$3
+KEY="$3"
 VALUE="$4"
 PrintHelp() {
-	echo "Usage: setvar <mode> <file> <var> <value>"
+	echo "setvar: Edit variables in files. Supports simple KEY=VALUE pairs."
+	echo "Usage: setvar <mode> <file> <key> <value>"
 	echo "Mode:"
-	echo "    set <value> Set value of var. If var does not exist it will be created."
-	echo "    delete      Delete var from file."
-	echo "    query       Print value of var."
+	echo "    set <value> Set value of a variable. If it does not exist it will be created."
+	echo "    query       Print value of a variable."
+	echo "    delete      Delete a variable from the file."
 	echo "Examples:"
 	echo "    setvar set /etc/environment XCURSOR_SIZE 24"
-	echo "    setvar delete /etc/environment XCURSOR_SIZE"
 	echo "    setvar query /etc/environment XCURSOR_SIZE"
+	echo "    setvar delete /etc/environment XCURSOR_SIZE"
 }
 # Error handling
 [ -z $MODE ] && echo "[ERROR] You must specify a mode!" && PrintHelp && exit 1
+[ $MODE != "set" ] && [ $MODE != "query" ] && [ $MODE != "delete" ] && echo "[ERROR] Invalid mode \"$MODE\"!" && PrintHelp && exit 1
 [ -z "$FILENAME" ] && echo "[ERROR] You must specify a file name!" && PrintHelp && exit 1
-[ ! -f "$FILENAME" ] && touch "$FILENAME"
-[ -z $VAR ] && echo "[ERROR] You must specify a variable to read/write!" && PrintHelp && exit 1
+[ ! -f "$FILENAME" ] && touch "$FILENAME" # Create the file if it does not exist
+[ -z $KEY ] && echo "[ERROR] You must specify a variable to read/write!" && PrintHelp && exit 1
 
-VARLEN=${#VAR} # Length of specified var name
-IFS=$'\n' # Set delimiter to newline instead of space (default)
-FILE=$(cat "$FILENAME") # Read file contents
+KEYLEN=${#KEY} # Length of specified var name
+IFS=$'\n' # Set delimiter to newline instead of space
+FILE_OLD=$(cat "$FILENAME") # Read file contents
 
-Search() {
-	for LINE in $FILE; do # Read file line-by-line...
-		if [ "${LINE:0:VARLEN}" == $VAR ]; then # ...until it finds line with specified key
-			SEARCH="$LINE" # Set $SEARCH to the current line
-		fi
-	done
-}
-
-# Add newline to end of file if it doesn't have one (stackoverflow.com/a/34944104)
-AddNewLine() {
-	if [[ -s "$FILENAME" && -z "$(tail -c 1 "$FILENAME")" ]]; then # If file ends with newline...
-		: # Do nothing
-	else
-		echo "" >> "$FILENAME" # Otherwise add one
+# Read the file line-by-line and search for the key.
+# If setting or deleting, set the new file contents.
+LINE_NO=1
+LINE_NO_NEW=1
+unset SEARCH
+FILE_NEW=""
+for LINE in $FILE_OLD; do
+	# When the specified key is found, don't write it just yet. Instead, save it and it's line number.
+	# If it is found again, update it and it's line number.
+	# This is because when a file is sourced, any specified variables will overwrite the previous occurence of that same variable.
+	# That is why we only care about the last occurence of that variable, and we must remove any duplicates.
+	if [ "${LINE:0:KEYLEN+1}" == "$KEY=" ]; then SEARCH="$LINE"
+	elif [ ! -z "$LINE" ] && [ $MODE != "query" ]; then
+		[ $LINE_NO_NEW == 1 ] && FILE_NEW="$LINE" || FILE_NEW="$FILE_NEW$IFS$LINE"
+		((LINE_NO_NEW++))
 	fi
-}
+	((LINE_NO++))
+done
 
-if [ $MODE == "set" ]; then
-	Search
-	REPLACE="$VAR=$VALUE" # Set $REPLACE to "$2=$4"
-	if [ -z "$SEARCH" ]; then # If search result is empty...
-		AddNewLine
-		echo "$REPLACE" >> $FILENAME # Add the variable to the file
-	else
-		sed -i "s/$SEARCH/$REPLACE/g" $FILENAME # Otherwise edit the file in-place with sed
-	fi
-elif [ $MODE == "delete" ]; then
-	Search
-	FIRSTLINE=1
-	for LINE in $FILE; do # Write entire file again...
-		if [ "$LINE" != "$SEARCH" ]; then # ...skipping any lines containing specified var ($2)
-			if [ $FIRSTLINE == 1 ]; then # If this is the first line, overwrite the file
-				echo "$LINE" > $FILENAME
-				FIRSTLINE=0
-			else echo "$LINE" >> $FILENAME; fi # Otherwise append to the file
-		fi
+if [ $MODE != "query" ]; then # Write new file contents
+	LINE_NO_NEW=1
+	for LINE in $FILE_NEW; do
+		[ $LINE_NO_NEW == 1 ] && echo "$LINE" > "$FILENAME" || echo "$LINE" >> "$FILENAME"
+		((LINE_NO_NEW++))
 	done
-elif [ $MODE == "query" ]; then
-	Search
-	echo ${SEARCH:VARLEN+1}
-else echo "[ERROR] Invalid mode!"; PrintHelp; exit 1; fi
+	[ $MODE != "delete" ] && echo "$KEY=$VALUE" >> "$FILENAME"
+	echo >> "$FILENAME"
+else # Return result
+	echo "${SEARCH:KEYLEN+1}"
+fi

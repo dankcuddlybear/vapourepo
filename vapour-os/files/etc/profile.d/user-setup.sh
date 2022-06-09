@@ -13,7 +13,7 @@ if [ ! -z $MEDIA_DEV ] && [ $USER != "guest" ]; then
 	/media/$USER/Music \
 	/media/$USER/Pictures \
 	/media/$USER/Videos &> /dev/null
-	chmod 700 /media/user
+	chmod 700 /media/$USER
 	[ "$(/opt/vapour-os/setvar query "/home/$USER/.config/user-dirs.dirs" XDG_DOWNLOAD_DIR)" != "\"/media/$USER/Downloads\"" ] && \
 	xdg-user-dirs-update --set DOWNLOAD "/media/$USER/Downloads"
 	[ "$(/opt/vapour-os/setvar query "/home/$USER/.config/user-dirs.dirs" XDG_TEMPLATES_DIR)" != "\"/media/$USER/Templates\"" ] && \
@@ -28,7 +28,7 @@ if [ ! -z $MEDIA_DEV ] && [ $USER != "guest" ]; then
 	xdg-user-dirs-update --set PICTURES "/media/$USER/Pictures"
 	[ "$(/opt/vapour-os/setvar query "/home/$USER/.config/user-dirs.dirs" XDG_VIDEOS_DIR)" != "\"/media/$USER/Videos\"" ] && \
 	xdg-user-dirs-update --set VIDEOS "/media/$USER/Videos"
-elif [ $USER != "guest" ];
+elif [ $USER != "guest" ]; then
 	[ "$(/opt/vapour-os/setvar query "/home/$USER/.config/user-dirs.dirs" XDG_DOWNLOAD_DIR)" != "\"\$HOME/Downloads\"" ] && \
 	xdg-user-dirs-update --set DOWNLOAD "$HOME/Downloads"
 	[ "$(/opt/vapour-os/setvar query "/home/$USER/.config/user-dirs.dirs" XDG_TEMPLATES_DIR)" != "\"\$HOME/Templates\"" ] && \

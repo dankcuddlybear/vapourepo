@@ -2,9 +2,9 @@
 Type = Package
 Operation = Install
 Operation = Upgrade
-Target = filesystem
+Target = lsb-release
 
 [Action]
-Description = Patch /usr/lib/os-release
+Description = Patch /etc/lsb-release
 When = PostTransaction
-Exec = /opt/vapour-os/patchrelease
+Exec = /opt/vapour-os/patchlsb-release

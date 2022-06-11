@@ -1,0 +1,10 @@
+[Trigger]
+Type = Package
+Operation = Install
+Target = vapour-os-kde
+Target = plymouth-git
+
+[Action]
+Description = Set Plymouth theme to breeze
+When = PostTransaction
+Exec = sh -c 'plymouth-set-default-theme -R breeze'

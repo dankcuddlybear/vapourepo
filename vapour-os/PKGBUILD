@@ -1,7 +1,7 @@
 # Maintainer: dankcuddlybear <dankcuddlybear@protonmail.com>
 pkgname=vapour-os
-pkgver=1.1.4
-pkgrel=3
+pkgver=1.1.5
+pkgrel=1
 pkgdesc='Vapour OS core system'
 arch=(x86_64)
 url='https://github.com/dankcuddlybear/vapourepo'
@@ -31,7 +31,6 @@ depends=(
 optdepends=('amd-ucode: Fixes for AMD CPUs'
 	'hdapsd: Drop protection for mechanical HDDs in laptops (requires accelerometer)'
 	'intel-ucode: Fixes for Intel CPUs'
-	'vapour-os-bootscreen: Graphical boot screen'
 	'vapour-os-gaming: Windows/Linux gaming libraries and software'
 	'vapour-os-gnome: GNOME X11/Wayland shell and utilities'
 	'vapour-os-gui: Basic GUI with X11 and Pipewire'

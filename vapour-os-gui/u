@@ -1,0 +1,9 @@
+/etc/profile: Loads upon TTY/DM login
+	Loads configs from /etc/profile.d:
+		console-colours.sh
+		gnome-keyring.sh
+
+
+/etc/X11/xinitrc
+/etc/X11/xininitrc.d/00-xprofile
+	Loads /etc/xprofile

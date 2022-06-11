@@ -1,6 +1,6 @@
 # Maintainer: dankcuddlybear <dankcuddlybear@protonmail.com>
 pkgname=vapour-os-kde
-pkgver=1.1.2
+pkgver=1.1.3
 pkgrel=1
 pkgdesc='Vapour OS KDE Plasma X11 desktop environment. When prompted, please select: 1) phonon-qt5-gstreamer 2) noto-fonts 3) xdg-desktop-portal-kde. WARNING: You MUST install vapour-os-gui FIRST, before installing this package, due to dependency conflicts'
 arch=(any)
@@ -53,6 +53,7 @@ depends=('ark'
 	'xdg-desktop-portal-kde'
 	'yakuake'
 )
+optdepends=('plymouth-git: Breeze boot splash screen')
 backup=(etc/sddm.conf.d/kde_settings.conf)
 package() {
 	cd "$srcdir"

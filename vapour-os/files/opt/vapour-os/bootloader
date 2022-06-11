@@ -6,24 +6,24 @@ KPARAMS="rw acpi_osi=Linux"
 KPARAMS_GRAPHICAL="quiet splash loglevel=0 rd.systemd.show_status=false rd.udev.log_level=0 vt.global_cursor_default=0 console=null"
 mkdir -p /boot/loader/entries &> /dev/null
 # Configure bootloader
-echo "default arch.conf" > /boot/loader/loader.conf
+echo "default vapour-os.conf" > /boot/loader/loader.conf
 echo "timeout 2" >> /boot/loader/loader.conf
 echo "console-mode keep" >> /boot/loader/loader.conf
 echo "editor no" >> /boot/loader/loader.conf
 echo "auto-firmware no" >> /boot/loader/loader.conf
 echo "random-seed-mode always" >> /boot/loader/loader.conf
 # Create default bootloader entry
-echo "title Arch Linux" > /boot/loader/entries/arch.conf
-echo "linux /vmlinuz-linux-zen" >> /boot/loader/entries/arch.conf
-[ -f /boot/amd-ucode.img ] && echo "initrd /amd-ucode.img" >> /boot/loader/entries/arch.conf
-[ -f /boot/intel-ucode.img ] && echo "initrd /intel-ucode.img" >> /boot/loader/entries/arch.conf
-echo "initrd /initramfs-linux-zen.img" >> /boot/loader/entries/arch.conf
-if [ -f /usr/bin/plymouth ]; then echo "options $KPARAMS $KPARAMS_GRAPHICAL root=UUID=$ROOT_UUID" >> /boot/loader/entries/arch.conf
-else echo "options $KPARAMS root=UUID=$ROOT_UUID" >> /boot/loader/entries/arch.conf; fi
-# Create bootloader entry (fallback initramfs)
-echo "title Arch Linux (fallback initramfs)" > /boot/loader/entries/arch-fallback.conf
-echo "linux /vmlinuz-linux-zen" >> /boot/loader/entries/arch-fallback.conf
-[ -f /boot/amd-ucode.img ] && echo "initrd /amd-ucode.img" >> /boot/loader/entries/arch-fallback.conf
-[ -f /boot/intel-ucode.img ] && echo "initrd /intel-ucode.img" >> /boot/loader/entries/arch-fallback.conf
-echo "initrd /initramfs-linux-zen-fallback.img" >> /boot/loader/entries/arch-fallback.conf
-echo "options $KPARAMS root=UUID=$ROOT_UUID" >> /boot/loader/entries/arch-fallback.conf
+echo "title Vapour OS" > /boot/loader/entries/vapour-os.conf
+echo "linux /vmlinuz-linux-zen" >> /boot/loader/entries/vapour-os.conf
+[ -f /boot/amd-ucode.img ] && echo "initrd /amd-ucode.img" >> /boot/loader/entries/vapour-os.conf
+[ -f /boot/intel-ucode.img ] && echo "initrd /intel-ucode.img" >> /boot/loader/entries/vapour-os.conf
+echo "initrd /initramfs-linux-zen.img" >> /boot/loader/entries/vapour-os.conf
+if [ -f /usr/bin/plymouth ]; then echo "options $KPARAMS $KPARAMS_GRAPHICAL root=UUID=$ROOT_UUID" >> /boot/loader/entries/vapour-os.conf
+else echo "options $KPARAMS root=UUID=$ROOT_UUID" >> /boot/loader/entries/vapour-os.conf; fi
+# Create fallback bootloader entry
+echo "title Vapour OS (fallback initramfs)" > /boot/loader/entries/vapour-os-fallback.conf
+echo "linux /vmlinuz-linux-zen" >> /boot/loader/entries/vapour-os-fallback.conf
+[ -f /boot/amd-ucode.img ] && echo "initrd /amd-ucode.img" >> /boot/loader/entries/vapour-os-fallback.conf
+[ -f /boot/intel-ucode.img ] && echo "initrd /intel-ucode.img" >> /boot/loader/entries/vapour-os-fallback.conf
+echo "initrd /initramfs-linux-zen-fallback.img" >> /boot/loader/entries/vapour-os-fallback.conf
+echo "options $KPARAMS root=UUID=$ROOT_UUID" >> /boot/loader/entries/vapour-os-fallback.conf

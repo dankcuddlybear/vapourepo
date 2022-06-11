@@ -1,0 +1,11 @@
+[Trigger]
+Type = Package
+Operation = Install
+Operation = Upgrade
+Operation = Uninstall
+Target = plymouth-git
+
+[Action]
+Description = Plymouth installer
+When = PostTransaction
+Exec = sh -c '/opt/vapour-os/initramfs; /opt/vapour-os/bootloader'

@@ -2,7 +2,7 @@
 Type = Package
 Operation = Install
 Operation = Upgrade
-Operation = Uninstall
+Operation = Remove
 Target = plymouth-git
 
 [Action]

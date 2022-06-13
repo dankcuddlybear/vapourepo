@@ -1,23 +1,21 @@
 # Maintainer: dankcuddlybear <dankcuddlybear@protonmail.com>
 pkgname=vapour-os-nvidia
-pkgver=1.1.1
-pkgrel=2
-pkgdesc='Vapour OS closed-source Nvidia drivers for OpenGL, Vulkan, OpenCL and hardware video acceleration. WARNING: loading proprietary kernel modules taints the kernel.'
+pkgver=1.1.2
+pkgrel=1
+pkgdesc='Proprietary Nvidia drivers for OpenGL/Vulkan/OpenCL/hardware video. WARNING: loading proprietary kernel modules taints the kernel.'
 arch=(x86_64)
 url='https://github.com/dankcuddlybear/Vapour-OS'
-backup=(etc/X11/xorg.conf.d/20-nvidia.conf)
-depends=('nvidia-dkms'
-	'lib32-nvidia-utils'
+depends=('lib32-nvidia-utils'
 	'lib32-opencl-nvidia'
+	'nvidia-dkms'
+	'nvidia-prime'
 	'opencl-nvidia'
     'vapour-os-gui'
 )
 provides=('vapour-os-gpudriver')
-optdepends=('nvidia-prime: Run graphically intensive applications on the dedicated Nvidia GPU')
 package() {
 	cd "$srcdir"
 	cd ../
 	filesdir="$(pwd)/files"
-	cp -r "$filesdir/etc" "$pkgdir"
 	cp -r "$filesdir/usr" "$pkgdir"
 }

@@ -1,0 +1,6 @@
+post_install() {
+    [ -d /sys/class/backlight/* ] && ln -s /sys/class/backlight/* /etc/backlight
+}
+pre_remove() {
+    rm /etc/backlight &> /dev/null
+}

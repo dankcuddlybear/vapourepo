@@ -2,20 +2,20 @@ post_install() {
     if [ -d /sys/class/backlight/* ]; then
 		ln -s /sys/class/backlight/* /etc/vapour-os/backlight
 		echo "scale=8; $(cat /etc/vapour-os/backlight/max_brightness)*0.005" | bc | awk '{print int($1)}' > /etc/vapour-os/min_brightness
-		systemctl --now enable min_brightness.path min_brightness.service
+		#systemctl --now enable min_brightness.path min_brightness.service
 	fi
 }
-post_upgrade() {
-	if [ -d /sys/class/backlight/* ]; then
-		systemctl --now enable min_brightness.path min_brightness.service
-	else
-		systemctl --now disable min_brightness.path min_brightness.service
-		rm /etc/vapour-os/backlight &> /dev/null
-		rm /etc/vapour-os/min_brightness &> /dev/null
-	fi
-}
+#post_upgrade() {
+#	if [ -d /sys/class/backlight/* ]; then
+#		systemctl --now enable min_brightness.path min_brightness.service
+#	else
+#		systemctl --now disable min_brightness.path min_brightness.service
+#		rm /etc/vapour-os/backlight &> /dev/null
+#		rm /etc/vapour-os/min_brightness &> /dev/null
+#	fi
+}#
 pre_remove() {
-	systemctl --now disable min_brightness.path min_brightness.service &> /dev/null
+	#systemctl --now disable min_brightness.path min_brightness.service &> /dev/null
     rm /etc/vapour-os/backlight &> /dev/null
     rm /etc/vapour-os/min_brightness &> /dev/null
 }

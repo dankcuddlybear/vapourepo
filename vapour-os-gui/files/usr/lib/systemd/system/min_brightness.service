@@ -3,7 +3,7 @@ Description=Set brightness to minimum (0.5%) if it is too low
 
 [Service]
 Type=simple
-ExecStart=/opt/vapour-os/min_brightness
+ExecStart=/opt/vapour-os/vapour-os-gui/fix_brightness
 
 [Install]
 WantedBy=multi-user.target

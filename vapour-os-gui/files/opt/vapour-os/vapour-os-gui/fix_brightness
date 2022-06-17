@@ -1,0 +1,13 @@
+#!/bin/bash
+#DEBUG=1 # Uncomment to log to /tmp/min_brightness.log
+[ ! -z $DEBUG ] && echo "min_brightness.service was activated!" > /tmp/min_brightness.log
+BRIGHTNESS=$(cat /etc/vapour-os/backlight/brightness)
+MIN_BRIGHTNESS=$(cat /etc/vapour-os/min_brightness)
+[ ! -z $DEBUG ] && echo "BRIGHTNESS=$BRIGHTNESS (current brightness)" >> /tmp/min_brightness.log
+[ ! -z $DEBUG ] && echo "MIN_BRIGHTNESS=$BRIGHTNESS (minimum brightness)" >> /tmp/min_brightness.log
+if (($BRIGHTNESS < $MIN_BRIGHTNESS)); then
+	[ ! -z $DEBUG ] && echo "Current brightness is too low!" >> /tmp/min_brightness.log
+	echo $MIN_BRIGHTNESS > /etc/vapour-os/backlight/brightness
+else
+	[ ! -z $DEBUG ] && echo "Current brightness is high enough." >> /tmp/min_brightness.log
+fi

@@ -8,4 +8,4 @@ Target = vapour-os-kde
 [Action]
 Description = Delete Plasma's ugly default cursors, forcing it to use Adwaita cursor theme instead
 When = PostTransaction
-Exec = sh -c 'rm -rf /usr/share/icons/breeze_cursors &> /dev/null'
+Exec = rm -rf /usr/share/icons/breeze_cursors

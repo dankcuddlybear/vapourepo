@@ -1,0 +1,5 @@
+#!/bin/sh
+if [ -f /usr/share/plasma/look-and-feel/org.kde.breeze.desktop/contents/splash/images/busywidget.svgz ]; then
+	rm -rf /usr/share/plasma/look-and-feel/org.kde.breeze.desktop/contents/splash
+	cp -r /opt/vapour-os/vapour-os-kde/splash /usr/share/plasma/look-and-feel/org.kde.breeze.desktop/contents
+fi

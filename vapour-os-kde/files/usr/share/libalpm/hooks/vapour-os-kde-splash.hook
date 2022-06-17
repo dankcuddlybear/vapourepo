@@ -3,8 +3,9 @@ Type = Package
 Operation = Install
 Operation = Upgrade
 Target = breeze
+Target = vapour-os-kde
 
 [Action]
 Description = Replace Plasma's default splash screen
 When = PostTransaction
-Exec = sh -c 'rm -rf /usr/share/plasma/look-and-feel/org.kde.breeze.desktop/contents/splash; cp -r /opt/vapour-os/vapour-os-kde/splash /usr/share/plasma/look-and-feel/org.kde.breeze.desktop/contents'
+Exec = /opt/vapour-os/vapour-os-kde/set-ksplash

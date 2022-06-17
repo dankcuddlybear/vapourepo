@@ -50,7 +50,7 @@ Rectangle {
             //in the middle of the remaining space
             y: parent.height - (parent.height - logo.y) / 2 - height/2
             anchors.horizontalCenter: parent.horizontalCenter
-            source: "images/busywidget.svgz"
+            source: "images/spinner.svgz"
             sourceSize.height: PlasmaCore.Units.gridUnit * 2
             sourceSize.width: PlasmaCore.Units.gridUnit * 2
             RotationAnimator on rotation {

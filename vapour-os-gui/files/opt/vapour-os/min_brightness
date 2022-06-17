@@ -1,0 +1,4 @@
+#!/bin/bash
+BRIGHTNESS=$(cat /etc/vapour-os/backlight/brightness)
+MIN_BRIGHTNESS=$(cat /etc/vapour-os/min_brightness)
+if (($BRIGHTNESS < $MIN_BRIGHTNESS)); then echo $MIN_BRIGHTNESS > /etc/vapour-os/backlight/brightness; fi

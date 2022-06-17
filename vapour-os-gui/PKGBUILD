@@ -1,8 +1,8 @@
 # Maintainer: dankcuddlybear <dankcuddlybear@protonmail.com>
 pkgname=vapour-os-gui
-pkgver=1.1.1
-pkgrel=2
-pkgdesc='Vapour OS GUI libs - uses X11 and Pipewire.'
+pkgver=1.1.2
+pkgrel=3
+pkgdesc='Vapour OS GUI libs and services - uses X11 and Pipewire.'
 arch=(any)
 url='https://github.com/dankcuddlybear/Vapour-OS'
 backup=(etc/X11/xorg.conf.d/30-touchpad.conf)
@@ -27,5 +27,6 @@ package() {
 	cd ../
 	filesdir="$(pwd)/files"
 	cp -r "$filesdir/etc" "$pkgdir"
+	cp -r "$filesdir/opt" "$pkgdir"
 	cp -r "$filesdir/usr" "$pkgdir"
 }

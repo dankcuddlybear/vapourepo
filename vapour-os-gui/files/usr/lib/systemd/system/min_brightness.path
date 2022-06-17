@@ -1,0 +1,9 @@
+[Unit]
+Description=Monitor brightness for changes
+
+[Path]
+PathChanged=/etc/vapour-os/backlight/brightness
+Unit=min_brightness.service
+
+[Install]
+WantedBy=multi-user.target

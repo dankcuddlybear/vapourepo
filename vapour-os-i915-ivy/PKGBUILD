@@ -1,5 +1,5 @@
 # Maintainer: dankcuddlybear <dankcuddlybear@protonmail.com>
-pkgname=vapour-os-i915-gen3
+pkgname=vapour-os-i915-ivy
 pkgver=1.1.1
 pkgrel=1
 pkgdesc='Vapour OS Intel GPU drivers for OpenGL, Vulkan and hardware video acceleration. For gen 3 (Ivy Bridge) up to gen 6 (Skylake/Kabylake). WARNING: Some module options taint the kernel.'

@@ -54,7 +54,9 @@ depends=('ark'
 	'yakuake'
 )
 optdepends=('plymouth-git: Breeze boot splash screen')
-backup=(etc/sddm.conf.d/kde_settings.conf)
+backup=('etc/sddm.conf.d/kde_settings.conf'
+	'usr/share/sddm/themes/breeze/theme.conf.user'
+)
 package() {
 	cd "$srcdir"
 	cd ../

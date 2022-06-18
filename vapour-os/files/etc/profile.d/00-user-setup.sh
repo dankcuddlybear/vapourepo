@@ -1,5 +1,5 @@
 #!/bin/sh
-. /opt/vapour-os/diskinfo
+. /opt/vapour-os/diskinfo &> /dev/null # Check if media partition exists
 
 # Set XDG user dirs for all users except guest
 # If the /media partition exists, create the user directory inside it (with same permissions as home directory) if it does not exist,
@@ -44,3 +44,7 @@ elif [ $USER != "guest" ]; then
 	[ "$(/opt/vapour-os/setvar query "/home/$USER/.config/user-dirs.dirs" XDG_VIDEOS_DIR)" != "\"\$HOME/Videos\"" ] && \
 	xdg-user-dirs-update --set VIDEOS "$HOME/Videos"
 fi
+
+# Copy files from /etc/skel if they don't exist
+cp -nr --no-preserve=all /etc/skel/* /home/$USER # Copy files from /etc/skel
+cp -nr --no-preserve=all /etc/skel/.* /home/$USER # Copy hidden files from /etc/skel

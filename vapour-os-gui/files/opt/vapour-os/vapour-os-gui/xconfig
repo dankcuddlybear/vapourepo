@@ -1,0 +1,42 @@
+#!/bin/bash
+[ $(whoami) != "root" ] && echo "[ERROR] You must run this script with root priviliges." && exit 1
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+. $SCRIPT_DIR/gpuinfo # Get GPU info
+## This script will automatically configure up to 2 GPUs in the system.
+## The secondary GPU config will always have "-secondary" appended to its filename,
+## in order to avoid conflicts when 2 GPUs of the same type are installed
+## (example: AMD Vega integrated graphics and AMD Radeon discrete graphics card).
+## It does not look at what drivers are installed, it only looks at what GPUs are
+## currently connected to the motherboard. Therefore, having the drivers installed for
+## a GPU you don't have won't do anything bad. However, having a GPU installed but not
+## installing its drivers may prevent Xorg from working properly/at all.
+
+## Remove unused configs
+[ GPU0 != "amd" ] && rm /etc/X11/xorg.conf.d/20-amdgpu.conf &> /dev/null
+[ GPU0 != "intel" ] && rm /etc/X11/xorg.conf.d/20-intel.conf &> /dev/null
+[ GPU0 != "nvidia" ] && rm /etc/X11/xorg.conf.d/20-nvidia.conf &> /dev/null
+if [ ! -z $GPU1 ]; then
+	[ GPU1 != "amd" ] && rm /etc/X11/xorg.conf.d/20-amdgpu-secondary.conf &> /dev/null
+	[ GPU1 != "intel" ] && rm /etc/X11/xorg.conf.d/20-intel-secondary.conf &> /dev/null
+	[ GPU1 != "nvidia" ] && rm /etc/X11/xorg.conf.d/20-nvidia-secondary.conf &> /dev/null
+fi
+
+## Copy whatever configs we need to /etc/X11/xorg.conf.d (do not overwrite existing configs)
+[ GPU0 == "amd" ] && cp -n /opt/vapour-os/vapour-os-gui/20-amdgpu.conf /etc/X11/xorg.conf.d/20-amdgpu.conf
+[ GPU0 == "intel" ] && cp -n /opt/vapour-os/vapour-os-gui/20-intel.conf /etc/X11/xorg.conf.d/20-intel.conf
+[ GPU0 == "nvidia" ] && cp -n /opt/vapour-os/vapour-os-gui/20-nvidia.conf /etc/X11/xorg.conf.d/20-nvidia.conf
+if [ ! -z $GPU1 ]; then
+	[ GPU1 == "amd" ] && cp -n /opt/vapour-os/vapour-os-gui/20-amdgpu.conf /etc/X11/xorg.conf.d/20-amdgpu-secondary.conf
+	[ GPU1 == "intel" ] && cp -n /opt/vapour-os/vapour-os-gui/20-intel.conf /etc/X11/xorg.conf.d/20-intel-secondary.conf
+	[ GPU1 == "nvidia" ] && cp -n /opt/vapour-os/vapour-os-gui/20-nvidia.conf /etc/X11/xorg.conf.d/20-nvidia-secondary.conf
+fi
+
+## Finally, set bus IDs
+[ GPU0 == "amd" ] && $SCRIPT_DIR/setxbusid 20-amdgpu.conf $GPU0_BUSID
+[ GPU0 == "intel" ] && $SCRIPT_DIR/setxbusid 20-intel.conf $GPU0_BUSID
+[ GPU0 == "nvidia" ] && $SCRIPT_DIR/setxbusid 20-nvidia.conf $GPU0_BUSID
+if [ ! -z $GPU1 ]; then
+	[ GPU1 == "amd" ] && $SCRIPT_DIR/setxbusid 20-amdgpu-secondary.conf $GPU1_BUSID
+	[ GPU1 == "intel" ] && $SCRIPT_DIR/setxbusid 20-intel-secondary.conf $GPU1_BUSID
+	[ GPU1 == "nvidia" ] && $SCRIPT_DIR/setxbusid 20-nvidia-secondary.conf $GPU1_BUSID
+fi

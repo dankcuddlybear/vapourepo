@@ -1,0 +1,12 @@
+[Trigger]
+Operation=Install
+Type=Package
+Target=vapour-os-amdgpu
+Target=vapour-os-i915
+Target=vapour-os-i915-ivy
+Target=vapour-os-nvidia
+
+[Action]
+Description=Automatically configure GPUs
+When=PostTransaction
+Exec=/opt/vapour-os/vapour-os-gui/xconfig

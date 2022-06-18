@@ -112,7 +112,6 @@ echo " - Auto CPU frequency - slow down or speed up CPU depending on what progra
 echo "COMING SOON (hopefully):"
 echo " - Power saver - like Android's battery saver but better. Disables compositing, sets refresh rate to 60FPS, lowers the screen brightness and forces light theme (forces dark theme on OLED displays)."
 echo " - Vapour OS manager: Manage the system and software or repair the system. Toggle settings which will take effect immediately (most of them)."
-echo " - Data saver - like Android's data saver. Reduces network usage for background apps, and compresses all network traffic."
 echo " - Eye saver - automatically adjusts screen brightness based on ambient light conditions. Enables dark theme at sunset or if there is low ambient light. Makes colours warmer during sunset to help you sleep better. Requires location services and ambient light sensor or webcam."
 echo " - Wayland support, although this will probably never happen, not for a thousand years."
 echo

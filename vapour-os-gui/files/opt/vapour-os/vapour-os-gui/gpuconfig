@@ -1,16 +1,19 @@
 #!/bin/sh
-#[ $(whoami) != "root" ] && echo "[ERROR] You must run this script with root priviliges." && exit 1
+[ $(whoami) != "root" ] && echo "[ERROR] You must run this script with root priviliges." && exit 1
 FILENAME="$1"
 BUSID="$2"
+IDENT="$3"
 PrintHelp() {
-	echo "setxbusid: Set GPU PCIe bus ID in /etc/X11/xorg.conf.d/<file>"
-	echo "Usage: setxbusid: <config filename> <BusID>"
-	echo "Example: setxbusid 20-intel.conf PCI:0:2:0"
+	echo "gpuconfig: Set GPU PCIe bus ID and identifier in /etc/X11/xorg.conf.d/<file>"
+	echo "Usage: setxbusid: <config filename> <BusID> <GPU no>"
+	echo "Example: setxbusid 20-intel.conf PCI:0:2:0 \"Intel Graphics\""
+	echo "Example: setxbusid 20-nvidia-secondary.conf PCI:0:2:0 \"Nvidia Dedicated Graphics\""
 }
 # Error handling
 [ -z "$FILENAME" ] && echo "[ERROR] You must specify a file name!" && PrintHelp && exit 1
 [ ! -f "/etc/X11/xorg.conf.d/$FILENAME" ] && echo "[ERROR] File does not exist!" && exit 1
 [ -z $BUSID ] && echo "[ERROR] You must specify a BusID!" && PrintHelp && exit 1
+[ -z "$IDENT" ] && echo "[ERROR] You must specify an GPU identifier!" && PrintHelp && exit 1
 
 FILENAME="/etc/X11/xorg.conf.d/$FILENAME"
 IFS=$'\n' # Set delimiter to newline instead of space
@@ -31,7 +34,7 @@ for LINE in $FILE_OLD; do
 		INDENT=$(echo "$LINE" | cut -c1-$LEN_INDENT)
 	fi
 	## Write current file contents into new file contents
-	if [ $WORD != "BusID" ]; then # Ignore any lines with BusID as we will set this later
+	if [ $WORD != "BusID" ] && [ $WORD != "Identifier" ]; then # Ignore any lines with BusID/Identifier as we will set this later
 		[ $LINE_NO == 1 ] && FILE_NEW="$LINE" || FILE_NEW="$FILE_NEW$IFS$LINE"
 	fi
 	((LINE_NO++))
@@ -39,13 +42,17 @@ done
 # If indentation could not be detected, make it a tab.
 [ -z "$INDENT" ] && INDENT="	"
 
+unset IDNEXT
 # Go through the new file contents line-by-line
 LINE_NO=1
 for LINE in $FILE_NEW; do
 	WORD=$(echo "$LINE" | sed -e 's/^[ \t]*//' | cut -d ' ' -f 1)
-	## Write new file contents into file
+	# Put Indentifier right after Section
+	[ ! -z $IDNEXT ] && echo "${INDENT}Identifier \"$IDENT\"" >> "$FILENAME" && unset IDNEXT
+	[ $WORD == "Section" ] && IDNEXT=1
 	# Put BusID right before EndSection
 	[ $WORD == "EndSection" ] && echo "${INDENT}BusID \"$BUSID\"" >> "$FILENAME"
+	# Write new file contents into file
 	[ $LINE_NO == 1 ] && echo "$LINE" > "$FILENAME" || echo "$LINE" >> "$FILENAME"
 	((LINE_NO++))
 done

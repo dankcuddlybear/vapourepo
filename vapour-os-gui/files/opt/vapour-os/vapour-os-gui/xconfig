@@ -31,12 +31,28 @@ if [ ! -z $GPU1 ]; then
 	[ GPU1 == "nvidia" ] && cp -n /opt/vapour-os/vapour-os-gui/20-nvidia.conf /etc/X11/xorg.conf.d/20-nvidia-secondary.conf
 fi
 
-## Finally, set bus IDs
-[ GPU0 == "amd" ] && $SCRIPT_DIR/setxbusid 20-amdgpu.conf $GPU0_BUSID
-[ GPU0 == "intel" ] && $SCRIPT_DIR/setxbusid 20-intel.conf $GPU0_BUSID
-[ GPU0 == "nvidia" ] && $SCRIPT_DIR/setxbusid 20-nvidia.conf $GPU0_BUSID
+## Set bus ID and identifier for each GPU
+[ GPU0 == "amd" ] && PIDENT="AMD Graphics"
+[ GPU0 == "intel" ] && PIDENT="Intel Graphics"
+[ GPU0 == "nvidia" ] && PIDENT="Nvidia Graphics"
+[ GPU0 == "amd" ] && $SCRIPT_DIR/gpuconfig 20-amdgpu.conf $GPU0_BUSID "$PIDENT"
+[ GPU0 == "intel" ] && $SCRIPT_DIR/gpuconfig 20-intel.conf $GPU0_BUSID "$PIDENT"
+[ GPU0 == "nvidia" ] && $SCRIPT_DIR/gpuconfig 20-nvidia.conf $GPU0_BUSID "$PIDENT"
 if [ ! -z $GPU1 ]; then
-	[ GPU1 == "amd" ] && $SCRIPT_DIR/setxbusid 20-amdgpu-secondary.conf $GPU1_BUSID
-	[ GPU1 == "intel" ] && $SCRIPT_DIR/setxbusid 20-intel-secondary.conf $GPU1_BUSID
-	[ GPU1 == "nvidia" ] && $SCRIPT_DIR/setxbusid 20-nvidia-secondary.conf $GPU1_BUSID
+	[ GPU1 == "amd" ] && $SCRIPT_DIR/gpuconfig 20-amdgpu-secondary.conf $GPU1_BUSID "AMD Dedicated Graphics"
+	[ GPU1 == "intel" ] && $SCRIPT_DIR/gpuconfig 20-intel-secondary.conf $GPU1_BUSID "Intel Dedicated Graphics"
+	[ GPU1 == "nvidia" ] && $SCRIPT_DIR/gpuconfig 20-nvidia-secondary.conf $GPU1_BUSID "Nvidia Dedicated Graphics"
 fi
+
+## Set Screen and ServerLayout
+echo "Section \"Screen\"" > /etc/X11/xorg.conf.d/30-screen.conf
+echo "	Identifier \"$PIDENT\"" >> /etc/X11/xorg.conf.d/30-screen.conf
+echo "	Device \"$PIDENT\"" >> /etc/X11/xorg.conf.d/30-screen.conf
+echo "EndSection" >> /etc/X11/xorg.conf.d/30-screen.conf
+echo "" >> /etc/X11/xorg.conf.d/30-screen.conf
+
+echo "Section \"ServerLayout\"" >> /etc/X11/xorg.conf.d/90-serverlayout.conf
+echo "	Identifier \"layout\"" >> /etc/X11/xorg.conf.d/90-serverlayout.conf
+echo "	Screen 0 \"$PIDENT\"" >> /etc/X11/xorg.conf.d/90-serverlayout.conf
+[ ! -z $GPU1 ] && [ GPU1 == "nvidia" ] && echo "	Option \"AllowNVIDIAGPUScreens\"" >> /etc/X11/xorg.conf.d/90-serverlayout.conf
+echo "EndSection" >> /etc/X11/xorg.conf.d/90-serverlayout.conf

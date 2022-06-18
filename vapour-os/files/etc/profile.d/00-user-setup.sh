@@ -46,5 +46,4 @@ elif [ $USER != "guest" ]; then
 fi
 
 # Copy files from /etc/skel if they don't exist
-cp -nr --no-preserve=all /etc/skel/* /home/$USER # Copy files from /etc/skel
-cp -nr --no-preserve=all /etc/skel/.* /home/$USER # Copy hidden files from /etc/skel
+for FILE in $(ls -A /etc/skel); do cp cp -nr --no-preserve=all /etc/skel/$FILE /home/$USER; done

@@ -12,36 +12,36 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 ## installing its drivers may prevent Xorg from working properly/at all.
 
 ## Remove unused configs
-[ GPU0 != "amd" ] && rm /etc/X11/xorg.conf.d/20-amdgpu.conf &> /dev/null
-[ GPU0 != "intel" ] && rm /etc/X11/xorg.conf.d/20-intel.conf &> /dev/null
-[ GPU0 != "nvidia" ] && rm /etc/X11/xorg.conf.d/20-nvidia.conf &> /dev/null
+[ $GPU0 != "amd" ] && rm /etc/X11/xorg.conf.d/20-amdgpu.conf &> /dev/null
+[ $GPU0 != "intel" ] && rm /etc/X11/xorg.conf.d/20-intel.conf &> /dev/null
+[ $GPU0 != "nvidia" ] && rm /etc/X11/xorg.conf.d/20-nvidia.conf &> /dev/null
 if [ ! -z $GPU1 ]; then
-	[ GPU1 != "amd" ] && rm /etc/X11/xorg.conf.d/20-amdgpu-secondary.conf &> /dev/null
-	[ GPU1 != "intel" ] && rm /etc/X11/xorg.conf.d/20-intel-secondary.conf &> /dev/null
-	[ GPU1 != "nvidia" ] && rm /etc/X11/xorg.conf.d/20-nvidia-secondary.conf &> /dev/null
+	[ $GPU1 != "amd" ] && rm /etc/X11/xorg.conf.d/20-amdgpu-secondary.conf &> /dev/null
+	[ $GPU1 != "intel" ] && rm /etc/X11/xorg.conf.d/20-intel-secondary.conf &> /dev/null
+	[ $GPU1 != "nvidia" ] && rm /etc/X11/xorg.conf.d/20-nvidia-secondary.conf &> /dev/null
 fi
 
 ## Copy whatever configs we need to /etc/X11/xorg.conf.d (do not overwrite existing configs)
-[ GPU0 == "amd" ] && cp -n /opt/vapour-os/vapour-os-gui/20-amdgpu.conf /etc/X11/xorg.conf.d/20-amdgpu.conf
-[ GPU0 == "intel" ] && cp -n /opt/vapour-os/vapour-os-gui/20-intel.conf /etc/X11/xorg.conf.d/20-intel.conf
-[ GPU0 == "nvidia" ] && cp -n /opt/vapour-os/vapour-os-gui/20-nvidia.conf /etc/X11/xorg.conf.d/20-nvidia.conf
+[ $GPU0 == "amd" ] && cp -n /opt/vapour-os/vapour-os-gui/20-amdgpu.conf /etc/X11/xorg.conf.d/20-amdgpu.conf
+[ $GPU0 == "intel" ] && cp -n /opt/vapour-os/vapour-os-gui/20-intel.conf /etc/X11/xorg.conf.d/20-intel.conf
+[ $GPU0 == "nvidia" ] && cp -n /opt/vapour-os/vapour-os-gui/20-nvidia.conf /etc/X11/xorg.conf.d/20-nvidia.conf
 if [ ! -z $GPU1 ]; then
-	[ GPU1 == "amd" ] && cp -n /opt/vapour-os/vapour-os-gui/20-amdgpu.conf /etc/X11/xorg.conf.d/20-amdgpu-secondary.conf
-	[ GPU1 == "intel" ] && cp -n /opt/vapour-os/vapour-os-gui/20-intel.conf /etc/X11/xorg.conf.d/20-intel-secondary.conf
-	[ GPU1 == "nvidia" ] && cp -n /opt/vapour-os/vapour-os-gui/20-nvidia.conf /etc/X11/xorg.conf.d/20-nvidia-secondary.conf
+	[ $GPU1 == "amd" ] && cp -n /opt/vapour-os/vapour-os-gui/20-amdgpu.conf /etc/X11/xorg.conf.d/20-amdgpu-secondary.conf
+	[ $GPU1 == "intel" ] && cp -n /opt/vapour-os/vapour-os-gui/20-intel.conf /etc/X11/xorg.conf.d/20-intel-secondary.conf
+	[ $GPU1 == "nvidia" ] && cp -n /opt/vapour-os/vapour-os-gui/20-nvidia.conf /etc/X11/xorg.conf.d/20-nvidia-secondary.conf
 fi
 
 ## Set bus ID and identifier for each GPU
-[ GPU0 == "amd" ] && PIDENT="AMD Graphics"
-[ GPU0 == "intel" ] && PIDENT="Intel Graphics"
-[ GPU0 == "nvidia" ] && PIDENT="Nvidia Graphics"
-[ GPU0 == "amd" ] && $SCRIPT_DIR/gpuconfig 20-amdgpu.conf $GPU0_BUSID "$PIDENT"
+[ $GPU0 == "amd" ] && PIDENT="AMD Graphics"
+[ $GPU0 == "intel" ] && PIDENT="Intel Graphics"
+[ $GPU0 == "nvidia" ] && PIDENT="Nvidia Graphics"
+[ $GPU0 == "amd" ] && $SCRIPT_DIR/gpuconfig 20-amdgpu.conf $GPU0_BUSID "$PIDENT"
 [ GPU0 == "intel" ] && $SCRIPT_DIR/gpuconfig 20-intel.conf $GPU0_BUSID "$PIDENT"
 [ GPU0 == "nvidia" ] && $SCRIPT_DIR/gpuconfig 20-nvidia.conf $GPU0_BUSID "$PIDENT"
 if [ ! -z $GPU1 ]; then
-	[ GPU1 == "amd" ] && $SCRIPT_DIR/gpuconfig 20-amdgpu-secondary.conf $GPU1_BUSID "AMD Dedicated Graphics"
-	[ GPU1 == "intel" ] && $SCRIPT_DIR/gpuconfig 20-intel-secondary.conf $GPU1_BUSID "Intel Dedicated Graphics"
-	[ GPU1 == "nvidia" ] && $SCRIPT_DIR/gpuconfig 20-nvidia-secondary.conf $GPU1_BUSID "Nvidia Dedicated Graphics"
+	[ $GPU1 == "amd" ] && $SCRIPT_DIR/gpuconfig 20-amdgpu-secondary.conf $GPU1_BUSID "AMD Dedicated Graphics"
+	[ $GPU1 == "intel" ] && $SCRIPT_DIR/gpuconfig 20-intel-secondary.conf $GPU1_BUSID "Intel Dedicated Graphics"
+	[ $GPU1 == "nvidia" ] && $SCRIPT_DIR/gpuconfig 20-nvidia-secondary.conf $GPU1_BUSID "Nvidia Dedicated Graphics"
 fi
 
 ## Set Screen and ServerLayout
@@ -49,10 +49,7 @@ echo "Section \"Screen\"" > /etc/X11/xorg.conf.d/30-screen.conf
 echo "	Identifier \"$PIDENT\"" >> /etc/X11/xorg.conf.d/30-screen.conf
 echo "	Device \"$PIDENT\"" >> /etc/X11/xorg.conf.d/30-screen.conf
 echo "EndSection" >> /etc/X11/xorg.conf.d/30-screen.conf
-echo "" >> /etc/X11/xorg.conf.d/30-screen.conf
-
-echo "Section \"ServerLayout\"" >> /etc/X11/xorg.conf.d/90-serverlayout.conf
+echo "Section \"ServerLayout\"" > /etc/X11/xorg.conf.d/90-serverlayout.conf
 echo "	Identifier \"layout\"" >> /etc/X11/xorg.conf.d/90-serverlayout.conf
 echo "	Screen 0 \"$PIDENT\"" >> /etc/X11/xorg.conf.d/90-serverlayout.conf
-[ ! -z $GPU1 ] && [ GPU1 == "nvidia" ] && echo "	Option \"AllowNVIDIAGPUScreens\"" >> /etc/X11/xorg.conf.d/90-serverlayout.conf
-echo "EndSection" >> /etc/X11/xorg.conf.d/90-serverlayout.conf
+[ ! -z $GPU1 ] && [ $GPU1 == "nvidia" ] && echo "	Option \"AllowNVIDIAGPUScreens\"" >> /etc/X11/xorg.conf.d/90-serverlayout.conf

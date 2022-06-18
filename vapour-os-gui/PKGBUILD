@@ -5,7 +5,7 @@ pkgrel=1
 pkgdesc='Vapour OS GUI libs/scripts/services - uses X11 and Pipewire.'
 arch=(any)
 url='https://github.com/dankcuddlybear/Vapour-OS'
-backup=(etc/X11/xorg.conf.d/30-touchpad.conf)
+backup=('etc/X11/xorg.conf.d/30-touchpad.conf')
 install=vapour-os-gui.install
 depends=('pipewire-alsa'
 	'pipewire-jack'

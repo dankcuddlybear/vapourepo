@@ -40,9 +40,7 @@ Install() {
 	setterm -cursor on >> /etc/issue # Silent boot cursor fix
 	
 	# Configure system settings
-	$SCRIPT_DIR/fstab
-	$SCRIPT_DIR/initramfs
-	$SCRIPT_DIR/bootloader
+	rm /etc/fstab
 	if [ -f /etc/vapour-os/install.conf ]; then
 		. /etc/vapour-os/install.conf
 		$SCRIPT_DIR/locale $LOCALE
@@ -54,6 +52,9 @@ Install() {
 		$SCRIPT_DIR/guest $GUEST
 		$SCRIPT_DIR/dict $WORDS
 	fi
+	[ ! -f /etc/fstab ] && $SCRIPT_DIR/fstab
+	$SCRIPT_DIR/initramfs
+	$SCRIPT_DIR/bootloader
 
 	# Set environment variables
 	[ -z $($SCRIPT_DIR/setvar query /etc/environment EDITOR) ] && $SCRIPT_DIR/setvar set /etc/environment EDITOR "/usr/bin/nano"

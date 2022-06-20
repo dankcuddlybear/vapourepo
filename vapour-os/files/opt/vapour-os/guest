@@ -3,7 +3,6 @@
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 GUEST=$1
 [ -z $GUEST ] && echo "[WARNING] Leaving guest unchanged" && exit 0
-[ $GUEST != 1 ] || [ $GUEST != 0 ] && 
 
 RemoveGuest() {
 	pkill -9 -u guest &> /dev/null
@@ -14,11 +13,8 @@ RemoveGuest() {
 }
 
 AddGuest() {
-	echo "## Guest home" >> /etc/fstab
-	echo "tmpfs /home/guest tmpfs rw,nodev,nosuid,size=1G,noauto,x-systemd.automount 0 0" >> /etc/fstab
-	echo "" >> /etc/fstab
-	systemctl daemon-reload
 	mkdir /home/guest
+	$SCRIPT_DIR/fstab
 	mount /home/guest
 	useradd guest
 	chmod 700 /home/guest
@@ -26,6 +22,6 @@ AddGuest() {
 	passwd -d guest &> /dev/null
 }
 
-if [ $GUEST == 1 ]; then RemoveGuest &&	AddGuest
+if [ $GUEST == 1 ]; then AddGuest
 elif [ $GUEST == 0 ]; then RemoveGuest
 else echo "[ERROR] Invalid value! (must be 1 or 0)"; exit 1; fi

@@ -12,7 +12,6 @@ depends=('lib32-nvidia-utils'
 	'opencl-nvidia'
     'vapour-os-gui'
 )
-backup=('etc/X11/xorg.conf.d/20-nvidia.conf')
 provides=('vapour-os-gpudriver')
 package() {
 	cd "$srcdir"

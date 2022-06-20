@@ -12,7 +12,6 @@ depends=('intel-compute-runtime'
     'vapour-os-gui'
     'vulkan-intel'
 )
-backup=('etc/X11/xorg.conf.d/20-intel.conf')
 provides=('vapour-os-gpudriver')
 conflicts=('vapour-os-i915-ivy')
 package() {

@@ -5,9 +5,9 @@ BUSID="$2"
 IDENT="$3"
 PrintHelp() {
 	echo "gpuconfig: Set GPU PCIe bus ID and identifier in /etc/X11/xorg.conf.d/<file>"
-	echo "Usage: setxbusid: <config filename> <BusID> <GPU no>"
-	echo "Example: setxbusid 20-intel.conf PCI:0:2:0 \"Intel Graphics\""
-	echo "Example: setxbusid 20-nvidia-secondary.conf PCI:0:2:0 \"Nvidia Dedicated Graphics\""
+	echo "Usage: gpuconfig <config filename> <BusID> <GPU no>"
+	echo "Example: gpuconfig 20-intel.conf PCI:0:2:0 \"Intel Graphics\""
+	echo "Example: gpuconfig 20-nvidia-secondary.conf PCI:0:2:0 \"Nvidia Dedicated Graphics\""
 }
 # Error handling
 [ -z "$FILENAME" ] && echo "[ERROR] You must specify a file name!" && PrintHelp && exit 1

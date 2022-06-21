@@ -1,0 +1,15 @@
+#!/bin/sh
+
+## The service is started when the system connects to the internet.
+## Update databases then download packages, but do not install them.
+## It will attempt to download updates up to 5 times if it fails
+#pacman -Syuw
+
+## If no updates are available, skip this section
+
+
+# pacman -Su to install the downloaded packages
+# pacman -Sc to clear the cache
+
+# The auto-updater has a tray icon - by clicking on it you can see the output of pacman.
+# If pacman requires user input or gives a warning/error the user will be notified

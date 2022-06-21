@@ -6,12 +6,28 @@ loadkeys $KEYMAP
 setfont latarcyrheb-sun32
 timedatectl set-ntp true
 
-# HARDWARE CHECKER - gathers necessary hardware info and aborts installation if system requirements are not met.
+# HARDWARE CHECKER - gathers hardware info to automatically install recommended packages
 echo "Checking hardware..."
 # CPU checker
 lscpu | grep "x86_64" &> /dev/null && CPU_ARCH="x86_64"
+#for CPU in "x86_64" "i486" "i686" "pentium4" "aarch64" "armv7h"; do
+#	lscpu | grep "$CPU" &> /dev/null && CPU_ARCH="$CPU"
+#done
 if [ -z $CPU_ARCH ]; then
-    echo "[ERROR] Unsupported CPU architecture! Only x86_64 is supported - this installer will not work on Apple's M1 Silicon Macs, PowerPC Macs or a Raspberry Pi for example."
+    echo "[ERROR] Unsupported CPU architecture! (Supported: x86_64)"
+    #echo "[ERROR] Unsupported CPU architecture! (Supported: x86_64 i486 i686 pentium4 aarch64 armv7h)"
+    echo "For example, Vapour OS will work on the following devices:"
+    echo " - Any computer with a 64-bit Intel or AMD processor (x86_64)"
+    echo " - Xbox One, PS4, Steam Deck (x86_64)"
+    #echo " - Any computer with a 32/64-bit Intel or AMD processor (x86/x86_64)"
+    #echo " - Raspberry Pi/compute module 2/3/4 series and Raspberry Pi 400 (armv7h/aarch64)"
+    echo "Vapour OS will NOT work on these devices:"
+    echo " - Any computer with a 16/32-bit Intel or AMD processor (x86)"
+    echo " - Raspberry Pi/compute module (armv6/armv7h/aarch64)"
+    #echo " - Raspberry Pi/compute model 1 series (armv6)"
+    echo " - Apple M1/M2 Silicon Macs (aarch64)"
+    echo " - Apple Power/G-series Macs (PPC)"
+    echo " - Nintendo Switch (aarch64)"
     exit 1
 fi
 lscpu | grep "GenuineIntel" &> /dev/null && CPU="intel"
@@ -50,25 +66,7 @@ if [ -z $UEFI ]; then
     echo "[ERROR] UEFI not detected. Please check that your motherboard supports UEFI, and that you have booted in UEFI mode, not BIOS or UEFI-CSM (compatibility mode)."
     exit 1
 fi
-# GPU checker. If present, the Intel iGPU or AMD GPU will always be the primary GPU.
-lspci | grep "VGA compatible controller: Intel Corporation" &> /dev/null && GPU0="intel"
-if [ $GPU0 == "intel" ]; then
-    lspci | grep "VGA compatible controller: NVIDIA Corporation" &> /dev/null && GPU1="nvidia"
-    lspci | grep "VGA compatible controller: Advanced Micro Devices" &> /dev/null && GPU1="amd"
-else
-    lspci | grep "VGA compatible controller: Advanced Micro Devices" &> /dev/null && GPU0="amd"
-    if [ $GPU0 == "amd" ]; then
-        lspci | grep "VGA compatible controller: NVIDIA Corporation" &> /dev/null && GPU1="nvidia"
-    else
-        lspci | grep "VGA compatible controller: NVIDIA Corporation" &> /dev/null && GPU0="nvidia"
-    fi
-fi
-[ -z $GPU0 ] && echo "[WARNING] Could not find a GPU. You may have an unsupported graphics card (this includes virtual graphics adaptors used by virtual machines)." && WARNINGS_ISSUED=1
-[ $GPU0 == "intel" ] && echo "Found Intel integrated GPU, which will be the primary GPU"
-[ $GPU0 == "amd" ] && echo "Found AMD GPU, which will be the primary GPU"
-[ $GPU0 == "nvidia" ] && echo "Found Nvidia GPU, which will be the primary GPU"
-[ $GPU1 == "amd" ] && echo "Found AMD GPU, which will be the secondary GPU"
-[ $GPU1 == "nvidia" ] && echo "Found Nvidia GPU, which will be the secondary GPU"
+
 # Detect chassis type
 CHASSIS=$(dmidecode --string chassis-type)
 if [ $CHASSIS == "Portable" ] || [ $CHASSIS == "Laptop" ] || [ $CHASSIS == "Notebook" ] || [ $CHASSIS == "Hand Held" ] || [ $CHASSIS == "Sub Notebook" ]; then
@@ -225,8 +223,6 @@ cp $SCRIPT_DIR/options.conf /mnt/etc/vapour-os/install.conf
 echo "CPU=\"$CPU\"                      # \"intel\", \"amd\" or leave blank if you have neither" > /mnt/etc/vapour-os/device.conf
 echo "SSE4_2=\"$SSE4_2\"                # Set to 1 if your CPU supports SSE4.2" >> /mnt/etc/vapour-os/device.conf
 echo "RAM=$RAM" >> /mnt/etc/vapour-os/device.conf
-echo "GPU0=\"$GPU0\"                    # \"intel\", \"amd\", \"nvidia\" or leave blank if you don't have a GPU" >> /mnt/etc/vapour-os/device.conf
-echo "GPU1=\"$GPU1\"                    # \"amd\", \"nvidia\" or leave blank if you don't have a second GPU" >> /mnt/etc/vapour-os/device.conf
 echo "PORTABLE=\"$PORTABLE\"            # Set to 1 if your device is portable" >> /mnt/etc/vapour-os/device.conf
 echo "BATTERY=\"$BATTERY\"              # Set to 1 if your device has a battery or UPS" >> /mnt/etc/vapour-os/device.conf
 echo "ACCELEROMETER=\"$ACCELEROMETER\"  # Set to 1 if your portable device has an accelerometer" >> /mnt/etc/vapour-os/device.conf
@@ -248,13 +244,23 @@ echo "echo \"Server = https://raw.githubusercontent.com/dankcuddlybear/\\\$repo/
 # Install Vapour OS
 if [ ! -z $GRAPHICAL ]; then # GRAPHICAL is set
 	if [ $GRAPHICAL != 0 ]; then # Graphical system (any)
-		# Install GPU drivers if a GPU is found
-		[ -z $GPU0 ] && echo "pacman --needed --noconfirm -Syu vapour-os-gui || exit 1" >> /mnt/etc/vapour-os/chroot-cfg
-		[ $GPU0 == "intel" ] || [ $GPU1 == "intel" ] && echo "pacman --needed --noconfirm -Syu vapour-os-i915 || exit 1" >> /mnt/etc/vapour-os/chroot-cfg
-		[ $GPU0 == "amd" ] || [ $GPU1 == "amd" ] && echo "pacman --needed --noconfirm -Syu vapour-os-amdgpu || exit 1" >> /mnt/etc/vapour-os/chroot-cfg
-		[ $GPU0 == "nvidia" ] || [ $GPU1 == "nvidia" ] && echo "pacman --needed --noconfirm -Syu vapour-os-nvidia || exit 1" >> /mnt/etc/vapour-os/chroot-cfg
-		# Install 32-bit GUI libs
-		[ $GRAPHICAL == 2 ] && echo "pacman --needed --noconfirm -Syu lib32-vapour-os-gui || exit 1" >> /mnt/etc/vapour-os/chroot-cfg
+		# Install 64bit/multilib GUI libs
+		if [ $GRAPHICAL == 2 ]; then echo "pacman --needed --noconfirm -Syu lib32-vapour-os-gui || exit 1" >> /mnt/etc/vapour-os/chroot-cfg
+		else echo "pacman --needed --noconfirm -Syu vapour-os-gui || exit 1" >> /mnt/etc/vapour-os/chroot-cfg; fi
+		# Detect and install GPU drivers
+		echo ". /opt/vapour-os/vapour-os/gui/gpuinfo" >> /mnt/etc/vapour-os/chroot-cfg
+		echo "if [ \$GPU0 == \"amd\" ] || [ \$GPU1 == \"amd\" ]; then"
+		echo "    pacman --needed --noconfirm -Syu vapour-os-amdgpu || exit 1" >> /mnt/etc/vapour-os/chroot-cfg
+		echo "    pacman --asdeps -D vapour-os-gui" >> /mnt/etc/vapour-os/chroot-cfg
+		echo "fi" >> /mnt/etc/vapour-os/chroot-cfg
+		echo "if [ \$GPU0 == \"intel\" ] || [ \$GPU1 == \"intel\" ]; then"
+		echo "    pacman --needed --noconfirm -Syu vapour-os-i915 || exit 1" >> /mnt/etc/vapour-os/chroot-cfg
+		echo "    pacman --asdeps -D vapour-os-gui" >> /mnt/etc/vapour-os/chroot-cfg
+		echo "fi" >> /mnt/etc/vapour-os/chroot-cfg
+		echo "if [ \$GPU0 == \"nvidia\" ] || [ \$GPU1 == \"nvidia\" ]; then"
+		echo "    pacman --needed --noconfirm -Syu vapour-os-nvidia || exit 1" >> /mnt/etc/vapour-os/chroot-cfg
+		echo "    pacman --asdeps -D vapour-os-gui" >> /mnt/etc/vapour-os/chroot-cfg
+		echo "fi" >> /mnt/etc/vapour-os/chroot-cfg
 	else echo "pacman --needed --noconfirm -Syu vapour-os || exit 1" >> /mnt/etc/vapour-os/chroot-cfg; fi
 else echo "pacman --needed --noconfirm -Syu vapour-os || exit 1" >> /mnt/etc/vapour-os/chroot-cfg; fi
 echo "pacman --asdeps -D $PKG_PACSTRAP" >> /mnt/etc/vapour-os/chroot-cfg

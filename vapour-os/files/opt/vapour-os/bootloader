@@ -2,7 +2,7 @@
 [ $(whoami) != "root" ] && echo "[ERROR] You must run this script with root priviliges." && exit 1
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 . $SCRIPT_DIR/diskinfo # Get root UUID
-KPARAMS="rw acpi_osi=Linux"
+KPARAMS="rw acpi_osi=Linux fsck.mode=force fsck.repair=yes"
 KPARAMS_GRAPHICAL="quiet splash loglevel=0 rd.systemd.show_status=false rd.udev.log_level=0 vt.global_cursor_default=0 console=null"
 [ -f /boot/params ] && KPARAMS_EXTRA=$(cat /boot/params)
 mkdir -p /boot/loader/entries &> /dev/null

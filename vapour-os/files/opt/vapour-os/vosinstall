@@ -17,14 +17,14 @@ if [ $MODE != "upgrade" ] && [ $MODE != "install" ]; then
 fi
 
 Upgrade() {
+	## Overwrite configs owned by other packages (preserve target permissions).
+	$SCRIPT_DIR/installconfig /opt/vapour-os/etc /etc
+	
 	# Enable and start systemd units
 	systemctl --now enable ananicy-cpp.service auto-cpufreq.service avahi-daemon.service fstrim.timer irqbalance.service NetworkManager.service rtirq.service rtkit-daemon.service
 	sync
 }
 Install() {
-	## Overwrite configs owned by other packages (preserve target permissions).
-	$SCRIPT_DIR/installconfig /opt/vapour-os/etc /etc
-	
 	## Write /etc/issue
 	echo "____   ____                                   ________    _________" > /etc/issue
 	echo "\\\\   \\\\ /   /____  ______   ____  __ _________  \\\\_____  \\\\  /   _____/" >> /etc/issue
@@ -36,7 +36,8 @@ Install() {
 	echo "\\d \\t" >> /etc/issue
 	echo "/dev/\\l" >> /etc/issue
 	echo "" >> /etc/issue
-	echo "Welcome! (\\u) currently logged in." >> /etc/issue
+	echo "Welcome! \\U currently logged in" >> /etc/issue
+	echo "" >> /etc/issue
 	setterm -cursor on >> /etc/issue # Silent boot cursor fix
 	
 	# Configure system settings

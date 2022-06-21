@@ -2,7 +2,7 @@
 [ $(whoami) != "root" ] && echo "[ERROR] You must run this script with root priviliges." && exit 1
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 . $SCRIPT_DIR/gpuinfo # Get GPU info
-## This script will automatically configure up to 2 GPUs in the system.
+## This script will automatically configure up to 2 GPUs, 1 screen and 1 serverlayout.
 ## The secondary GPU config will always have "-secondary" appended to its filename,
 ## in order to avoid conflicts when 2 GPUs of the same type are installed
 ## (example: AMD Vega integrated graphics and AMD Radeon discrete graphics card).
@@ -32,24 +32,24 @@ if [ ! -z $GPU1 ]; then
 fi
 
 ## Set bus ID and identifier for each GPU
-[ $GPU0 == "amd" ] && PIDENT="AMD Graphics"
-[ $GPU0 == "intel" ] && PIDENT="Intel Graphics"
-[ $GPU0 == "nvidia" ] && PIDENT="Nvidia Graphics"
-[ $GPU0 == "amd" ] && $SCRIPT_DIR/gpuconfig 20-amdgpu.conf $GPU0_BUSID "$PIDENT"
-[ GPU0 == "intel" ] && $SCRIPT_DIR/gpuconfig 20-intel.conf $GPU0_BUSID "$PIDENT"
-[ GPU0 == "nvidia" ] && $SCRIPT_DIR/gpuconfig 20-nvidia.conf $GPU0_BUSID "$PIDENT"
+[ $GPU0 == "amd" ] && PIDENT="AMD Graphics" && $SCRIPT_DIR/gpuconfig 20-amdgpu.conf $GPU0_BUSID "$PIDENT"
+[ $GPU0 == "intel" ] && PIDENT="Intel Graphics" && $SCRIPT_DIR/gpuconfig 20-intel.conf $GPU0_BUSID "$PIDENT"
+[ $GPU0 == "nvidia" ] && PIDENT="Nvidia Graphics" && $SCRIPT_DIR/gpuconfig 20-nvidia.conf $GPU0_BUSID "$PIDENT"
 if [ ! -z $GPU1 ]; then
 	[ $GPU1 == "amd" ] && $SCRIPT_DIR/gpuconfig 20-amdgpu-secondary.conf $GPU1_BUSID "AMD Dedicated Graphics"
 	[ $GPU1 == "intel" ] && $SCRIPT_DIR/gpuconfig 20-intel-secondary.conf $GPU1_BUSID "Intel Dedicated Graphics"
 	[ $GPU1 == "nvidia" ] && $SCRIPT_DIR/gpuconfig 20-nvidia-secondary.conf $GPU1_BUSID "Nvidia Dedicated Graphics"
 fi
 
-## Set Screen and ServerLayout
+## Set Screen
 echo "Section \"Screen\"" > /etc/X11/xorg.conf.d/30-screen.conf
 echo "	Identifier \"$PIDENT\"" >> /etc/X11/xorg.conf.d/30-screen.conf
 echo "	Device \"$PIDENT\"" >> /etc/X11/xorg.conf.d/30-screen.conf
 echo "EndSection" >> /etc/X11/xorg.conf.d/30-screen.conf
+
+## Set ServerLayout
 echo "Section \"ServerLayout\"" > /etc/X11/xorg.conf.d/90-serverlayout.conf
 echo "	Identifier \"layout\"" >> /etc/X11/xorg.conf.d/90-serverlayout.conf
 echo "	Screen 0 \"$PIDENT\"" >> /etc/X11/xorg.conf.d/90-serverlayout.conf
 [ ! -z $GPU1 ] && [ $GPU1 == "nvidia" ] && echo "	Option \"AllowNVIDIAGPUScreens\"" >> /etc/X11/xorg.conf.d/90-serverlayout.conf
+echo "EndSection" >> /etc/X11/xorg.conf.d/90-serverlayout.conf

@@ -3,9 +3,8 @@ Type = Package
 Operation = Install
 Operation = Upgrade
 Target = breeze
-Target = vapour-os-kde
 
 [Action]
 Description = Delete Plasma's ugly default cursors, forcing it to use Adwaita cursor theme instead
 When = PostTransaction
-Exec = rm -rf /usr/share/icons/breeze_cursors
+Exec = sh -c 'rm -rf /usr/share/icons/breeze_cursors &> /dev/null || sleep 0'

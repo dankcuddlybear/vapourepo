@@ -21,7 +21,7 @@ Upgrade() {
 	$SCRIPT_DIR/installconfig /opt/vapour-os/etc /etc
 	
 	# Enable and start systemd units
-	systemctl --now enable ananicy-cpp.service auto-cpufreq.service avahi-daemon.service fstrim.timer irqbalance.service NetworkManager.service rtirq.service rtkit-daemon.service
+	systemctl --now enable ananicy-cpp.service auto-cpufreq.service avahi-daemon.service bluetooth.service fstrim.timer irqbalance.service NetworkManager.service rtirq.service rtkit-daemon.service
 	sync
 }
 Install() {

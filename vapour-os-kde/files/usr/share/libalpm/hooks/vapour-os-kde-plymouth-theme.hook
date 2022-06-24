@@ -2,7 +2,6 @@
 Type = Package
 Operation = Install
 Target = vapour-os-kde
-Target = plymouth-git
 
 [Action]
 Description = Set Plymouth theme to breeze

@@ -3,7 +3,6 @@ Type = Package
 Operation = Install
 Operation = Upgrade
 Target = breeze
-Target = vapour-os-kde
 
 [Action]
 Description = Replace Plasma's default splash screen

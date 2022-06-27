@@ -6,6 +6,7 @@ pkgdesc='Vapour OS core system'
 arch=(x86_64)
 url='https://github.com/dankcuddlybear/vapourepo'
 install=vapour-os.install
+backup=('etc/skel/.profile' 'etc/skel/.config/yay/config.json' 'etc/udisks2/mount_options.conf')
 depends=(
 	# Minimal bootable system
 	'base' 'efibootmgr' 'linux-zen' 'linux-firmware' 'sudo'

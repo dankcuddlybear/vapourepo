@@ -1,0 +1,27 @@
+#!/bin/sh
+[ $(whoami) != "root" ] && echo "[ERROR] You must run this script with root priviliges." && exit 1
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+. $SCRIPT_DIR/diskinfo
+DEBUG=1
+
+# Find existing bootloader path used to boot the system
+BOOTCURRENT=$(efibootmgr | grep -sm 1 "BootCurrent: ")
+BOOTCURRENT=$(efibootmgr -v | grep -sm 1 Boot${BOOTCURRENT:13})
+BOOTCURRENT=$(echo $BOOTCURRENT | grep -o -P "(?<=\)/File\().*(?=.efi\))").efi
+
+# Create paths
+mkdir -p $BOOT_DIR/EFI/boot $BOOT_DIR/EFI/HackBGRT
+
+# Install HackBGRT to ESP
+cp -n $SCRIPT_DIR/HackBGRT/bootx64.efi $BOOT_DIR/EFI/boot/bootx64.efi
+cp $SCRIPT_DIR/HackBGRT/bootx64.efi $BOOT_DIR/EFI/HackBGRT/bootx64.efi
+cp -n $SCRIPT_DIR/HackBGRT/config.txt $BOOT_DIR/EFI/HackBGRT/config.txt
+
+# Create HackBGRT bootloader entry
+efibootmgr -c -d $BOOT_DISK -p $BOOT_PART -L "HackBGRT" -l "\EFI\HackBGRT\bootx64.efi"
+
+# Find number of HackBGRT bootloader entry
+BOOTNUM=$(efibootmgr | grep "HackBGRT" | cut -d '*' -f 1 | cut -c5-8)
+
+# Set HackBGRT bootloader entry active
+efibootmgr -o $BOOTNUM

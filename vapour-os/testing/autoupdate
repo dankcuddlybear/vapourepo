@@ -1,9 +1,17 @@
-#!/bin/sh
+#!/bin/bash
 
 ## The service is started when the system connects to the internet.
 ## Update databases then download packages, but do not install them.
 ## It will attempt to download updates up to 5 times if it fails
-#pacman -Syuw
+ATTEMPT=1; while (($ATTEMPT <= 5)); do
+	pacman --noconfirm -Syuqw && FAIL=0 || FAIL=1
+	((ATTEMPT++))
+done; [ $FAIL == 1 ] && exit 1
+
+##
+
+
+
 
 ## If no updates are available, skip this section
 

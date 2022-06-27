@@ -1,0 +1,4 @@
+﻿boot=\EFI\systemd\systemd-bootx64.efi
+image=black
+resolution=-1x-1
+debug=0

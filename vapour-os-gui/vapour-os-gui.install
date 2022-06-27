@@ -13,7 +13,7 @@ post_install() {
 #		rm /etc/vapour-os/backlight &> /dev/null
 #		rm /etc/vapour-os/min_brightness &> /dev/null
 #	fi
-}#
+#}
 pre_remove() {
 	#systemctl --now disable min_brightness.path min_brightness.service &> /dev/null
     rm /etc/vapour-os/backlight &> /dev/null

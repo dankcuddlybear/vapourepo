@@ -1,7 +1,7 @@
 # Maintainer: dankcuddlybear <dankcuddlybear@protonmail.com>
 pkgname=vapour-os-gui
 pkgver=1.1.5
-pkgrel=1
+pkgrel=2
 pkgdesc='Vapour OS GUI libs/scripts/services - uses X11 and Pipewire.'
 arch=(any)
 url='https://github.com/dankcuddlybear/Vapour-OS'

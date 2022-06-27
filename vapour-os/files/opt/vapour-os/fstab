@@ -24,6 +24,7 @@ if [ ! -z "$PUBLIC_DEV" ]; then
 	echo "## Public partition" >> /etc/fstab
 	echo "UUID=$PUBLIC_UUID /public ext4 noatime,noauto,x-systemd.automount 0 2" >> /etc/fstab
 	echo "" >> /etc/fstab
+fi
 if [ -d /home/guest ]; then
 	echo "## Guest home" >> /etc/fstab
 	echo "tmpfs /home/guest tmpfs nodev,nosuid,size=1G,noauto,x-systemd.automount 0 0" >> /etc/fstab

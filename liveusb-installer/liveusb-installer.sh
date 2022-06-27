@@ -118,10 +118,10 @@ read -p "When you are ready, press enter to continue or CTRL+C to abort installa
 # Unmount any mounted filesystems
 echo "Unmounting filesystems..."
 umount -f "$BOOT_DEV"
-[ ! -z "$HOME_DEV" ] && umount -f "$HOME_DEV"
-[ ! -z "$MEDIA_DEV" ] && umount -f "$MEDIA_DEV"
-[ ! -z "$PUBLIC_DEV" ] && umount -f "$PUBLIC_DEV"
-umount -f "$ROOT_DEV"
+[ ! -z "$HOME_DEV" ] && umount -f "$HOME_DEV" &> /dev/null
+[ ! -z "$MEDIA_DEV" ] && umount -f "$MEDIA_DEV" &> /dev/null
+[ ! -z "$PUBLIC_DEV" ] && umount -f "$PUBLIC_DEV" &> /dev/null
+umount -f "$ROOT_DEV" &> /dev/null
 # Format any filesystems marked for formatting
 [ $FORMAT_ROOT == 1 ] || [ $FORMAT_BOOT == 1 ] || [ $FORMAT_HOME == 1 ] || \
 [ $FORMAT_MEDIA == 1 ] || [ $FORMAT_PUBLIC == 1 ] && echo "Formatting partitions..."
@@ -248,8 +248,8 @@ if [ ! -z $GRAPHICAL ]; then # GRAPHICAL is set
 		if [ $GRAPHICAL == 2 ]; then echo "pacman --needed --noconfirm -Syu lib32-vapour-os-gui || exit 1" >> /mnt/etc/vapour-os/chroot-cfg
 		else echo "pacman --needed --noconfirm -Syu vapour-os-gui || exit 1" >> /mnt/etc/vapour-os/chroot-cfg; fi
 		# Detect and install GPU drivers
-		echo ". /opt/vapour-os/vapour-os/gui/gpuinfo" >> /mnt/etc/vapour-os/chroot-cfg
-		echo "if [ \$GPU0 == \"amd\" ] || [ \$GPU1 == \"amd\" ]; then"
+		echo ". /opt/vapour-os/vapour-os/gui-gpuinfo" >> /mnt/etc/vapour-os/chroot-cfg
+		echo "if [ \$GPU0 == \"amd\" ] || [ \$GPU1 == \"amd\" ]; then" >> /mnt/etc/vapour-os/chroot-cfg
 		echo "    pacman --needed --noconfirm -Syu vapour-os-amdgpu || exit 1" >> /mnt/etc/vapour-os/chroot-cfg
 		echo "    pacman --asdeps -D vapour-os-gui" >> /mnt/etc/vapour-os/chroot-cfg
 		echo "fi" >> /mnt/etc/vapour-os/chroot-cfg

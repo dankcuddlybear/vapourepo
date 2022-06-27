@@ -20,8 +20,4 @@ cp -n $SCRIPT_DIR/HackBGRT/config.txt $BOOT_DIR/EFI/HackBGRT/config.txt
 # Create HackBGRT bootloader entry
 efibootmgr -c -d $BOOT_DISK -p $BOOT_PART -L "HackBGRT" -l "\EFI\HackBGRT\bootx64.efi"
 
-# Find number of HackBGRT bootloader entry
-BOOTNUM=$(efibootmgr | grep "HackBGRT" | cut -d '*' -f 1 | cut -c5-8)
-
-# Set HackBGRT bootloader entry active
-efibootmgr -o $BOOTNUM
+echo "HackBGRT has been installed. Don't forget to set it as the first boot option in your UEFI settings."

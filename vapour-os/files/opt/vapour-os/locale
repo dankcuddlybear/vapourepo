@@ -10,12 +10,12 @@ echo "" >> /etc/locale.gen
 locale-gen
 echo "LANG=$LOCALE.UTF-8" > /etc/locale.conf
 echo "LANGUAGE=$LOCALE:en_US:en" >> /etc/locale.conf
-echo "LC_CTYPE=$LOCALE.UTF-8" >> /etc/locale.conf
-echo "LC_NUMERIC=$LOCALE.UTF-8" >> /etc/locale.conf
-echo "LC_TIME=$LOCALE.UTF-8" >> /etc/locale.conf
+echo "LC_CTYPE=$LOCALE.UTF-8" >> /etc/locale.conf #
+echo "LC_NUMERIC=$LOCALE.UTF-8" >> /etc/locale.conf #
+echo "LC_TIME=$LOCALE.UTF-8" >> /etc/locale.conf #
 echo "LC_COLLATE=C" >> /etc/locale.conf
 echo "LC_MONETARY=$LOCALE.UTF-8" >> /etc/locale.conf
-echo "LC_MESSAGES=$LOCALE.UTF-8" >> /etc/locale.conf
+echo "LC_MESSAGES=$LOCALE.UTF-8" >> /etc/locale.conf #
 echo "LC_PAPER=$LOCALE.UTF-8" >> /etc/locale.conf
 echo "LC_NAME=$LOCALE.UTF-8" >> /etc/locale.conf
 echo "LC_ADDRESS=$LOCALE.UTF-8" >> /etc/locale.conf

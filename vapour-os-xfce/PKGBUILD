@@ -1,6 +1,6 @@
 # Maintainer: dankcuddlybear <dankcuddlybear@protonmail.com>
 pkgname=vapour-os-xfce
-pkgver=1.1.1
+pkgver=1.1.2
 pkgrel=1
 pkgdesc='Vapour OS XFCE4 desktop and utilities'
 arch=(any)
@@ -15,13 +15,14 @@ depends=('gvfs-afc'
 	'gvfs-smb'
 	'lightdm-gtk-greeter'
 	'mousepad'
+	'network-manager-applet'
 	'ristretto'
 	'thunar-archive-plugin'
 	'thunar-media-tags-plugin'
 	'thunar-volman'
 	'vapour-os-gui'
 	'xarchiver'
-	'xfce4-appfinder'
+	#'xfce4-appfinder'
 	'xfce4-battery-plugin'
 	'xfce4-clipman-plugin'
 	'xfce4-cpufreq-plugin'
@@ -48,7 +49,6 @@ depends=('gvfs-afc'
 	'xfce4-terminal'
 	'xfce4-timer-plugin'
 	'xfce4-verve-plugin'
-	'xfce4-wavelan-plugin'
 	'xfce4-weather-plugin'
 	'xfdesktop'
 	'xfwm4'

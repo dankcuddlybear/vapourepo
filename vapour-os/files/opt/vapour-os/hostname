@@ -2,7 +2,7 @@
 [ $(whoami) != "root" ] && echo "[ERROR] You must run this script with root priviliges." && exit 1
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 HOST_NAME=$1
-[ -z $HOST_NAME ] && echo "[ERROR] You must specify a hostname!" && exit 1
+[ -z $HOST_NAME ] && echo "[ERROR] No hostname specified - will default to vapour-os." && exit 1
 echo $HOST_NAME > /etc/hostname
 echo "127.0.0.1 localhost" > /etc/hosts
 echo "::1 localhost" >> /etc/hosts

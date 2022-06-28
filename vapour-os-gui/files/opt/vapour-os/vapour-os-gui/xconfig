@@ -21,24 +21,34 @@ if [ ! -z $GPU1 ]; then
 	[ $GPU1 != "nvidia" ] && rm /etc/X11/xorg.conf.d/20-nvidia-secondary.conf &> /dev/null
 fi
 
-## Copy whatever configs we need to /etc/X11/xorg.conf.d (do not overwrite existing configs)
-[ $GPU0 == "amd" ] && cp -n /opt/vapour-os/vapour-os-gui/20-amdgpu.conf /etc/X11/xorg.conf.d/20-amdgpu.conf
-[ $GPU0 == "intel" ] && cp -n /opt/vapour-os/vapour-os-gui/20-intel.conf /etc/X11/xorg.conf.d/20-intel.conf
-[ $GPU0 == "nvidia" ] && cp -n /opt/vapour-os/vapour-os-gui/20-nvidia.conf /etc/X11/xorg.conf.d/20-nvidia.conf
-if [ ! -z $GPU1 ]; then
-	[ $GPU1 == "amd" ] && cp -n /opt/vapour-os/vapour-os-gui/20-amdgpu.conf /etc/X11/xorg.conf.d/20-amdgpu-secondary.conf
-	[ $GPU1 == "intel" ] && cp -n /opt/vapour-os/vapour-os-gui/20-intel.conf /etc/X11/xorg.conf.d/20-intel-secondary.conf
-	[ $GPU1 == "nvidia" ] && cp -n /opt/vapour-os/vapour-os-gui/20-nvidia.conf /etc/X11/xorg.conf.d/20-nvidia-secondary.conf
+## Configure primary and secondary GPUs (do not overwrite existing configs except new BusID)
+## qemu-std reqires no configuration
+if [ $GPU0 == "amd" ]; then
+	cp -n /opt/vapour-os/vapour-os-gui/20-amdgpu.conf /etc/X11/xorg.conf.d/20-amdgpu.conf
+	PIDENT="AMD Graphics"
+	$SCRIPT_DIR/gpuconfig 20-amdgpu.conf $GPU0_BUSID "$PIDENT"
+elif [ $GPU0 == "intel" ]; then
+	cp -n /opt/vapour-os/vapour-os-gui/20-intel.conf /etc/X11/xorg.conf.d/20-intel.conf
+	PIDENT="Intel Graphics"
+	$SCRIPT_DIR/gpuconfig 20-intel.conf $GPU0_BUSID "$PIDENT"
+elif [ $GPU0 == "nvidia" ]; then
+	cp -n /opt/vapour-os/vapour-os-gui/20-nvidia.conf /etc/X11/xorg.conf.d/20-nvidia.conf
+	PIDENT="Nvidia Graphics" && $SCRIPT_DIR/gpuconfig 20-nvidia.conf $GPU0_BUSID "$PIDENT"
 fi
-
-## Set bus ID and identifier for each GPU
-[ $GPU0 == "amd" ] && PIDENT="AMD Graphics" && $SCRIPT_DIR/gpuconfig 20-amdgpu.conf $GPU0_BUSID "$PIDENT"
-[ $GPU0 == "intel" ] && PIDENT="Intel Graphics" && $SCRIPT_DIR/gpuconfig 20-intel.conf $GPU0_BUSID "$PIDENT"
-[ $GPU0 == "nvidia" ] && PIDENT="Nvidia Graphics" && $SCRIPT_DIR/gpuconfig 20-nvidia.conf $GPU0_BUSID "$PIDENT"
 if [ ! -z $GPU1 ]; then
-	[ $GPU1 == "amd" ] && $SCRIPT_DIR/gpuconfig 20-amdgpu-secondary.conf $GPU1_BUSID "AMD Dedicated Graphics"
-	[ $GPU1 == "intel" ] && $SCRIPT_DIR/gpuconfig 20-intel-secondary.conf $GPU1_BUSID "Intel Dedicated Graphics"
-	[ $GPU1 == "nvidia" ] && $SCRIPT_DIR/gpuconfig 20-nvidia-secondary.conf $GPU1_BUSID "Nvidia Dedicated Graphics"
+	if [ $GPU1 == "amd" ]; then
+		cp -n /opt/vapour-os/vapour-os-gui/20-amdgpu.conf /etc/X11/xorg.conf.d/20-amdgpu-secondary.conf
+		SIDENT="AMD Dedicated Graphics"
+		$SCRIPT_DIR/gpuconfig 20-amdgpu-secondary.conf $GPU1_BUSID "$SIDENT"
+	elif [ $GPU1 == "intel" ]; then
+		cp -n /opt/vapour-os/vapour-os-gui/20-intel.conf /etc/X11/xorg.conf.d/20-intel-secondary.conf
+		SIDENT="Intel Dedicated Graphics"
+		$SCRIPT_DIR/gpuconfig 20-intel-secondary.conf $GPU1_BUSID "$SIDENT"
+	elif [ $GPU1 == "nvidia" ]; then
+		cp -n /opt/vapour-os/vapour-os-gui/20-nvidia.conf /etc/X11/xorg.conf.d/20-nvidia-secondary.conf
+		SIDENT="Nvidia Dedicated Graphics"
+		$SCRIPT_DIR/gpuconfig 20-nvidia-secondary.conf $GPU1_BUSID "$SIDENT"
+	fi
 fi
 
 ## Set Screen

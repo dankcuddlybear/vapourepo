@@ -3,7 +3,7 @@
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 DISPLAY_SIZE=$1
 # Error handling
-[ -z $DISPLAY_SIZE ] && echo "[ERROR] You must specify screen size in inches!" && exit 1
+[ -z $DISPLAY_SIZE ] && echo "[ERROR] Screen size in inches not specified - applications will default to 96dpi." && exit 1
 
 # Get framebuffer resolution, then calculate DPI
 PIXELS_X=$(cat /sys/class/graphics/fb0/virtual_size | cut -d , -f 1)

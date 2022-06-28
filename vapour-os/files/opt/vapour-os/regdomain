@@ -2,6 +2,6 @@
 [ $(whoami) != "root" ] && echo "[ERROR] You must run this script with root priviliges." && exit 1
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 REGDOMAIN=$1
-[ -z $REGDOMAIN ] && echo "[ERROR] You must specify a wireless regulatory domain!" && exit 1
+[ -z $REGDOMAIN ] && echo "[ERROR] No wireless regulatory domain specified." && exit 1
 iw reg set $REGDOMAIN
 echo "WIRELESS_REGDOM=\"$REGDOMAIN\"" > /etc/conf.d/wireless-regdom

@@ -2,7 +2,7 @@
 [ $(whoami) != "root" ] && echo "[ERROR] You must run this script with root priviliges." && exit 1
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 LOCALE=$1
-[ -z $LOCALE ] && echo "[ERROR] You must specify a locale!" && exit 1
+[ -z $LOCALE ] && echo "[ERROR] No locale specified - will default to en_US" && exit 1
 localectl set-locale $LOCALE
 echo "$LOCALE.UTF-8 UTF-8" > /etc/locale.gen
 echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen

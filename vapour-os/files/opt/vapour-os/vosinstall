@@ -22,6 +22,7 @@ Upgrade() {
 	
 	# Enable and start systemd units
 	systemctl --now enable ananicy-cpp.service auto-cpufreq.service avahi-daemon.service fstrim.timer irqbalance.service NetworkManager.service rtirq.service rtkit-daemon.service
+	
 	sync
 }
 Install() {
@@ -41,10 +42,8 @@ Install() {
 	setterm -cursor on >> /etc/issue # Silent boot cursor fix
 	
 	# Configure system settings
-	$SCRIPT_DIR/bootloader
 	if [ -f /etc/vapour-os/install.conf ]; then
 		. /etc/vapour-os/install.conf
-		rm -f /etc/fstab; $SCRIPT_DIR/fstab
 		$SCRIPT_DIR/locale $LOCALE
 		$SCRIPT_DIR/keymap $KEYMAP
 		$SCRIPT_DIR/timezone $TIMEZONE
@@ -53,13 +52,16 @@ Install() {
 		$SCRIPT_DIR/regdomain $REGDOMAIN
 		$SCRIPT_DIR/guest $GUEST
 		$SCRIPT_DIR/dict $WORDS
-		[ $HACKBGRT == 1 ] && $SCRIPT_DIR/hackbgrt-install
+		[ ! -z $HACKBGRT ] && [ $HACKBGRT == 1 ] && $SCRIPT_DIR/hackbgrt-install
 	fi
+	rm -f /etc/fstab; $SCRIPT_DIR/fstab
+	$SCRIPT_DIR/bootloader
 	$SCRIPT_DIR/initramfs
 
 	# Set environment variables
-	[ -z $($SCRIPT_DIR/setvar query /etc/environment EDITOR) ] && $SCRIPT_DIR/setvar set /etc/environment EDITOR "/usr/bin/nano"
-	[ -z $($SCRIPT_DIR/setvar query /etc/environment GTK_USE_PORTAL) ] && $SCRIPT_DIR/setvar set /etc/environment GTK_USE_PORTAL "1"
+	. /etc/environment
+	[ -z $EDITOR ] && $SCRIPT_DIR/setvar set /etc/environment EDITOR "/usr/bin/nano"
+	[ -z $GTK_USE_PORTAL ] && $SCRIPT_DIR/setvar set /etc/environment GTK_USE_PORTAL "1"
 	
 	bootctl install --esp-path=/boot
 	Upgrade

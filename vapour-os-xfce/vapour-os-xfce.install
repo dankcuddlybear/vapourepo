@@ -1,6 +1,6 @@
 post_install() {
 	systemctl enable lightdm-plymouth.service && PLYMOUTH=1
-	if [ $PLYMOUTH == 1 ]; then
+	if [ ! -z $PLYMOUTH ] && [ $PLYMOUTH == 1 ]; then
 		systemctl disable lightdm.service
 		echo "LightDM enabled - please reboot or start lightdm-plymouth.service"
 		echo "Don't forget to stop lightdm.service if it is running"

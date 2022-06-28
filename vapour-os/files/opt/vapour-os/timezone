@@ -2,5 +2,6 @@
 [ $(whoami) != "root" ] && echo "[ERROR] You must run this script with root priviliges." && exit 1
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 TIMEZONE=$1
-[ -z $TIMEZONE ] && echo "[ERROR] You must specify a time zone!" && exit 1
+[ -z $TIMEZONE ] && echo "[ERROR] No time zone specified - will default to UTC" && exit 1
 ln -sf /usr/share/zoneinfo/$TIMEZONE /etc/localtime
+timedatectl set-timezone $TIMEZONE

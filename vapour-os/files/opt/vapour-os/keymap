@@ -4,7 +4,7 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 KEYMAP=$1
 [ -z $KEYMAP ] && echo "[ERROR] No keymap specified - will default to US." && exit 1
 
-mkdir -P /etc/X11/xorg.conf.d
+mkdir -p /etc/X11/xorg.conf.d
 localectl set-keymap $KEYMAP
 XKEYMAP=$(localectl | grep -sm 1 "X11 Layout" | cut -c19-30)
 $SCRIPT_DIR/setvar set /etc/vconsole.conf KEYMAP $KEYMAP

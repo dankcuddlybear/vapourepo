@@ -56,5 +56,5 @@ else
 		echo $GPU1_DATA | grep -iqs "QXL" && GPU1="qxl"
 		echo $GPU1_DATA | grep -iqs "Virtio GPU" && GPU1="virtio-gpu"
 		[ -z $GPU1 ] && echo "[WARNING] Could not determine secondary GPU!"
-	fi
+	else GPU1="none"; fi
 fi

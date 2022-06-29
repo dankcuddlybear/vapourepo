@@ -1,7 +1,7 @@
 #!/bin/bash
 [ $(whoami) != "root" ] && echo "[ERROR] You must run this script with root priviliges." && exit 1
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-. $SCRIPT_DIR/gpuinfo # Get GPU info
+. $SCRIPT_DIR/../gpuinfo # Get GPU info
 ## This script will automatically configure up to 2 GPUs, 1 screen and 1 serverlayout.
 ## The secondary GPU config will always have "-secondary" appended to its filename,
 ## in order to avoid conflicts when 2 GPUs of the same type are installed

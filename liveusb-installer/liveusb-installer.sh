@@ -133,7 +133,7 @@ sync
 # Bootstrap packages. If it fails for some reason, abort installation.
 [ $CPU == "amd" ] && PKG_PACSTRAP_EXTRA="amd-ucode"
 [ $CPU == "intel" ] && PKG_PACSTRAP_EXTRA="intel-ucode"
-[ $ACCELEROMETER == 1 ] && PKG_PACSTRAP_EXTRA="$PKG_PACSTRAP_EXTRA hdapsd"
+[ ! -z $ACCELEROMETER ] && [ $ACCELEROMETER == 1 ] && PKG_PACSTRAP_EXTRA="$PKG_PACSTRAP_EXTRA hdapsd"
 pacstrap /mnt base sudo $PKG_PACSTRAP_EXTRA || exit 1
 sync
 
@@ -144,7 +144,7 @@ cp $SCRIPT_DIR/chroot-setup.sh /mnt/etc/vapour-os/chroot-setup.sh
 
 # Begin chroot install
 sync
-arch-chroot /mnt '/etc/vapour-os/chroot-cfg' || exit 1
+arch-chroot /mnt '/etc/vapour-os/chroot-setup.sh' || exit 1
 
 # The system is now bootable
 sync

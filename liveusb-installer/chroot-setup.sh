@@ -10,6 +10,14 @@ SetProgress() {
 }
 
 if [ $PROGRESS == 0 ]; then
+	## Add Chaotic keys and mirrors
+	pacman-key --recv-key FBA220DFC880C036 --keyserver keyserver.ubuntu.com || exit 1
+	pacman-key --lsign-key FBA220DFC880C036
+	pacman --noconfirm --asdeps -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst' 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst' || exit 1
+	SetProgress 1; sync
+fi
+
+if [ $PROGRESS == 1 ]; then
 	## Configure Sudo (don't ask for password for automated install)
 	echo "root ALL=(ALL:ALL) ALL" > /etc/sudoers
 	echo "%wheel ALL=(ALL:ALL) NOPASSWD:ALL" >> /etc/sudoers
@@ -49,24 +57,21 @@ if [ $PROGRESS == 0 ]; then
 	echo "[vapourepo]" >> /etc/pacman.conf
 	echo "SigLevel = Optional DatabaseOptional" >> /etc/pacman.conf
 	echo "Server = https://raw.githubusercontent.com/dankcuddlybear/\$repo/main/__PKG" >> /etc/pacman.conf
-	SetProgress 1; sync
-fi
-
-if [ $PROGRESS == 1 ]; then
-	## Add Chaotic keys and mirrors
-	pacman-key --recv-key FBA220DFC880C036 --keyserver keyserver.ubuntu.com || exit 1
-	pacman-key --lsign-key FBA220DFC880C036
-	pacman --noconfirm --asdeps -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst' 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst' || exit 1
 	SetProgress 2; sync
 fi
 
 if [ $PROGRESS == 2 ]; then
-## Install Vapour OS
+	## Create an invalid mkinitcpio.conf so mkinitcpio will fail.
+	## The initramfs will be built later anyway so this will save some time.
+	echo "-null-" > /etc/mkinitcpio.conf
+	
+	## Install Vapour OS
 	if [ -z $GRAPHICAL ]; then GRAPHICAL=0; elif [ $GRAPHICAL != 1 ] && [ $GRAPHICAL != 2 ]; then GRAPHICAL=0; fi
 	if [ $GRAPHICAL == 2 ]; then pacman --needed --noconfirm -Syu lib32-vapour-os-gui || exit 1
 	elif [ $GRAPHICAL == 1 ]; then pacman --needed --noconfirm -Syu vapour-os-gui || exit 1
-	elif [ $GRAPHICAL == 0 ]; then pacman --needed --noconfirm -Syu vapour-os || exit 1
+	elif [ $GRAPHICAL == 0 ]; then pacman --needed --noconfirm -Syu vapour-os || exit 1; fi
 	pacman --asdeps -D base sudo
+	rm -f /etc/mkinitcpio.conf.pacnew &> /dev/null
 	SetProgress 3; sync
 fi
 

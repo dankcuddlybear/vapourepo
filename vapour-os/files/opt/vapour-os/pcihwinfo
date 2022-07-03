@@ -24,9 +24,14 @@ for ENTRY in $PCI_DEVICES; do
 			echo "Found AMD graphics at $BUS:$DEV:$FUN"
 		elif [ "$VENDOR" == "Intel Corporation" ]; then
 			INTEL_LEGACY=0
-			if [[ $DEVICE != *"[UHD Graphics]"* ]]; then
-				#"2nd Generation Core Processor Family Integrated Graphics Controller"
-				if [[ $DEVICE == *" Generation "* ]]; then
+			if [[ $DEVICE != *"[UHD Graphics]"* ]] && [[ $DEVICE != *"CometLake"* ]] && [[ $DEVICE != *"Skylake"* ]]; then
+				#2nd Generation Core Processor Family Integrated Graphics Controller
+				#3rd Gen Core processor Graphics Controller
+				#4 Series Chipset Integrated Graphics Controller
+				#4th Gen Core Processor Integrated Graphics Controller
+				#4th Generation Core Processor Family Integrated Graphics Controller
+				#82945G/GZ Integrated Graphics Controller
+				if [[ $DEVICE == *" Generation "* ]] || [[ $DEVICE == *" Gen "* ]]; then
 					INTEL_GEN=$(echo "$DEVICE" | cut -d ' ' -f 1 | cut -c1)
 					if (($INTEL_GEN < 8)); then INTEL_LEGACY=1; fi
 				fi

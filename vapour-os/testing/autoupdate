@@ -1,13 +1,25 @@
 #!/bin/bash
+[ $(whoami) != "root" ] && echo "[ERROR] You must run this script with root priviliges." && exit 1
+
+Log() {
+	echo "$(date +[%Y-%m-%dT%H:%M:%S%z]) [VAPOUR-OS] $1" >> /var/log/pacman.log
+}
 
 ## The service is started when the system connects to the internet.
 ## Update databases then download packages, but do not install them.
 ## It will attempt to download updates up to 5 times if it fails
+Log "Starting automatic update..."
 ATTEMPT=1; while (($ATTEMPT <= 5)); do
 	pacman --noconfirm -Syuqw && FAIL=0 || FAIL=1
-	((ATTEMPT++))
-done; [ $FAIL == 1 ] && exit 1
-
+	if [ $FAIL == 1 ]; then
+		(($ATTEMPT < 5)) && Log "Failed to download updates, retrying..."
+		((ATTEMPT++))
+	fi
+done;
+if [ $FAIL == 1 ]; then
+	echo "Failed to download updates 5 times, exiting..."
+	exit 1
+fi
 ##
 
 

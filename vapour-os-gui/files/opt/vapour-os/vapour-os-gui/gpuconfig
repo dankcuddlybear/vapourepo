@@ -11,7 +11,7 @@ PrintHelp() {
 }
 # Error handling
 [ -z "$FILENAME" ] && echo "[ERROR] You must specify a file name!" && PrintHelp && exit 1
-[ ! -f "/etc/X11/xorg.conf.d/$FILENAME" ] && echo "[ERROR] File does not exist!" && exit 1
+[ ! -f "/etc/X11/xorg.conf.d/$FILENAME" ] && echo "[ERROR] File \"/etc/X11/xorg.conf.d/$FILENAME\" does not exist!" && exit 1
 [ -z $BUSID ] && echo "[ERROR] You must specify a BusID!" && PrintHelp && exit 1
 [ -z "$IDENT" ] && echo "[ERROR] You must specify an GPU identifier!" && PrintHelp && exit 1
 

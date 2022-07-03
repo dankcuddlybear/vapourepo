@@ -17,8 +17,6 @@ for ENTRY in $PCI_DEVICES; do
 	## Configure GPUs
 	if [ $CLASS == "VGA compatible controller" ]; then
 		if [ -z $GPUNO ]; then GPUNO=0; elif [ $GPUNO == 0 ]; then GPUNO=1; elif [ $GPUNO == 1 ]; then GPUNO=2; fi
-		
-		## Physical GPUs
 		if [ "$VENDOR" == "Advanced Micro Devices, Inc. [AMD/ATI]" ]; then
 			GPU="amd"
 			echo "Found AMD graphics at $BUS:$DEV:$FUN"
@@ -31,7 +29,7 @@ for ENTRY in $PCI_DEVICES; do
 				#4th Gen Core Processor Integrated Graphics Controller
 				#4th Generation Core Processor Family Integrated Graphics Controller
 				#82945G/GZ Integrated Graphics Controller
-				if [[ $DEVICE == *" Generation "* ]] || [[ $DEVICE == *" Gen "* ]]; then
+				if [[ $DEVICE == *" Generation "* ]] || [[ $DEVICE == *" Gen "* ]] || [[ $DEVICE == *" Series "* ]]; then
 					INTEL_GEN=$(echo "$DEVICE" | cut -d ' ' -f 1 | cut -c1)
 					if (($INTEL_GEN < 8)); then INTEL_LEGACY=1; fi
 				fi
@@ -46,9 +44,7 @@ for ENTRY in $PCI_DEVICES; do
 		elif [ "$VENDOR" == "NVIDIA Corporation" ]; then
 			GPU="nvidia"
 			echo "Found Nvidia graphics at $BUS:$DEV:$FUN"
-		
-		## Virtual GPUs
-		elif [ "$VENDOR" == "Vendor 1234" -a "$DEVICE" == "Device 1111" ] || [ "$VENDOR" == "Vendor 4321" -a "$DEVICE" == "Device 1111" ]
+		elif [ "$VENDOR" == "Vendor 1234" -a "$DEVICE" == "Device 1111" ] || [ "$VENDOR" == "Vendor 4321" -a "$DEVICE" == "Device 1111" ]; then
 			GPU="std"
 			echo "Found STDVGA graphics at $BUS:$DEV:$FUN"
 		elif [ "$VENDOR" == "Red Hat, Inc." -a "$DEVICE" == "Virtio GPU" ]; then
@@ -57,8 +53,6 @@ for ENTRY in $PCI_DEVICES; do
 		elif [ "$VENDOR" == "Red Hat, Inc." -a "$DEVICE" == "QXL paravirtual graphic card" ]; then
 			GPU="qxl"
 			echo "Found QXL graphics at $BUS:$DEV:$FUN"
-		
-		## Not recommended, do not use these
 		elif [ "$VENDOR" == "VMware" ]; then
 			GPU="vmware"
 			echo "Found VMware graphics at $BUS:$DEV:$FUN"
@@ -67,8 +61,6 @@ for ENTRY in $PCI_DEVICES; do
 			GPU="cirrus"
 			echo "Found Cirrus graphics at $BUS:$DEV:$FUN"
 			echo "[WARNING] Cirrus graphics are extremely outdated and not officially supported by Vapour OS. You should use Virtio (if possible), QXL or STD."
-		
-		## Other
 		else GPU="unknown"; echo "[WARNING] Unrecognised GPU, skipping configuration for $SLOT $CLASS: $VENDOR $DEVICE"; fi
 		
 		if [ $GPUNO == 0 ]; then

@@ -1,22 +1,26 @@
 # Maintainer: dankcuddlybear <dankcuddlybear@protonmail.com>
 pkgname=vapour-os-gnome
-pkgver=1.1.1
+pkgver=1.1.2
 pkgrel=1
 pkgdesc='Vapour OS GNOME X11/Wayland shell'
 arch=(any)
 url='https://github.com/dankcuddlybear/Vapour-OS'
 install=vapour-os-gnome.install
-depends=('eog'
+depends=('adwaita-qt5'
+	'adwaita-qt6'
+	'eog'
     'evince'
     'file-roller'
-    'gdm-plymouth'
+    'gdm'
     'gedit'
     'ghex'
     'gnome-calculator'
     'gnome-characters'
     'gnome-control-center'
     'gnome-font-viewer'
+    'gnome-initial-setup'
     'gnome-menus'
+    'gnome-shell-extension-dash-to-dock'
     'gnome-shell-extensions'
     'gnome-sound-recorder'
     'gnome-system-monitor'
@@ -33,6 +37,9 @@ depends=('eog'
     'gvfs-smb'
     'nautilus-sendto'
     'nautilus-share'
+    'networkmanager'
+    'qt5ct'
+    'qt6ct'
     'seahorse'
     'seahorse-nautilus'
     'sushi'

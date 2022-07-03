@@ -78,13 +78,16 @@ fi
 if [ $PROGRESS == 3 ]; then
 	## Install graphics drivers
 	if [ $GRAPHICAL != 0 ]; then
-		. /opt/vapour-os/vapour-os-gui/gpuinfo
+		. /opt/vapour-os/vapour-os-gui/pcihwinfo
 		if [ $GPU0 == "amd" ] || [ $GPU1 == "amd" ]; then
 			pacman --needed --noconfirm -Syu vapour-os-amdgpu || exit 1
 			pacman --asdeps -D vapour-os-gui
 		fi
 		if [ $GPU0 == "intel" ] || [ $GPU1 == "intel" ]; then
 			pacman --needed --noconfirm -Syu vapour-os-i915 || exit 1
+			pacman --asdeps -D vapour-os-gui
+		if [ $GPU0 == "intel-legacy" ] || [ $GPU1 == "intel-legacy" ]; then
+			pacman --needed --noconfirm -Syu vapour-os-i915-legacy || exit 1
 			pacman --asdeps -D vapour-os-gui
 		fi
 		if [ $GPU0 == "nvidia" ] || [ $GPU1 == "nvidia" ]; then

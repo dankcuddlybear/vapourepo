@@ -56,7 +56,7 @@ Install() {
 	fi
 	rm -f /etc/fstab; $SCRIPT_DIR/fstab
 	$SCRIPT_DIR/bootloader
-	$SCRIPT_DIR/initramfs
+	if [ ! -z $NO_SD_VCONSOLE -a $NO_SD_VCONSOLE == 1 ]; then $SCRIPT_DIR/initramfs --novc; else $SCRIPT_DIR/initramfs; fi
 
 	# Set environment variables
 	. /etc/environment

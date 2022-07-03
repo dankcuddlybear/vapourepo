@@ -1,0 +1,18 @@
+pre_install() {
+	echo "Thank you for choosing Vapour OS. Installation will begin now..."
+}
+post_remove() {
+	rm -rf /etc/vapour-os /opt/vapour-os /boot/loader/entries/vapour-os.conf /boot/loader/entries/vapour-os-fallback.conf
+}
+pre_remove() {
+	systemctl --now disable ananicy-cpp.service avahi-daemon.service fstrim.timer irqbalance.service rtirq.service
+}
+post_remove() {
+	rm -rf /etc/vapour-os /opt/vapour-os /boot/loader/entries/vapour-os.conf /boot/loader/entries/vapour-os-fallback.conf
+}
+pre_remove() {
+	systemctl --now disable ananicy-cpp.service avahi-daemon.service fstrim.timer irqbalance.service rtirq.service
+}
+post_remove() {
+	rm -rf /etc/vapour-os /opt/vapour-os /boot/loader/entries/vapour-os.conf /boot/loader/entries/vapour-os-fallback.conf
+}

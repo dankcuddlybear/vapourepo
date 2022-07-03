@@ -1,7 +1,7 @@
 # Maintainer: dankcuddlybear <dankcuddlybear@protonmail.com>
 pkgname=vapour-os-i915
 pkgver=1.1.6
-pkgrel=1
+pkgrel=2
 pkgdesc='Vapour OS Intel GPU drivers for OpenGL, Vulkan, OpenCL and hardware video acceleration. For gen 5 (Broadwell) or later. WARNING: Some module options taint the kernel.'
 arch=(x86_64)
 url='https://github.com/dankcuddlybear/Vapour-OS'
@@ -13,7 +13,7 @@ depends=('intel-compute-runtime'
     'vulkan-intel'
 )
 provides=('vapour-os-gpudriver')
-conflicts=('vapour-os-i915-ivy')
+conflicts=('vapour-os-i915-legacy')
 package() {
 	cd "$srcdir"
 	cd ../

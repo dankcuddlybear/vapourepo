@@ -5,7 +5,7 @@
 # If the /media partition exists, create the user directory inside it (with same permissions as home directory) if it does not exist,
 # then set all XDG user dirs (except Desktop) to be inside /media/$USER.
 # If there is no /media partition, set all XDG user dirs to be inside /home/$USER instead (the default).
-if [ ! -z $MEDIA_DEV ] && [ $USER != "guest" ]; then
+if [ ! -z $MEDIA_DEV ] && [ $USER != "guest" ] && [ -f /usr/bin/xdg-user-dirs-update ]; then
 	mkdir -p /media/$USER/Downloads \
 	/media/$USER/Templates \
 	/media/$USER/Public \

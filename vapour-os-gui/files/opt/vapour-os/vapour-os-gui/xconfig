@@ -14,10 +14,12 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 ## Remove unused configs
 [ $GPU0 != "amd" ] && rm /etc/X11/xorg.conf.d/20-amdgpu.conf &> /dev/null
 [ $GPU0 != "intel" ] && rm /etc/X11/xorg.conf.d/20-intel.conf &> /dev/null
+[ $GPU0 != "intel-legacy" ] && rm /etc/X11/xorg.conf.d/20-intel-legacy.conf &> /dev/null
 [ $GPU0 != "nvidia" ] && rm /etc/X11/xorg.conf.d/20-nvidia.conf &> /dev/null
 if [ ! -z $GPU1 ]; then
 	[ $GPU1 != "amd" ] && rm /etc/X11/xorg.conf.d/20-amdgpu-secondary.conf &> /dev/null
 	[ $GPU1 != "intel" ] && rm /etc/X11/xorg.conf.d/20-intel-secondary.conf &> /dev/null
+	[ $GPU1 != "intel-legacy" ] && rm /etc/X11/xorg.conf.d/20-intel-legacy-secondary.conf &> /dev/null
 	[ $GPU1 != "nvidia" ] && rm /etc/X11/xorg.conf.d/20-nvidia-secondary.conf &> /dev/null
 fi
 
@@ -30,6 +32,10 @@ if [ $GPU0 == "amd" ]; then
 elif [ $GPU0 == "intel" ]; then
 	cp -n /opt/vapour-os/vapour-os-gui/20-intel.conf /etc/X11/xorg.conf.d/20-intel.conf
 	PIDENT="Intel Graphics"
+	$SCRIPT_DIR/gpuconfig 20-intel-legacy.conf $GPU0_BUSID "$PIDENT"
+elif [ $GPU0 == "intel-legacy" ]; then
+	cp -n /opt/vapour-os/vapour-os-gui/20-intel-legacy.conf /etc/X11/xorg.conf.d/20-intel-legacy.conf
+	PIDENT="Intel Legacy Graphics"
 	$SCRIPT_DIR/gpuconfig 20-intel.conf $GPU0_BUSID "$PIDENT"
 elif [ $GPU0 == "nvidia" ]; then
 	cp -n /opt/vapour-os/vapour-os-gui/20-nvidia.conf /etc/X11/xorg.conf.d/20-nvidia.conf
@@ -44,6 +50,10 @@ if [ ! -z $GPU1 ]; then
 		cp -n /opt/vapour-os/vapour-os-gui/20-intel.conf /etc/X11/xorg.conf.d/20-intel-secondary.conf
 		SIDENT="Intel Dedicated Graphics"
 		$SCRIPT_DIR/gpuconfig 20-intel-secondary.conf $GPU1_BUSID "$SIDENT"
+	elif [ $GPU1 == "intel-legacy" ]; then
+		cp -n /opt/vapour-os/vapour-os-gui/20-intel.conf /etc/X11/xorg.conf.d/20-intel-legacy-secondary.conf
+		SIDENT="Intel Legacy Dedicated Graphics"
+		$SCRIPT_DIR/gpuconfig 20-intel-legacy-secondary.conf $GPU1_BUSID "$SIDENT"
 	elif [ $GPU1 == "nvidia" ]; then
 		cp -n /opt/vapour-os/vapour-os-gui/20-nvidia.conf /etc/X11/xorg.conf.d/20-nvidia-secondary.conf
 		SIDENT="Nvidia Dedicated Graphics"

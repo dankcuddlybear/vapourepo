@@ -1,19 +1,26 @@
 #!/bin/sh
 [ $(whoami) != "root" ] && echo "[ERROR] You must run this script with root priviliges." && exit 1
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-. $SCRIPT_DIR/diskinfo # Get root UUID
+. $SCRIPT_DIR/diskinfo
+. $SCRIPT_DIR/pcihwinfo
+
+## Kernel parameters
 KPARAMS="rw acpi_osi=Linux fsck.mode=force fsck.repair=yes"
+[ ! -z $GPU0 ] && [ $GPU0 == "nvidia" ] && KPARAMS="$KPARAMS nvidia-drm.modeset=1"
 KPARAMS_GRAPHICAL="quiet splash loglevel=0 rd.systemd.show_status=false rd.udev.log_level=0 vt.global_cursor_default=0 console=null"
-[ -f /boot/params ] && KPARAMS_EXTRA=$(cat /boot/params)
+[ -f /boot/params ] && KPARAMS="$KPARAMS $(cat /boot/params)" ## Load user parameters from /boot/params file
+
 mkdir -p /boot/loader/entries &> /dev/null
-# Configure bootloader
+
+## Configure bootloader
 echo "default vapour-os.conf" > /boot/loader/loader.conf
 echo "timeout 2" >> /boot/loader/loader.conf
 echo "console-mode keep" >> /boot/loader/loader.conf
 echo "editor no" >> /boot/loader/loader.conf
 echo "auto-firmware no" >> /boot/loader/loader.conf
 echo "random-seed-mode always" >> /boot/loader/loader.conf
-# Create default bootloader entry
+
+## Create default bootloader entry
 echo "title Vapour OS" > /boot/loader/entries/vapour-os.conf
 echo "linux /vmlinuz-linux-zen" >> /boot/loader/entries/vapour-os.conf
 [ -f /boot/amd-ucode.img ] && echo "initrd /amd-ucode.img" >> /boot/loader/entries/vapour-os.conf
@@ -21,7 +28,8 @@ echo "linux /vmlinuz-linux-zen" >> /boot/loader/entries/vapour-os.conf
 echo "initrd /initramfs-linux-zen.img" >> /boot/loader/entries/vapour-os.conf
 if [ -f /usr/bin/plymouth ]; then echo "options $KPARAMS $KPARAMS_GRAPHICAL root=UUID=$ROOT_UUID $KPARAMS_EXTRA" >> /boot/loader/entries/vapour-os.conf
 else echo "options $KPARAMS root=UUID=$ROOT_UUID $KPARAMS_EXTRA" >> /boot/loader/entries/vapour-os.conf; fi
-# Create fallback bootloader entry
+
+## Create fallback bootloader entry
 echo "title Vapour OS (fallback initramfs)" > /boot/loader/entries/vapour-os-fallback.conf
 echo "linux /vmlinuz-linux-zen" >> /boot/loader/entries/vapour-os-fallback.conf
 [ -f /boot/amd-ucode.img ] && echo "initrd /amd-ucode.img" >> /boot/loader/entries/vapour-os-fallback.conf

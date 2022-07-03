@@ -1,8 +1,8 @@
 # Maintainer: dankcuddlybear <dankcuddlybear@protonmail.com>
-pkgname=vapour-os-i915-ivy
-pkgver=1.1.2
+pkgname=vapour-os-i915-legacy
+pkgver=1.1.1
 pkgrel=1
-pkgdesc='Vapour OS Intel GPU drivers for OpenGL, Vulkan and hardware video acceleration. For gen 3 (Ivy Bridge) up to gen 6 (Skylake/Kabylake). WARNING: Some module options taint the kernel.'
+pkgdesc='Vapour OS Intel GPU drivers for OpenGL, Vulkan and hardware video acceleration. For any Intel GPUs older than Coffee Lake (gen 8). Vulkan requires at least Ivy Bridge (gen 3), and OpenCL is not supported. WARNING: Some module options taint the kernel.'
 arch=(x86_64)
 url='https://github.com/dankcuddlybear/Vapour-OS'
 depends=('lib32-libva-intel-driver'
@@ -11,7 +11,6 @@ depends=('lib32-libva-intel-driver'
     'libva-intel-driver'
     'vapour-os-gui'
     'vulkan-intel'
-    'xf86-video-intel'
 )
 provides=('vapour-os-gpudriver')
 conflicts=('vapour-os-i915')

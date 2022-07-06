@@ -1,0 +1,5 @@
+# Rule for when switching to battery
+SUBSYSTEM=="power_supply",ENV{POWER_SUPPLY_ONLINE}=="0",RUN+="/opt/vapour-os/powermgr mode bat"
+
+# Rule for when switching to powersupply
+SUBSYSTEM=="power_supply",ENV{POWER_SUPPLY_ONLINE}=="1",RUN+="/opt/vapour-os/powermgr mode ac"

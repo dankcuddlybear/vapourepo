@@ -1,0 +1,18 @@
+#!/bin/sh
+[ $(whoami) != "root" ] && echo "[ERROR] You must run this script with root priviliges." && exit 1
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+
+# Error handling
+PrintCommands() {
+	echo "mode    Set the power management mode: \"battery\" or \"ac\"."
+}
+CMD=$1; [ -z $CMD ] && echo "[ERROR] You must specify a command:" && PrintCommands && exit 1
+if [ ! -z $2 ]; then
+	if [ $2 == battery ]; then
+		rm -f /tmp/OnAc
+		touch /tmp/OnBattery
+	elif [ $2 == ac ]; then
+		rm -f /tmp/OnBattery
+		touch /tmp/OnAc
+	else echo "[ERROR] Invalid mode!"; PrintCommands; exit 1; fi
+elif 

@@ -1,0 +1,8 @@
+post_install() {
+	/opt/vapour-os/setvar /etc/environment set WINEESYNC 1
+	/opt/vapour-os/setvar /etc/environment set DXVK_CONFIG_FILE /etc/dxvk.conf
+}
+post_remove() {
+	/opt/vapour-os/setvar /etc/environment delete WINEESYNC 1
+	/opt/vapour-os/setvar /etc/environment delete DXVK_CONFIG_FILE
+}

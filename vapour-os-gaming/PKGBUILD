@@ -1,10 +1,17 @@
 # Maintainer: dankcuddlybear <dankcuddlybear@protonmail.com>
 pkgname=vapour-os-gaming
-pkgver=1.1.2
+pkgver=1.1.4
 pkgrel=1
 pkgdesc='Vapour OS game libraries for 64 bit/32 bit Windows and Linux game compatibility'
 arch=(x86_64)
 url='https://github.com/dankcuddlybear/vapourepo'
-#backup=(etc/drirc)
+backup=(etc/dxvk.conf)
 depends=('gamemode' 'joystickwake' 'lib32-gamemode' 'lib32-gst-plugins-base' 'lib32-libxslt' 'lib32-mangohud' 'lib32-ocl-icd' 'lib32-vapour-os-gui' 'lib32-vkd3d' 'lib32-vulkan-mesa-layers' 'mangohud' 'ocl-icd' 'pipewire-jack' 'proton-ge-custom' 'steam-native-runtime' 'vapour-os-multimedia' 'vkd3d-proton-mingw-git' 'winetricks' 'wine-gecko' 'wine-ge-custom' 'wine-mono' 'wine-nine' 'xone-dkms' 'lib32-flac' 'lib32-libavc1394' 'lib32-libdv' 'lib32-libiec61883' 'lib32-libpulse' 'lib32-libvpx' 'lib32-mpg123' 'lib32-speex' 'lib32-taglib' 'lib32-twolame' 'lib32-v4l-utils' 'lib32-wavpack'
 )
+install=vapour-os-gaming.install
+package() {
+	cd "$srcdir"
+	cd ../
+	filesdir="$(pwd)/files"
+	cp -r "$filesdir/etc" "$pkgdir"
+}

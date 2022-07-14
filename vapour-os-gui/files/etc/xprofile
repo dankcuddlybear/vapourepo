@@ -7,4 +7,4 @@ if test -d /etc/xprofile.d/; then
 fi
 
 # Set DPI
-xrandr --dpi $QT_FONT_DPI
+xrandr --dpi $DPI

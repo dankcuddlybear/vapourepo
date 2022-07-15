@@ -1,6 +1,5 @@
 #!/bin/sh
 . /opt/vapour-os/diskinfo &> /dev/null # Check if media partition exists
-USER=$(whoami)
 
 # Set XDG user dirs for all users except guest
 # If the /media partition exists, create the user directory inside it (with same permissions as home directory) if it does not exist,

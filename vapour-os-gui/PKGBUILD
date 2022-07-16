@@ -1,11 +1,11 @@
 # Maintainer: dankcuddlybear <dankcuddlybear@protonmail.com>
 pkgname=vapour-os-gui
 pkgver=1.1.7
-pkgrel=3
+pkgrel=4
 pkgdesc='Vapour OS GUI libs/scripts/services - uses X11 and Pipewire.'
 arch=(any)
 url='https://github.com/dankcuddlybear/Vapour-OS'
-backup=(etc/X11/xorg.conf.d/30-touchpad.conf)
+backup=('etc/X11/xorg.conf.d/30-touchpad.conf' 'etc/pipewire/client.conf')
 depends=('pipewire-alsa'
 	'pipewire-jack'
 	'pipewire-pulse'

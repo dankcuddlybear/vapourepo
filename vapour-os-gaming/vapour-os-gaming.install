@@ -5,7 +5,7 @@ post_install() {
 	/opt/vapour-os/setvar /etc/environment set DXVK_LOG_LEVEL none
 }
 post_remove() {
-	/opt/vapour-os/setvar /etc/environment delete WINEESYNC 1
+	/opt/vapour-os/setvar /etc/environment delete WINEESYNC
 	/opt/vapour-os/setvar /etc/environment delete DXVK_CONFIG_FILE
 	/opt/vapour-os/setvar /etc/environment delete DXVK_LOG_PATH
 	/opt/vapour-os/setvar /etc/environment delete DXVK_LOG_LEVEL

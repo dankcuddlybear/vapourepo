@@ -3,10 +3,12 @@ post_install() {
 	/opt/vapour-os/setvar /etc/environment set DXVK_CONFIG_FILE /etc/dxvk.conf
 	/opt/vapour-os/setvar /etc/environment set DXVK_LOG_PATH none
 	/opt/vapour-os/setvar /etc/environment set DXVK_LOG_LEVEL none
+	/opt/vapour-os/setvar /etc/environment set WINEDLLOVERRIDES "winemenubuilder.exe=d wine setup.exe"
 }
 post_remove() {
 	/opt/vapour-os/setvar /etc/environment delete WINEESYNC
 	/opt/vapour-os/setvar /etc/environment delete DXVK_CONFIG_FILE
 	/opt/vapour-os/setvar /etc/environment delete DXVK_LOG_PATH
 	/opt/vapour-os/setvar /etc/environment delete DXVK_LOG_LEVEL
+	/opt/vapour-os/setvar /etc/environment delete WINEDLLOVERRIDES
 }

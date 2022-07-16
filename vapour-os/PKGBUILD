@@ -1,7 +1,7 @@
 # Maintainer: dankcuddlybear <dankcuddlybear@protonmail.com>
 pkgname=vapour-os
 pkgver=1.1.10
-pkgrel=10
+pkgrel=11
 pkgdesc='Vapour OS core system'
 arch=(x86_64)
 url='https://github.com/dankcuddlybear/vapourepo'

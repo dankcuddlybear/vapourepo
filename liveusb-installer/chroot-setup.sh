@@ -110,6 +110,7 @@ if [ $PROGRESS == 4 ]; then
 	gpasswd -a $OWNER http
 	gpasswd -a $OWNER realtime
 	gpasswd -a $OWNER wheel
+	passwd -l root
 	SetProgress 5; sync
 fi
 

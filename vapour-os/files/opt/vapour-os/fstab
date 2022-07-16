@@ -7,26 +7,26 @@ echo "## Root partition" > /etc/fstab
 echo "UUID=$ROOT_UUID / ext4 lazytime 0 1" >> /etc/fstab
 echo "" >> /etc/fstab
 echo "## EFI system partition" >> /etc/fstab
-echo "UUID=$BOOT_UUID /boot vfat noatime,noexec,noauto,x-systemd.automount,dmask=0022,fmask=133,iocharset=ascii,shortname=mixed,utf8,errors=remount-ro 0 2" >> /etc/fstab
+echo "UUID=$BOOT_UUID /boot vfat noatime,noauto,x-systemd.automount,nodev,nosuid,noexec,dmask=0022,fmask=133,iocharset=ascii,shortname=mixed,utf8,errors=remount-ro 0 2" >> /etc/fstab
 echo "" >> /etc/fstab
 
 if [ ! -z "$HOME_DEV" ]; then
 	echo "## Home partition" >> /etc/fstab
-	echo "UUID=$HOME_UUID /home ext4 lazytime,noauto,x-systemd.automount 0 2" >> /etc/fstab
+	echo "UUID=$HOME_UUID /home ext4 lazytime,noauto,x-systemd.automount,nodev,nosuid 0 2" >> /etc/fstab
 	echo "" >> /etc/fstab
 fi
 if [ ! -z "$MEDIA_DEV" ]; then
 	echo "## Media partition" >> /etc/fstab
-	echo "UUID=$MEDIA_UUID /media ext4 noatime,noauto,x-systemd.automount 0 2" >> /etc/fstab
+	echo "UUID=$MEDIA_UUID /media ext4 noatime,noauto,x-systemd.automount,nodev,nosuid 0 2" >> /etc/fstab
 	echo "" >> /etc/fstab
 fi
 if [ ! -z "$PUBLIC_DEV" ]; then
 	echo "## Public partition" >> /etc/fstab
-	echo "UUID=$PUBLIC_UUID /public ext4 noatime,noauto,x-systemd.automount 0 2" >> /etc/fstab
+	echo "UUID=$PUBLIC_UUID /public ext4 noatime,noauto,x-systemd.automount,nodev,nosuid 0 2" >> /etc/fstab
 	echo "" >> /etc/fstab
 fi
 if [ -d /home/guest ]; then
 	echo "## Guest home" >> /etc/fstab
-	echo "tmpfs /home/guest tmpfs nodev,nosuid,size=1G,noauto,x-systemd.automount 0 0" >> /etc/fstab
+	echo "tmpfs /home/guest tmpfs noauto,x-systemd.automount,nodev,nosuid,size=1G 0 0" >> /etc/fstab
 fi
 systemctl daemon-reload

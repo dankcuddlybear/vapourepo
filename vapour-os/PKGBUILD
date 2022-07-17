@@ -1,6 +1,6 @@
 # Maintainer: dankcuddlybear <dankcuddlybear@protonmail.com>
 pkgname=vapour-os
-pkgver=1.1.11
+pkgver=1.1.12
 pkgrel=1
 pkgdesc='Vapour OS core system'
 arch=(x86_64)
@@ -17,7 +17,7 @@ depends=(
 	# Performance enhancements
 	'ananicy-cpp' 'ananicy-rules-git' 'irqbalance' 'realtime-privileges' 'rtirq' 'rtkit'
 	# Filesystems
-	'dosfstools' 'exfatprogs' 'mtools'
+	'dosfstools' 'mtools'
 	# Archives
 	'p7zip' 'unrar'
 	# Networking

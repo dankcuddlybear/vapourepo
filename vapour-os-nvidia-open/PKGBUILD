@@ -1,20 +1,20 @@
 # Maintainer: dankcuddlybear <dankcuddlybear@protonmail.com>
-pkgname=vapour-os-nvidia
-pkgver=1.1.6
-pkgrel=2
-pkgdesc='Proprietary Nvidia drivers for OpenGL/Vulkan/OpenCL/hardware video. WARNING: loading proprietary kernel modules taints the kernel.'
+pkgname=vapour-os-nvidia-open
+pkgver=0.0.1
+pkgrel=1
+pkgdesc='Nvidia drivers for OpenGL/Vulkan/OpenCL/hardware video. With open-source kernel modules. EXPERIMENTAL.'
 arch=(x86_64)
 url='https://github.com/dankcuddlybear/Vapour-OS'
 depends=('lib32-nvidia-utils'
 	'lib32-opencl-nvidia'
-	'nvidia-dkms'
+	'nvidia-open-dkms'
 	'nvidia-prime'
 	'opencl-nvidia'
     'vapour-os-gui'
 )
 provides=('vapour-os-gpudriver')
-conflicts=('vapour-os-nvidia-open')
-install=vapour-os-nvidia.install
+conflicts=('vapour-os-nvidia')
+install=vapour-os-nvidia-open.install
 package() {
 	cd "$srcdir"
 	cd ../

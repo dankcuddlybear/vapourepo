@@ -1,7 +1,7 @@
 # Maintainer: dankcuddlybear <dankcuddlybear@protonmail.com>
 pkgname=vapour-os-kde
-pkgver=1.1.5
-pkgrel=2
+pkgver=1.1.6
+pkgrel=1
 pkgdesc='Vapour OS KDE Plasma X11 desktop environment. When prompted, please select: 1) phonon-qt5-gstreamer 2) noto-fonts 3) xdg-desktop-portal-kde. WARNING: You MUST install vapour-os-gui FIRST, before installing this package, due to dependency conflicts'
 arch=(any)
 url='https://github.com/dankcuddlybear/Vapour-OS'
@@ -9,15 +9,19 @@ install=vapour-os-kde.install
 depends=('ark'
 	'bluedevil'
 	'breeze-gtk'
-	'dolphin'
+	'dolphin-plugins'
 	'drkonqi'
 	'ffmpegthumbs'
+	'filelight'
 	'gwenview'
 	'icoutils'
 	'kamoso'
+	'kalarm'
+	'ktimer'
 	'kate'
 	'kcalc'
 	'kcharselect'
+	'kcolorchooser'
 	'kdegraphics-thumbnailers'
 	'kdenetwork-filesharing'
 	'kdepim-addons'
@@ -34,6 +38,7 @@ depends=('ark'
 	'kscreen'
 	'kwallet-pam'
 	'kwalletmanager'
+	'markdownpart'
 	'noto-fonts'
 	'noto-fonts-cjk'
 	'noto-fonts-emoji'

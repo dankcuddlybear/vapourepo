@@ -1,7 +1,7 @@
 # Maintainer: dankcuddlybear <dankcuddlybear@protonmail.com>
 pkgname=vapour-os-gaming
-pkgver=1.1.5
-pkgrel=2
+pkgver=1.1.6
+pkgrel=1
 pkgdesc='Vapour OS game libraries for 64 bit/32 bit Windows and Linux game compatibility'
 arch=(x86_64)
 url='https://github.com/dankcuddlybear/vapourepo'
@@ -14,5 +14,6 @@ package() {
 	cd ../
 	filesdir="$(pwd)/files"
 	cp -r "$filesdir/etc" "$pkgdir"
+	cp -r "$filesdir/opt" "$pkgdir"
 	cp -r "$filesdir/usr" "$pkgdir"
 }

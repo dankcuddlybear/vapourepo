@@ -57,11 +57,6 @@ Install() {
 	rm -f /etc/fstab; $SCRIPT_DIR/fstab
 	$SCRIPT_DIR/bootloader
 	if [ ! -z $NO_SD_VCONSOLE -a $NO_SD_VCONSOLE == 1 ]; then $SCRIPT_DIR/initramfs --novc; else $SCRIPT_DIR/initramfs; fi
-
-	# Set environment variables
-	. /etc/environment
-	[ -z $EDITOR ] && $SCRIPT_DIR/setvar set /etc/environment EDITOR "/usr/bin/nano"
-	[ -z $GTK_USE_PORTAL ] && $SCRIPT_DIR/setvar set /etc/environment GTK_USE_PORTAL "1"
 	
 	bootctl install --esp-path=/boot
 	Upgrade

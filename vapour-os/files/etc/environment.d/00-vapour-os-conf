@@ -1,0 +1,6 @@
+## WARNING: Any changes to this file will be lost after vapour-os is
+## upgraded. If you wish to change these defaults, create a file with a
+## numerically/alphabetically higher filename and it will be read after
+## this file.
+
+EDITOR=/usr/bin/nano

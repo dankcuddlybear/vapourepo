@@ -7,4 +7,4 @@ Target = filesystem
 [Action]
 Description = Patch /usr/lib/os-release
 When = PostTransaction
-Exec = /opt/vapour-os/patchfilesystem
+Exec = /opt/vapour-os/vosinstall upgrade filesystem

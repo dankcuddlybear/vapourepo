@@ -6,4 +6,4 @@ Target = vapour-os
 [Action]
 Description = Vapour OS config
 When = PostTransaction
-Exec = /opt/vapour-os/vosinstall upgrade
+Exec = /opt/vapour-os/vosinstall upgrade vapour-os

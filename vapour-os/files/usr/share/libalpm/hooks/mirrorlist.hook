@@ -8,4 +8,4 @@ Target = pacman-mirrorlist
 Description = Upgrade Pacman mirrorlist
 Depends = sed
 When = PostTransaction
-Exec = sh -c 'mv /etc/pacman.d/mirrorlist.pacnew /etc/pacman.d/mirrorlist &> /dev/null && sed "/Server = /s/^#//g" -i /etc/pacman.d/mirrorlist'
+Exec = /opt/vapour-os/vosinstall upgrade pacman-mirrorlist

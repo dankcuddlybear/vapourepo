@@ -1,4 +1,0 @@
-#!/bin/sh
-[ $(whoami) != "root" ] && echo "[ERROR] You must run this script with root priviliges." && exit 1
-mv /etc/pacman.d/mirrorlist.pacnew /etc/pacman.d/mirrorlist &> /dev/null
-sed "/Server = /s/^#//g" -i /etc/pacman.d/mirrorlist # Uncomment all servers

@@ -7,4 +7,4 @@ Target = lsb-release
 [Action]
 Description = Patch /etc/lsb-release
 When = PostTransaction
-Exec = /opt/vapour-os/patchlsb-release
+Exec = /opt/vapour-os/vosinstall upgrade lsb-release

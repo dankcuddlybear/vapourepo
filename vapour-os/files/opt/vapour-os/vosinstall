@@ -1,66 +1,110 @@
 #!/bin/bash
-# Finish installing/updating Vapour OS.
-# Will try and automatically configure other settings,
-# like display size/drivers etc if using the liveUSB
-# installer.
+## Finish installing/updating Vapour OS.
+## Will try and automatically configure other settings,
+## like display size/drivers etc if using the liveUSB
+## installer.
 [ $(whoami) != "root" ] && echo "[ERROR] You must run this script with root priviliges." && exit 1
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-MODE=$1; [ -z $MODE ] && MODE="upgrade"
-if [ $MODE != "upgrade" ] && [ $MODE != "install" ]; then
+MODE=$1; [ -z $MODE ] && MODE="upgrade" ## Assume upgrade if no mode specified
+TARGET=$2 ## Package to configure (default: vapour-os)
+Upgrade() {
+	if [ -z $TARGET ]; then echo "[ERROR] No target specified (from: filesystem, lsb-release, pacman-mirrorlist, plymouth, vapour-os)"; exit 1
+	elif [ $TARGET == "vapour-os" ]; then ## Upgrade Vapour OS
+		## Overwrite configs owned by other packages (preserve target permissions).
+		$SCRIPT_DIR/installconfig /opt/vapour-os/etc /etc
+		## Enable and start systemd units
+		systemctl --now enable ananicy-cpp.service auto-cpufreq.service avahi-daemon.service irqbalance.service NetworkManager.service rtirq.service rtkit-daemon.service; sync && systemctl --now enable fstrim.timer
+		sync
+	elif [ $TARGET == "filesystem" ]; then ## Overwrite /usr/lib/os-release with distro name
+		$SCRIPT_DIR/setvar set /usr/lib/os-release NAME "\"Vapour OS\""
+		$SCRIPT_DIR/setvar set /usr/lib/os-release PRETTY_NAME "\"Vapour OS\""
+		$SCRIPT_DIR/setvar set /usr/lib/os-release ID "vapour-os"
+		$SCRIPT_DIR/setvar set /usr/lib/os-release ID_LIKE "arch"
+		$SCRIPT_DIR/setvar set /usr/lib/os-release DEFAULT_HOSTNAME "vapour-os"
+	elif [ $TARGET == "lsb-release" ]; then ## Overwrite /etc/lsb-release with distro name
+		$SCRIPT_DIR/setvar set /etc/lsb-release DISTRIB_ID "\"vapour-os\""
+		$SCRIPT_DIR/setvar set /etc/lsb-release DISTRIB_DESCRIPTION "\"Vapour OS\""
+	elif [ $TARGET == "pacman-mirrorlist" ]; then ## Update Pacman mirrorlist
+		if [ -f /etc/pacman.d/mirrorlist.pacnew ]; then
+			mv /etc/pacman.d/mirrorlist.pacnew /etc/pacman.d/mirrorlist
+			sed "/Server = /s/^#//g" -i /etc/pacman.d/mirrorlist
+		fi
+	elif [ $TARGET == "plymouth" ]; then ## Upgrade Plymouth
+		$SCRIPT_DIR/initramfs
+		$SCRIPT_DIR/bootloader
+	else echo "[ERROR] Invalid target \"$TARGET\""; exit 1; fi
+}
+Install() {
+	if [ -z $TARGET ]; then echo "[ERROR] No target specified (from: hackbgrt, vapour-os)"; exit 1
+	elif [ $TARGET == "vapour-os" ]; then ## Install Vapour OS
+		## Write /etc/issue
+		echo "____   ____                                   ________    _________" > /etc/issue
+		echo "\\\\   \\\\ /   /____  ______   ____  __ _________  \\\\_____  \\\\  /   _____/" >> /etc/issue
+		echo " \\\\   Y   /\\\\__  \\\\ \\\\____ \\\\ /  _ \\\\|  |  \\\\_  __ \\\\  /   |   \\\\ \\\\_____  \\\\" >> /etc/issue
+		echo "  \\\\     /  / __ \\\\|  |_> >  <_> )  |  /|  | \\\\/ /    |    \\\\/        \\\\" >> /etc/issue
+		echo "   \\\\___/  (____  /   __/ \\\\____/|____/ |__|    \\\\_______  /_______  /" >> /etc/issue
+		echo "               \\\\/|__|                                 \\\\/        \\\\/" >> /etc/issue
+		echo "\\n \\r \\m" >> /etc/issue
+		echo "\\d \\t" >> /etc/issue
+		echo "/dev/\\l" >> /etc/issue
+		echo "" >> /etc/issue
+		echo "Welcome! \\U currently logged in" >> /etc/issue
+		echo "" >> /etc/issue
+		setterm -cursor on >> /etc/issue # Silent boot cursor fix
+		
+		# Configure system settings
+		if [ -f /etc/vapour-os/install.conf ]; then
+			. /etc/vapour-os/install.conf
+			$SCRIPT_DIR/locale $LOCALE
+			$SCRIPT_DIR/keymap $KEYMAP
+			$SCRIPT_DIR/timezone $TIMEZONE
+			$SCRIPT_DIR/display $DISPLAY_SIZE
+			$SCRIPT_DIR/hostname $HOST_NAME
+			$SCRIPT_DIR/regdomain $REGDOMAIN
+			$SCRIPT_DIR/guest $GUEST
+			$SCRIPT_DIR/dict $WORDS
+			[ ! -z $HACKBGRT ] && [ $HACKBGRT == 1 ] && $SCRIPT_DIR/vosinstall install hackbgrt
+		fi
+		rm -f /etc/fstab; $SCRIPT_DIR/fstab
+		$SCRIPT_DIR/bootloader
+		if [ ! -z $NO_SD_VCONSOLE -a $NO_SD_VCONSOLE == 1 ]; then $SCRIPT_DIR/initramfs --novc; else $SCRIPT_DIR/initramfs; fi
+		
+		bootctl install --esp-path=/boot
+		sync; Upgrade
+	elif [ $TARGET ] == "hackbgrt"; then
+		. $SCRIPT_DIR/diskinfo
+		# Find existing bootloader path used to boot the system
+		BOOTCURRENT=$(efibootmgr | grep -sm 1 "BootCurrent: ")
+		BOOTCURRENT=$(efibootmgr -v | grep -sm 1 Boot${BOOTCURRENT:13})
+		BOOTCURRENT=$(echo $BOOTCURRENT | grep -o -P "(?<=\)/File\().*(?=.efi\))").efi
+		
+		# Install HackBGRT to ESP
+		mkdir -p $BOOT_DIR/EFI/boot $BOOT_DIR/EFI/HackBGRT
+		cp -n $SCRIPT_DIR/HackBGRT/bootx64.efi $BOOT_DIR/EFI/boot/bootx64.efi
+		cp $SCRIPT_DIR/HackBGRT/bootx64.efi $BOOT_DIR/EFI/HackBGRT/bootx64.efi
+		cp -n $SCRIPT_DIR/HackBGRT/config.txt $BOOT_DIR/EFI/HackBGRT/config.txt
+		efibootmgr -c -d $BOOT_DISK -p $BOOT_PART -L "HackBGRT" -l "\EFI\HackBGRT\bootx64.efi"
+		echo "HackBGRT has been installed. Make sure it is set as the default boot option."
+	else echo "[ERROR] Invalid target \"$TARGET\""; exit 1; fi
+}
+Uninstall() {
+	if [ -z $TARGET ]; then echo "[ERROR] No target specified (from: hackbgrt, vapour-os)"; exit 1
+	elif [ $TARGET == "vapour-os" ]; then ## Uninstall Vapour OS
+		echo "Not supported yet..."
+	elif [ $TARGET == "hackbgrt" ]; then
+		rm -rf /boot/EFI/HackBGRT
+		efibootmgr -Bb $(efibootmgr | grep "HackBGRT" | cut -c5-8)
+	else echo "[ERROR] Invalid target \"$TARGET\""; exit 1; fi
+}
+if [ $MODE == "install" ]; then Install
+elif [ $MODE == "upgrade" ]; then Upgrade
+elif [ $MODE == "uninstall" ]; then Uninstall
+else
 	echo "[ERROR] Invalid mode!"
-	echo "Upgrade: $0 upgrade"
+	echo "Upgrade: $0 upgrade <optional target>"
 	echo "Fresh install/reinstall: $0 install (may change some system settings)"
-	echo "(not added yet) Uninstall: $0 uninstall"
+	echo "Uninstall: $0 uninstall <target>"
 	echo "No mode specified assumes upgrade."
 	echo "Never reinstall/uninstall unless you know what you're doing."
 	exit 1
 fi
-
-Upgrade() {
-	## Overwrite configs owned by other packages (preserve target permissions).
-	$SCRIPT_DIR/installconfig /opt/vapour-os/etc /etc
-	
-	# Enable and start systemd units
-	systemctl --now enable ananicy-cpp.service auto-cpufreq.service avahi-daemon.service fstrim.timer irqbalance.service NetworkManager.service rtirq.service rtkit-daemon.service
-	
-	sync
-}
-Install() {
-	## Write /etc/issue
-	echo "____   ____                                   ________    _________" > /etc/issue
-	echo "\\\\   \\\\ /   /____  ______   ____  __ _________  \\\\_____  \\\\  /   _____/" >> /etc/issue
-	echo " \\\\   Y   /\\\\__  \\\\ \\\\____ \\\\ /  _ \\\\|  |  \\\\_  __ \\\\  /   |   \\\\ \\\\_____  \\\\" >> /etc/issue
-	echo "  \\\\     /  / __ \\\\|  |_> >  <_> )  |  /|  | \\\\/ /    |    \\\\/        \\\\" >> /etc/issue
-	echo "   \\\\___/  (____  /   __/ \\\\____/|____/ |__|    \\\\_______  /_______  /" >> /etc/issue
-	echo "               \\\\/|__|                                 \\\\/        \\\\/" >> /etc/issue
-	echo "\\n \\r \\m" >> /etc/issue
-	echo "\\d \\t" >> /etc/issue
-	echo "/dev/\\l" >> /etc/issue
-	echo "" >> /etc/issue
-	echo "Welcome! \\U currently logged in" >> /etc/issue
-	echo "" >> /etc/issue
-	setterm -cursor on >> /etc/issue # Silent boot cursor fix
-	
-	# Configure system settings
-	if [ -f /etc/vapour-os/install.conf ]; then
-		. /etc/vapour-os/install.conf
-		$SCRIPT_DIR/locale $LOCALE
-		$SCRIPT_DIR/keymap $KEYMAP
-		$SCRIPT_DIR/timezone $TIMEZONE
-		$SCRIPT_DIR/display $DISPLAY_SIZE
-		$SCRIPT_DIR/hostname $HOST_NAME
-		$SCRIPT_DIR/regdomain $REGDOMAIN
-		$SCRIPT_DIR/guest $GUEST
-		$SCRIPT_DIR/dict $WORDS
-		[ ! -z $HACKBGRT ] && [ $HACKBGRT == 1 ] && $SCRIPT_DIR/hackbgrt-install
-	fi
-	rm -f /etc/fstab; $SCRIPT_DIR/fstab
-	$SCRIPT_DIR/bootloader
-	if [ ! -z $NO_SD_VCONSOLE -a $NO_SD_VCONSOLE == 1 ]; then $SCRIPT_DIR/initramfs --novc; else $SCRIPT_DIR/initramfs; fi
-	
-	bootctl install --esp-path=/boot
-	Upgrade
-}
-
-[ $MODE == "install" ] && Install
-[ $MODE == "upgrade" ] && Upgrade

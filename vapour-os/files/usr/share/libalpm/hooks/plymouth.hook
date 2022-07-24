@@ -8,4 +8,4 @@ Target = plymouth-git
 [Action]
 Description = Plymouth installer
 When = PostTransaction
-Exec = sh -c '/opt/vapour-os/initramfs; /opt/vapour-os/bootloader'
+Exec = /opt/vapour-os/vosinstall upgrade plymouth

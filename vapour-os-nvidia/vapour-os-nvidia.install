@@ -1,8 +1,8 @@
 post_install() {
-	/opt/vapour-os/setvar /etc/environment set __GL_SYNC_TO_VBLANK 0
-	/opt/vapour-os/setvar /etc/environment set __GL_THREADED_OPTIMIZATIONS 0
+	/opt/vapour-os/setvar set /etc/environment __GL_SYNC_TO_VBLANK 0
+	/opt/vapour-os/setvar set /etc/environment __GL_THREADED_OPTIMIZATIONS 0
 }
 post_remove() {
-	/opt/vapour-os/setvar /etc/environment delete __GL_SYNC_TO_VBLANK
-	/opt/vapour-os/setvar /etc/environment delete __GL_THREADED_OPTIMIZATIONS
+	/opt/vapour-os/setvar delete /etc/environment __GL_SYNC_TO_VBLANK
+	/opt/vapour-os/setvar delete /etc/environment __GL_THREADED_OPTIMIZATIONS
 }

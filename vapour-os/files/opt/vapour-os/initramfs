@@ -1,14 +1,15 @@
 #!/bin/sh
 [ $(whoami) != "root" ] && echo "[ERROR] You must run this script with root priviliges." && exit 1
-if [ ! -z $1 -a $1 != "--novc" ]; then
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+. $SCRIPT_DIR/pcihwinfo
+
+if [ ! -z $1 ] && [ $1 != "--novc" ]; then
 	echo "[ERROR] Unknown argument $1. Supported arguments are:"
 	"--novc  Do not add sd-vconsole hook. This can help if UEFI-CSM cannot be disabled, and the bootloader resolution is initially low and causes console text to appear huge before KMS."
 	exit 1
 fi
-SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-. $SCRIPT_DIR/pcihwinfo
 
-if [ ! -z $1 -a $1 == "--novc" ]; then HOOKS="autodetect base systemd"; else HOOKS="autodetect base systemd sd-vconsole"; fi
+if [ ! -z $1 ] && [ $1 == "--novc" ]; then HOOKS="autodetect base systemd"; else HOOKS="autodetect base systemd sd-vconsole"; fi
 HOOKS="$HOOKS modconf"
 if [ -f /usr/bin/plymouth ]; then HOOKS="$HOOKS sd-plymouth"; fi
 HOOKS="$HOOKS block filesystems keyboard fsck"

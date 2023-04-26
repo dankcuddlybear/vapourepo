@@ -1,0 +1,9 @@
+[Trigger]
+Type = Package
+Operation = Install
+Target = nano
+
+[Action]
+Description = Configure Nano editor
+When = PostTransaction
+Exec = /usr/share/libalpm/scripts/vapour-os/nano

@@ -1,0 +1,48 @@
+# Maintainer: Dankcuddlybear <dankcuddlybear@protonmail.com>
+pkgname=vapour-os-gaming
+pkgver=1.1.11
+pkgrel=7
+pkgdesc='Libraries for Windows/Linux games on Vapour OS'
+arch=(x86_64)
+url='https://github.com/dankcuddlybear/vapourepo'
+backup=(etc/dxvk.conf)
+depends=('pipewire' 'pipewire-jack' 'pipewire-alsa' 'pipewire-pulse' 'wireplumber' 'vapour-os-multimedia'
+	'gamemode' 'lib32-gamemode' 'glew1.10' 'lib32-glew1.10'
+	'joystickwake'
+	## lib32-*
+		'lib32-alsa-plugins'
+		'lib32-dbus-glib'
+		'lib32-fluidsynth' 'lib32-freeglut'
+		'lib32-glew' 'lib32-gst-plugins-base' 'lib32-gst-plugins-good'
+		## lib32-lib*
+			'lib32-libappindicator-gtk2' 'lib32-libappindicator-gtk3'
+			'lib32-libnm'
+		'lib32-openal' 'lib32-openssl-1.1'
+		'lib32-pipewire-jack' 'lib32-pipewire-v4l2'
+		'lib32-sdl2_image' 'lib32-sdl2_mixer'
+		'lib32-libudev0-shim' 'lib32-libusb'
+		'lib32-vulkan-mesa-layers'
+		'lib32-libwrap'
+		'lib32-libxslt'
+	## lib*
+		'libcurl-compat' 'lib32-libcurl-compat' 'libcurl-gnutls' 'lib32-libcurl-gnutls'
+		'libgcrypt15' 'lib32-libgcrypt15'
+		'libidn11' 'lib32-libidn11'
+		'libjpeg6-turbo' 'lib32-libjpeg6-turbo'
+		'libpng12' 'lib32-libpng12'
+		'librtmp0' 'lib32-librtmp0'
+		#libstrangle-git
+		'libtiff4' 'lib32-libtiff4'
+		'libvpx1.3' 'lib32-libvpx1.3'
+	'mangohud' 'lib32-mangohud'
+	'ocl-icd' 'lib32-ocl-icd'
+	'proton-ge-custom' 'protontricks'
+	'sdl2_ttf' 'lib32-sdl2_ttf'
+	'vkd3d-proton-mingw-git' 'lib32-vkd3d'
+	'winetricks' 'wine-gecko' 'wine-ge-custom' 'wine-mono' 'wine-nine'
+	'xone-dkms'
+)
+package() {
+	cp -r "$srcdir/../files/etc" "$pkgdir"
+	cp -r "$srcdir/../files/usr" "$pkgdir"
+}

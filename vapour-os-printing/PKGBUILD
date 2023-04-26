@@ -1,0 +1,18 @@
+# Maintainer: Dankcuddlybear <dankcuddlybear@protonmail.com>
+pkgname=vapour-os-printing
+pkgver=0.1.1
+pkgrel=3
+pkgdesc='Vapour OS print support and printer drivers.'
+arch=(any)
+url='https://github.com/dankcuddlybear/Vapour-OS'
+install=vapour-os-printing.install
+depends=('cups-pdf'
+	'colord-sane' 'cups-pk-helper'
+	'foomatic-db-engine'
+	'foomatic-db-gutenprint-ppds'
+	'foomatic-db-nonfree-ppds'
+	'foomatic-db-ppds'
+	'gutenprint'
+	'gsfonts'
+	'sane-airscan' 'system-config-printer'
+)

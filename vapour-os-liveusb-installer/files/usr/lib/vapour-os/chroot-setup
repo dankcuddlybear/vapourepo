@@ -1,0 +1,149 @@
+#!/bin/bash
+DISTRO_ID="vapour-os"
+DISTRO_NAME="Vapour OS"
+[ $(whoami) != "root" ] && echo "[ERROR] You must run this script with root priviliges." && exit 1
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+[ -f "/$DISTRO_ID-live" ] && export VAPOUR_OS_INSTALL_MODE="buildiso" || export VAPOUR_OS_INSTALL_MODE="liveusb"
+[ "$VAPOUR_OS_INSTALL_MODE" == "buildiso" ] && touch /tmp/buildiso && touch /etc/$DISTRO_ID/buildiso
+ARCH="$(uname -m)"
+if [ -f "/etc/$DISTRO_ID/PROGRESS" ]; then PROGRESS="$(cat /etc/$DISTRO_ID/PROGRESS)"; else
+	PROGRESS=0
+	echo "0" > /etc/$DISTRO_ID/PROGRESS
+fi
+Checkpoint() {
+	PROGRESS="$1"
+	echo "$PROGRESS" > /etc/$DISTRO_ID/PROGRESS
+	sync
+}
+
+PACKAGES="$DISTRO_ID"
+DEF_DEPS="base iptables-nft"
+if [ -f /boot/vmlinu*-linux* ]; then
+	KERNEL_FILE="$(basename "$(ls /boot/vmlinu*-linux* | tr '\n' ' ' | awk '{print $1}')")"
+	KERNEL="${KERNEL_FILE:8}"
+else KERNEL_FILE="vmlinuz-linux-tt"; KERNEL="linux-tt"; fi
+PACKAGES="$PACKAGES $KERNEL $KERNEL-headers"
+if [ "$VAPOUR_OS_INSTALL_MODE" == "buildiso" ]; then
+	PACKAGES="$PACKAGES firefox gparted vlc onlyoffice-bin qbittorrent hdapsd nano htop vapour-os-amdgpu vapour-os-i915 vapour-os-liveusb-installer vapour-os-multimedia vapour-os-nvidia vapour-os-printing vapour-os-xfce"
+	DEF_DEPS="pipewire wireplumber pipewire-jack pipewire-pulse xdg-desktop-portal-gtk"
+fi
+
+if [ $PROGRESS == 0 ]; then
+	echo "" > /etc/mkinitcpio.conf # Block initramfs creation until after Vapour OS has been installed
+	## Configure pacman
+	echo "[options]" > /etc/pacman.conf
+	echo "HoldPkg = amd-ucode base glibc intel-ucode pacman $DISTRO_ID" >> /etc/pacman.conf
+	echo "Architecture = auto" >> /etc/pacman.conf
+	echo "#IgnorePkg = " >> /etc/pacman.conf
+	echo "#IgnoreGroup = " >> /etc/pacman.conf
+	echo "#NoUpgrade = " >> /etc/pacman.conf
+	echo "Color" >> /etc/pacman.conf
+	[ "$VAPOUR_OS_INSTALL_MODE" == "buildiso" ] && echo "#CheckSpace" >> /etc/pacman.conf || echo "CheckSpace" >> /etc/pacman.conf
+	([ "$VAPOUR_OS_INSTALL_MODE" == "buildiso" ] || (($(nproc) <= 5))) && echo "ParallelDownloads = 5" >> /etc/pacman.conf || echo "ParallelDownloads = $(nproc)" >> /etc/pacman.conf
+	echo "SigLevel = Required DatabaseOptional" >> /etc/pacman.conf
+	echo "LocalFileSigLevel = Optional" >> /etc/pacman.conf
+	echo "" >> /etc/pacman.conf
+	echo "[core]" >> /etc/pacman.conf
+	echo "Include = /etc/pacman.d/mirrorlist" >> /etc/pacman.conf
+	echo "" >> /etc/pacman.conf
+	echo "[extra]" >> /etc/pacman.conf
+	echo "Include = /etc/pacman.d/mirrorlist" >> /etc/pacman.conf
+	echo "" >> /etc/pacman.conf
+	echo "[community]" >> /etc/pacman.conf
+	echo "Include = /etc/pacman.d/mirrorlist" >> /etc/pacman.conf
+	echo "" >> /etc/pacman.conf
+	echo "[multilib]" >> /etc/pacman.conf
+	echo "Include = /etc/pacman.d/mirrorlist" >> /etc/pacman.conf
+	Checkpoint 1
+fi
+
+if [ $PROGRESS == 1 ]; then
+	pacman-key --recv-key FBA220DFC880C036 --keyserver keyserver.ubuntu.com || exit 1
+	pacman-key --lsign-key FBA220DFC880C036
+	Checkpoint 2
+fi; if [ $PROGRESS == 2 ]; then
+	pacman --needed --noconfirm --asdeps -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst' 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst' || exit 1
+	echo "" >> /etc/pacman.conf
+	echo "[chaotic-aur]" >> /etc/pacman.conf
+	echo "Include = /etc/pacman.d/chaotic-mirrorlist" >> /etc/pacman.conf
+	echo "" >> /etc/pacman.conf
+	echo "[vapourepo]" >> /etc/pacman.conf
+	echo "SigLevel = Optional DatabaseOptional" >> /etc/pacman.conf
+	echo "Include = /etc/pacman.d/vapour-os-mirrorlist.tmp" >> /etc/pacman.conf
+	Checkpoint 3
+fi
+
+if [ $PROGRESS == 3 ]; then
+	curl -o /etc/pacman.d/vapour-os-mirrorlist.tmp https://raw.githubusercontent.com/dankcuddlybear/vapourepo/main/vapour-os/files/etc/pacman.d/vapour-os-mirrorlist || exit 1
+	Checkpoint 4
+fi
+
+## Install Vapour OS
+if [ $PROGRESS == 4 ]; then
+	N=0; while ((N < 5)); do pacman --noconfirm -Syuw $DEF_DEPS $PACKAGES && FAIL=0 || FAIL=0
+		if [ $FAIL == 1 ]; then ((N++))
+			((N < 5)) && echo "[ERROR] Failed to download packages. Retrying..." || (echo "[ERROR] Failed to download packages 5 times. Giving up..."; exit 1)
+		else N=5; fi
+	done
+	Checkpoint 5
+fi; if [ $PROGRESS == 5 ]; then
+	pacman --needed --noconfirm --asdeps -Su $DEF_DEPS || exit 1
+	pacman --needed --noconfirm -Su $PACKAGES || exit 1
+	pacman --asdeps -D $DEF_DEPS
+	Checkpoint 6
+fi
+
+if [ $PROGRESS == 6 ]; then
+	locale-gen
+	ln -sf /usr/share/zoneinfo/Europe/London /etc/localtime
+	/usr/bin/syscfg dictionary british-english
+	limine-install install
+	timedatectl set-ntp true
+	usermod -L root
+	fscrypt setup --force --quiet
+	rm /boot/initramfs-*.img &> /dev/null; mkinitcpio -P
+
+	## Reconfigure pacman
+	sed -i "/^#CheckSpace/ cCheckSpace" /etc/pacman.conf
+	sed -i "s/Include = \/etc\/pacman.d\/vapour-os-mirrorlist.tmp/Include = \/etc\/pacman.d\/vapour-os-mirrorlist/g" /etc/pacman.conf
+	rm /etc/pacman.d/vapour-os-mirrorlist.tmp
+	pacman --noconfirm -Sc
+
+	## Configure sudo
+	echo "Defaults passwd_timeout=0" > /etc/sudoers
+	echo "Defaults insults" >> /etc/sudoers
+	echo "root ALL=(ALL:ALL) ALL" >> /etc/sudoers
+	echo "%wheel ALL=(ALL) ALL" >> /etc/sudoers
+	echo "@includedir /etc/sudoers.d" >> /etc/sudoers
+	chmod 660 /etc/sudoers
+
+	if [ "$VAPOUR_OS_INSTALL_MODE" == "buildiso" ]; then
+		useradd -m live
+		passwd -d live
+		groupadd -r autologin
+		gpasswd -a live wheel
+		gpasswd -a live autologin
+		echo "$DISTRO_ID-live" > /etc/hostname
+		echo "127.0.0.1 localhost" > /etc/hosts
+		echo "::1 localhost" >> /etc/hosts
+		echo "127.0.1.1 $DISTRO_ID-live" >> /etc/hosts
+		echo "PRETTY_HOSTNAME=\"Vapour OS $ARCH Live\"" > /etc/machine-info
+	else
+		# Configure users
+		NUM_USERS=0; while ((NUM_USERS < 1)); do
+			NUM_USERS="$(ls -I shared -I initsetup /home | wc -w)"
+			((NUM_USERS < 1)) && /usr/bin/syscfg users add
+		done
+		# Configure hostname
+		HOSTNAME=""; while [ -z "$HOSTNAME" ]; do
+			HOSTNAME="$(cat /etc/hostname)"
+			[ -z "$HOSTNAME" ] && /usr/bin/syscfg hostname
+		done
+		# FSCrypt
+		. /usr/lib/vapour-os/diskinfo
+		[ ! -z $HOME_DEV ] && fscrypt setup /home --force --quiet
+		[ ! -z $MEDIA_DEV ] && fscrypt setup /media --force --quiet
+	fi
+	rm /etc/$DISTRO_ID/PROGRESS
+	sync
+fi

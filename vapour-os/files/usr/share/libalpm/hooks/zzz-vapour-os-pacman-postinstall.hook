@@ -1,0 +1,11 @@
+[Trigger]
+Operation = Install
+Operation = Upgrade
+Operation = Remove
+Type = Package
+Target = *
+
+[Action]
+Description = Finalising package installation
+When = PostTransaction
+Exec = /usr/share/libalpm/scripts/vapour-os/pacman-postinstall

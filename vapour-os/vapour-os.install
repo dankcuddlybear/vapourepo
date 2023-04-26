@@ -1,0 +1,9 @@
+post_install() {
+	/usr/lib/vapour-os/pacinst install
+}
+post_upgrade() {
+	/usr/lib/vapour-os/pacinst upgrade $2 $1
+}
+pre_remove() {
+	/usr/lib/vapour-os/pacinst uninstall
+}

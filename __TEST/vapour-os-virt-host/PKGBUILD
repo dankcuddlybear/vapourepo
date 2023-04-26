@@ -1,0 +1,50 @@
+# Maintainer: dankcuddlybear <dankcuddlybear@protonmail.com>
+pkgname=vapour-os-virtualisation-host
+pkgver=1.0.0
+pkgrel=1
+pkgdesc='Everything you need for a Windows or Linux guest'
+arch=(x86_64)
+url='https://github.com/dankcuddlybear/vapourepo'
+#install=vapour-os.install
+depends=('qemu-audio-alsa'
+	'qemu-audio-dbus'
+	'qemu-audio-pa'
+	'qemu-audio-sdl'
+	'qemu-audio-spice'
+	'qemu-chardev-spice'
+	'qemu-hw-display-virtio-gpu'
+	'qemu-hw-display-virtio-gpu-gl'
+	'qemu-hw-display-virtio-gpu-pci'
+	'qemu-hw-display-virtio-gpu-pci-gl'
+	'qemu-hw-display-virtio-vga'
+	'qemu-hw-display-virtio-vga-gl'
+	'qemu-hw-usb-host'
+	'qemu-hw-usb-redirect'
+	'qemu-img'
+	'qemu-system-x86'
+	'qemu-tools'
+	'qemu-ui-curses'
+	'qemu-ui-spice-app'
+	'qemu-ui-spice-core'
+	'qemu-virtiofsd'
+)
+optdepends=('amd-ucode: Security patches for AMD CPUs'
+	'intel-ucode: Security patches for Intel CPUs'
+	'hdapsd: Fall protection for laptop internal HDD'
+	'vapour-os-gaming: Windows/Linux gaming libraries and software'
+	'vapour-os-gnome: GNOME X11/Wayland shell and utilities'
+	'vapour-os-gui: Basic GUI with X11 and Pipewire'
+	'vapour-os-kde: KDE X11 desktop and utilities'
+	'vapour-os-multimedia: Audio/video codecs and disc support'
+	'vapour-os-printing: CUPS print services and drivers'
+	'vapour-os-xfce: XFCE X11 desktop and utilities'
+)
+package() {
+	cp -r "$srcdir/../files/etc" "$pkgdir"
+	cp -r "$srcdir/../files/opt" "$pkgdir"
+	cp -r "$srcdir/../files/usr" "$pkgdir"
+}
+
+
+
+

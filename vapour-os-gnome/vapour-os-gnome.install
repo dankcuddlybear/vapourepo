@@ -1,0 +1,7 @@
+post_install() {
+	systemctl enable gdm
+}
+pre_remove() {
+	systemctl disable gdm
+	echo "GDM disabled - please reboot or stop gdm.service"
+}

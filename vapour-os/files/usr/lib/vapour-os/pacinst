@@ -1,0 +1,50 @@
+#!/bin/bash
+DISTRO_ID="vapour-os"
+Error() {
+	echo "[ERROR] $1"
+	exit 1
+}
+Upgrade() {
+	systemctl --now enable fstrim.timer systemd-oomd
+}
+Install() {
+	hwclock --systohc
+	cp -r /usr/share/$DISTRO_ID/custom-configs/etc /
+	passwd -l root
+	# Create custom /etc/issue
+	setterm -cursor on > /etc/issue # Cursor fix
+	echo -e "$(cat /usr/share/$DISTRO_ID/$DISTRO_ID.ascii)" >> /etc/issue
+	echo "\\n \\r \\m" >> /etc/issue
+	echo "\\d \\t" >> /etc/issue
+	echo "/dev/\\l" >> /etc/issue
+	echo "" >> /etc/issue
+	echo "Welcome!" >> /etc/issue
+	echo "" >> /etc/issue
+	systemctl --now enable avahi-daemon NetworkManager
+}
+case $1 in
+	install) Install; Upgrade;;
+	upgrade) Upgrade;;
+	uninstall) exit 0;;
+	*) Error "Unrecognised command \"$1\" - valid commands are install, upgrade, uninstall)";;
+esac
+
+
+SecureBootSetup() {
+	if [ -d /sys/firmware/efi ]; then
+		sbctl create-keys
+		sbctl sign-all -g
+		sbctl enroll-keys -m && echo "Secure boot support is now enabled." ||
+		echo "[WARNING] Failed to enroll secure boot keys"
+		echo "          If you don't wish to use secure boot, you can ignore this warning. Otherwise:"
+		echo "           - Enter firmware setup utility and find an option to clear all secure boot certificates."
+		echo "             This will disable secure boot and put the firmware in setup mode."
+		echo "           - Reboot into $DISTRO_NAME and run the following command: sbctl enroll-keys -m"
+		echo "             This will enroll Microsoft's keys and your own secure boot keys to the UEFI."
+		echo "             Most OPROMs are signed Microsoft's keys. Without them, most expansion cards, like graphics cards, will not work with secure boot enabled."
+		echo "             It is important to enroll Microsoft's keys as well."
+		echo "           - Enter firmware setup utility again and enable secure boot."
+	fi
+}
+
+

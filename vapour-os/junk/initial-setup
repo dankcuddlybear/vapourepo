@@ -1,0 +1,68 @@
+#!/bin/bash
+DISTRO_ID="vapour-os"
+DISTRO_NAME="Vapour OS"
+BACKTITLE="Initial setup"
+[ $(whoami) != "root" ] && echo "[ERROR] You must run this script with root priviliges" && exit 1
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+export INITIAL_SETUP=1
+
+while true; do
+	## Add a user
+	NUM_USERS=0; while ((NUM_USERS < 1)); do
+		NUM_USERS="$(ls -I shared -I initsetup /home | wc -w)"
+		((NUM_USERS < 1)) && /usr/bin/syscfg users
+	done
+	## Set hostname
+	HOSTNAME=""; while [ -z "$HOSTNAME" ]; do
+		HOSTNAME="$(cat /etc/hostname)"
+		[ -z "$HOSTNAME" ] && /usr/bin/syscfg hostname
+	done
+	OPTION=$(dialog --stdout --backtitle "$BACKTITLE" --cancel-label "Exit" --title "Main menu" --menu "" 0 0 0 \
+	"0" "Add users [DONE]" \
+	"1" "System hostname [DONE]" \
+	"2" "Pretty (detailed) hostname" \
+	"3" "Enable/disable locales (default: en_GB.UTF-8 UTF-8)" \
+	"4" "System language (default: en_GB.UTF-8)" \
+	"5" "Console keymap (default: uk)" \
+	"6" "X keymap - for graphical applications (default: gb)" \
+	"7" "Timezone (default: Europe/London)" \
+	"8" "WiFi country (default: world)" \
+	"9" "Network manager" \
+	"10" "Additional software")
+	if [ -z "$OPTION" ]; then # User has selected exit
+		dialog --backtitle "$BACKTITLE" --title "Finish setup" --yesno "Exit and finish setup?" 0 0 && CONFIRM=1 || CONFIRM=0
+		if [ $CONFIRM == 1 ]; then
+			rm -rf /etc/systemd/system/getty@tty1.service.d/autologin.conf /etc/$DISTRO_ID/initial-setup
+			exit
+		fi
+	else # User has selected an option to configure
+		case $OPTION in
+			0) /usr/bin/syscfg users;;
+			1) /usr/bin/syscfg hostname;;
+			2) /usr/bin/syscfg prettyhostname;;
+			3) /usr/bin/syscfg selectlocales;;
+			4) /usr/bin/syscfg lang;;
+			5) /usr/bin/syscfg wificountry;;
+			6) /usr/bin/syscfg consolekeymap;;
+			7) /usr/bin/syscfg xkeymap;;
+			8) /usr/bin/syscfg timezone;;
+			9) nmcli;;
+			10) # Additional software
+				dialog --backtitle "$BACKTITLE" --title "Additional software" --msgbox "The following additional software packages are available:
+				vapour-os-amdgpu: AMD graphics drivers
+				vapour-os-i915: Intel graphics drivers
+				vapour-os-nvidia: Nvidia graphics drivers
+				---
+				vapour-os-gui: Libraries and helper scripts for graphical environments. Uses Pipewire for audio. Requires graphics drivers - install one from the list above. If you don't have AMD, Intel or Nvidia graphics you will have to install the drivers manually.
+				vapour-os-multimedia: Multimedia codecs. Requires vapour-os-gui.
+				vapour-os-gaming: Tools, libraries, and helper scripts for gaming. Requires vapour-os-gui and vapour-os-multimedia.
+				vapour-os-printing: Print services and drivers.
+				---
+				vapour-os-kde: KDE Plasma desktop environment and utilities with KDE cursors removed and KDE branding removed from splash screen. Requires vapour-os-gui.
+				vapour-os-xfce: XFCE desktop environment and utilities. Requires vapour-os-gui.
+				---
+				vapour-os-device-hp-pavilion-gaming-17cd1013na: Configuration for HP Pavilion gaming laptop 17-cd1013na. Intel microcode and GPU drivers, Nvidia GPU drivers, and hdapsd." 0 0
+				;;
+		esac
+	fi
+done

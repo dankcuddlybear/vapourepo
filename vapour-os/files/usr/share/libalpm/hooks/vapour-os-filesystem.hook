@@ -1,0 +1,10 @@
+[Trigger]
+Type = Package
+Operation = Install
+Operation = Upgrade
+Target = filesystem
+
+[Action]
+Description = Update release file
+When = PostTransaction
+Exec = /usr/share/libalpm/scripts/vapour-os/filesystem

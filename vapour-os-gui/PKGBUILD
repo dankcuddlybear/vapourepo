@@ -1,0 +1,19 @@
+# Maintainer: Dankcuddlybear <dankcuddlybear@protonmail.com>
+pkgname=vapour-os-gui
+pkgver=1.1.15
+pkgrel=8
+pkgdesc='An Arch distro that aims to be fast, power-efficient and easily configured for any use case (dependencies for desktop)'
+arch=(any)
+url='https://github.com/dankcuddlybear/Vapour-OS'
+backup=('etc/X11/xorg.conf.d/30-touchpad.conf' 'etc/pipewire/client.conf')
+depends=('gst-plugin-pipewire'
+	'gnome-keyring' 'libgnome-keyring' 'libsecret'
+	'ocl-icd'
+	'pipewire' 'pipewire-jack' 'pipewire-v4l2' 'pipewire-alsa' 'pipewire-pulse' 'pipewire-x11-bell' 'pipewire-zeroconf' 'wireplumber'
+	'vapour-os' 'vulkan-mesa-layers'
+	'xdg-desktop-portal' 'xdg-user-dirs' 'xorg-server'
+)
+package() {
+ 	cp -r "$srcdir/../files/etc" "$pkgdir"
+	cp -r "$srcdir/../files/usr" "$pkgdir"
+}

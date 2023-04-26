@@ -1,0 +1,35 @@
+# Maintainer: Dankcuddlybear <dankcuddlybear@protonmail.com>
+pkgname=vapour-os-gnome
+pkgver=1.1.4
+pkgrel=5
+pkgdesc='Vapour OS GNOME X11/Wayland shell'
+arch=(any)
+url='https://github.com/dankcuddlybear/Vapour-OS'
+install=vapour-os-gnome.install
+depends=('pipewire' 'pipewire-jack' 'pipewire-alsa' 'pipewire-pulse' 'wireplumber' 'vapour-os-gui'
+	'adwaita-qt5' 'adwaita-qt6'
+	'eog' 'evince'
+	'file-roller'
+	'gdm-prime' 'libgdm-prime' 'gedit'
+	'gnome-calculator' 'gnome-characters' 'gnome-control-center'
+	'gnome-font-viewer'
+	'gnome-menus'
+	'gnome-shell-extensions' 'gnome-shell-extension-appindicator' 'gnome-shell-extension-dash-to-dock' 'gnome-shell-extension-desktop-icons-ng'
+	'gnome-system-monitor'
+	'gnome-terminal' 'gnome-tweaks'
+	'gnome-usage' 'gnome-user-share'
+	'gvfs-afc' 'gvfs-goa' 'gvfs-google' 'gvfs-gphoto2' 'gvfs-mtp' 'gvfs-nfs' 'gvfs-smb'
+	'malcontent'
+	'nautilus-sendto' 'nautilus-share' 'networkmanager'
+	'qt5ct' 'qt6ct'
+	'seahorse' 'seahorse-nautilus' 'sushi'
+	'vapour-os-gui'
+	'xdg-desktop-portal-gnome' 'xdg-user-dirs-gtk' 'xorg-xwayland'
+)
+package() {
+	cd "$srcdir"
+	cd ../
+	filesdir="$(pwd)/files"
+	cp -r "$filesdir/usr" "$pkgdir"
+}
+

@@ -1,0 +1,10 @@
+[Trigger]
+Type = Package
+Operation = Install
+Operation = Upgrade
+Target = lsb-release
+
+[Action]
+Description = Update lsb-release file
+When = PostTransaction
+Exec = /usr/share/libalpm/scripts/vapour-os/lsb-release

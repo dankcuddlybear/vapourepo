@@ -1,0 +1,176 @@
+#!/bin/bash
+DISTRO_ID="vapour-os"
+DISTRO_NAME="Vapour OS"
+BACKTITLE="$DISTRO_NAME installer"
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+PAGE=0 # 0: Main menu, 1: Select preset, 2: Select root partition, 3: Select boot partition
+
+GetDisks() {
+	unset DISKCHOICES # Numbered list of disks to be used later by dialog (1 /dev/sda 2 /dev/nvme0n1 etc...)
+	DISKS=$(lsblk -dnpo NAME) # List of disks
+	DISKNO=1
+	for DISK in $DISKS; do
+		DISKCHOICES="$DISKCHOICES $DISKNO $DISK"
+		((DISKNO++))
+	done
+	unset DISK DISKNO
+}
+
+GetPartitions() {
+	unset SYSPARTITIONS PARTCHOICES PARTITIONS
+	GetDisks
+	for DISK in $DISKS; do
+		SYSPARTITIONS="$SYSPARTITIONS $(lsblk $DISK -lnpo NAME | grep -vx "$DISK")"
+	done
+	PARTNO=1
+	for PARTITION in $SYSPARTITIONS; do
+		# First, check that this partition hasn't already been chosen
+		if ([ -z $ROOT_DEV ] || [ $ROOT_DEV != "$PARTITION" ]) &&
+		([ -z $BOOT_DEV ] || [ $BOOT_DEV != "$PARTITION" ]) &&
+		([ -z $HOME_DEV ] || [ $HOME_DEV != "$PARTITION" ]) &&
+		([ -z $MEDIA_DEV ] || [ $MEDIA_DEV != "$PARTITION" ]) &&
+		([ -z $PUBLIC_DEV ] || [ $PUBLIC_DEV != "$PARTITION" ]); then
+			PARTCHOICES="$PARTCHOICES $PARTNO $PARTITION"
+			PARTITIONS="$PARTITIONS $PARTITION"
+			((PARTNO++))
+		fi
+	done
+	unset DISK PARTITION PARTNO SYSPARTITIONS
+}
+
+PartitionTool() {
+	DISKSELECT=$(dialog --stdout --backtitle "$BACKTITLE" --cancel-label "Back" --title "Partitioning tool" --menu "WARNING: Any changes to partitions will occur immediately after exiting the partitioning tool. Data loss may occur. Please be careful!\n\nPlease select disk:" 0 0 0 $DISKCHOICES)
+	if [ ! -z $DISKSELECT ]; then
+		DISK=$(echo $DISKS | cut -d ' ' -f $DISKSELECT)
+		## Try to launch cfdisk, then fdisk if cfdisk isn't available, then display an error (debug)
+		cfdisk $DISK || fdisk $DISK || dialog --backtitle "$BACKTITLE" --title "Error" --msgbox "Failed to launch partitioning tool or failed to open $DISK!" 0 0
+	fi
+}
+
+PartitionChooser() {
+	case $PAGE in # Partition name to be displayed in dialog. Unset previously selected partitions if going back a page, and optional if partition is required.
+		2) PARTNAME="root"; unset ROOT_DEV FORMAT_ROOT LABEL_ROOT BOOT_DEV FORMAT_BOOT LABEL_BOOT;;
+		3) PARTNAME="boot"; unset BOOT_DEV FORMAT_BOOT LABEL_BOOT HOME_DEV FORMAT_HOME LABEL_HOME;;
+		4) PARTNAME="home"; unset HOME_DEV FORMAT_HOME LABEL_HOME MEDIA_DEV FORMAT_MEDIA LABEL_MEDIA; OPTIONAL="n None";;
+		5) PARTNAME="media"; unset MEDIA_DEV FORMAT_MEDIA LABEL_MEDIA PUBLIC_DEV FORMAT_MEDIA LABEL_MEDIA; OPTIONAL="n None";;
+		6) PARTNAME="public"; unset PUBLIC_DEV FORMAT_PUBLIC LABEL_PUBLIC; OPTIONAL="n None";;
+		7) PARTNAME="swap"; unset SWAP_DEV; OPTIONAL="n None";;
+	esac
+	GetPartitions
+	PARTSELECTNO=$(dialog --stdout --backtitle "$BACKTITLE" --cancel-label "Back" --title "Partition selection" --menu "Please select $PARTNAME partition:" 0 0 0 $PARTCHOICES $OPTIONAL "p" "Launch partitioning tool")
+	if [ -z $PARTSELECTNO ]; then ((PAGE--)) # Go back a page if back is selected
+	elif [ $PARTSELECTNO == "p" ]; then PartitionTool
+	else
+		if [ $PARTSELECTNO != "n" ]; then # Select this partition unless "none" chosen
+			PARTSELECT=$(echo $PARTITIONS | cut -d ' ' -f $PARTSELECTNO)
+			FSTYPE=$(lsblk $PARTSELECT -dnpo FSTYPE) # Get partition type
+			FSSIZE=$(lsblk $PARTSELECT -dnpo SIZE) # Get partition size
+			FSSIZE_BYTES=$(blockdev --getsize64 $PARTSELECT) # Get partition size in bytes
+			LABEL=$(lsblk $PARTSELECT -dnpo LABEL) # Get partition label
+			if [ $FSTYPE == "swap" ]; then [ -z "$(cat /proc/swaps | grep "$PARTSELECT")" ] && MOUNTED="No" || MOUNTED="Yes"
+			else [ -z "$(mount | grep "$PARTSELECT")" ] && MOUNTED="No" || MOUNTED="Yes"; fi
+
+			if [ $PARTNAME == "root" ] && [ $FSSIZE_BYTES -lt 2147483648 ]; then
+				dialog --backtitle "$BACKTITLE" --title "Partition info" --yesno "Device:  $PARTSELECT\nLabel:   $LABEL\nSize:    $FSSIZE\nType:    $FSTYPE\nMounted: $MOUNTED\n\nThe selected partition is too small. It needs to be at least 2GiB in size." 0 0
+				CONFIRM=0
+			elif [ $PARTNAME == "boot" ] && [ $FSSIZE_BYTES -lt 536870912 ]; then
+				dialog --backtitle "$BACKTITLE" --title "Partition info" --yesno "Device:  $PARTSELECT\nLabel:   $LABEL\nSize:    $FSSIZE\nType:    $FSTYPE\nMounted: $MOUNTED\n\nThe selected partition is too small. It needs to be at least 512MiB in size." 0 0
+				CONFIRM=0
+			else
+				## Display partition info and confirm or go back
+				dialog --backtitle "$BACKTITLE" --title "Partition info" --yesno "Device:  $PARTSELECT\nLabel:   $LABEL\nSize:    $FSSIZE\nType:    $FSTYPE\nMounted: $MOUNTED\n\nSelect as $PARTNAME partition?" 0 0 && CONFIRM=1 || CONFIRM=0
+			fi
+
+			if [ $CONFIRM == 1 ]; then
+				## Check partition is formatted correctly (vfat for ESP, ext4 for all others except swap)
+				if ([ $PARTNAME == "root" ] && [ $FSTYPE == "ext4" ]) ||
+				([ $PARTNAME == "boot" ] && [ $FSTYPE == "vfat" ]) ||
+				([ $PARTNAME == "home" ] && [ $FSTYPE == "ext4" ]) ||
+				([ $PARTNAME == "media" ] && [ $FSTYPE == "ext4" ]) ||
+				([ $PARTNAME == "public" ] && [ $FSTYPE == "ext4" ]); then
+					dialog --backtitle "$BACKTITLE" --title "Format partition" --yesno "Would you like to format this partition?\nIf you do, all data on this partition will be lost forever.\nIf not, only system files from the previous Linux installation will be removed, and all other files will be kept." 0 0 && FORMAT=1 || FORMAT=0
+				elif [ $PARTNAME != "swap" ]; then # Partition is not formatted correctly
+					dialog --backtitle "$BACKTITLE" --title "Warning" --msgbox "This partition appears to be unformatted or incorrectly formatted. It will be formatted before installation. If it contains important data, back it up now!" 0 0
+					FORMAT=1
+				fi
+				## Detect existing label if possible, otherwise suggest default label. Then, ask to set the label.
+				if [ -z "$LABEL" ]; then
+					if [ $PARTNAME == "root" ]; then LABEL="$DISTRO_ID"
+					elif [ $PARTNAME == "boot" ]; then LABEL="BOOT"
+					else LABEL="$PARTNAME"; fi
+				fi
+				LABEL="$(dialog --stdout --backtitle "$BACKTITLE" --cancel-label "None" --title "Volume label" --inputbox "Enter volume label:" 0 0 "$LABEL")"
+				[ $FSTYPE == "vfat" ] && LABEL="${LABEL^^}" # Capitalise label if partition type is vfat
+			fi
+		else unset PARTSELECT FORMAT LABEL; CONFIRM=1; fi
+		if [ $CONFIRM == 1 ]; then
+			case $PARTNAME in
+				"root") export ROOT_DEV=$PARTSELECT; export FORMAT_ROOT=$FORMAT; export LABEL_ROOT="$LABEL";;
+				"boot") export BOOT_DEV=$PARTSELECT; export FORMAT_BOOT=$FORMAT; export LABEL_BOOT="${LABEL^^}";;
+				"home") export HOME_DEV=$PARTSELECT; export FORMAT_HOME=$FORMAT; export LABEL_HOME="$LABEL";;
+				"media") export MEDIA_DEV=$PARTSELECT; export FORMAT_MEDIA=$FORMAT; export LABEL_MEDIA="$LABEL";;
+				"public") export PUBLIC_DEV=$PARTSELECT; export FORMAT_PUBLIC=$FORMAT; export LABEL_PUBLIC="$LABEL";;
+				"swap") export SWAP_DEV=$PARTSELECT; export LABEL_SWAP="$LABEL";;
+			esac
+			unset FSTYPE PARTSELECT PARTSELECTNO PARTNAME PARTITIONS PARTCHOICES OPTIONAL LABEL FORMAT
+			((PAGE++))
+		fi
+	fi
+}
+
+dialog --backtitle "$BACKTITLE" --title "Welcome" --msgbox "Thank you for choosing $DISTRO_NAME!
+We will never collect data or spy on you in any way.
+We will never restrict what you can do on your device.
+If you want to see how everything works, visit github.com/dankcuddlybear/vapourepo
+Press ENTER to continue (or CTRL+C to quit at any time)." 0 0
+while true; do
+	case $PAGE in
+		0) # Main menu - choose normal or automated install
+			INSTALL_MODE=$(dialog --stdout --backtitle "$BACKTITLE" --cancel-label "Abort" --title "Main menu" --menu "What would you like to do?" 0 0 0 "1" "Install $DISTRO_NAME" "2" "Load preset for automated install (not yet available)")
+			if [ -z $INSTALL_MODE ]; then clear; echo "Aborted installation."; exit # Abort installation if abort is selected
+			elif [ $INSTALL_MODE == 1 ]; then PAGE=2
+			elif [ $INSTALL_MODE == 2 ]; then PAGE=1
+			fi
+			;;
+		1) # Preset chooser
+			if [ $INSTALL_MODE == 1 ]; then PAGE=0 # Go to first page if not using automated install
+			else
+				dialog --backtitle "$BACKTITLE" --title "Error" --msgbox "This feature is not yet implemented." 0 0
+				PAGE=0
+			fi
+			;;
+		## Choose partitions
+		2) PartitionChooser;; 3) PartitionChooser;; 4) PartitionChooser;; 5) PartitionChooser;; 6) PartitionChooser;; 7) PartitionChooser;;
+		8) # Connect to the internet
+			ping -c 1 archlinux.org &> /dev/null && INTERNET_CONNECTED=1 || INTERNET_CONNECTED=0
+			if [ $INTERNET_CONNECTED == 0 ]; then
+				dialog --backtitle "$BACKTITLE" --title "No internet connection" --yesno "It looks like you aren't connected to the internet. An internet connection is required to install $DISTRO_NAME. You may have recieved this warning in error, but you should verify your connection just to be safe.\n\nOpen NetworkManager menu?" 0 0 && nmtui
+			fi
+			((PAGE++))
+			;;
+		9) # Review settings before install
+			## Generate dialog text
+			FINALTEXT="$DISTRO_NAME is ready to be installed. Please review the following changes:\n[ROOT] $ROOT_DEV"
+			[ ! -z "$LABEL_ROOT" ] && FINALTEXT="$FINALTEXT \"$LABEL_ROOT\""; [ $FORMAT_ROOT == 1 ] && FINALTEXT="$FINALTEXT (format)"
+			FINALTEXT="$FINALTEXT\n[BOOT] $BOOT_DEV"; [ ! -z "$LABEL_BOOT" ] && FINALTEXT="$FINALTEXT \"$LABEL_BOOT\""; [ $FORMAT_BOOT == 1 ] && FINALTEXT="$FINALTEXT (format)"
+			if [ ! -z $HOME_DEV ]; then
+				FINALTEXT="$FINALTEXT\n[HOME] $HOME_DEV"; [ ! -z "$LABEL_HOME" ] && FINALTEXT="$FINALTEXT \"$LABEL_HOME\""; [ $FORMAT_HOME == 1 ] && FINALTEXT="$FINALTEXT (format)"
+			fi
+			if [ ! -z $MEDIA_DEV ]; then
+				FINALTEXT="$FINALTEXT\n[MEDIA] $MEDIA_DEV"; [ ! -z "$LABEL_MEDIA" ] && FINALTEXT="$FINALTEXT \"$LABEL_MEDIA\""; [ $FORMAT_MEDIA == 1 ] && FINALTEXT="$FINALTEXT (format)"
+			fi
+			if [ ! -z $PUBLIC_DEV ]; then
+				FINALTEXT="$FINALTEXT\n[PUBLIC] $PUBLIC_DEV"; [ ! -z "$LABEL_PUBLIC" ] && FINALTEXT="$FINALTEXT \"$LABEL_PUBLIC\""; [ $FORMAT_PUBLIC == 1 ] && FINALTEXT="$FINALTEXT (format)"
+			fi
+			if [ ! -z $SWAP_DEV ]; then
+				FINALTEXT="$FINALTEXT\n[SWAP] $SWAP_DEV"; [ ! -z "$LABEL_SWAP" ] && FINALTEXT="$FINALTEXT \"$LABEL_SWAP\""; FINALTEXT="$FINALTEXT (format)"
+			fi
+			FINALTEXT="$FINALTEXT\n\nApply changes and begin installation?"
+ 			dialog --backtitle "$BACKTITLE" --title "Confirm changes" --yesno "$FINALTEXT" 0 0 && ((PAGE++)) || PAGE=7
+ 			;;
+		10) # Begin installation
+			"/usr/lib/$DISTRO_ID/$DISTRO_ID-installer" || exit 1
+			sync
+			echo "Installation complete! You may reboot your computer."; exit;;
+	esac
+done

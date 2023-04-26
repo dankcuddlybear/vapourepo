@@ -1,0 +1,3 @@
+[submodule "hackbgrt-bin"]
+	path = hackbgrt-bin
+	url = ssh://aur@aur.archlinux.org/hackbgrt-bin.git

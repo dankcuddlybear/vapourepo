@@ -1,0 +1,73 @@
+#!/bin/bash
+## Finish installing Vapour OS after Pacman install.
+[ $(whoami) != "root" ] && echo "[ERROR] This script must be run a root" && exit 1
+MODE=$1; [ -z "$MODE" ] && echo "[ERROR] No mode specified (install, upgrade, uninstall)" && exit 1
+DISTRO_ID="vapour-os"
+DISTRO_NAME="Vapour OS"
+SYSTEMD_UNITS="avahi-daemon fstrim.timer NetworkManager NetworkManager-dispatcher nftables rtirq rtkit-daemon system-setup systemd-oomd"
+SYSTEMD_UNITS_MASK="systemd-rfkill systemd-rfkill.socket"
+[ -f "/$DISTRO_ID-live" ] && VAPOUR_OS_INSTALL_MODE="buildiso" || VAPOUR_OS_INSTALL_MODE="system"
+[ -f "/tmp/$DISTRO_ID/$DISTRO_ID-oldver" ] && VER_OLD="$(cat /tmp/$DISTRO_ID/$DISTRO_ID-oldver)" || unset VER_OLD
+
+SecureBootSetup() {
+	if [ -d /sys/firmware/efi ]; then
+		sbctl create-keys
+		sbctl sign-all -g
+		sbctl enroll-keys -m && echo "Secure boot support is now enabled." ||
+		echo "[WARNING] Failed to enroll secure boot keys"
+		echo "          If you don't wish to use secure boot, you can ignore this warning. Otherwise:"
+		echo "           - Enter firmware setup utility and find an option to clear all secure boot certificates."
+		echo "             This will disable secure boot and put the firmware in setup mode."
+		echo "           - Reboot into $DISTRO_NAME and run the following command: sbctl enroll-keys -m"
+		echo "             This will enroll Microsoft's keys and your own secure boot keys to the UEFI."
+		echo "             Most OPROMs are signed Microsoft's keys. Without them, most expansion cards, like graphics cards, will not work with secure boot enabled."
+		echo "             It is important to enroll Microsoft's keys as well."
+		echo "           - Enter firmware setup utility again and enable secure boot."
+	fi
+}
+
+Upgrade() { # Finish upgrade process (run every install/upgrade)
+	cp -nr /usr/share/$DISTRO_ID/custom-configs/etc /
+	systemctl enable $SYSTEMD_UNITS
+	systemctl mask $SYSTEMD_UNITS_MASK
+	# If upgrading from 1.1.34-16 or older, disable irqbalance
+	if [ $(vercmp 1.1.34-16 $VER_OLD) -gt -1 ]; then
+		systemctl --now disable irqbalance
+	fi
+}
+
+Install() { # Fresh install (run once on install only)
+	# Create custom /etc/issue
+	setterm -cursor on > /etc/issue # Cursor fix
+	echo "____   ____                                   ________    _________" > /etc/issue
+	echo "\\\\   \\\\ /   /____  ______   ____  __ _________  \\\\_____  \\\\  /   _____/" >> /etc/issue
+	echo " \\\\   Y   /\\\\__  \\\\ \\\\____ \\\\ /  _ \\\\|  |  \\\\_  __ \\\\  /   |   \\\\ \\\\_____  \\\\" >> /etc/issue
+	echo "  \\\\     /  / __ \\\\|  |_> >  <_> )  |  /|  | \\\\/ /    |    \\\\/        \\\\" >> /etc/issue
+	echo "   \\\\___/  (____  /   __/ \\\\____/|____/ |__|    \\\\_______  /_______  /" >> /etc/issue
+	echo "               \\\\/|__|                                 \\\\/        \\\\/" >> /etc/issue
+	echo "\\n \\r \\m" >> /etc/issue
+	echo "\\d \\t" >> /etc/issue
+	echo "/dev/\\l" >> /etc/issue
+	echo "" >> /etc/issue
+	echo "Welcome!" >> /etc/issue
+	echo "" >> /etc/issue
+	cp -r /usr/share/$DISTRO_ID/custom-configs/etc /
+	/usr/lib/$DISTRO_ID/mkfstab
+	if [ "$VAPOUR_OS_INSTALL_MODE" == "buildiso" ]; then
+		for FILE in $(ls /etc/mkinitcpio.d); do
+			echo "PRESETS=('fallback')" >> /etc/mkinitcpio.d/$FILE
+		done
+	fi
+	SecureBootSetup
+	Upgrade
+}
+
+Uninstall() {
+	systemctl disable $SYSTEMD_UNITS
+	systemctl unmask $SYSTEMD_UNITS_MASK
+}
+
+if [ "$MODE" == "install" ]; then Install
+elif [ "$MODE" == "upgrade" ]; then Upgrade
+elif [ "$MODE" == "uninstall" ]; then Uninstall
+else echo "[ERROR] Invalid mode \"$1\""; exit 1; fi

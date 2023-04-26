@@ -1,0 +1,65 @@
+#!/bin/sh
+DISTRO_ID="vapour-os"
+[ $(whoami) != root ] && echo "[ERROR] You must be root to run this script." && exit 1
+Help() {
+	echo "USAGE: $(basename $0) <profile>"
+	echo "List of profiles available:"
+	echo "    powersave:   Saves power by using more aggressive energy-saving settings. May reduce performance."
+	echo "    balanced:    Saves power when possible, without noticeably reducing performance. Recommended."
+	echo "    performance: Use performance-biased settings, and reduce power saving features."
+	echo "                 May improve performance, reduce latency and reduce stuttering in games. May also lead to shorter battery life, more heat and a higher energy bill."
+	echo "    esports:     Use performance-biased settings, and disable all power saving features entirely."
+	echo "                 May improve performance, reduce latency and reduce stuttering in games. Will hugely increase power consumption."
+	echo "                 Recommended for competitive gaming and E-Sports."
+	echo "Choose wisely. Saving energy saves you money and saves the planet!"
+}
+if [ -z "$1" ]; then echo "[ERROR] No mode specified"; Help; exit 1
+elif [ "$MODE" != "powersave" ] && [ "$MODE" != "balanced" ] && [ "$MODE" != "performance" ] && [ "$MODE" != "esports" ]; then
+    echo "[ERROR] Invalid mode \"$MODE\""; Help; exit 1
+fi
+SCALING_DRIVER=$(cat /sys/devices/system/cpu/cpufreq/policy0/scaling_driver)
+CURRENT_POWER_PROFILE=$(cat /run/$DISTRO_ID/power-profile &> /dev/null)
+
+for CORE in $(ls -d /sys/devices/system/cpu/cpu*); do
+    # Set governor
+    if [ $SCALING_DRIVER == "intel_pstate" ]; then
+		if [ "$1" == "powersave" ] || [ "$1" == "balanced" ]; then echo powersave > $CORE/cpufreq/scaling_governor
+		else echo performance > $CORE/cpufreq/scaling_governor; fi
+	else
+		if [ "$1" == "esports" ]; then echo performance > $CORE/cpufreq/scaling_governor
+		else echo schedutil > $CORE/cpufreq/scaling_governor; fi
+	fi
+
+    # Set min frequency
+    if [ "$1" == "esports" ]; then cat $CORE/cpufreq/cpuinfo_max_freq > $CORE/cpufreq/scaling_min_freq
+    else cat $CORE/cpufreq/cpuinfo_min_freq > $CORE/cpufreq/scaling_min_freq; fi
+
+    # Set Intel energy perf bias
+    if [ $SCALING_DRIVER == "intel_pstate" ]; then
+        if [ "$1" == "powersave" ]; then echo 15 > $CORE/power/energy_perf_bias
+        elif [ "$1" == "balanced" ]; then echo 8 > $CORE/power/energy_perf_bias
+        elif [ "$1" == "performance" ]; then echo 4 > $CORE/power/energy_perf_bias
+		elif [ "$1" == "esports" ]; then echo 0 > $CORE/power/energy_perf_bias; fi
+    fi
+done
+
+# Enable ASPM (set mode twice to work around a bug)
+if [ "$1" == "powersave" ] || [ "$1" == "balanced" ]; then
+	echo powersave > /sys/module/pcie_aspm/parameters/policy
+	echo powersupersave > /sys/module/pcie_aspm/parameters/policy
+elif [ "$1" == "performance" ]; then
+	echo powersupersave > /sys/module/pcie_aspm/parameters/policy
+	echo powersave > /sys/module/pcie_aspm/parameters/policy
+elif [ "$1" == "esports" ]; then
+	echo powersave > /sys/module/pcie_aspm/parameters/policy
+	echo performance > /sys/module/pcie_aspm/parameters/policy; fi
+fi
+
+if [ "$1" == "esports" ]; then # Disable runtime PM
+	for DEVICE in $(ls -d /sys/bus/*/devices/*); do echo "on" > $DEVICE/power/control; done
+elif [ ! -z "$CURRENT_POWER_PROFILE" ] && [ "$CURRENT_POWER_PROFILE" == "esports" ]; then # Reload udev rules (this will enable runtime PM)
+	udevadm trigger
+fi
+
+# Save current power profile
+echo $1 > /run/$DISTRO_ID/power-profile

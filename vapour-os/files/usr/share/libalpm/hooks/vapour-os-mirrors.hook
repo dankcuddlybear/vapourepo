@@ -2,10 +2,11 @@
 Operation = Install
 Operation = Upgrade
 Type = Package
+Target = chaotic-mirrorlist
 Target = pacman-mirrorlist
 
 [Action]
-Description = Upgrade Pacman mirrorlist
+Description = Upgrade Arch Linux and CHaotic Mirrors
 Depends = sed
 When = PostTransaction
-Exec = /usr/share/libalpm/scripts/vapour-os/pacman-mirrorlist
+Exec = /usr/share/libalpm/scripts/vapour-os/mirrors

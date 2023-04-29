@@ -1,0 +1,9 @@
+[Trigger]
+Type = Package
+Operation = Install
+Target = vapour-os
+
+[Action]
+Description = Install Vapour OS
+When = PostTransaction
+Exec = /usr/lib/vapour-os/vapour-os-installer install

@@ -1,0 +1,9 @@
+[Trigger]
+Type = Package
+Operation = Remove
+Target = vapour-os
+
+[Action]
+Description = Uninstall Vapour OS
+When = PreTransaction
+Exec = /usr/lib/vapour-os/vapour-os-installer uninstall

@@ -8,17 +8,17 @@ url='https://github.com/dankcuddlybear/vapourepo'
 install=vapour-os.install
 backup=('etc/skel/.config/yay/config.json'
 )
-depends=('base' 'base-devel' 'bash-completion'
+depends=('base' 'base-devel' 'bash-completion' 'bluez'
 	'chaotic-keyring' 'chaotic-mirrorlist'
-	'efibootmgr' 'ethtool'
+	'dnsmasq' 'dosfstools'
+	'efibootmgr' 'ethtool' 'exfatprogs'
 	'hdparm' 'fscrypt'
 	'iw'
 	'linux-firmware'
-	'man-db' 'man-pages'
-	'networkmanager' 'nss-mdns'
+	'man-db' 'man-pages' 'modemmanager' 'mtools'
 	'sbctl' 'sudo'
 	'terminus-font'
-	'wireless-regdb'
+	'wireless-regdb' 'words'
 	'yay'
 )
 package() {

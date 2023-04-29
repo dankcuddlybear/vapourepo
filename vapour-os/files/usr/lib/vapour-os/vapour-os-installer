@@ -6,6 +6,7 @@ Error() {
 	exit 1
 }
 Upgrade() {
+	false
 }
 Install() {
 	/usr/share/libalpm/scripts/$DISTRO_ID/mirrors # Update Pacman mirrorlists now

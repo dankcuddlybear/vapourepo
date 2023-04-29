@@ -31,7 +31,8 @@ Install() {
 	locale-gen
 	systemctl --now enable avahi-daemon.socket NetworkManager; systemctl enable systemd-oomd fstrim.timer
 	Upgrade # Finish installation
-	passwd -l root
+	if [ -f "/$DISTRO_ID-live" ]; then passwd -l root
+	else passwd -u root; passwd -d root; fi
 }
 Uninstall() {
 	# Restore default configs

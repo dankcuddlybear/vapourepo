@@ -1,7 +1,7 @@
 # Maintainer: Dankcuddlybear <dankcuddlybear@protonmail.com>
 pkgname=vapour-os
 pkgver=1.1.35
-pkgrel=4
+pkgrel=5
 pkgdesc='Arch-based distro that aims to be fast, flexible and power-efficient (core package). Make sure you install a kernel and headers.'
 arch=(x86_64)
 url='https://github.com/dankcuddlybear/vapourepo'

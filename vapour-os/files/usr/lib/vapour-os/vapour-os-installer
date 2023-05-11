@@ -14,7 +14,7 @@ Install() {
 	cp -r /usr/share/$DISTRO_ID/custom-configs/etc /
 	rm /etc/mkinitcpio.conf.pacnew &> /dev/null
 	if [ -f /etc/mkinitcpio.conf ]; then # Check before overwriting /etc/mkinitcpio.conf
-		VAPOUR_OS_NO_OVERWRITE="$(sh -c '/etc/mkinitcpio.conf && echo $VAPOUR_OS_NO_OVERWRITE')"
+		VAPOUR_OS_NO_OVERWRITE="$(sh -c '. /etc/mkinitcpio.conf && echo $VAPOUR_OS_NO_OVERWRITE')"
 		if [ -z "$VAPOUR_OS_NO_OVERWRITE" ] || [ "$VAPOUR_OS_NO_OVERWRITE" != 1 ]; then
 			cp /usr/share/$DISTRO_ID/custom-configs/mkinitcpio.conf /etc/mkinitcpio.conf
 		fi

@@ -1,0 +1,17 @@
+# Maintainer: Dankcuddlybear <dankcuddlybear@protonmail.com>
+pkgname=vapour-os-config-desktop
+pkgver=1.0.0
+pkgrel=1
+pkgdesc='Vapour OS preset for personal computers (CLI only)'
+arch=(x86_64)
+url='https://github.com/dankcuddlybear/Vapour-OS'
+install=vapour-os-config-desktop.install
+depends=('base-devel' 'bash-completion' 'bluez'
+	'exfatprogs' 'fscrypt'
+	'man-db' 'man-pages'
+	'terminus-font'
+	'yay'
+)
+package() {
+	cp -r "$srcdir/../files/usr" "$pkgdir"
+}

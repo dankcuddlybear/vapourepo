@@ -1,0 +1,10 @@
+[DESKTOP]
+base-devel bash-completion bluez ethtool exfatprogs iw man-db man-pages modemmanager
+
+[MOBILE]
+
+[SERVER]
+
+[HTPC]
+
+[EMBEDDED]

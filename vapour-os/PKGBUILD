@@ -1,25 +1,24 @@
 # Maintainer: Dankcuddlybear <dankcuddlybear@protonmail.com>
 pkgname=vapour-os
 pkgver=1.1.35
-pkgrel=5
+pkgrel=6
 pkgdesc='Arch-based distro that aims to be fast, flexible and power-efficient (core package). Make sure you install a kernel and headers.'
 arch=(x86_64)
 url='https://github.com/dankcuddlybear/vapourepo'
 install=vapour-os.install
 backup=('etc/skel/.config/yay/config.json'
 )
-depends=('base' 'base-devel' 'bash-completion' 'bluez'
+depends=('base'
 	'chaotic-keyring' 'chaotic-mirrorlist'
-	'dnsmasq' 'dosfstools'
-	'efibootmgr' 'ethtool' 'exfatprogs'
+	'dosfstools'
+	'efibootmgr' 'ethtool'
 	'hdparm' 'fscrypt'
 	'iw'
 	'linux-firmware'
-	'man-db' 'man-pages' 'modemmanager' 'mtools'
-	'sbctl' 'sudo'
+	'networkmanager'
+	'sbctl'
 	'terminus-font'
-	'wireless-regdb' 'words'
-	'yay'
+	'wireless-regdb'
 )
 package() {
 	cp -r "$srcdir/../files/etc" "$pkgdir"

@@ -1,0 +1,11 @@
+[MINIMUM SYSTEM REQUIREMENTS]
+x86_64 processor
+180MiB RAM
+1GiB storage
+OPTIONAL: Graphics cardMD Radeon Graphics (HD 7000 or above), Intel Graphics
+
+[RECOMMENDED SPECIFICATIONS]
+1.8GHz dual-core x86_64 processor
+4GiB RAM
+16GiB storage
+Intel (HD Graphics or above) or AMD Radeon Graphics

@@ -1,13 +1,12 @@
 # Maintainer: Dankcuddlybear <dankcuddlybear@protonmail.com>
 pkgname=vapour-os
 pkgver=1.1.35
-pkgrel=6
-pkgdesc='Arch-based distro that aims to be fast, flexible and power-efficient (core package). Make sure you install a kernel and headers.'
+pkgrel=8
+pkgdesc='A modular Arch based distro optimised for energy saving and ease of use (core system)'
 arch=(x86_64)
 url='https://github.com/dankcuddlybear/vapourepo'
 install=vapour-os.install
-backup=('etc/skel/.config/yay/config.json'
-)
+backup=('etc/skel/.config/yay/config.json' 'etc/vapour-os/vapour-os.conf')
 depends=('base'
 	'chaotic-keyring' 'chaotic-mirrorlist'
 	'dosfstools'
@@ -17,7 +16,6 @@ depends=('base'
 	'linux-firmware'
 	'networkmanager'
 	'sbctl'
-	'terminus-font'
 	'wireless-regdb'
 )
 package() {

@@ -1,6 +1,8 @@
 #!/bin/bash
 DISTRO_ID="vapour-os"
 DISTRO_NAME="Vapour OS"
+if [ -f "/$DISTRO_ID-live" ]; then INTSALL_MODE="iso"
+else INSTALL_MODE="system"; fi
 Error() {
 	echo "[ERROR] $1"
 	exit 1
@@ -10,11 +12,13 @@ Upgrade() {
 }
 Install() {
 	/usr/share/libalpm/scripts/$DISTRO_ID/mirrors # Update Pacman mirrorlists now
+	
 	## Copy custom configs
 	cp -r /usr/share/$DISTRO_ID/custom-configs/etc /
 	rm /etc/mkinitcpio.conf.pacnew &> /dev/null
 	if [ -f /etc/mkinitcpio.conf ]; then # Check before overwriting /etc/mkinitcpio.conf
-		VAPOUR_OS_NO_OVERWRITE="$(sh -c '. /etc/mkinitcpio.conf && echo $VAPOUR_OS_NO_OVERWRITE')"
+		if [ $INSTALL_MODE == "iso" ]; then VAPOUR_OS_NO_OVERWRITE=1
+		else VAPOUR_OS_NO_OVERWRITE="$(sh -c '. /etc/mkinitcpio.conf && echo $VAPOUR_OS_NO_OVERWRITE')"; fi
 		if [ -z "$VAPOUR_OS_NO_OVERWRITE" ] || [ "$VAPOUR_OS_NO_OVERWRITE" != 1 ]; then
 			cp /usr/share/$DISTRO_ID/custom-configs/mkinitcpio.conf /etc/mkinitcpio.conf
 		fi
@@ -30,10 +34,17 @@ Install() {
 	echo "" >> /etc/issue
 	
 	locale-gen
-	systemctl --now enable avahi-daemon.socket NetworkManager; systemctl enable systemd-oomd fstrim.timer
+	systemctl enable avahi-daemon.socket fstrim.timer NetworkManager systemd-oomd
 	Upgrade # Finish installation
-	if [ -f "/$DISTRO_ID-live" ]; then passwd -l root
-	else passwd -u root; passwd -d root; fi
+	
+	if [ $INSTALL_MODE == "iso" ]; then
+		passwd -u root; passwd -d root # Unlock root account
+		useradd -m live; passwd -qd -m 0 -x -1 # Create passwordless user "live"
+		gpasswd -a live wheel; gpasswd -a live games # Add to groups
+		rm /usr/local/sbin/cat
+	else
+		passwd -l root # Lock root account (su/sudo still usable)
+	fi
 }
 Uninstall() {
 	# Restore default configs

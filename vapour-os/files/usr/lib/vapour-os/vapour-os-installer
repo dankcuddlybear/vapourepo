@@ -31,7 +31,7 @@ Install() {
 	else
 		passwd -l root # Lock root account (su/sudo still usable)
 		# Copy system-specific configs
-		VAPOUR_OS_NO_OVERWRITE="$(sh -c '. /etc/mkinitcpio.conf && echo $VAPOUR_OS_NO_OVERWRITE')"; fi
+		VAPOUR_OS_NO_OVERWRITE="$(sh -c '. /etc/mkinitcpio.conf && echo $VAPOUR_OS_NO_OVERWRITE')"
 		if [ -z "$VAPOUR_OS_NO_OVERWRITE" ] || [ "$VAPOUR_OS_NO_OVERWRITE" != 1 ]; then
 			cp /usr/share/$DISTRO_ID/custom-configs/mkinitcpio.conf /etc/mkinitcpio.conf
 		fi

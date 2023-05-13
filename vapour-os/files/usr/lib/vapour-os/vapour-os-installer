@@ -24,8 +24,8 @@ Install() {
 	echo "" >> /etc/issue
 	
 	if [ $INSTALL_MODE == "iso" ]; then
-		passwd -u root; passwd -d root # Unlock root account
-		useradd -m live; passwd -qd -m 0 -x -1 # Create passwordless user "live"
+		passwd -u root 1> /dev/null; passwd -d root 1> /dev/null # Unlock root account
+		useradd -m live; passwd -dq -n 0 -x -1 # Create passwordless user "live"
 		gpasswd -a live wheel; gpasswd -a live games # Add to groups
 		rm -rf /etc/*.pacnew
 		rm /usr/local/sbin/cat

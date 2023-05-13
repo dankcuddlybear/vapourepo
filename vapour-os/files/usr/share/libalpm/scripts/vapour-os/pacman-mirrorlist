@@ -1,8 +1,0 @@
-#!/bin/sh
-# Upgrade Arch Linux and Chaotic mirrorlist
-if [ -f /etc/pacman.d/mirrorlist.pacnew ]; then
-	mv /etc/pacman.d/mirrorlist.pacnew /etc/pacman.d/mirrorlist
-	sed "/Server = /s/^#//g" -i /etc/pacman.d/mirrorlist
-fi; if [ -f /etc/pacman.d/chaotic-mirrorlist.pacnew ]; then
-	mv /etc/pacman.d/chaotic-mirrorlist.pacnew /etc/pacman.d/chaotic-mirrorlist
-fi

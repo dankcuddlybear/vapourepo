@@ -6,7 +6,7 @@ Target = chaotic-mirrorlist
 Target = pacman-mirrorlist
 
 [Action]
-Description = Upgrade Arch Linux and CHaotic Mirrors
+Description = Upgrade Arch Linux and Chaotic Mirrors
 Depends = sed
 When = PostTransaction
 Exec = /usr/share/libalpm/scripts/vapour-os/mirrors

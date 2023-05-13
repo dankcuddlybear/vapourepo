@@ -1,7 +1,8 @@
 #!/bin/sh
-printf "Synchronizing disk writes..."; sync; printf " Done.\n"
-PKG_ORPHANS="$(pacman -Qdttq)"
-if [ ! -z "$PKG_ORPHANS" ]; then
-	echo "These packages are no longer required by other packages:"
-	echo "$PKG_ORPHANS"
+# Upgrade Arch Linux and Chaotic mirrorlist
+if [ -f /etc/pacman.d/mirrorlist.pacnew ]; then
+	mv /etc/pacman.d/mirrorlist.pacnew /etc/pacman.d/mirrorlist
+	sed "/Server = /s/^#//g" -i /etc/pacman.d/mirrorlist
+fi; if [ -f /etc/pacman.d/chaotic-mirrorlist.pacnew ]; then
+	mv /etc/pacman.d/chaotic-mirrorlist.pacnew /etc/pacman.d/chaotic-mirrorlist
 fi

@@ -1,7 +1,7 @@
 # Maintainer: Dankcuddlybear <dankcuddlybear@protonmail.com>
 pkgname=vapour-os
 pkgver=1.1.35
-pkgrel=9
+pkgrel=10
 pkgdesc='A modular Arch based distro optimised for energy saving and ease of use (core system)'
 arch=(x86_64)
 url='https://github.com/dankcuddlybear/vapourepo'
@@ -15,7 +15,8 @@ depends=('base'
 	'iw'
 	'linux-firmware'
 	'networkmanager'
-	'sbctl'
+	'polkit'
+	'sbctl' 'sudo'
 	'wireless-regdb'
 )
 package() {

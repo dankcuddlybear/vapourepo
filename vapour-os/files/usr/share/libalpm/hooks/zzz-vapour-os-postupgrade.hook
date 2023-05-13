@@ -9,4 +9,4 @@ Target = *
 Description = Finish installing packages
 Depends = coreutils
 When = PostTransaction
-Exec = /usr/lib/vapour-os/vapour-os-installer upgrade
+Exec = /usr/share/libalpm/scripts/vapour-os/postupgrade

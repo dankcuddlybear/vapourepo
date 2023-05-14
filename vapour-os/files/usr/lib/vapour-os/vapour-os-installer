@@ -1,11 +1,28 @@
 #!/bin/bash
-DISTRO_ID="vapour-os"
-DISTRO_NAME="Vapour OS"
-if [ -f "/$DISTRO_ID-live" ]; then INSTALL_MODE="iso"
-else INSTALL_MODE="system"; fi
+DISTRO_ID="vapour-os"; DISTRO_NAME="Vapour OS"
 Error() {
 	echo "[ERROR] $1"
 	exit 1
+}
+[ -z "$1" ] && Error "No command (install/upgrade/uninstall)"
+if [ -f "/$DISTRO_ID-live" ]; then INSTALL_MODE="iso"; else INSTALL_MODE="system"; fi
+SecureBootSetup() {
+	if ([ -d /sys/firmware/efi ] && [ ! -z "$(bash -c 'cd /sys/firmware/efi/efivars; shopt -s nocaseglob; ls *secureboot*')" ]) || [ $INSTALL_MODE == "iso" ]; then
+		sbctl create-keys
+		sbctl sign-all -g
+		if [ $INSTALL_MODE == "system" ]; then
+			sbctl enroll-keys -m && echo "Secure boot support is now enabled." ||
+			echo "[WARNING] Failed to enroll secure boot keys"
+			echo "          If you don't wish to use secure boot, you can ignore this warning. Otherwise:"
+			echo "           - Enter firmware setup utility and find an option to clear all secure boot certificates."
+			echo "             This will disable secure boot and put the firmware in setup mode."
+			echo "           - Reboot $DISTRO_NAME and run the following command: sbctl enroll-keys -m"
+			echo "             This will enroll Microsoft's keys and your own secure boot keys to the UEFI."
+			echo "             Most OPROMs are signed Microsoft's keys. Without them, most expansion cards, like graphics cards, will not work with secure boot enabled."
+			echo "             It is important to enroll Microsoft's keys as well."
+			echo "           - Enter firmware setup utility again and enable secure boot."
+		fi
+	fi
 }
 Upgrade() {
 	sleep 0
@@ -13,6 +30,7 @@ Upgrade() {
 Install() {
 	/usr/share/libalpm/scripts/$DISTRO_ID/mirrors # Update Pacman mirrorlists now
 	cp -r /usr/share/$DISTRO_ID/custom-configs/etc / # Copy custom configs
+	#
 	## Create custom /etc/issue greeting
 	setterm -cursor on > /etc/issue
 	echo -e "$(cat /usr/share/$DISTRO_ID/$DISTRO_ID.ascii)" >> /etc/issue
@@ -22,25 +40,25 @@ Install() {
 	echo "" >> /etc/issue
 	echo "Welcome!" >> /etc/issue
 	echo "" >> /etc/issue
-	
-	if [ $INSTALL_MODE == "iso" ]; then
+	#
+	if [ $INSTALL_MODE == "iso" ]; then ## ArchISO build mode
 		passwd -uq root; passwd -dq root # Unlock root account
-		useradd -m live; passwd -dq -n 0 -x -1 live # Create passwordless user "live"
-		gpasswd -a live wheel; gpasswd -a live games # Add to groups
-		rm -rf /etc/*.pacnew
-		rm /usr/local/sbin/cat
-	else
-		passwd -l root # Lock root account (su/sudo still usable)
-		# Copy system-specific configs
+		useradd -m live; passwd -dq live # Create passwordless user "live"
+		gpasswd -a live wheel 1> /dev/null; gpasswd -a live games 1> /dev/null # Add to groups
+		rm -rf /etc/*.pacnew # We don't need these files
+		rm /usr/local/sbin/cat # Remove cat needed by GRUB install script
+	elif [ $INSTALL_MODE == "system" ]; then ## System install mode
+		# mkinitcpio.conf
 		VAPOUR_OS_NO_OVERWRITE="$(sh -c '. /etc/mkinitcpio.conf && echo $VAPOUR_OS_NO_OVERWRITE')"
 		if [ -z "$VAPOUR_OS_NO_OVERWRITE" ] || [ "$VAPOUR_OS_NO_OVERWRITE" != 1 ]; then
 			cp /usr/share/$DISTRO_ID/custom-configs/mkinitcpio.conf /etc/mkinitcpio.conf
 		fi
+		passwd -l root # Lock root account (su/sudo still usable)
 		cp /usr/share/$DISTRO_ID/custom-configs/locale.gen /etc/locale.gen
 	fi
-	
 	locale-gen
 	systemctl enable avahi-daemon.socket fstrim.timer NetworkManager systemd-oomd
+	SecureBootSetup
 	Upgrade # Finish installation
 }
 Uninstall() {
@@ -58,26 +76,11 @@ Uninstall() {
 	echo "    When you are sure everything works properly, re-lock root with \"sudo passwd -l root\""
 	echo "    or set a password with \"sudo passwd root\"."
 }
-SecureBootSetup() {
-	if [ -d /sys/firmware/efi ]; then
-		sbctl create-keys
-		sbctl sign-all -g
-		sbctl enroll-keys -m && echo "Secure boot support is now enabled." ||
-		echo "[WARNING] Failed to enroll secure boot keys"
-		echo "          If you don't wish to use secure boot, you can ignore this warning. Otherwise:"
-		echo "           - Enter firmware setup utility and find an option to clear all secure boot certificates."
-		echo "             This will disable secure boot and put the firmware in setup mode."
-		echo "           - Reboot into $DISTRO_NAME and run the following command: sbctl enroll-keys -m"
-		echo "             This will enroll Microsoft's keys and your own secure boot keys to the UEFI."
-		echo "             Most OPROMs are signed Microsoft's keys. Without them, most expansion cards, like graphics cards, will not work with secure boot enabled."
-		echo "             It is important to enroll Microsoft's keys as well."
-		echo "           - Enter firmware setup utility again and enable secure boot."
-	fi
-}
 
 case $1 in
 	install) Install;;
 	upgrade) Upgrade;;
+	help|-h|--help) echo "Usage: $(basename $0) <command> (install/upgrade/uninstall)"; exit;;
 	uninstall) Uninstall;;
 	*) Error "Unrecognised command \"$1\" - valid commands are install, upgrade, uninstall)";;
 esac

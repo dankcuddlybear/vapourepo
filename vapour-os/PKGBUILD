@@ -1,7 +1,7 @@
 # Maintainer: Dankcuddlybear <dankcuddlybear@protonmail.com>
 pkgname=vapour-os
 pkgver=1.1.35
-pkgrel=15
+pkgrel=16
 pkgdesc='A modular Arch based distro optimised for energy saving and ease of use (core system)'
 arch=(x86_64)
 url='https://github.com/dankcuddlybear/vapourepo'
@@ -20,6 +20,7 @@ depends=('base'
 	'wireless-regdb'
 )
 package() {
+	chmod 750 "$srcdir/../files/etc/sudoers.d"
 	cp -r "$srcdir/../files/etc" "$pkgdir"
 	cp -r "$srcdir/../files/usr" "$pkgdir"
 }

@@ -15,6 +15,7 @@ depends=('android-udev'
 	'system-config-printer'
 	'terminus-font'
 	'usb_modeswitch' 'usbutils'
+	'vapour-os'
 	'yay'
 )
 

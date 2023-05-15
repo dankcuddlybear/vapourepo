@@ -1,0 +1,17 @@
+# Maintainer: Dankcuddlybear <dankcuddlybear@protonmail.com>
+pkgname=vapour-os-desktop-libs
+pkgver=1.0.0
+pkgrel=1
+pkgdesc='Desktop libraries for Vapour OS (CLI only)'
+arch=(x86_64)
+url='https://github.com/dankcuddlybear/Vapour-OS'
+install=vapour-os-desktop-libs.install
+depends=('android-udev'
+	'base-devel' 'bash-completion' 'bluez' 'bluez-utils'
+	'exfatprogs' 'fscrypt'
+	'man-db' 'man-pages' 'modemmanager'
+	'terminus-font'
+	'usb_modeswitch' 'usbutils'
+	'yay'
+)
+

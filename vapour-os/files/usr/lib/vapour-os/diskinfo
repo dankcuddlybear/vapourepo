@@ -1,32 +1,14 @@
-ROOT_DEV=$(mount | grep -sm 1 "on / type ext4" | cut -d ' ' -f 1)
-ROOT_UUID=$(blkid $ROOT_DEV | cut -d ' ' -f 3 | cut -c7-42)
-
-BOOT_DEV=$(mount | grep -sm 1 "on /boot type vfat" | cut -d ' ' -f 1)
-if [ ! -z "$BOOT_DEV" ]; then
-	BOOT_UUID=$(dd if=$BOOT_DEV skip=67 bs=1 count=4 status=none | hexdump -v -e '1/1 "%02X" " "' | xargs perl -e '@_=@ARGV; print "$_[3]$_[2]-$_[1]$_[0]\n"')
-	# Try to detect boot partition mount point
-	if [ ${BOOT_DEV:5:2} == "hd" ] || [ ${BOOT_DEV:5:2} == "sd" ] || [ ${BOOT_DEV:5:2} == "vd" ]; then
-		BOOT_DISK=${BOOT_DEV:0:8}
-		BOOT_PART=${BOOT_DEV:8}
-	elif [ ${BOOT_DEV:5:4} == "nvme" ]; then
-		BOOT_DISK=${BOOT_DEV:0:12}
-		BOOT_PART=${BOOT_DEV:13}
-	elif [ ${BOOT_DEV:5:6} == "mmcblk" ]; then # mmcblk0p1
-		BOOT_DISK=${BOOT_DEV:0:12}
-		BOOT_PART=${BOOT_DEV:13}
-	fi
-	BOOT_DIR=$(findmnt -no TARGET $BOOT_DEV)
-else unset BOOT_UUID; fi
-# https://www.kirsle.net/get-fat-drive-serial-numbers-in-unix
-
-HOME_DEV=$(mount | grep -sm 1 "on /home type ext4" | cut -d ' ' -f 1)
-if [ ! -z "$HOME_DEV" ]; then HOME_UUID=$(blkid $HOME_DEV | cut -d ' ' -f 3 | cut -c7-42); fi
-
-MEDIA_DEV=$(mount | grep -sm 1 "on /media type ext4" | cut -d ' ' -f 1)
-if [ ! -z "$MEDIA_DEV" ]; then MEDIA_UUID=$(blkid $MEDIA_DEV | cut -d ' ' -f 3 | cut -c7-42); fi
-
-PUBLIC_DEV=$(mount | grep -sm 1 "on /public type ext4" | cut -d ' ' -f 1)
-if [ ! -z "$PUBLIC_DEV" ]; then PUBLIC_UUID=$(blkid $PUBLIC_DEV | cut -d ' ' -f 3 | cut -c7-42); fi
-
+unset ROOT_DEV ROOT_UUID ROOT_FSTYPE BOOT_DEV BOOT_UUID HOME_DEV HOME_UUID HOME_FSTYPE MEDIA_DEV MEDIA_UUID MEDIA_FSTYPE PUBLIC_DEV PUBLIC_UUID PUBLIC_FSTYPE SWAP_DEV SWAP_UUID
+ROOT_DEV=$(mount | grep -sm 1 "on / type" | cut -d ' ' -f 1)
+ROOT_UUID=$(lsblk -lno UUID $ROOT_DEV)
+ROOT_FSTYPE=$(lsblk -lno FSTYPE $ROOT_DEV)
+BOOT_DEV=$(mount | grep -sm 1 "on /boot type" | cut -d ' ' -f 1)
+[ ! -z "$BOOT_DEV" ] && BOOT_UUID=$(lsblk -lno UUID $BOOT_DEV)
+HOME_DEV=$(mount | grep -sm 1 "on /home type" | cut -d ' ' -f 1)
+[ ! -z "$HOME_DEV" ] && (HOME_UUID=$(lsblk -lno UUID $HOME_DEV) && HOME_FSTYPE=$(lsblk -lno FSTYPE $HOME_DEV))
+MEDIA_DEV=$(mount | grep -sm 1 "on /media" | cut -d ' ' -f 1)
+[ ! -z "$MEDIA_DEV" ] && (MEDIA_UUID=$(lsblk -lno UUID $MEDIA_DEV) && MEDIA_FSTYPE=$(lsblk -lno FSTYPE $MEDIA_DEV))
+PUBLIC_DEV=$(mount | grep -sm 1 "on /public type" | cut -d ' ' -f 1)
+[ ! -z "$PUBLIC_DEV" ] && (PUBLIC_UUID=$(lsblk -lno UUID $PUBLIC_DEV) && PUBLIC_FSTYPE=$(lsblk -lno FSTYPE $PUBLIC_DEV))
 SWAP_DEV=$(swapon -s | grep "/dev/" | cut -d ' ' -f 1)
-if [ ! -z "$SWAP_DEV" ]; then SWAP_UUID=$(blkid $SWAP_DEV | cut -d ' ' -f 3 | cut -c7-42); fi
+[ ! -z "$SWAP_DEV" ] && SWAP_UUID=$(blkid $SWAP_DEV | cut -d ' ' -f 3 | cut -c7-42); fi

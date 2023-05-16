@@ -18,7 +18,6 @@ depends=(
 	#'lib32-pipewire-jack'
 	'lib32-sdl2_image' 'lib32-sdl2_mixer' 'lib32-sdl2_ttf'
 	'lib32-libudev0-shim' 'lib32-libusb'
-	'lib32-libwrap'
 	'lib32-libxslt'
 	'libcurl-compat' 'libcurl-gnutls' 'lib32-libcurl-gnutls'
 	'libgcrypt15' 'lib32-libgcrypt15'

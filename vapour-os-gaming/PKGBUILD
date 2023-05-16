@@ -31,7 +31,6 @@ depends=(
 	'sdl2_ttf'
 	'vapour-os-desktop-libs' 'vkd3d-proton-mingw-git' 
 	'winetricks' 'wine-gecko' 'wine-ge-custom' 'wine-mono' 'wine-nine'
-	'xone-dkms'
 )
 package() {
 	cp -r "$srcdir/../files/etc" "$pkgdir"

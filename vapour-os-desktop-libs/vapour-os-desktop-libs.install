@@ -1,6 +1,6 @@
 post_install() {
-	sh -c 'touch /etc/vconsole.conf; unset FONT; . /etc/vconsole.conf; if [ -z "$FONT" ]; then echo "FONT=ter-116b" >> /etc/vconsole.conf; done'
-	systemctl enable bluetooth cups.socket cups-browsed ModemManager
+	sh -c 'touch /etc/vconsole.conf; unset FONT; . /etc/vconsole.conf; if [ -z "$FONT" ]; then echo "FONT=ter-116b" >> /etc/vconsole.conf; fi'
+	systemctl enable bluetooth cups.socket cups-browsed ipp-usb ModemManager
 }
 pre_remove() {
 	sh -c 'unset FONT KEYMAP; . /etc/vconsole.conf; if [ ! -z "$FONT" ] && [ -z "$(ls /usr/share/kbd/consolefonts/$FONT.*)" ]; then echo "KEYMAP=$KEYMAP" > /etc/vconsole.conf; fi'

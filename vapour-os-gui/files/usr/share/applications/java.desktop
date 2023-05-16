@@ -1,8 +1,0 @@
-[Desktop Entry]
-Exec=java -jar
-Terminal=false
-MimeType=application/x-java;
-Name=Run Java program
-NoDisplay=true
-Type=Application
-Icon=application-x-java

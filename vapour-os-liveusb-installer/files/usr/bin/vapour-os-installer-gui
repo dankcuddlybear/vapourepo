@@ -169,7 +169,7 @@ while true; do
  			dialog --backtitle "$BACKTITLE" --title "Confirm changes" --yesno "$FINALTEXT" 0 0 && ((PAGE++)) || PAGE=7
  			;;
 		10) # Begin installation
-			"/usr/lib/$DISTRO_ID/$DISTRO_ID-installer" || exit 1
+			"/usr/lib/$DISTRO_ID/$DISTRO_ID-liveusb-installer" || exit 1
 			sync
 			echo "Installation complete! You may reboot your computer."; exit;;
 	esac

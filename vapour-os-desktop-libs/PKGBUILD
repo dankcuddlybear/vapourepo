@@ -5,17 +5,29 @@ pkgrel=1
 pkgdesc='Desktop libraries for Vapour OS (CLI only)'
 arch=(x86_64)
 url='https://github.com/dankcuddlybear/Vapour-OS'
+replaces=('vapour-os-gui' 'vapour-os-multimedia' 'vapour-os-printing')
 install=vapour-os-desktop-libs.install
-depends=('android-udev'
-	'base-devel' 'bash-completion' 'bluez' 'bluez-utils'
-	'cups-pdf' 'cups-pk-helper' 'colord-sane' 
-	'exfatprogs' 'foomatic-db-engine' 'foomatic-db-gutenprint-ppds' 'foomatic-db-nonfree-ppds' 'foomatic-db-ppds' 'fscrypt'
-	'gsfonts' 'gutenprint'
+backup=('etc/X11/xorg.conf.d/30-touchpad.conf')
+depends=('aribb24' 'aribb25' 'android-udev'
+	'base-devel' 'bash-completion' 'bluez' 'bluez-cups' 'bluez-utils-compat'
+	'cups-pdf' 'cups-pk-helper' 
+	'exfatprogs'
+	'foomatic-db-engine' 'foomatic-db-gutenprint-ppds' 'foomatic-db-nonfree-ppds' 'foomatic-db-ppds'
+	'gnome-keyring' 'gsfonts' 'gst-libav' 'gst-plugin-pipewire' 'gst-plugins-base' 'gst-plugins-bad' 'gst-plugins-good' 'gst-plugins-ugly' 'gutenprint'
+	'ipp-usb'
+	'libdvdcss' 'libgnome-keyring' 'libsecret' 'libtiger' 'libvdpau-va-gl'
 	'man-db' 'man-pages' 'modemmanager'
-	'system-config-printer'
+	'ocl-icd'
+	'pipewire-roc' 'pipewire-x11-bell' 'pipewire-zeroconf' 'python-pysmbc'
+	'realtime-privileges'
+	'sane-airscan' 'sane-gt68xx-firmware' 'splix' 'system-config-printer'
 	'terminus-font'
 	'usb_modeswitch' 'usbutils'
-	'vapour-os'
+	'vapour-os' 'vcdimager' 'vulkan-mesa-layers'
+	'xdg-desktop-portal' 'xdg-user-dirs'
 	'yay'
 )
-
+package() {
+	cp -r "$srcdir/../files/etc" "$pkgdir"
+	cp -r "$srcdir/../files/usr" "$pkgdir"
+}

@@ -1,0 +1,12 @@
+[Trigger]
+Type = Path
+Operation = Install
+Operation = Upgrade
+Target = usr/lib/modules/*/vmlinuz
+Target = usr/lib/initcpio/*
+
+[Action]
+Description = Warn about kernel upgrade
+When = PostTransaction
+Exec = /usr/bin/echo "[WARNING] Kernel has been updated. Some devices may stop working until you restart your computer."
+NeedsTargets

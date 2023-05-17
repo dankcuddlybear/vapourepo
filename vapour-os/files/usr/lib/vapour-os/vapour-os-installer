@@ -49,7 +49,7 @@ Install() {
 	if [ $INSTALL_MODE == "iso" ]; then ## ArchISO build mode
 		passwd -uq root; passwd -dq root # Unlock root account
 		useradd -m live; passwd -dq live # Create passwordless user "live"
-		gpasswd -a live wheel 1> /dev/null; gpasswd -a live games 1> /dev/null # Add to groups
+		gpasswd -a live wheel 1> /dev/null; gpasswd -a live autologin 1> /dev/null # Add to groups
 		rm -rf /etc/*.pacnew # We don't need these files
 		rm /usr/local/sbin/cat # Remove cat needed by GRUB install script
 	elif [ $INSTALL_MODE == "system" ]; then ## System install mode

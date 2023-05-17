@@ -101,6 +101,7 @@ Install() {
 	fi
 	#
 	locale-gen
+	pacman-key --init; pacman-key --populate
 	systemctl enable avahi-daemon.socket fstrim.timer NetworkManager systemd-oomd
 	systemctl mask systemd-resolved
 	SecureBootSetup

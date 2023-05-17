@@ -1,7 +1,7 @@
 # Maintainer: Dankcuddlybear <dankcuddlybear@protonmail.com>
 pkgname=vapour-os-amdgpu
-pkgver=1.1.6
-pkgrel=3
+pkgver=1.0.0
+pkgrel=1
 pkgdesc='Vapour OS AMD GPU multilib drivers for OpenGL, Vulkan, OpenCL and hardware video acceleration.'
 arch=(x86_64)
 url='https://github.com/dankcuddlybear/Vapour-OS'

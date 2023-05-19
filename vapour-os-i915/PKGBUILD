@@ -1,7 +1,7 @@
 # Maintainer: Dankcuddlybear <dankcuddlybear@protonmail.com>
 pkgname=vapour-os-i915
-pkgver=1.1.9
-pkgrel=3
+pkgver=1.0.0
+pkgrel=1
 pkgdesc='Vapour OS Intel GPU drivers for OpenGL, Vulkan, OpenCL and hardware video acceleration. For gen 5 (Broadwell) or later. WARNING: Some module options taint the kernel.'
 arch=(x86_64)
 url='https://github.com/dankcuddlybear/Vapour-OS'

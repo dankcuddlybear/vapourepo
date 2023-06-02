@@ -1,0 +1,48 @@
+#!/bin/bash
+DISTRO_ID="vapour-os"
+[ $(whoami) != "root" ] && echo "[ERROR] You must run this script with root priviliges." && exit 1
+. /usr/lib/$DISTRO_ID/diskinfo
+EFI_BITS="$(cat /sys/firmware/efi/fw_platform_size)"
+Upgrade() {
+	mkdir -p /boot/limine /boot/EFI/limine &> /dev/null
+	cp /usr/share/limine/limine.sys /boot/limine/
+	limine-deploy $ROOT_DEV
+	if [ -z "$EFI_BITS" ]; then
+		cp /usr/share/limine/BOOTIA32.EFI /boot/EFI/limine/
+		cp /usr/share/limine/BOOTX64.EFI /boot/EFI/limine/
+	elif [ "$EFI_BITS" == 32 ]; then
+		cp /usr/share/limine/BOOTIA32.EFI /boot/EFI/limine/
+	elif [ "$EFI_BITS" == 64 ]; then
+		cp /usr/share/limine/BOOTX64.EFI /boot/EFI/limine/
+	fi
+}
+
+if [ -z "$1" ]; then echo "[ERROR] No command (install/upgrade/uninstall)"; exit 1
+case "$1" in
+	install)
+		Upgrade
+		cp /usr/share/$DISTRO_ID/custom-configs/limine.cfg /boot/limine/
+		# Set CPU if AMD or Intel, otherwise disable microcode loading altogether
+		if [ -f /boot/amd-ucode.img ]; then sed -i "s/^.*\${CPU}=.*$/\${CPU}=amd/" /boot/limine/limine.cfg
+		elif [ -f /boot/intel-ucode.img ]; then sed -i "s/^.*\${CPU}=.*$/\${CPU}=amd/" /boot/limine/limine.cfg
+		else
+			sed -i "/MODULE_PATH=boot:\/\/\/\${CPU}-ucode.img/d" /boot/limine/limine.cfg
+		fi
+		# Set KERNEL to first kernel found
+		KERNEL_FILE="$(basename "$(ls /boot/vmlinu*-linux* | tr '\n' ' ' | awk '{print $1}')")"
+		KERNEL="${KERNEL_FILE:8}"
+		sed -i "s/^.*\${KERNEL}=.*$/\${KERNEL}=$KERNEL/" /boot/limine/limine.cfg
+		# Set ROOT_UUID
+		sed -i "s/^.*\${ROOT_UUID}=.*$/\${ROOT_UUID}=$ROOT_UUID/" /boot/limine/limine.cfg
+		if [ -z "$EFI_BITS" ]; then # Create EFI boot entry
+			echo "[WARNING] System was booted in BIOS mode. UEFI boot entries cannot be created."
+			echo "          You must add \EFI\Limine\BOOTX64.EFI or \EFI\Limine\BOOTIA32.EFI manually."
+			echo "          You can add it in the UEFI boot options, in the EFI shell or" 
+			echo "          with efibootmgr on Linux booted on UEFI."
+		elif [ "$EFI_BITS" == 32 ]; then efibootmgr -c -d $ROOT_DEV -p $BOOT_PART -L "Limine" -l '\EFI\Limine\BOOTIA32.EFI'
+		elif [ "$EFI_BITS" == 64 ]; then efibootmgr -c -d $ROOT_DEV -p $BOOT_PART -L "Limine" -l '\EFI\Limine\BOOTX64.EFI'
+		fi;;
+	upgrade) Upgrade;;
+	uninstall) limine-deploy --undeploy $ROOT_DEV; rm -rf /boot/limine /boot/EFI/limine;;
+	*) echo "[ERROR] Unrecognised command \"$1\""; exit 1;;
+esac

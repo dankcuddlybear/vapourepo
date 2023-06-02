@@ -1,4 +1,5 @@
 #!/bin/bash
+[ "$(whoami)" != "root" ] && echo "[ERROR] You must run this installer as root" && exit 1
 DISTRO_ID="vapour-os"
 DISTRO_NAME="Vapour OS"
 BACKTITLE="$DISTRO_NAME installer"
@@ -117,16 +118,179 @@ PartitionChooser() {
 		fi
 	fi
 }
+SelectVersion() {
+	VERSION_TO_INSTALL=$(dialog --stdout --backtitle "$BACKTITLE" --cancel-label "Back" --title "Version selection" --menu "Please select a version to install:" 0 0 0 \
+	"vapour-os-kde" "KDE Plasma (best for Windows users)" \
+	"vapour-os-xfce" "XFCE (best for older devices)" \
+	"vapour-os-gnome" "GNOME Shell (best for touch devices)" \
+	"vapour-os-desktop-libs" "Command line only (PCs/laptops)" \
+	"vapour-os" "Core system only (servers and embedded devices)")
+	[ -z "$VERSION_TO_INSTALL" ] && ((PAGE--)) || ((PAGE++))
+}
+SelectKernel() {
+	KERNELS="$(dialog --stdout --backtitle "$BACKTITLE" --cancel-label "Back" --title "Recommended software" --checklist "Select one or more Linux kernels to install:" 0 0 0 \
+	"linux-tt" "TT scheduler Linux kernel by CachyOS with other patches and improvements (recommended). May not boot on some BIOSes." "ON" \
+	"OFFICIALLY SUPPORTED" "" "OFF" \
+	"  linux" "Vanilla Linux kernel - use if linux-tt does not boot on your BIOS." "OFF" \
+	"  linux-hardened" "Security-Hardened Linux kernel and modules" "OFF" \
+	"  linux-lts" "Linux LTS kernel and modules" "OFF" \
+	"  linux-rt" "Linux realtime kernel and modules" "OFF" \
+	"  linux-rt-lts" "Linux realtime LTS kernel and modules" "OFF" \
+	"  linux-zen" "Linux ZEN kernel and modules" "OFF" \
+	"HARDWARE OPTIMISED" "" "OFF" \
+	"  linux-amd" "Linux kernel aimed at ZNVER4/MZEN4 AMD Ryzen CPU based hardware" "OFF" \
+	"  linux-amd-znver2" "Linux kernel aimed at znver2 AMD Ryzen CPU based hardware" "OFF" \
+	"  linux-amd-znver3" "Linux kernel aimed at znver3 AMD Ryzen CPU based hardware" "OFF" \
+	"  linux-hdr-git" "Linux kernel and modules with AMDGPU HDR support" "OFF" \
+	"  linux-nitrous" "Linux kernel and modules optimized for Skylake and newer, compiled using clang" "OFF" \
+	"LINUX-TKG" "" "OFF" \
+	"  linux-lts-tkg-bmq" "Linux-tkg BMQ scheduler LTS kernel and modules" "OFF" \
+	"  linux-lts-tkg-pds" "Linux-tkg PDS scheduler LTS kernel and modules" "OFF" \
+	"  linux-lts-tkg-tt" "Linux-tkg TT scheduler LTS kernel and modules" "OFF" \
+	"  linux-tkg" "Linux-tkg kernel and modules" "OFF" \
+	"  linux-tkg-bmq-generic_v3" "Linux-tkg BMQ scheduler kernel and modules" "OFF" \
+	"  linux-tkg-cfs" "Linux-tkg CFS scheduler kernel and modules" "OFF" \
+	"  linux-tkg-cfs-generic_v3" "Linux-tkg CFS scheduler kernel and modules" "OFF" \
+	"  linux-tkg-cfs-lto_v3" "Linux-tkg CFS scheduler kernel and modules" "OFF" \
+	"  linux-tkg-pds" "Linux-tkg PDS scheduler kernel and modules" "OFF" \
+	"  linux-tkg-pds-generic_v3" "Linux-tkg PDS scheduler kernel and modules" "OFF" \
+	"  linux-tkg-tt" "Linux-tkg TT scheduler kernel and modules" "OFF" \
+	"  linux-tkg-tt-generic_v3" "Linux-tkg TT scheduler kernel and modules" "OFF" \
+	"OTHER" "" "OFF" \
+	"  linux-cachyos-bore" "Linux BORE scheduler kernel and modules by CachyOS with other patches and improvements (recommended)" "OFF" \
+	"  linux-clear" "Intel's Clear Linux kernel and modules" "OFF" \
+	"  linux-drm-next-git" "Linux kernel and modules with bleeding-edge GPU drivers" "OFF" \
+	"  linux-drm-tip-git" "Linux kernel and modules with bleeding-edge GPU drivers" "OFF" \
+	"  linux-git" "Linus Torvalds' Mainline Linux kernel and modules" "OFF" \
+	"  linux-lqx" "Linux Liquorix kernel and modules" "OFF" \
+	"  linux-mainline" "Linux Mainline kernel and modules" "OFF" \
+	"  linux-next-git" "Linux NEXT kernel and modules" "OFF" \
+	"  linux-xanmod" "Linux kernel and modules with Xanmod patches" "OFF" \
+	"  linux-xanmod-lts" "Linux LTS kernel and modules with Xanmod patches" "OFF" \
+	"  linux-xanmod-rt" "Linux realtime kernel and modules with Xanmod patches" "OFF" \
+	)"
+	if [ ! -z "$KERNELS" ]; then # Remove category names from selection
+		KERNELS="${KERNELS/OFFICIALLY SUPPORTED/}"
+		KERNELS="${KERNELS/HARDWARE OPTIMISED/}"
+		KERNELS="${KERNELS/LINUX-TKG/}"
+		KERNELS="${KERNELS/OTHER/}"
+		KERNELS="$(echo "$KERNELS" | sed 's/\"//g')"
+	fi
+	[ -z "$KERNELS" ] && ((PAGE--)) || ((PAGE++))
+}
+SelectExtraSoftware() {
+	EXTRA_SOFTWARE="$(dialog --stdout --backtitle "BACKTITLE" --cancel-label "Skip" --title "Recommended software" --checklist "Would you like to install additional software?
+	See also https://wiki.archlinux.org/title/Category:Lists_of_software" 0 0 0 \
+	"GAMING" "" "OFF" \
+	"  vapour-os-gaming" "Linux/Windows game compatibility (64bit+32bit)" "OFF" \
+	"  dolphin-emu" "Nintendo Gamecube/Wii/Triforce emulator. NO GAMES OR COPYRIGHTED FILES INCLUDED - SOURCE THESE YOURSELF" "OFF" \
+	"  gzdoom" "Play DOOM engine games on modern PCs. NO GAMES OR COPYRIGHTED FILES INCLUDED - SOURCE THESE YOURSELF" "OFF" \
+	"  melonds-git" "Nintendo DS(i) emulator. NO GAMES OR COPYRIGHTED FILES INCLUDED - SOURCE THESE YOURSELF" "OFF" \
+	"  prismlauncher-qt5" "Open-source Minecraft Launcher and mod manager. YOU MUST PURCHASE MINECRAFT TO PLAY" "OFF" \
+	"  steam-native-runtime" "PC game storefront and launcher by Valve" "OFF" \
+	"INTERNET" "(for web browsers, scroll down further)" "OFF" \
+	"  discord" "Voice and video chat software" "OFF" \
+	"  qbittorrent" "Advanced BitTorrent client based on Qt" "OFF" \
+	"MULTIMEDIA" "" "OFF" \
+	"  gimp" "GNU Image Manipulation Program" "OFF" \
+	"  kolourpaint" "Paint program by KDE" "OFF" \
+	"  obs-studio" "Free open-source recording/streaming software" "OFF" \
+	"  vlc" "Multi-format media player/streamer and CD/VCD/DVD/BD player" "OFF" \
+	"OFFICE, TEXT" "" "OFF" \
+	"  nano" "Text editor for terminal" "OFF" \
+	"  onlyoffice-bin" "Office suite combining text, spreadsheet and presentation editors" "OFF" \
+	"SYSTEM" "" "OFF" \
+	"  gparted" "Graphical partition manager" "OFF" \
+	"WEB BROWSERS" "" "OFF" \
+	"  brave-bin" "Web browser that blocks ads and trackers by default" "OFF" \
+	"  chromium" "Open-source browser from which Google Chrome is based." "OFF" \
+	"    chromium-widevine" "Chromium plugin for viewing premium video content" "OFF" \
+	"    ublock-origin" "Chromium extension for blocking ads, trackers, miners, popups, malware sites and more. Fast, potent and lean." "OFF" \
+	"  firefox-i18n-en-gb" "Firefox browser (with British English language pack)" "OFF" \
+	"  firefox-i18n-en-us" "Firefox browser (with American English language pack)" "OFF" \
+	"  firefox-i18n-en-ca" "Firefox browser (with Canadian English language pack)" "OFF" \
+	"    firefox-ublock-origin" "Firefox extension for blocking ads, trackers, miners, popups, malware sites and more. Fast, potent and lean." "OFF" \
+	"  icecat" "GNU version of the Firefox browser." "OFF" \
+	"  librewolf" "Community-maintained fork of Firefox focused on privacy, security and freedom." "OFF" \
+	"  midori" "Lightweight web browser" "OFF" \
+	"  opera" "Fast and secure web browser" "OFF" \
+	"  vivaldi" "An advanced browser made with the power user in mind" "OFF" \
+	"CASUAL GAMES" "" "OFF" \
+	"  gnome-2048" "Slide numbered tiles on a grid to combine them to create a tile with the number 2048" "OFF" \
+	"  gnome-chess" "Computer version of Chess" "OFF" \
+	"  gnome-mahjongg" "Disassemble a pile of tiles by removing matching pairs" "OFF" \
+	"  gnome-mines" "Minesweeper clone" "OFF" \
+	"  gnome-nibbles" "Snake-like game, playable with up to 6 players" "OFF" \
+	"  gnome-sudoku" "Test your logic skills in this number grid puzzle" "OFF" \
+	"  gnome-taquin" "Sliding picture puzzle" "OFF" \
+	"  iagno" "Computer version of Reversi" "OFF" \
+	"  kfourinline" "Computer version of Connect 4" "OFF" \
+	"  kigo" "Computer version of Go" "OFF" \
+	"  khangman" "Hangman game" "OFF" \
+	"  knavalbattle" "Computer version of Battleships" "OFF" \
+	"  ksirk" "Computer version of Risk. Supports up to 6 human/AI players and network multiplayer" "OFF" \
+	"  kubrick" "Rubik's cube game" "OFF" \
+	"  lbreakout2" "Breakout inspired game with nice effects, graphics and sounds" "OFF" \
+	"  palapeli" "Single-player jigsaw puzzle game" "OFF" \
+	"  picmi" "Nonogram logic game similar to Picross" "OFF" \
+	"  puzzles " "Simon Tatham's Portable Puzzle Collection" "OFF" \
+	"  pysolfc" "Collection of over 1000 solitaire games" "OFF" \
+	"  quadrapassel" "Tetris clone" "OFF" \
+	"FREE GAMES" "" "OFF" \
+	"  0ad" "Historically-based real-time 3D strategy game" "OFF" \
+	"  cuyo" "Tetris-style puzzle game for up to two players with a twist" "OFF" \
+	"  dwarffortress" "Single-player fantasy game in which you build a dwarven outpost or play an adventurer in a randomly generated world" "OFF" \
+	"  glhack" "Port of Nethack, a single player dungeon exploration game in 2D" "OFF" \
+	"  hedgewars" "Worms clone. Take turns to blast your opponents into oblivion with comedic results!" "OFF" \
+	"  mari0" "Original Super Mario Bros with Portal gun mechanics" "OFF" \
+	"  shattered-pixel-dungeon" "Roguelike dungeon crawler with randomized levels and enemies, and hundreds of items" "OFF" \
+	"  supertux" "Super Mario style 2D platformer starring Tux" "OFF" \
+	"  supertuxkart" "Kart racing game featuring Tux and his friends" "OFF" \
+	"  wesnoth" "Free, turn-based tactical strategy game with a high fantasy theme, featuring both single-player, and online/hotseat multiplayer combat" "OFF" \
+	"EDUCATIONAL" "" "OFF" \
+	"  artikulate" "Improve your pronunciation by listening to native speakers" "OFF" \
+	"  blinken" "Memory enhancement game" "OFF" \
+	"  gcompris-qt" "Educational software suite comprising of numerous activities for children aged 2 to 10" "OFF" \
+	"  kalzium" "Periodic table of elements" "OFF" \
+	"  kanagram" "Letter order game" "OFF" \
+	"  kbruch" "Practice fractions and percentages" "OFF" \
+	"  kgeography" "Geography trainer" "OFF" \
+	"  klettres" "Learn the alphabet" "OFF" \
+	"  ktouch" "Touch typing tutor" "OFF" \
+	"  kturtle" "Turtlescript edcational programming environment" "OFF" \
+	"  marble" "Desktop globe with maps for Earth, the Moon and other planets" "OFF" \
+	"  minuet" "Music Education software by KDE" "OFF" \
+	"  scratch" "Create and share your own interactive stories, games, music and art" "OFF"
+	)"
+	if [ ! -z "$EXTRA_SOFTWARE" ]; then # Remove category names from selection
+		EXTRA_SOFTWARE="${EXTRA_SOFTWARE/GAMING/}"
+		EXTRA_SOFTWARE="${EXTRA_SOFTWARE/INTERNET/}"
+		EXTRA_SOFTWARE="${EXTRA_SOFTWARE/MULTIMEDIA/}"
+		EXTRA_SOFTWARE="${EXTRA_SOFTWARE/OFFICE, TEXT/}"
+		EXTRA_SOFTWARE="${EXTRA_SOFTWARE/SYSTEM/}"
+		EXTRA_SOFTWARE="${EXTRA_SOFTWARE/WEB BROWSERS/}"
+		EXTRA_SOFTWARE="${EXTRA_SOFTWARE/CASUAL GAMES/}"
+		EXTRA_SOFTWARE="${EXTRA_SOFTWARE/FREE GAMES/}"
+		EXTRA_SOFTWARE="${EXTRA_SOFTWARE/EDUCATIONAL/}"
+		EXTRA_SOFTWARE="$(echo "$EXTRA_SOFTWARE" | sed 's/\"//g')"
+	fi
+	if [ ! -z "$EXTRA_SOFTWARE" ]; then
+		[[ "$EXTRA_SOFTWARE" == *"chromium"* ]] && $EXTRA_SOFTWARE="$EXTRA_SOFTWARE chromium-widevine"
+		[[ "$EXTRA_SOFTWARE" == *"gparted"* ]] && $EXTRA_SOFTWARE="$EXTRA_SOFTWARE gpart mtools ntfs-3g"
+		[[ "$EXTRA_SOFTWARE" == *"vivaldi"* ]] && $EXTRA_SOFTWARE="$EXTRA_SOFTWARE vivaldi-ffmpeg-codecs"
+	fi
+	((PAGE++))
+}
 
 dialog --backtitle "$BACKTITLE" --title "Welcome" --msgbox "Thank you for choosing $DISTRO_NAME!
-We will never collect data or spy on you in any way.
-We will never restrict what you can do on your device.
-If you want to see how everything works, visit github.com/dankcuddlybear/vapourepo
+$DISTRO_NAME is open source - github.com/dankcuddlybear/vapourepo (some proprietary drivers are included)
+If you have issues with the installer, please file a bug report on the Github link above.
+If you have any other issues, please consult the excellent Arch Wiki (wiki.archlinux.org) or use a search engine before filing a bug report.
 Press ENTER to continue (or CTRL+C to quit at any time)." 0 0
 while true; do
 	case $PAGE in
 		0) # Main menu - choose normal or automated install
-			INSTALL_MODE=$(dialog --stdout --backtitle "$BACKTITLE" --cancel-label "Abort" --title "Main menu" --menu "What would you like to do?" 0 0 0 "1" "Install $DISTRO_NAME" "2" "Load preset for automated install (not yet available)")
+			INSTALL_MODE=$(dialog --stdout --backtitle "$BACKTITLE" --cancel-label "Exit" --title "Main menu" --menu "What would you like to do?" 0 0 0 "1" "Install $DISTRO_NAME" "2" "Load preset for automated install (not yet available)")
 			if [ -z $INSTALL_MODE ]; then clear; echo "Aborted installation."; exit # Abort installation if abort is selected
 			elif [ $INSTALL_MODE == 1 ]; then PAGE=2
 			elif [ $INSTALL_MODE == 2 ]; then PAGE=1
@@ -139,16 +303,19 @@ while true; do
 				PAGE=0
 			fi
 			;;
-		## Choose partitions
+		# Choose partitions
 		2) PartitionChooser;; 3) PartitionChooser;; 4) PartitionChooser;; 5) PartitionChooser;; 6) PartitionChooser;; 7) PartitionChooser;;
-		8) # Connect to the internet
+		8) SelectKernel;; 9) SelectVersion;; 10) SelectExtraSoftware;; # Choose extra software
+		11) # Connect to the internet
 			ping -c 1 archlinux.org &> /dev/null && INTERNET_CONNECTED=1 || INTERNET_CONNECTED=0
 			if [ $INTERNET_CONNECTED == 0 ]; then
-				dialog --backtitle "$BACKTITLE" --title "No internet connection" --yesno "It looks like you aren't connected to the internet. An internet connection is required to install $DISTRO_NAME. You may have recieved this warning in error, but you should verify your connection just to be safe.\n\nOpen NetworkManager menu?" 0 0 && nmtui
+				dialog --backtitle "$BACKTITLE" --title "No internet connection" --yesno \
+				"It looks like you aren't connected to the internet. An internet connection is required to install $DISTRO_NAME. Please verify that you are connected.
+				\nOpen NetworkManager menu?" 0 0 && nmtui
 			fi
 			((PAGE++))
 			;;
-		9) # Review settings before install
+		12) # Review settings before install
 			## Generate dialog text
 			FINALTEXT="$DISTRO_NAME is ready to be installed. Please review the following changes:\n[ROOT] $ROOT_DEV"
 			[ ! -z "$LABEL_ROOT" ] && FINALTEXT="$FINALTEXT \"$LABEL_ROOT\""; [ $FORMAT_ROOT == 1 ] && FINALTEXT="$FINALTEXT (format)"
@@ -166,9 +333,13 @@ while true; do
 				FINALTEXT="$FINALTEXT\n[SWAP] $SWAP_DEV"; [ ! -z "$LABEL_SWAP" ] && FINALTEXT="$FINALTEXT \"$LABEL_SWAP\""; FINALTEXT="$FINALTEXT (format)"
 			fi
 			FINALTEXT="$FINALTEXT\n\nApply changes and begin installation?"
- 			dialog --backtitle "$BACKTITLE" --title "Confirm changes" --yesno "$FINALTEXT" 0 0 && ((PAGE++)) || PAGE=7
+ 			dialog --backtitle "$BACKTITLE" --title "Confirm changes" --yesno "$FINALTEXT" 0 0 && ((PAGE++)) || PAGE=8
  			;;
-		10) # Begin installation
+		13) # Begin installation
+			clear
+			echo "Installation of $DISTRO_NAME has now begun. Grab a cup of tea, because this will take a while."
+			echo "DO NOT turn off your device or disconnect it from the internet."
+			sleep 2
 			"/usr/lib/$DISTRO_ID/$DISTRO_ID-liveusb-installer" || exit 1
 			sync
 			echo "Installation complete! You may reboot your computer."; exit;;

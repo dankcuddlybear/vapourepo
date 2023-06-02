@@ -3,110 +3,135 @@ DISTRO_ID="vapour-os"
 DISTRO_NAME="Vapour OS"
 [ $(whoami) != "root" ] && echo "[ERROR] You must run this script with root priviliges." && exit 1
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-[ -z "$VAPOUR_OS_INSTALL_MODE" ] && export VAPOUR_OS_INSTALL_MODE="liveusb"
-E2OPTIONS="ea_inode,encrypt,fast_commit,inline_data,large_dir,quota,uninit_bg"
+E2OPTIONS="ea_inode,encrypt,fast_commit,inline_data,large_dir,quota,uninit_bg,verity"
+ARCH="$(uname -m)"
 unset PARTITION_NOT_FOUND
 timedatectl set-ntp true
 sync
 
-## Check that each partition exists, and resolve links
-ValidatePartition() {
+## 1) Prepare and mount filesystems
+echo "Preparing file systems..."
+ValidatePartition() { # Checks that each partition exists, and resolves links
 	if [ ! -z "$1" ]; then
 		if [ -b "$1" ]; then echo "$(readlink -f "$1")"; else PARTITION_NOT_FOUND=1; fi
 	fi
 }
-
-if [ "$VAPOUR_OS_INSTALL_MODE" != "buildiso" ]; then
-	[ -z "$ROOT_DEV" ] && echo "[ERROR] No root partition specified. Please set variable ROOT_DEV to the root partition." && exit 1
-	[ -z "$BOOT_DEV" ] && echo "[ERROR] No EFI system partition specified. Please set variable BOOT_DEV to the ESP." && exit 1
-	ROOT_DEV="$(ValidatePartition "$ROOT_DEV")"; [ ! -z $PARTITION_NOT_FOUND ] && echo "[ERROR] Root partition $ROOT_DEV does not exist!" && exit 1
-	BOOT_DEV="$(ValidatePartition "$BOOT_DEV")"; [ ! -z $PARTITION_NOT_FOUND ] && echo "[ERROR] EFI system partition $BOOT_DEV does not exist!" && exit 1
-	HOME_DEV="$(ValidatePartition "$HOME_DEV")"; [ ! -z $PARTITION_NOT_FOUND ] && echo "[ERROR] Home partition $HOME_DEV does not exist!" && exit 1
-	MEDIA_DEV="$(ValidatePartition "$MEDIA_DEV")"; [ ! -z $PARTITION_NOT_FOUND ] && echo "[ERROR] Media partition $MEDIA_DEV does not exist!" && exit 1
-	PUBLIC_DEV="$(ValidatePartition "$PUBLIC_DEV")"; [ ! -z $PARTITION_NOT_FOUND ] && echo "[ERROR] Public partition $PUBLIC_DEV does not exist!" && exit 1
-	SWAP_DEV="$(ValidatePartition "$SWAP_DEV")"; [ ! -z $PARTITION_NOT_FOUND ] && echo "[ERROR] Swap partition $SWAP_DEV does not exist!" && exit 1
-
-	## Unmount any mounted filesystems
-	if [ ! -z "$SWAP_DEV" ] && [ ! -z "$(cat /proc/swaps | grep "$SWAP_DEV")" ]; then # Unmount mounted swap partition
-		swapoff "$SWAP_DEV" || (echo "[ERROR] Failed to unmount $FS"; exit 1)
-	fi
-	for FS in "$BOOT_DEV" "$HOME_DEV" "$MEDIA_DEV" "$PUBLIC_DEV" "$ROOT_DEV"; do
-		if [ ! -z "$FS" ] && [ ! -z "$(mount | grep "$FS")" ]; then # Unmount mounted filesystem
-			umount -f "$FS" || (echo "[ERROR] Failed to unmount $FS"; exit 1)
-		fi
-	done; unset FS
-
-	## Format any filesystems marked for formatting
-	[ ! -z $FORMAT_ROOT ] && [ $FORMAT_ROOT == 1 ] && mkfs.ext4 -FL "$LABEL_ROOT" -O $E2OPTIONS "$ROOT_DEV"
-	[ ! -z $FORMAT_BOOT ] && [ $FORMAT_BOOT == 1 ] && mkfs.fat -F 32 -n "$LABEL_BOOT" "$BOOT_DEV"
-	[ ! -z "$HOME_DEV" ] && [ ! -z $FORMAT_HOME ] && [ $FORMAT_HOME == 1 ] && mkfs.ext4 -FL "$LABEL_HOME" -O $E2OPTIONS "$HOME_DEV"
-	[ ! -z "$MEDIA_DEV" ] && [ ! -z $FORMAT_MEDIA ] && [ $FORMAT_MEDIA == 1 ] && mkfs.ext4 -FL "$LABEL_MEDIA" -O $E2OPTIONS "$MEDIA_DEV"
-	[ ! -z "$PUBLIC_DEV" ] && [ ! -z $FORMAT_PUBLIC ] && [ $FORMAT_PUBLIC == 1 ] && mkfs.ext4 -FL "$LABEL_PUBLIC" -O $E2OPTIONS "$PUBLIC_DEV"
-	[ ! -z "$SWAP_DEV" ] && mkswap -L "$LABEL_SWAP" "$SWAP_DEV"
-
-	## Tune filesystems and force fsck every mount
-	tune2fs -O $E2OPTIONS -c 1 "$ROOT_DEV"
-	[ ! -z "$HOME_DEV" ] && tune2fs -O $E2OPTIONS -c 1 "$HOME_DEV"
-	[ ! -z "$MEDIA_DEV" ] && tune2fs -O $E2OPTIONS -c 1 "$MEDIA_DEV"
-	[ ! -z "$PUBLIC_DEV" ] && tune2fs -O $E2OPTIONS -c 1 "$PUBLIC_DEV"
-
-	## Set boot flag on ESP
-	BOOT_DEV="$(readlink -f "$BOOT_DEV")"
-	if [ "${BOOT_DEV:5:2}" == "hd" ] || [ "${BOOT_DEV:5:2}" == "sd" ] || [ "${BOOT_DEV:5:2}" == "vd" ]; then
-		ESPDISK="${BOOT_DEV:0:8}"
-		ESPPART="${BOOT_DEV:8:3}"
-	elif [ "${BOOT_DEV:5:4}" == "nvme" ]; then
-		ESPDISK="${BOOT_DEV:0:12}"
-		ESPPART="${BOOT_DEV:13:3}"
-	elif [ "${BOOT_DEV:5:6}" == "mmcblk" ]; then
-		ESPDISK="${BOOT_DEV:0:12}"
-		ESPPART="${BOOT_DEV:13:3}"
-	else echo "[ERROR] Error detecting EFI system partition!"; exit 1; fi
-	parted "$ESPDISK" set "$ESPPART" boot on 1> /dev/null
-
-	## Mount and clear root filesystem
-	mount "$ROOT_DEV" /mnt
-	[ "$FORMAT_ROOT" != 1 ] && rm -rf /mnt/bin /mnt/dev /mnt/etc /mnt/lib /mnt/lib64 /mnt/mnt /mnt/opt /mnt/proc /mnt/root /mnt/run /mnt/sbin /mnt/sys /mnt/tmp /mnt/usr /mnt/var
+[ -z "$ROOT_DEV" ] && echo "[ERROR] No root partition specified. Please set variable ROOT_DEV to the root partition." && exit 1
+[ -z "$BOOT_DEV" ] && echo "[ERROR] No EFI system partition specified. Please set variable BOOT_DEV to the ESP." && exit 1
+ROOT_DEV="$(ValidatePartition "$ROOT_DEV")"; [ ! -z $PARTITION_NOT_FOUND ] && echo "[ERROR] Root partition $ROOT_DEV does not exist!" && exit 1
+BOOT_DEV="$(ValidatePartition "$BOOT_DEV")"; [ ! -z $PARTITION_NOT_FOUND ] && echo "[ERROR] EFI system partition $BOOT_DEV does not exist!" && exit 1
+HOME_DEV="$(ValidatePartition "$HOME_DEV")"; [ ! -z $PARTITION_NOT_FOUND ] && echo "[ERROR] Home partition $HOME_DEV does not exist!" && exit 1
+MEDIA_DEV="$(ValidatePartition "$MEDIA_DEV")"; [ ! -z $PARTITION_NOT_FOUND ] && echo "[ERROR] Media partition $MEDIA_DEV does not exist!" && exit 1
+PUBLIC_DEV="$(ValidatePartition "$PUBLIC_DEV")"; [ ! -z $PARTITION_NOT_FOUND ] && echo "[ERROR] Public partition $PUBLIC_DEV does not exist!" && exit 1
+SWAP_DEV="$(ValidatePartition "$SWAP_DEV")"; [ ! -z $PARTITION_NOT_FOUND ] && echo "[ERROR] Swap partition $SWAP_DEV does not exist!" && exit 1
+# Unmount any mounted filesystems
+if [ ! -z "$SWAP_DEV" ] && [ ! -z "$(cat /proc/swaps | grep "$SWAP_DEV")" ]; then # Unmount mounted swap partition
+	echo "$SWAP_DEV is still in use, unmounting..."
+	sync; swapoff "$SWAP_DEV" || (echo "[ERROR] Failed to unmount $SWAP_DEV"; exit 1)
 fi
-
-## Create mount points
+for FS in "$BOOT_DEV" "$HOME_DEV" "$MEDIA_DEV" "$PUBLIC_DEV" "$ROOT_DEV"; do
+if [ ! -z "$FS" ] && [ ! -z "$(mount | grep "$FS")" ]; then # Unmount mounted filesystem
+		echo "$FS is still in use, unmounting..."
+		sync; umount -f "$FS" || (echo "[ERROR] Failed to unmount $FS"; exit 1)
+	fi
+done; unset FS
+# Format and tune root and boot partition, if marked for formatting
+[ ! -z $FORMAT_ROOT ] && [ $FORMAT_ROOT == 1 ] && echo "Formatting root (/) partition" && mkfs.ext4 -FL "$LABEL_ROOT" -O $E2OPTIONS "$ROOT_DEV"
+echo "Tuning root (/) partition"; tune2fs -O $E2OPTIONS -c 1 "$ROOT_DEV"
+[ ! -z $FORMAT_BOOT ] && [ $FORMAT_BOOT == 1 ] && echo "Formatting /boot partition" && mkfs.fatF 32 -n "$LABEL_BOOT" "$BOOT_DEV"
+# Set boot flag on /boot partition
+echo "Making /boot partition bootable"
+BOOT_DEV="$(readlink -f "$BOOT_DEV")"
+if [ "${BOOT_DEV:5:2}" == "hd" ] || [ "${BOOT_DEV:5:2}" == "sd" ] || [ "${BOOT_DEV:5:2}" == "vd" ]; then
+	ESPDISK="${BOOT_DEV:0:8}"
+	ESPPART="${BOOT_DEV:8:3}"
+elif [ "${BOOT_DEV:5:4}" == "nvme" ]; then
+	ESPDISK="${BOOT_DEV:0:12}"
+	ESPPART="${BOOT_DEV:13:3}"
+elif [ "${BOOT_DEV:5:6}" == "mmcblk" ]; then
+	ESPDISK="${BOOT_DEV:0:12}"
+	ESPPART="${BOOT_DEV:13:3}"
+else echo "[ERROR] Error detecting /boot partition!"; exit 1; fi
+parted "$ESPDISK" set "$ESPPART" boot on 1> /dev/null
+# Format and tune other partitions, if marked for formatting
+if [ ! -z "$HOME_DEV" ]; then
+	[ ! -z $FORMAT_HOME ] && [ $FORMAT_HOME == 1 ] && echo "Formatting /home partition" && mkfs.ext4 -FL "$LABEL_HOME" -O $E2OPTIONS "$HOME_DEV"
+	echo "Tuning /home partition"; tune2fs -O $E2OPTIONS -c 1 "$HOME_DEV"
+fi
+if [ ! -z "$MEDIA_DEV" ]; then
+	[ ! -z $FORMAT_MEDIA ] && [ $FORMAT_MEDIA == 1 ] && echo "Formatting /media partition" && mkfs.ext4 -FL "$LABEL_MEDIA" -O $E2OPTIONS "$MEDIA_DEV"
+	echo "Tuning /media partition"; tune2fs -O $E2OPTIONS -c 1 "$MEDIA_DEV"
+fi
+if [ ! -z "$PUBLIC_DEV" ]; then
+	[ ! -z $FORMAT_PUBLIC ] && [ $FORMAT_PUBLIC == 1 ] && echo "Formatting /public partition" && mkfs.ext4 -FL "$LABEL_PUBLIC" -O $E2OPTIONS "$PUBLIC_DEV"
+	echo "Tuning /public partition"; tune2fs -O $E2OPTIONS -c 1 "$PUBLIC_DEV"
+[ ! -z "$SWAP_DEV" ] && echo "Formatting swap partition" && mkswap -L "$LABEL_SWAP" "$SWAP_DEV"
+# Mount and clear root filesystem
+echo "Mounting root (/) partition"; mount "$ROOT_DEV" /mnt
+if [ "$FORMAT_ROOT" != 1 ]; then
+	echo "Deleting old Linux files from root (/) partition"
+	rm -rf /mnt/bin /mnt/dev /mnt/etc /mnt/lib /mnt/lib64 /mnt/mnt /mnt/opt /mnt/proc /mnt/root /mnt/run /mnt/sbin /mnt/sys /mnt/tmp /mnt/usr /mnt/var
+fi
+# Create mount points
+echo "Creating mount points..."
 mkdir "/mnt/boot" &> /dev/null
 mkdir "/mnt/public" &> /dev/null; chmod 777 "/mnt/public"; chmod +t "/mnt/public"
-
-if [ "$VAPOUR_OS_INSTALL_MODE" != "buildiso" ]; then
-	## Create mount points
-	[ ! -z "$HOME_DEV" ] && mkdir /mnt/home &> /dev/null
-	[ ! -z "$MEDIA_DEV" ] && mkdir /mnt/media &> /dev/null && chmod 777 /mnt/media && chmod +t /mnt/media
-	## Mount and clear other filesystems
-	mount "$BOOT_DEV" /mnt/boot
-	[ $FORMAT_BOOT != 1 ] && rm -rf /mnt/boot/*.img /mnt/boot/vmlinu* /mnt/boot/EFI/systemd /mnt/boot/loader
-	[ ! -z "$HOME_DEV" ] && mount "$HOME_DEV" /mnt/home
-	[ ! -z "$MEDIA_DEV" ] && mount "$MEDIA_DEV" /mnt/media
-	[ ! -z "$PUBLIC_DEV" ] && mount "$PUBLIC_DEV" /mnt/public
+[ ! -z "$HOME_DEV" ] && mkdir /mnt/home &> /dev/null
+[ ! -z "$MEDIA_DEV" ] && mkdir /mnt/media &> /dev/null && chmod 777 /mnt/media && chmod +t /mnt/media
+# Mount and clear other filesystems
+mount "$BOOT_DEV" /mnt/boot; echo "Mounted /boot"
+if [ $FORMAT_BOOT != 1 ]; then
+	echo "Deleting old Linux files from /boot partition"
+	rm -rf /mnt/boot/*.img /mnt/boot/vmlinu* /mnt/boot/EFI/systemd /mnt/boot/limine /mnt/boot/loader
 fi
+[ ! -z "$HOME_DEV" ] && mount "$HOME_DEV" /mnt/home && echo "Mounted /home"
+[ ! -z "$MEDIA_DEV" ] && mount "$MEDIA_DEV" /mnt/media && echo "Mounted /media"
+[ ! -z "$PUBLIC_DEV" ] && mount "$PUBLIC_DEV" /mnt/public && echo "Mounted /public"
 sync
 
-## Auto-detect hardware
-PACKAGES="base iptables-nft"
+## 2) Auto-detect required packages
+PACKAGES="base"
+# Detect CPU microcode
 CPU_VENDOR_ID="$(lscpu | grep "Vendor ID:" | awk '{print $NF}')"
-if [ $VAPOUR_OS_INSTALL_MODE == "buildiso" ]; then PACKAGES="$PACKAGES amd-ucode intel-ucode"
-elif [ "$CPU_VENDOR_ID" == "AuthenticAMD" ]; then PACKAGES="$PACKAGES amd-ucode"
-elif [ "$CPU_VENDOR_ID" == "GenuineIntel" ]; then PACKAGES="$PACKAGES intel-ucode"; fi
+if [ "$CPU_VENDOR_ID" == "AuthenticAMD" ]; then PACKAGES="$PACKAGES amd-ucode"; echo "Found AMD $ARCH CPU"
+elif [ "$CPU_VENDOR_ID" == "GenuineIntel" ]; then PACKAGES="$PACKAGES intel-ucode"; echo "Found Intel $ARCH CPU"
+else echo "Found unknown $ARCH CPU"
+# Detect laptop hardware
 CHASSIS="$(dmidecode -s chassis-type)"
-if [ $VAPOUR_OS_INSTALL_MODE != "buildiso" ] && [ ! -z "$CHASSIS" ] && ([ "$CHASSIS" == "Portable" ] || [ "$CHASSIS" == "Laptop" ] || [ "$CHASSIS" == "Notebook" ] || \
-[ "$CHASSIS" == "Convertible" ] || [ "$CHASSIS" == "Detachable" ] || [ "$CHASSIS" == "Tablet" ] || [ "$CHASSIS" == "Hand Held" ]); then
-	JOYSTICKS="$(ls /dev/js*)"; if [ ! -z "$JOYSTICKS" ]; then PACKAGES="$PACKAGES hdapsd"; fi
+if [ ! -z "$CHASSIS" ] && ([ "$CHASSIS" == "Laptop" ] || [ "$CHASSIS" == "Notebook" ] || \
+[ "$CHASSIS" == "Convertible" ] || [ "$CHASSIS" == "Detachable" ] || [ "$CHASSIS" == "Tablet" ] || \
+[ "$CHASSIS" == "Hand Held" ] || [ "$CHASSIS" == "Portable" ]); then
+	echo "Device is portable (type $CHASSIS)"
+	if [ ! -z "$CHASSIS" ] && ([ "$CHASSIS" == "Laptop" ] || [ "$CHASSIS" == "Notebook" ] || \
+	[ "$CHASSIS" == "Convertible" ] || [ "$CHASSIS" == "Detachable" ] || [ "$CHASSIS" == "Tablet" ]); then
+		if [ -f /dev/freefall ]; then
+			echo "Found freefall sensor"
+			PACKAGES="$PACKAGES hdapsd"
+		fi
+	fi
+else echo "Device is type $CHASSIS"; fi
+# Install extra non-dependency packages depending on version to be installed
+if [ "$VERSION_TO_INSTALL" != "vapour-os" ]
+	# Install Pipewire first to avoid dependency conflicts
+	PACKAGES="$PACKAGES lib32-pipewire-jack pipewire-alsa pipewire-jack pipewire-pulse wireplumber"
+	# Install the right XDG desktop portal
+	case "$VERSION_TO_INSTALL" in
+		vapour-os-gnome) PACKAGES="$PACKAGES xdg-desktop-portal-gnome";;
+		vapour-os-kde) PACKAGES="$PACKAGES xdg-desktop-portal-kde";;
+		vapour-os-xfce) PACKAGES="$PACKAGES xdg-desktop-portal-gtk";;
+	esac
 fi
 
-## Bootstrap packages. If it fails for some reason, abort installation.
+## 3) Install packages
+echo "Bootstrapping a minimal system..."
 pacstrap /mnt $PACKAGES || exit 1
 sync
 
-## Finish install in chroot
+## 4) Finish install in chroot
 mkdir -p "/mnt/etc/$DISTRO_ID"
 cp $SCRIPT_DIR/chroot-setup "/mnt/etc/$DISTRO_ID/chroot-setup"
-[ "$VAPOUR_OS_INSTALL_MODE" == "buildiso" ] && touch "/mnt/$DISTRO_ID-live"
 sync
+echo "Installing in chroot..."
 arch-chroot /mnt "/etc/$DISTRO_ID/chroot-setup"
 rm "/mnt/etc/$DISTRO_ID/chroot-setup"
 sync

@@ -1,9 +1,16 @@
-unset ROOT_DEV ROOT_UUID ROOT_FSTYPE BOOT_DEV BOOT_UUID HOME_DEV HOME_UUID HOME_FSTYPE MEDIA_DEV MEDIA_UUID MEDIA_FSTYPE PUBLIC_DEV PUBLIC_UUID PUBLIC_FSTYPE SWAP_DEV SWAP_UUID
+unset ROOT_DEV ROOT_UUID ROOT_FSTYPE BOOT_DEV BOOT_UUID BOOT_PART HOME_DEV HOME_UUID HOME_FSTYPE MEDIA_DEV MEDIA_UUID MEDIA_FSTYPE PUBLIC_DEV PUBLIC_UUID PUBLIC_FSTYPE SWAP_DEV SWAP_UUID
 ROOT_DEV=$(mount | grep -sm 1 "on / type" | cut -d ' ' -f 1)
 ROOT_UUID=$(lsblk -lno UUID $ROOT_DEV)
 ROOT_FSTYPE=$(lsblk -lno FSTYPE $ROOT_DEV)
 BOOT_DEV=$(mount | grep -sm 1 "on /boot type" | cut -d ' ' -f 1)
 [ ! -z "$BOOT_DEV" ] && BOOT_UUID=$(lsblk -lno UUID $BOOT_DEV)
+if [ "${BOOT_DEV:5:2}" == "hd" ] || [ "${BOOT_DEV:5:2}" == "sd" ] || [ "${BOOT_DEV:5:2}" == "vd" ]; then
+	BOOT_PART="${BOOT_DEV:8:3}"
+elif [ "${BOOT_DEV:5:4}" == "nvme" ]; then
+	BOOT_PART="${BOOT_DEV:13:3}"
+elif [ "${BOOT_DEV:5:6}" == "mmcblk" ]; then
+	BOOT_PART="${BOOT_DEV:13:3}"
+else echo "[ERROR] Error detecting /boot partition!"; fi
 HOME_DEV=$(mount | grep -sm 1 "on /home type" | cut -d ' ' -f 1)
 [ ! -z "$HOME_DEV" ] && (HOME_UUID=$(lsblk -lno UUID $HOME_DEV) && HOME_FSTYPE=$(lsblk -lno FSTYPE $HOME_DEV))
 MEDIA_DEV=$(mount | grep -sm 1 "on /media" | cut -d ' ' -f 1)
@@ -11,4 +18,5 @@ MEDIA_DEV=$(mount | grep -sm 1 "on /media" | cut -d ' ' -f 1)
 PUBLIC_DEV=$(mount | grep -sm 1 "on /public type" | cut -d ' ' -f 1)
 [ ! -z "$PUBLIC_DEV" ] && (PUBLIC_UUID=$(lsblk -lno UUID $PUBLIC_DEV) && PUBLIC_FSTYPE=$(lsblk -lno FSTYPE $PUBLIC_DEV))
 SWAP_DEV=$(swapon -s | grep "/dev/" | cut -d ' ' -f 1)
-[ ! -z "$SWAP_DEV" ] && SWAP_UUID=$(blkid $SWAP_DEV | cut -d ' ' -f 3 | cut -c7-42); fi
+[ ! -z "$SWAP_DEV" ] && SWAP_UUID=$(blkid $SWAP_DEV | cut -d ' ' -f 3 | cut -c7-42)
+

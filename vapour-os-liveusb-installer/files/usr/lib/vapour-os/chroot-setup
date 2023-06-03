@@ -15,16 +15,19 @@ Checkpoint() {
 }
 
 # Define packages and dependencies
-PACKAGES="$DISTRO_ID limine"
+VERSION_TO_INSTALL="$(cat /etc/$DISTRO_ID/version-to-install)"
+PACKAGES="$(cat /etc/$DISTRO_ID/extra-software) $VERSION_TO_INSTALL limine"
 DEF_DEPS="base"
-
-## TODO: Detect multiple kernels
-# Detect kernel
-if [ -f /boot/vmlinu*-linux* ]; then
-	KERNEL_FILE="$(basename "$(ls /boot/vmlinu*-linux* | tr '\n' ' ' | awk '{print $1}')")"
-	KERNEL="${KERNEL_FILE:8}"
-else KERNEL_FILE="vmlinuz-linux"; KERNEL="linux"; fi
-PACKAGES="$PACKAGES $KERNEL $KERNEL-headers"
+if [ "$VERSION_TO_INSTALL" != "vapour-os" ]; then
+	DEF_DEPS="$DEF_DEPS lib32-pipewire-jack pipewire-alsa pipewire-jack pipewire-pulse wireplumber"
+	case "$VERSION_TO_INSTALL" in
+		vapour-os-gnome) DEF_DEPS="$DEF_DEPS xdg-desktop-portal-gnome";;
+		vapour-os-kde) DEF_DEPS="$DEF_DEPS xdg-desktop-portal-kde";;
+		vapour-os-xfce) DEF_DEPS="$DEF_DEPS xdg-desktop-portal-gtk";;
+	esac
+fi
+KERNELS=$(cat /etc/$DISTRO_ID/kernels)
+for KERNEL in $KERNELS; do PACKAGES="$PACKAGES $KERNEL $KERNEL-headers"; done
 
 if [ $PROGRESS == 0 ]; then
 	# Block initramfs creation until after Vapour OS has been installed
@@ -56,21 +59,23 @@ if [ $PROGRESS == 0 ]; then
 	Checkpoint 1
 fi
 
-if [ $PROGRESS == 1 ]; then # Download and locally sign Chaotic-AUR keys
+if [ $PROGRESS == 1 ]; then # Download and locally sign keys for Chaotic-AUR and Vapourepo
+	pacman-key --init; pacman-key --populate
 	pacman-key --recv-key FBA220DFC880C036 --keyserver keyserver.ubuntu.com || exit 1
+	pacman --recv-key 7E33F46247D1BA09 --keyserver hkps://keys.mailvelope.com || exit 1
 	pacman-key --lsign-key FBA220DFC880C036
+	pacman-key --lsign-key 7E33F46247D1BA09
 	Checkpoint 2
 fi; if [ $PROGRESS == 2 ]; then
 	# Install Chaotic-AUR keyring and mirrorlist
 	pacman --needed --noconfirm --asdeps -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst' 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst' || exit 1
 	echo "" >> /etc/pacman.conf
-	# Add extra repositories to pacman.conf
+	# Add repositories to pacman.conf
 	echo "[chaotic-aur]" >> /etc/pacman.conf
 	echo "Include = /etc/pacman.d/chaotic-mirrorlist" >> /etc/pacman.conf
 	echo "" >> /etc/pacman.conf
 	echo "[vapourepo]" >> /etc/pacman.conf
 	echo "Include = /etc/pacman.d/vapour-os-mirrorlist.tmp" >> /etc/pacman.conf
-	## TODO: Verify that all keys are properly added to the system
 	Checkpoint 3
 fi
 
@@ -81,7 +86,7 @@ fi
 
 ## Install Vapour OS
 if [ $PROGRESS == 4 ]; then
-	N=0; while ((N < 5)); do pacman --noconfirm -Syuw $DEF_DEPS $PACKAGES && FAIL=0 || FAIL=0
+	N=0; while ((N < 5)); do pacman --needed --noconfirm -Syuw $DEF_DEPS $PACKAGES && FAIL=0 || FAIL=0
 		if [ $FAIL == 1 ]; then ((N++))
 			((N < 5)) && echo "[ERROR] Failed to download packages. Retrying..." || (echo "[ERROR] Failed to download packages 5 times. Giving up..."; exit 1)
 		else N=5; fi
@@ -95,7 +100,6 @@ fi
 
 if [ $PROGRESS == 6 ]; then
 	# Reconfigure pacman
-	sed -i "/^#CheckSpace/ cCheckSpace" /etc/pacman.conf
 	sed -i "s/Include = \/etc\/pacman.d\/vapour-os-mirrorlist.tmp/Include = \/etc\/pacman.d\/vapour-os-mirrorlist/g" /etc/pacman.conf
 	rm /etc/pacman.d/vapour-os-mirrorlist.tmp
 	pacman --noconfirm -Sc
@@ -104,8 +108,6 @@ if [ $PROGRESS == 6 ]; then
 	. /usr/lib/vapour-os/diskinfo
 	[ ! -z $HOME_DEV ] && fscrypt setup /home --force --quiet
 	[ ! -z $MEDIA_DEV ] && fscrypt setup /media --force --quiet
-	
-	# Install Limine bootloader
 	
 	# Add user
 	CONTINUE=0; while [ $CONTINUE == 0 ]; do

@@ -3,7 +3,7 @@ DISTRO_ID="vapour-os"
 DISTRO_NAME="Vapour OS"
 [ $(whoami) != "root" ] && echo "[ERROR] You must run this script with root priviliges." && exit 1
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-E2OPTIONS="ea_inode,encrypt,fast_commit,inline_data,large_dir,quota,uninit_bg,verity"
+E2OPTIONS="ea_inode,encrypt,fast_commit,large_dir,quota,uninit_bg,verity"
 ARCH="$(uname -m)"
 unset PARTITION_NOT_FOUND
 timedatectl set-ntp true
@@ -30,7 +30,7 @@ if [ ! -z "$SWAP_DEV" ] && [ ! -z "$(cat /proc/swaps | grep "$SWAP_DEV")" ]; the
 	sync; swapoff "$SWAP_DEV" || (echo "[ERROR] Failed to unmount $SWAP_DEV"; exit 1)
 fi
 for FS in "$BOOT_DEV" "$HOME_DEV" "$MEDIA_DEV" "$PUBLIC_DEV" "$ROOT_DEV"; do
-if [ ! -z "$FS" ] && [ ! -z "$(mount | grep "$FS")" ]; then # Unmount mounted filesystem
+	if [ ! -z "$FS" ] && [ ! -z "$(mount | grep "$FS")" ]; then # Unmount mounted filesystem
 		echo "$FS is still in use, unmounting..."
 		sync; umount -f "$FS" || (echo "[ERROR] Failed to unmount $FS"; exit 1)
 	fi
@@ -38,7 +38,7 @@ done; unset FS
 # Format and tune root and boot partition, if marked for formatting
 [ ! -z $FORMAT_ROOT ] && [ $FORMAT_ROOT == 1 ] && echo "Formatting root (/) partition" && mkfs.ext4 -FL "$LABEL_ROOT" -O $E2OPTIONS "$ROOT_DEV"
 echo "Tuning root (/) partition"; tune2fs -O $E2OPTIONS -c 1 "$ROOT_DEV"
-[ ! -z $FORMAT_BOOT ] && [ $FORMAT_BOOT == 1 ] && echo "Formatting /boot partition" && mkfs.fatF 32 -n "$LABEL_BOOT" "$BOOT_DEV"
+[ ! -z $FORMAT_BOOT ] && [ $FORMAT_BOOT == 1 ] && echo "Formatting /boot partition" && mkfs.fat -F 32 -n "$LABEL_BOOT" "$BOOT_DEV"
 # Set boot flag on /boot partition
 echo "Making /boot partition bootable"
 BOOT_DEV="$(readlink -f "$BOOT_DEV")"
@@ -65,6 +65,7 @@ fi
 if [ ! -z "$PUBLIC_DEV" ]; then
 	[ ! -z $FORMAT_PUBLIC ] && [ $FORMAT_PUBLIC == 1 ] && echo "Formatting /public partition" && mkfs.ext4 -FL "$LABEL_PUBLIC" -O $E2OPTIONS "$PUBLIC_DEV"
 	echo "Tuning /public partition"; tune2fs -O $E2OPTIONS -c 1 "$PUBLIC_DEV"
+fi
 [ ! -z "$SWAP_DEV" ] && echo "Formatting swap partition" && mkswap -L "$LABEL_SWAP" "$SWAP_DEV"
 # Mount and clear root filesystem
 echo "Mounting root (/) partition"; mount "$ROOT_DEV" /mnt
@@ -95,7 +96,7 @@ PACKAGES="base"
 CPU_VENDOR_ID="$(lscpu | grep "Vendor ID:" | awk '{print $NF}')"
 if [ "$CPU_VENDOR_ID" == "AuthenticAMD" ]; then PACKAGES="$PACKAGES amd-ucode"; echo "Found AMD $ARCH CPU"
 elif [ "$CPU_VENDOR_ID" == "GenuineIntel" ]; then PACKAGES="$PACKAGES intel-ucode"; echo "Found Intel $ARCH CPU"
-else echo "Found unknown $ARCH CPU"
+else echo "Found unknown $ARCH CPU"; fi
 # Detect laptop hardware
 CHASSIS="$(dmidecode -s chassis-type)"
 if [ ! -z "$CHASSIS" ] && ([ "$CHASSIS" == "Laptop" ] || [ "$CHASSIS" == "Notebook" ] || \
@@ -110,17 +111,6 @@ if [ ! -z "$CHASSIS" ] && ([ "$CHASSIS" == "Laptop" ] || [ "$CHASSIS" == "Notebo
 		fi
 	fi
 else echo "Device is type $CHASSIS"; fi
-# Install extra non-dependency packages depending on version to be installed
-if [ "$VERSION_TO_INSTALL" != "vapour-os" ]
-	# Install Pipewire first to avoid dependency conflicts
-	PACKAGES="$PACKAGES lib32-pipewire-jack pipewire-alsa pipewire-jack pipewire-pulse wireplumber"
-	# Install the right XDG desktop portal
-	case "$VERSION_TO_INSTALL" in
-		vapour-os-gnome) PACKAGES="$PACKAGES xdg-desktop-portal-gnome";;
-		vapour-os-kde) PACKAGES="$PACKAGES xdg-desktop-portal-kde";;
-		vapour-os-xfce) PACKAGES="$PACKAGES xdg-desktop-portal-gtk";;
-	esac
-fi
 
 ## 3) Install packages
 echo "Bootstrapping a minimal system..."
@@ -130,8 +120,11 @@ sync
 ## 4) Finish install in chroot
 mkdir -p "/mnt/etc/$DISTRO_ID"
 cp $SCRIPT_DIR/chroot-setup "/mnt/etc/$DISTRO_ID/chroot-setup"
+echo "$EXTRA_SOFTWARE" > "/mnt/etc/$DISTRO_ID/extra-software"
+echo "$KERNELS" > "/mnt/etc/$DISTRO_ID/kernels"
+echo "$VERSION_TO_INSTALL" > "/mnt/etc/$DISTRO_ID/version-to-install"
 sync
 echo "Installing in chroot..."
 arch-chroot /mnt "/etc/$DISTRO_ID/chroot-setup"
-rm "/mnt/etc/$DISTRO_ID/chroot-setup"
+rm "/mnt/etc/$DISTRO_ID/chroot-setup" "/mnt/etc/$DISTRO_ID/extra-software" "/mnt/etc/$DISTRO_ID/kernels" "/mnt/etc/$DISTRO_ID/version-to-install"
 sync

@@ -72,10 +72,10 @@ PartitionChooser() {
 			else [ -z "$(mount | grep "$PARTSELECT")" ] && MOUNTED="No" || MOUNTED="Yes"; fi
 
 			if [ $PARTNAME == "root" ] && [ $FSSIZE_BYTES -lt 2147483648 ]; then
-				dialog --backtitle "$BACKTITLE" --title "Partition info" --yesno "Device:  $PARTSELECT\nLabel:   $LABEL\nSize:    $FSSIZE\nType:    $FSTYPE\nMounted: $MOUNTED\n\nThe selected partition is too small. It needs to be at least 2GiB in size." 0 0
+				dialog --backtitle "$BACKTITLE" --title "Partition info" --msgbox "Device:  $PARTSELECT\nLabel:   $LABEL\nSize:    $FSSIZE\nType:    $FSTYPE\nMounted: $MOUNTED\n\nThe selected partition is too small. It needs to be at least 2GiB in size." 0 0
 				CONFIRM=0
-			elif [ $PARTNAME == "boot" ] && [ $FSSIZE_BYTES -lt 536870912 ]; then
-				dialog --backtitle "$BACKTITLE" --title "Partition info" --yesno "Device:  $PARTSELECT\nLabel:   $LABEL\nSize:    $FSSIZE\nType:    $FSTYPE\nMounted: $MOUNTED\n\nThe selected partition is too small. It needs to be at least 512MiB in size." 0 0
+			elif [ $PARTNAME == "boot" ] && [ $FSSIZE_BYTES -lt 268435456 ]; then
+				dialog --backtitle "$BACKTITLE" --title "Partition info" --msgbox "Device:  $PARTSELECT\nLabel:   $LABEL\nSize:    $FSSIZE\nType:    $FSTYPE\nMounted: $MOUNTED\n\nThe selected partition is too small. It needs to be at least 256MiB in size." 0 0
 				CONFIRM=0
 			else
 				## Display partition info and confirm or go back
@@ -128,7 +128,7 @@ SelectVersion() {
 	[ -z "$VERSION_TO_INSTALL" ] && ((PAGE--)) || ((PAGE++))
 }
 SelectKernel() {
-	KERNELS="$(dialog --stdout --backtitle "$BACKTITLE" --cancel-label "Back" --title "Recommended software" --checklist "Select one or more Linux kernels to install:" 0 0 0 \
+	KERNELS="$(dialog --stdout --backtitle "$BACKTITLE" --cancel-label "Back" --title "Linux kernel" --checklist "Select one or more Linux kernels to install:" 0 0 0 \
 	"linux-tt" "TT scheduler Linux kernel by CachyOS with other patches and improvements (recommended). May not boot on some BIOSes." "ON" \
 	"OFFICIALLY SUPPORTED" "" "OFF" \
 	"  linux" "Vanilla Linux kernel - use if linux-tt does not boot on your BIOS." "OFF" \
@@ -176,7 +176,9 @@ SelectKernel() {
 		KERNELS="${KERNELS/OTHER/}"
 		KERNELS="$(echo "$KERNELS" | sed 's/\"//g')"
 	fi
-	[ -z "$KERNELS" ] && ((PAGE--)) || ((PAGE++))
+	if [ -z "$KERNELS" ]; then
+		dialog --backtitle "$BACKTITLE" --title "Error" --msgbox "You must select at least one Linux kernel. Without it, your computer will not work!" 0 0
+	else ((PAGE++)); fi
 }
 SelectExtraSoftware() {
 	EXTRA_SOFTWARE="$(dialog --stdout --backtitle "BACKTITLE" --cancel-label "Skip" --title "Recommended software" --checklist "Would you like to install additional software?

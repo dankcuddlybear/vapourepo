@@ -177,13 +177,13 @@ SelectKernel() {
 		KERNELS="$(echo "$KERNELS" | sed 's/\"//g')"
 	fi
 	if [ -z "$KERNELS" ]; then
-		dialog --backtitle "$BACKTITLE" --title "Error" --msgbox "You must select at least one Linux kernel. Without it, your computer will not work!" 0 0
+		dialog --backtitle "$BACKTITLE" --title "Error" --msgbox "Please select at least 1 Linux kernel." 0 0
 	else ((PAGE++)); fi
 }
 SelectExtraSoftware() {
 	EXTRA_SOFTWARE="$(dialog --stdout --backtitle "BACKTITLE" --cancel-label "Skip" --title "Recommended software" --checklist "Would you like to install additional software?
 	See also https://wiki.archlinux.org/title/Category:Lists_of_software" 0 0 0 \
-	"GAMING" "" "OFF" \
+	"GAMING" "--------" "OFF" \
 	"  vapour-os-gaming" "Linux/Windows game compatibility (64bit+32bit)" "OFF" \
 	"  dolphin-emu" "Nintendo Gamecube/Wii/Triforce emulator. NO GAMES OR COPYRIGHTED FILES INCLUDED - SOURCE THESE YOURSELF" "OFF" \
 	"  gzdoom" "Play DOOM engine games on modern PCs. NO GAMES OR COPYRIGHTED FILES INCLUDED - SOURCE THESE YOURSELF" "OFF" \
@@ -193,17 +193,17 @@ SelectExtraSoftware() {
 	"INTERNET" "(for web browsers, scroll down further)" "OFF" \
 	"  discord" "Voice and video chat software" "OFF" \
 	"  qbittorrent" "Advanced BitTorrent client based on Qt" "OFF" \
-	"MULTIMEDIA" "" "OFF" \
+	"MULTIMEDIA" "--------" "OFF" \
 	"  gimp" "GNU Image Manipulation Program" "OFF" \
 	"  kolourpaint" "Paint program by KDE" "OFF" \
 	"  obs-studio" "Free open-source recording/streaming software" "OFF" \
 	"  vlc" "Multi-format media player/streamer and CD/VCD/DVD/BD player" "OFF" \
-	"OFFICE, TEXT" "" "OFF" \
+	"OFFICE, TEXT" "--------" "OFF" \
 	"  nano" "Text editor for terminal" "OFF" \
 	"  onlyoffice-bin" "Office suite combining text, spreadsheet and presentation editors" "OFF" \
-	"SYSTEM" "" "OFF" \
+	"SYSTEM" "--------" "OFF" \
 	"  gparted" "Graphical partition manager" "OFF" \
-	"WEB BROWSERS" "" "OFF" \
+	"WEB BROWSERS" "--------" "OFF" \
 	"  brave-bin" "Web browser that blocks ads and trackers by default" "OFF" \
 	"  chromium" "Open-source browser from which Google Chrome is based." "OFF" \
 	"    chromium-widevine" "Chromium plugin for viewing premium video content" "OFF" \
@@ -217,7 +217,7 @@ SelectExtraSoftware() {
 	"  midori" "Lightweight web browser" "OFF" \
 	"  opera" "Fast and secure web browser" "OFF" \
 	"  vivaldi" "An advanced browser made with the power user in mind" "OFF" \
-	"CASUAL GAMES" "" "OFF" \
+	"CASUAL GAMES" "--------" "OFF" \
 	"  gnome-2048" "Slide numbered tiles on a grid to combine them to create a tile with the number 2048" "OFF" \
 	"  gnome-chess" "Computer version of Chess" "OFF" \
 	"  gnome-mahjongg" "Disassemble a pile of tiles by removing matching pairs" "OFF" \
@@ -238,7 +238,7 @@ SelectExtraSoftware() {
 	"  puzzles " "Simon Tatham's Portable Puzzle Collection" "OFF" \
 	"  pysolfc" "Collection of over 1000 solitaire games" "OFF" \
 	"  quadrapassel" "Tetris clone" "OFF" \
-	"FREE GAMES" "" "OFF" \
+	"FREE GAMES" "--------" "OFF" \
 	"  0ad" "Historically-based real-time 3D strategy game" "OFF" \
 	"  cuyo" "Tetris-style puzzle game for up to two players with a twist" "OFF" \
 	"  dwarffortress" "Single-player fantasy game in which you build a dwarven outpost or play an adventurer in a randomly generated world" "OFF" \
@@ -249,7 +249,7 @@ SelectExtraSoftware() {
 	"  supertux" "Super Mario style 2D platformer starring Tux" "OFF" \
 	"  supertuxkart" "Kart racing game featuring Tux and his friends" "OFF" \
 	"  wesnoth" "Free, turn-based tactical strategy game with a high fantasy theme, featuring both single-player, and online/hotseat multiplayer combat" "OFF" \
-	"EDUCATIONAL" "" "OFF" \
+	"EDUCATIONAL" "--------" "OFF" \
 	"  artikulate" "Improve your pronunciation by listening to native speakers" "OFF" \
 	"  blinken" "Memory enhancement game" "OFF" \
 	"  gcompris-qt" "Educational software suite comprising of numerous activities for children aged 2 to 10" "OFF" \
@@ -277,9 +277,9 @@ SelectExtraSoftware() {
 		EXTRA_SOFTWARE="$(echo "$EXTRA_SOFTWARE" | sed 's/\"//g')"
 	fi
 	if [ ! -z "$EXTRA_SOFTWARE" ]; then
-		[[ "$EXTRA_SOFTWARE" == *"chromium"* ]] && $EXTRA_SOFTWARE="$EXTRA_SOFTWARE chromium-widevine"
-		[[ "$EXTRA_SOFTWARE" == *"gparted"* ]] && $EXTRA_SOFTWARE="$EXTRA_SOFTWARE gpart mtools ntfs-3g"
-		[[ "$EXTRA_SOFTWARE" == *"vivaldi"* ]] && $EXTRA_SOFTWARE="$EXTRA_SOFTWARE vivaldi-ffmpeg-codecs"
+		[[ "$EXTRA_SOFTWARE" == *"chromium"* ]] && EXTRA_SOFTWARE="$EXTRA_SOFTWARE chromium-widevine"
+		[[ "$EXTRA_SOFTWARE" == *"gparted"* ]] && EXTRA_SOFTWARE="$EXTRA_SOFTWARE gpart mtools ntfs-3g"
+		[[ "$EXTRA_SOFTWARE" == *"vivaldi"* ]] && EXTRA_SOFTWARE="$EXTRA_SOFTWARE vivaldi-ffmpeg-codecs"
 	fi
 	((PAGE++))
 }

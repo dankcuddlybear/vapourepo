@@ -1,7 +1,7 @@
 # Maintainer: Dankcuddlybear <dankcuddlybear@protonmail.com>
 pkgname=vapour-os-xfce
 pkgver=1.0.0
-pkgrel=1
+pkgrel=2
 pkgdesc='XFCE desktop for Vapour OS with XFCE apps and addons.'
 arch=(any)
 url='https://github.com/dankcuddlybear/Vapour-OS'
@@ -11,7 +11,7 @@ depends=(#'pipewire' 'pipewire-jack' 'pipewire-alsa' 'pipewire-pulse'
 	'lightdm-gtk-greeter'
 	'mousepad'
 	'network-manager-applet'
-	'python'
+	'pavucontrol' 'python'
 	'ristretto'
 	'thunar-archive-plugin' 'thunar-media-tags-plugin' 'thunar-volman'
 	'vapour-os-desktop-libs'

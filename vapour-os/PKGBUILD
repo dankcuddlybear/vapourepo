@@ -1,7 +1,7 @@
 # Maintainer: Dankcuddlybear <dankcuddlybear@protonmail.com>
 pkgname=vapour-os
 pkgver=1.0.0
-pkgrel=4
+pkgrel=5
 pkgdesc='A modular Arch based distro optimised for energy saving and ease of use (core system)'
 arch=(x86_64)
 url='https://github.com/dankcuddlybear/vapourepo'
@@ -22,7 +22,25 @@ depends=('base'
 	'wireless-regdb'
 )
 package() {
-	chmod 750 "$srcdir/../files/etc/sudoers.d"
 	cp -r "$srcdir/../files/etc" "$pkgdir"
 	cp -r "$srcdir/../files/usr" "$pkgdir"
+	chmod 750 "$pkgdir/etc/sudoers.d"
+	chmod +x "$pkgdir/usr/bin/syscfg" \
+		"$pkgdir/usr/lib/vapour-os/" \
+		"$pkgdir/usr/lib/vapour-os/hp-lid-fix" \
+		"$pkgdir/usr/lib/vapour-os/limine-install" \
+		"$pkgdir/usr/lib/vapour-os/mkfstab" \
+		"$pkgdir/usr/lib/vapour-os/power-balanced" \
+		"$pkgdir/usr/lib/vapour-os/random-errormsg" \
+		"$pkgdir/usr/lib/vapour-os/setvar" \
+		"$pkgdir/usr/lib/vapour-os/vapour-os-installer" \
+		"$pkgdir/usr/lib/vapour-os/wakeonlan-ethernet" \
+		"$pkgdir/usr/lib/vapour-os/wakeonlan-wifi" \
+		"$pkgdir/usr/share/libalpm/scripts/vapour-os/filesystem" \
+		"$pkgdir/usr/share/libalpm/scripts/vapour-os/lsb-release" \
+		"$pkgdir/usr/share/libalpm/scripts/vapour-os/mirrors" \
+		"$pkgdir/usr/share/libalpm/scripts/vapour-os/nano" \
+		"$pkgdir/usr/share/libalpm/scripts/vapour-os/openssh" \
+		"$pkgdir/usr/share/libalpm/scripts/vapour-os/postupgrade" \
+		"$pkgdir/usr/share/libalpm/scripts/vapour-os/setup"
 }

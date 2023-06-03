@@ -4,5 +4,5 @@ Encoding=UTF-8
 Name=Vapour OS Installer
 Comment=Install Vapour OS on your computer
 Exec=sudo vapour-os-installer-gui
-Categories=System;Utility;
+Categories=System;
 Terminal=true

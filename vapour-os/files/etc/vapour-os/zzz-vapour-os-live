@@ -1,2 +1,0 @@
-# Allow members of group wheel to use sudo without password prompt
-%wheel ALL=(ALL:ALL) NOPASSWD:ALL

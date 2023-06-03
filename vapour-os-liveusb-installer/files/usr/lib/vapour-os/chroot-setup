@@ -16,8 +16,8 @@ Checkpoint() {
 
 # Define packages and dependencies
 VERSION_TO_INSTALL="$(cat /etc/$DISTRO_ID/version-to-install)"
-PACKAGES="$(cat /etc/$DISTRO_ID/extra-software) $VERSION_TO_INSTALL limine"
-DEF_DEPS="base"
+PACKAGES="$VERSION_TO_INSTALL limine $(cat /etc/$DISTRO_ID/extra-software)"
+DEF_DEPS="base vapour-os-mirrorlist"
 if [ "$VERSION_TO_INSTALL" != "vapour-os" ]; then
 	DEF_DEPS="$DEF_DEPS lib32-pipewire-jack pipewire-alsa pipewire-jack pipewire-pulse wireplumber"
 	case "$VERSION_TO_INSTALL" in
@@ -61,10 +61,9 @@ fi
 
 if [ $PROGRESS == 1 ]; then # Download and locally sign keys for Chaotic-AUR and Vapourepo
 	pacman-key --init; pacman-key --populate
-	pacman-key --recv-key FBA220DFC880C036 --keyserver keyserver.ubuntu.com || exit 1
-	pacman --recv-key 7E33F46247D1BA09 --keyserver hkps://keys.mailvelope.com || exit 1
-	pacman-key --lsign-key FBA220DFC880C036
-	pacman-key --lsign-key 7E33F46247D1BA09
+	pacman-key --recv-keys FBA220DFC880C036 --keyserver keyserver.ubuntu.com || exit 1 # Chaotic-AUR
+	pacman-key --recv-keys 7E33F46247D1BA09 --keyserver hkps://keys.mailvelope.com || exit 1 # Chaotic-AUR
+	pacman-key --lsign-key FBA220DFC880C036; pacman-key --lsign-key 7E33F46247D1BA09
 	Checkpoint 2
 fi; if [ $PROGRESS == 2 ]; then
 	# Install Chaotic-AUR keyring and mirrorlist

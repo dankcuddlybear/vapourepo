@@ -1,14 +1,17 @@
 #!/bin/bash
 DISTRO_ID="vapour-os"
 DISTRO_NAME="Vapour OS"
-[ $(whoami) != "root" ] && echo "[ERROR] You must run this script with root priviliges." && exit 1
+Error() {
+	echo "[ERROR] $1"
+	exit 1
+}
+[ $(whoami) != "root" ] && Error "You must run this script with root priviliges."
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 E2OPTIONS="ea_inode,encrypt,fast_commit,large_dir,quota,uninit_bg,verity"
 ARCH="$(uname -m)"
 unset PARTITION_NOT_FOUND
 timedatectl set-ntp true
 sync
-
 ## 1) Prepare and mount filesystems
 echo "Preparing file systems..."
 ValidatePartition() { # Checks that each partition exists, and resolves links
@@ -16,25 +19,24 @@ ValidatePartition() { # Checks that each partition exists, and resolves links
 		if [ -b "$1" ]; then echo "$(readlink -f "$1")"; else PARTITION_NOT_FOUND=1; fi
 	fi
 }
-[ -z "$ROOT_DEV" ] && echo "[ERROR] No root partition specified. Please set variable ROOT_DEV to the root partition." && exit 1
-[ -z "$BOOT_DEV" ] && echo "[ERROR] No EFI system partition specified. Please set variable BOOT_DEV to the ESP." && exit 1
-ROOT_DEV="$(ValidatePartition "$ROOT_DEV")"; [ ! -z $PARTITION_NOT_FOUND ] && echo "[ERROR] Root partition $ROOT_DEV does not exist!" && exit 1
-BOOT_DEV="$(ValidatePartition "$BOOT_DEV")"; [ ! -z $PARTITION_NOT_FOUND ] && echo "[ERROR] EFI system partition $BOOT_DEV does not exist!" && exit 1
-HOME_DEV="$(ValidatePartition "$HOME_DEV")"; [ ! -z $PARTITION_NOT_FOUND ] && echo "[ERROR] Home partition $HOME_DEV does not exist!" && exit 1
-MEDIA_DEV="$(ValidatePartition "$MEDIA_DEV")"; [ ! -z $PARTITION_NOT_FOUND ] && echo "[ERROR] Media partition $MEDIA_DEV does not exist!" && exit 1
-PUBLIC_DEV="$(ValidatePartition "$PUBLIC_DEV")"; [ ! -z $PARTITION_NOT_FOUND ] && echo "[ERROR] Public partition $PUBLIC_DEV does not exist!" && exit 1
-SWAP_DEV="$(ValidatePartition "$SWAP_DEV")"; [ ! -z $PARTITION_NOT_FOUND ] && echo "[ERROR] Swap partition $SWAP_DEV does not exist!" && exit 1
+[ -z "$ROOT_DEV" ] && Error "No root partition specified. Please set variable ROOT_DEV to the root partition."
+[ -z "$BOOT_DEV" ] && Error "No EFI system partition specified. Please set variable BOOT_DEV to the ESP."
+ROOT_DEV="$(ValidatePartition "$ROOT_DEV")"; [ ! -z $PARTITION_NOT_FOUND ] && Error "Root partition $ROOT_DEV does not exist!"
+BOOT_DEV="$(ValidatePartition "$BOOT_DEV")"; [ ! -z $PARTITION_NOT_FOUND ] && Error "EFI system partition $BOOT_DEV does not exist!"
+HOME_DEV="$(ValidatePartition "$HOME_DEV")"; [ ! -z $PARTITION_NOT_FOUND ] && Error "Home partition $HOME_DEV does not exist!"
+MEDIA_DEV="$(ValidatePartition "$MEDIA_DEV")"; [ ! -z $PARTITION_NOT_FOUND ] && Error "Media partition $MEDIA_DEV does not exist!"
+PUBLIC_DEV="$(ValidatePartition "$PUBLIC_DEV")"; [ ! -z $PARTITION_NOT_FOUND ] && Error "Public partition $PUBLIC_DEV does not exist!"
+SWAP_DEV="$(ValidatePartition "$SWAP_DEV")"; [ ! -z $PARTITION_NOT_FOUND ] && Error "Swap partition $SWAP_DEV does not exist!"
 # Unmount any mounted filesystems
 if [ ! -z "$SWAP_DEV" ] && [ ! -z "$(cat /proc/swaps | grep "$SWAP_DEV")" ]; then # Unmount mounted swap partition
-	echo "$SWAP_DEV is still in use, unmounting..."
-	sync; swapoff "$SWAP_DEV" || (echo "[ERROR] Failed to unmount $SWAP_DEV"; exit 1)
+	echo "Unmounting $SWAP_DEV..."
+	sync; swapoff "$SWAP_DEV" || Error "Failed to unmount $SWAP_DEV"
 fi
-for FS in "$BOOT_DEV" "$HOME_DEV" "$MEDIA_DEV" "$PUBLIC_DEV" "$ROOT_DEV"; do
-	if [ ! -z "$FS" ] && [ ! -z "$(mount | grep "$FS")" ]; then # Unmount mounted filesystem
-		echo "$FS is still in use, unmounting..."
-		sync; umount -f "$FS" || (echo "[ERROR] Failed to unmount $FS"; exit 1)
-	fi
-done; unset FS
+for MOUNT in $(findmnt -lno TARGET -d backward | grep "/mnt"); do
+	echo "Unmounting $MOUNT..."
+	sync; umount -fl "$MOUNT" || Error "Failed to unmount $MOUNT"
+done
+
 # Format and tune root and boot partition, if marked for formatting
 [ ! -z $FORMAT_ROOT ] && [ $FORMAT_ROOT == 1 ] && echo "Formatting root (/) partition" && mkfs.ext4 -FL "$LABEL_ROOT" -O $E2OPTIONS "$ROOT_DEV"
 echo "Tuning root (/) partition"; tune2fs -O $E2OPTIONS -c 1 "$ROOT_DEV"
@@ -51,7 +53,7 @@ elif [ "${BOOT_DEV:5:4}" == "nvme" ]; then
 elif [ "${BOOT_DEV:5:6}" == "mmcblk" ]; then
 	ESPDISK="${BOOT_DEV:0:12}"
 	ESPPART="${BOOT_DEV:13:3}"
-else echo "[ERROR] Error detecting /boot partition!"; exit 1; fi
+else Error "Error detecting /boot partition!"; fi
 parted "$ESPDISK" set "$ESPPART" boot on 1> /dev/null
 # Format and tune other partitions, if marked for formatting
 if [ ! -z "$HOME_DEV" ]; then
@@ -119,12 +121,16 @@ sync
 
 ## 4) Finish install in chroot
 mkdir -p "/mnt/etc/$DISTRO_ID"
-cp $SCRIPT_DIR/chroot-setup "/mnt/etc/$DISTRO_ID/chroot-setup"
+cp "$SCRIPT_DIR/chroot-setup" "/mnt/etc/$DISTRO_ID/chroot-setup"
+echo "$EXTRA_SOFTWARE"
+echo "$KERNELS"
+echo "$VERSION_TO_INSTALL"
+read
 echo "$EXTRA_SOFTWARE" > "/mnt/etc/$DISTRO_ID/extra-software"
 echo "$KERNELS" > "/mnt/etc/$DISTRO_ID/kernels"
 echo "$VERSION_TO_INSTALL" > "/mnt/etc/$DISTRO_ID/version-to-install"
 sync
 echo "Installing in chroot..."
-arch-chroot /mnt "/etc/$DISTRO_ID/chroot-setup"
+arch-chroot /mnt "/etc/$DISTRO_ID/chroot-setup" || exit 1
 rm "/mnt/etc/$DISTRO_ID/chroot-setup" "/mnt/etc/$DISTRO_ID/extra-software" "/mnt/etc/$DISTRO_ID/kernels" "/mnt/etc/$DISTRO_ID/version-to-install"
 sync

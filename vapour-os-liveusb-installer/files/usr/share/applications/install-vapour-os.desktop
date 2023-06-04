@@ -1,8 +1,8 @@
 [Desktop Entry]
 Type=Application
 Encoding=UTF-8
-Name=Vapour OS Installer
+Name=Install Vapour OS
 Comment=Install Vapour OS on your computer
-Exec=sudo vapour-os-installer-gui
+Exec=sudo install-vapour-os
 Categories=System;
 Terminal=true

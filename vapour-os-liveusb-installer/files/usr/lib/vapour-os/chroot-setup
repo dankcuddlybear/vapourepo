@@ -19,7 +19,7 @@ VERSION_TO_INSTALL="$(cat /etc/$DISTRO_ID/version-to-install)"
 PACKAGES="$VERSION_TO_INSTALL limine $(cat /etc/$DISTRO_ID/extra-software)"
 DEF_DEPS="base vapour-os-mirrorlist"
 if [ "$VERSION_TO_INSTALL" != "vapour-os" ]; then
-	DEF_DEPS="$DEF_DEPS lib32-pipewire-jack pipewire-alsa pipewire-jack pipewire-pulse wireplumber"
+	PACKAGES="$PACKAGES lib32-pipewire-jack pipewire-alsa pipewire-jack pipewire-pulse wireplumber"
 	case "$VERSION_TO_INSTALL" in
 		vapour-os-gnome) DEF_DEPS="$DEF_DEPS xdg-desktop-portal-gnome";;
 		vapour-os-kde) DEF_DEPS="$DEF_DEPS xdg-desktop-portal-kde";;
@@ -107,6 +107,8 @@ if [ $PROGRESS == 6 ]; then
 	. /usr/lib/vapour-os/diskinfo
 	[ ! -z $HOME_DEV ] && fscrypt setup /home --force --quiet
 	[ ! -z $MEDIA_DEV ] && fscrypt setup /media --force --quiet
+	
+	/usr/lib/vapour-os/mkfstab
 	
 	# Add user
 	CONTINUE=0; while [ $CONTINUE == 0 ]; do

@@ -119,7 +119,8 @@ PartitionChooser() {
 	fi
 }
 SelectVersion() {
-	VERSION_TO_INSTALL=$(dialog --stdout --backtitle "$BACKTITLE" --cancel-label "Back" --title "Version selection" --menu "Please select a version to install:" 0 0 0 \
+	unset VERSION_TO_INSTALL
+	export VERSION_TO_INSTALL=$(dialog --stdout --backtitle "$BACKTITLE" --cancel-label "Back" --title "Version selection" --menu "Please select a version to install:" 0 0 0 \
 	"vapour-os-kde" "KDE Plasma (best for Windows users)" \
 	"vapour-os-xfce" "XFCE (best for older devices)" \
 	"vapour-os-gnome" "GNOME Shell (best for touch devices)" \
@@ -128,7 +129,8 @@ SelectVersion() {
 	[ -z "$VERSION_TO_INSTALL" ] && ((PAGE--)) || ((PAGE++))
 }
 SelectKernel() {
-	KERNELS="$(dialog --stdout --backtitle "$BACKTITLE" --cancel-label "Back" --title "Linux kernel" --checklist "Select one or more Linux kernels to install:" 0 0 0 \
+	unset KERNELS
+	export KERNELS="$(dialog --stdout --backtitle "$BACKTITLE" --cancel-label "Back" --title "Linux kernel" --checklist "Select one or more Linux kernels to install:" 0 0 0 \
 	"linux-tt" "TT scheduler Linux kernel by CachyOS with other patches and improvements (recommended). May not boot on some BIOSes." "ON" \
 	"OFFICIALLY SUPPORTED" "" "OFF" \
 	"  linux" "Vanilla Linux kernel - use if linux-tt does not boot on your BIOS." "OFF" \
@@ -181,11 +183,12 @@ SelectKernel() {
 	else ((PAGE++)); fi
 }
 SelectExtraSoftware() {
-	EXTRA_SOFTWARE="$(dialog --stdout --backtitle "BACKTITLE" --cancel-label "Skip" --title "Recommended software" --checklist "Would you like to install additional software?
+	unset EXTRA_SOFTWARE
+	export EXTRA_SOFTWARE="$(dialog --stdout --backtitle "BACKTITLE" --cancel-label "Skip" --title "Recommended software" --checklist "Would you like to install additional software?
 	See also https://wiki.archlinux.org/title/Category:Lists_of_software" 0 0 0 \
 	"GAMING" "--------" "OFF" \
 	"  vapour-os-gaming" "Linux/Windows game compatibility (64bit+32bit)" "OFF" \
-	"  dolphin-emu" "Nintendo Gamecube/Wii/Triforce emulator. NO GAMES OR COPYRIGHTED FILES INCLUDED - SOURCE THESE YOURSELF" "OFF" \
+	"  dolphin-emu" "Play your Nintendo Gamecube, Wii and Triforce games on your PC. NO GAMES OR COPYRIGHTED FILES INCLUDED - SOURCE THESE YOURSELF" "OFF" \
 	"  gzdoom" "Play DOOM engine games on modern PCs. NO GAMES OR COPYRIGHTED FILES INCLUDED - SOURCE THESE YOURSELF" "OFF" \
 	"  melonds-git" "Nintendo DS(i) emulator. NO GAMES OR COPYRIGHTED FILES INCLUDED - SOURCE THESE YOURSELF" "OFF" \
 	"  prismlauncher-qt5" "Open-source Minecraft Launcher and mod manager. YOU MUST PURCHASE MINECRAFT TO PLAY" "OFF" \
@@ -341,9 +344,9 @@ while true; do
 			clear
 			echo "Installation of $DISTRO_NAME has now begun. Grab a cup of tea, because this will take a while."
 			echo "DO NOT turn off your device or disconnect it from the internet."
-			sleep 2
+			echo; sleep 2
 			"/usr/lib/$DISTRO_ID/$DISTRO_ID-liveusb-installer" || exit 1
 			sync
-			echo "Installation complete! You may reboot your computer."; exit;;
+			echo; echo "Installation complete! You may reboot your computer."; exit 0;;
 	esac
 done

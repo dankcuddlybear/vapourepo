@@ -2,22 +2,24 @@
 DISTRO_ID="vapour-os"
 [ $(whoami) != "root" ] && echo "[ERROR] You must run this script with root priviliges." && exit 1
 . /usr/lib/$DISTRO_ID/diskinfo
-EFI_BITS="$(cat /sys/firmware/efi/fw_platform_size)"
+EFI_BITS="$(cat /sys/firmware/efi/fw_platform_size 2> /dev/null)"
 Upgrade() {
 	mkdir -p /boot/limine /boot/EFI/limine &> /dev/null
 	cp /usr/share/limine/limine.sys /boot/limine/
-	limine-deploy $ROOT_DEV
+	limine-deploy $BOOT_DISK
 	if [ -z "$EFI_BITS" ]; then
 		cp /usr/share/limine/BOOTIA32.EFI /boot/EFI/limine/
 		cp /usr/share/limine/BOOTX64.EFI /boot/EFI/limine/
 	elif [ "$EFI_BITS" == 32 ]; then
+		rm /boot/EFI/limine/BOOTX64.EFI &> /dev/null
 		cp /usr/share/limine/BOOTIA32.EFI /boot/EFI/limine/
 	elif [ "$EFI_BITS" == 64 ]; then
+		rm /boot/EFI/limine/BOOTIA32.EFI &> /dev/null
 		cp /usr/share/limine/BOOTX64.EFI /boot/EFI/limine/
 	fi
 }
 
-if [ -z "$1" ]; then echo "[ERROR] No command (install/upgrade/uninstall)"; exit 1
+[ -z "$1" ] && echo "[ERROR] No command (install/upgrade/uninstall)" && exit 1
 case "$1" in
 	install)
 		Upgrade
@@ -34,11 +36,8 @@ case "$1" in
 		sed -i "s/^.*\${KERNEL}=.*$/\${KERNEL}=$KERNEL/" /boot/limine/limine.cfg
 		# Set ROOT_UUID
 		sed -i "s/^.*\${ROOT_UUID}=.*$/\${ROOT_UUID}=$ROOT_UUID/" /boot/limine/limine.cfg
-		if [ -z "$EFI_BITS" ]; then # Create EFI boot entry
-			echo "[WARNING] System was booted in BIOS mode. UEFI boot entries cannot be created."
-			echo "          You must add \EFI\Limine\BOOTX64.EFI or \EFI\Limine\BOOTIA32.EFI manually."
-			echo "          You can add it in the UEFI boot options, in the EFI shell or" 
-			echo "          with efibootmgr on Linux booted on UEFI."
+		if [ -z "$EFI_BITS" ]; then # Create EFI boot entry (or don't)
+			echo "[WARNING] System was booted in BIOS mode. No UEFI boot entries were created."
 		elif [ "$EFI_BITS" == 32 ]; then efibootmgr -c -d $ROOT_DEV -p $BOOT_PART -L "Limine" -l '\EFI\Limine\BOOTIA32.EFI'
 		elif [ "$EFI_BITS" == 64 ]; then efibootmgr -c -d $ROOT_DEV -p $BOOT_PART -L "Limine" -l '\EFI\Limine\BOOTX64.EFI'
 		fi;;

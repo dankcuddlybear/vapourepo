@@ -3,39 +3,33 @@
 DISTRO_ID="vapour-os"
 DISTRO_NAME="Vapour OS"
 . /usr/lib/$DISTRO_ID/diskinfo
-
-echo "## Hide other users processes from unpriviliged users"
-echo "proc /proc proc nosuid,nodev,noexec,hidepid=2,gid=proc 0 0"
 echo "## Root partition" > /etc/fstab
 echo "UUID=$ROOT_UUID / ext4 lazytime 0 1" >> /etc/fstab
 echo "" >> /etc/fstab
-
 echo "## Boot partition" >> /etc/fstab
 echo "UUID=$BOOT_UUID /boot vfat noatime,noauto,x-systemd.automount,nodev,nosuid,noexec,dmask=0022,fmask=133,iocharset=ascii,shortname=mixed,utf8,errors=remount-ro 0 2" >> /etc/fstab
 echo "" >> /etc/fstab
-
 if [ ! -z "$HOME_DEV" ]; then
 	echo "## Home partition" >> /etc/fstab
 	echo "UUID=$HOME_UUID /home ext4 lazytime,noauto,x-systemd.automount,nodev,nosuid 0 2" >> /etc/fstab
 	echo "" >> /etc/fstab
 fi
-
 if [ ! -z "$MEDIA_DEV" ]; then
 	echo "## Media partition" >> /etc/fstab
 	echo "UUID=$MEDIA_UUID /media ext4 noatime,noauto,x-systemd.automount,nodev,nosuid 0 2" >> /etc/fstab
 	echo "" >> /etc/fstab
 fi
-
 if [ ! -z "$PUBLIC_DEV" ]; then
 	echo "## Public partition" >> /etc/fstab
 	echo "UUID=$PUBLIC_UUID /public ext4 noatime,noauto,x-systemd.automount,nodev,nosuid 0 2" >> /etc/fstab
 	echo "" >> /etc/fstab
 fi
-
 if [ ! -z "$SWAP_DEV" ]; then
 	echo "## Swap partition" >> /etc/fstab
 	echo "UUID=$SWAP_UUID none swap defaults 0 0" >> /etc/fstab
 	echo "" >> /etc/fstab
 fi
-
+echo "## Hide other users processes from unpriviliged users" >> /etc/fstab
+echo "proc /proc proc nosuid,nodev,noexec,hidepid=2,gid=proc 0 0" >> /etc/fstab
+echo "" >> /etc/fstab
 systemctl daemon-reload

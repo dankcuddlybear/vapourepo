@@ -7,13 +7,12 @@ Error() {
 }
 [ $(whoami) != "root" ] && Error "You must run this script with root priviliges."
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-E2OPTIONS="ea_inode,encrypt,fast_commit,large_dir,quota,uninit_bg,verity"
+E2OPTIONS="ea_inode,encrypt,inline_data,large_dir,project,quota,uninit_bg,verity"
 ARCH="$(uname -m)"
 unset PARTITION_NOT_FOUND
 timedatectl set-ntp true
 sync
 ## 1) Prepare and mount filesystems
-echo "Preparing file systems..."
 ValidatePartition() { # Checks that each partition exists, and resolves links
 	if [ ! -z "$1" ]; then
 		if [ -b "$1" ]; then echo "$(readlink -f "$1")"; else PARTITION_NOT_FOUND=1; fi
@@ -38,11 +37,11 @@ for MOUNT in $(findmnt -lno TARGET -d backward | grep "/mnt"); do
 done
 
 # Format and tune root and boot partition, if marked for formatting
-[ ! -z $FORMAT_ROOT ] && [ $FORMAT_ROOT == 1 ] && echo "Formatting root (/) partition" && mkfs.ext4 -FL "$LABEL_ROOT" -O $E2OPTIONS "$ROOT_DEV"
-echo "Tuning root (/) partition"; tune2fs -O $E2OPTIONS -c 1 "$ROOT_DEV"
-[ ! -z $FORMAT_BOOT ] && [ $FORMAT_BOOT == 1 ] && echo "Formatting /boot partition" && mkfs.fat -F 32 -n "$LABEL_BOOT" "$BOOT_DEV"
+[ ! -z $FORMAT_ROOT ] && [ $FORMAT_ROOT == 1 ] && mkfs.ext4 -FL "$LABEL_ROOT" -O $E2OPTIONS "$ROOT_DEV"
+tune2fs -O $E2OPTIONS -c 1 -o acl,discard,user_xattr "$ROOT_DEV"
+debugfs -w -R "set_super_value mount_opts auto_da_alloc,i_version,journal_checksum,lazytime" "$ROOT_DEV"
+[ ! -z $FORMAT_BOOT ] && [ $FORMAT_BOOT == 1 ] && mkfs.fat -F 32 -n "$LABEL_BOOT" "$BOOT_DEV"
 # Set boot flag on /boot partition
-echo "Making /boot partition bootable"
 BOOT_DEV="$(readlink -f "$BOOT_DEV")"
 if [ "${BOOT_DEV:5:2}" == "hd" ] || [ "${BOOT_DEV:5:2}" == "sd" ] || [ "${BOOT_DEV:5:2}" == "vd" ]; then
 	ESPDISK="${BOOT_DEV:0:8}"
@@ -57,39 +56,39 @@ else Error "Error detecting /boot partition!"; fi
 parted "$ESPDISK" set "$ESPPART" boot on 1> /dev/null
 # Format and tune other partitions, if marked for formatting
 if [ ! -z "$HOME_DEV" ]; then
-	[ ! -z $FORMAT_HOME ] && [ $FORMAT_HOME == 1 ] && echo "Formatting /home partition" && mkfs.ext4 -FL "$LABEL_HOME" -O $E2OPTIONS "$HOME_DEV"
-	echo "Tuning /home partition"; tune2fs -O $E2OPTIONS -c 1 "$HOME_DEV"
+	[ ! -z $FORMAT_HOME ] && [ $FORMAT_HOME == 1 ] && mkfs.ext4 -FL "$LABEL_HOME" -O $E2OPTIONS "$HOME_DEV"
+	tune2fs -O $E2OPTIONS -c 1 -o acl,discard,user_xattr "$HOME_DEV"
+	debugfs -w -R "set_super_value mount_opts auto_da_alloc,i_version,journal_checksum,lazytime,nodev,nosuid" "$HOME_DEV"
 fi
 if [ ! -z "$MEDIA_DEV" ]; then
-	[ ! -z $FORMAT_MEDIA ] && [ $FORMAT_MEDIA == 1 ] && echo "Formatting /media partition" && mkfs.ext4 -FL "$LABEL_MEDIA" -O $E2OPTIONS "$MEDIA_DEV"
-	echo "Tuning /media partition"; tune2fs -O $E2OPTIONS -c 1 "$MEDIA_DEV"
+	[ ! -z $FORMAT_MEDIA ] && [ $FORMAT_MEDIA == 1 ] && mkfs.ext4 -FL "$LABEL_MEDIA" -O $E2OPTIONS "$MEDIA_DEV"
+	tune2fs -O $E2OPTIONS -c 1 -o acl,discard,user_xattr "$MEDIA_DEV"
+	debugfs -w -R "set_super_value mount_opts auto_da_alloc,i_version,journal_checksum,noatime,nodev,nosuid" "$MEDIA_DEV"
 fi
 if [ ! -z "$PUBLIC_DEV" ]; then
-	[ ! -z $FORMAT_PUBLIC ] && [ $FORMAT_PUBLIC == 1 ] && echo "Formatting /public partition" && mkfs.ext4 -FL "$LABEL_PUBLIC" -O $E2OPTIONS "$PUBLIC_DEV"
-	echo "Tuning /public partition"; tune2fs -O $E2OPTIONS -c 1 "$PUBLIC_DEV"
+	[ ! -z $FORMAT_PUBLIC ] && [ $FORMAT_PUBLIC == 1 ] && mkfs.ext4 -FL "$LABEL_PUBLIC" -O $E2OPTIONS "$PUBLIC_DEV"
+	tune2fs -O $E2OPTIONS -c 1 -o acl,discard,user_xattr "$PUBLIC_DEV"
+	debugfs -w -R "set_super_value mount_opts auto_da_alloc,i_version,journal_checksum,noatime,nodev,nosuid" "$PUBLIC_DEV"
 fi
 [ ! -z "$SWAP_DEV" ] && echo "Formatting swap partition" && mkswap -L "$LABEL_SWAP" "$SWAP_DEV"
 # Mount and clear root filesystem
-echo "Mounting root (/) partition"; mount "$ROOT_DEV" /mnt
+mount "$ROOT_DEV" /mnt
 if [ "$FORMAT_ROOT" != 1 ]; then
-	echo "Deleting old Linux files from root (/) partition"
 	rm -rf /mnt/bin /mnt/dev /mnt/etc /mnt/lib /mnt/lib64 /mnt/mnt /mnt/opt /mnt/proc /mnt/root /mnt/run /mnt/sbin /mnt/sys /mnt/tmp /mnt/usr /mnt/var
 fi
 # Create mount points
-echo "Creating mount points..."
 mkdir "/mnt/boot" &> /dev/null
 mkdir "/mnt/public" &> /dev/null; chmod 777 "/mnt/public"; chmod +t "/mnt/public"
 [ ! -z "$HOME_DEV" ] && mkdir /mnt/home &> /dev/null
 [ ! -z "$MEDIA_DEV" ] && mkdir /mnt/media &> /dev/null && chmod 777 /mnt/media && chmod +t /mnt/media
 # Mount and clear other filesystems
-mount "$BOOT_DEV" /mnt/boot; echo "Mounted /boot"
+mount "$BOOT_DEV" /mnt/boot
 if [ $FORMAT_BOOT != 1 ]; then
-	echo "Deleting old Linux files from /boot partition"
 	rm -rf /mnt/boot/*.img /mnt/boot/vmlinu* /mnt/boot/EFI/systemd /mnt/boot/limine /mnt/boot/loader
 fi
-[ ! -z "$HOME_DEV" ] && mount "$HOME_DEV" /mnt/home && echo "Mounted /home"
-[ ! -z "$MEDIA_DEV" ] && mount "$MEDIA_DEV" /mnt/media && echo "Mounted /media"
-[ ! -z "$PUBLIC_DEV" ] && mount "$PUBLIC_DEV" /mnt/public && echo "Mounted /public"
+[ ! -z "$HOME_DEV" ] && mount "$HOME_DEV" /mnt/home
+[ ! -z "$MEDIA_DEV" ] && mount "$MEDIA_DEV" /mnt/media
+[ ! -z "$PUBLIC_DEV" ] && mount "$PUBLIC_DEV" /mnt/public
 sync
 
 ## 2) Auto-detect required packages
@@ -115,22 +114,15 @@ if [ ! -z "$CHASSIS" ] && ([ "$CHASSIS" == "Laptop" ] || [ "$CHASSIS" == "Notebo
 else echo "Device is type $CHASSIS"; fi
 
 ## 3) Install packages
-echo "Bootstrapping a minimal system..."
 pacstrap /mnt $PACKAGES || exit 1
-sync
-
-## 4) Finish install in chroot
+genfstab -U /mnt >> /mnt/etc/fstab
+echo "proc /proc proc nosuid,nodev,noexec,hidepid=2,gid=proc 0 0" >> /etc/fstab
 mkdir -p "/mnt/etc/$DISTRO_ID"
 cp "$SCRIPT_DIR/chroot-setup" "/mnt/etc/$DISTRO_ID/chroot-setup"
-echo "$EXTRA_SOFTWARE"
-echo "$KERNELS"
-echo "$VERSION_TO_INSTALL"
-read
 echo "$EXTRA_SOFTWARE" > "/mnt/etc/$DISTRO_ID/extra-software"
 echo "$KERNELS" > "/mnt/etc/$DISTRO_ID/kernels"
 echo "$VERSION_TO_INSTALL" > "/mnt/etc/$DISTRO_ID/version-to-install"
 sync
-echo "Installing in chroot..."
 arch-chroot /mnt "/etc/$DISTRO_ID/chroot-setup" || exit 1
 rm "/mnt/etc/$DISTRO_ID/chroot-setup" "/mnt/etc/$DISTRO_ID/extra-software" "/mnt/etc/$DISTRO_ID/kernels" "/mnt/etc/$DISTRO_ID/version-to-install"
 sync

@@ -108,8 +108,6 @@ if [ $PROGRESS == 6 ]; then
 	[ ! -z $HOME_DEV ] && fscrypt setup /home --force --quiet
 	[ ! -z $MEDIA_DEV ] && fscrypt setup /media --force --quiet
 	
-	/usr/lib/vapour-os/mkfstab
-	
 	# Add user
 	CONTINUE=0; while [ $CONTINUE == 0 ]; do
 		echo "[ATTENTION] Please enter an owner's username. This user will have administrator priviliges."

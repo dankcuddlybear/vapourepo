@@ -25,8 +25,7 @@ SecureBootSetup() {
 	fi
 }
 TuneExt4() {
-	#tune2fs -c 1 -O ea_inode,encrypt,fast_commit,verity -o acl,user_xattr -E mount_opts=delalloc,i_version,journal_async_commit,lazytime $1
-	tune2fs -c 1 -O ea_inode,encrypt,fast_commit,verity -o acl,user_xattr $1
+	tune2fs -c 1 -O ea_inode,encrypt,large_dir,verity -o acl,user_xattr $1
 }
 Upgrade() {
 	true
@@ -69,6 +68,7 @@ Install() {
 		. /usr/lib/$DISTRO_ID/diskinfo
 		if [ "$ROOT_FSTYPE" == "ext4" ]; then
 			TuneExt4 "$ROOT_DEV"
+			debugfs -w -R "set_super_value mount_opts auto_da_alloc,i_version,journal_checksum,lazytime" "$ROOT_DEV"
 			fscrypt setup
 		elif [ "$ROOT_FSTYPE" == "f2fs" ]; then
 			fsck.f2fs -O encrypt "$ROOT_DEV"
@@ -77,6 +77,7 @@ Install() {
 		if [ ! -z "$HOME_DEV" ]; then
 			if [ "$HOME_FSTYPE" == "ext4" ]; then
 				TuneExt4 "$HOME_DEV"
+				debugfs -w -R "set_super_value mount_opts auto_da_alloc,i_version,journal_checksum,lazytime,nodev,nosuid" "$HOME_DEV"
 				fscrypt setup /home
 			elif [ "$HOME_FSTYPE" == "f2fs" ]; then
 				fsck.f2fs -O encrypt "$HOME_DEV"
@@ -86,6 +87,7 @@ Install() {
 		if [ ! -z "$MEDIA_DEV" ]; then
 			if [ "$MEDIA_FSTYPE" == "ext4" ]; then
 				TuneExt4 "$MEDIA_DEV"
+				debugfs -w -R "set_super_value mount_opts auto_da_alloc,i_version,journal_checksum,noatime,nodev,nosuid" "$MEDIA_DEV"
 				fscrypt setup /media
 			elif [ "$MEDIA_FSTYPE" == "f2fs" ]; then
 				fsck.f2fs -O encrypt "$MEDIA_DEV"
@@ -95,6 +97,7 @@ Install() {
 		if [ ! -z "$PUBLIC_DEV" ]; then
 			if [ "$PUBLIC_FSTYPE" == "ext4" ]; then
 				TuneExt4 "$PUBLIC_DEV"
+				debugfs -w -R "set_super_value mount_opts auto_da_alloc,i_version,journal_checksum,noatime,nodev,nosuid" "$PUBLIC_DEV"
 				fscrypt setup /public
 			elif [ "$PUBLIC_FSTYPE" == "f2fs" ]; then
 				fsck.f2fs -O encrypt "$PUBLIC_DEV"

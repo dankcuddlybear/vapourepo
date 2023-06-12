@@ -1,12 +1,12 @@
 # Maintainer: Dankcuddlybear <dankcuddlybear@protonmail.com>
 pkgname=vapour-os-desktop-libs
 pkgver=1.0.0
-pkgrel=1
+pkgrel=2
 pkgdesc='Desktop libraries for Vapour OS (CLI only)'
 arch=(x86_64)
 url='https://github.com/dankcuddlybear/Vapour-OS'
 replaces=('vapour-os-gui' 'vapour-os-multimedia' 'vapour-os-printing')
-install=vapour-os-desktop-libs.install
+install=$pkgname.install
 backup=('etc/X11/xorg.conf.d/30-touchpad.conf')
 depends=('aribb24' 'aribb25' 'android-udev'
 	'base-devel' 'bash-completion' 'bluez' 'bluez-cups'
@@ -30,4 +30,6 @@ depends=('aribb24' 'aribb25' 'android-udev'
 package() {
 	cp -r "$srcdir/../files/etc" "$pkgdir"
 	cp -r "$srcdir/../files/usr" "$pkgdir"
+	chmod +x "$pkgdir/usr/lib/vapour-os/$pkgname/install.sh" \
+		"$pkgdir/usr/lib/vapour-os/$pkgname/uninstall.sh"
 }

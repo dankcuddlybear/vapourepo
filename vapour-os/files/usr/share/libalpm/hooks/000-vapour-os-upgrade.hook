@@ -6,4 +6,4 @@ Target = vapour-os
 [Action]
 Description = Upgrade Vapour OS
 When = PostTransaction
-Exec = /usr/lib/vapour-os/vapour-os-installer upgrade
+Exec = /usr/lib/vapour-os/install.sh upgrade

@@ -3,8 +3,10 @@ Type = Package
 Operation = Install
 Operation = Upgrade
 Target = filesystem
+Target = lsb-release
+Target = vapour-os
 
 [Action]
-Description = Update release file
+Description = Update release info
 When = PostTransaction
-Exec = /usr/share/libalpm/scripts/vapour-os/filesystem
+Exec = /usr/lib/vapour-os/update-release.sh

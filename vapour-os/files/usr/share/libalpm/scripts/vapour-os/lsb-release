@@ -1,3 +1,0 @@
-#!/bin/sh
-DISTRO_ID="vapour-os"
-cp /usr/share/$DISTRO_ID/custom-configs/lsb-release /etc/lsb-release

@@ -1,7 +1,7 @@
 # Maintainer: Dankcuddlybear <dankcuddlybear@protonmail.com>
 pkgname=vapour-os
 pkgver=1.0.0
-pkgrel=10
+pkgrel=11
 pkgdesc='A modular Arch based distro optimised for energy saving and ease of use (core system)'
 arch=(x86_64)
 url='https://github.com/dankcuddlybear/vapourepo'
@@ -27,21 +27,20 @@ package() {
 	cp -r "$srcdir/../files/usr" "$pkgdir"
 	chmod 750 "$pkgdir/etc/sudoers.d"
 	chmod +x "$pkgdir/usr/bin/syscfg" \
-		"$pkgdir/usr/lib/vapour-os/" \
-		"$pkgdir/usr/lib/vapour-os/hp-lid-fix" \
-		"$pkgdir/usr/lib/vapour-os/limine-install" \
-		"$pkgdir/usr/lib/vapour-os/mkfstab" \
-		"$pkgdir/usr/lib/vapour-os/power-balanced" \
-		"$pkgdir/usr/lib/vapour-os/random-errormsg" \
-		"$pkgdir/usr/lib/vapour-os/setvar" \
-		"$pkgdir/usr/lib/vapour-os/vapour-os-installer" \
-		"$pkgdir/usr/lib/vapour-os/wakeonlan-ethernet" \
-		"$pkgdir/usr/lib/vapour-os/wakeonlan-wifi" \
-		"$pkgdir/usr/share/libalpm/scripts/vapour-os/filesystem" \
-		"$pkgdir/usr/share/libalpm/scripts/vapour-os/lsb-release" \
-		"$pkgdir/usr/share/libalpm/scripts/vapour-os/mirrors" \
-		"$pkgdir/usr/share/libalpm/scripts/vapour-os/nano" \
-		"$pkgdir/usr/share/libalpm/scripts/vapour-os/openssh" \
-		"$pkgdir/usr/share/libalpm/scripts/vapour-os/postupgrade" \
-		"$pkgdir/usr/share/libalpm/scripts/vapour-os/setup"
+		"$pkgdir/usr/lib/systemd/system-sleep/00-udevadm-trigger" \
+		"$pkgdir/usr/lib/$pkgname/install.sh" \
+		"$pkgdir/usr/lib/$pkgname/hp-lid-fix" \
+		"$pkgdir/usr/lib/$pkgname/limine-install" \
+		"$pkgdir/usr/lib/$pkgname/mkfstab" \
+		"$pkgdir/usr/lib/$pkgname/power-balanced" \
+		"$pkgdir/usr/lib/$pkgname/random-errormsg" \
+		"$pkgdir/usr/lib/$pkgname/setvar" \
+		"$pkgdir/usr/lib/$pkgname/update-release.sh" \
+		"$pkgdir/usr/lib/$pkgname/wakeonlan-ethernet" \
+		"$pkgdir/usr/lib/$pkgname/wakeonlan-wifi" \
+		"$pkgdir/usr/share/libalpm/scripts/$pkgname/mirrors" \
+		"$pkgdir/usr/share/libalpm/scripts/$pkgname/nano" \
+		"$pkgdir/usr/share/libalpm/scripts/$pkgname/openssh" \
+		"$pkgdir/usr/share/libalpm/scripts/$pkgname/postupgrade" \
+		"$pkgdir/usr/share/libalpm/scripts/$pkgname/setup"
 }

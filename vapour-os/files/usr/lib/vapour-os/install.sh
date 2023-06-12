@@ -29,7 +29,7 @@ TuneExt4() {
 	tune2fs -c 1 -O ea_inode,encrypt,fast_commit,verity -o acl,user_xattr $1
 }
 Upgrade() {
-	sleep 0
+	true
 }
 Install() {
 	/usr/share/libalpm/scripts/$DISTRO_ID/mirrors # Update Pacman mirrorlists now

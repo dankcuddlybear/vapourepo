@@ -6,4 +6,4 @@ Target = vapour-os
 [Action]
 Description = Install Vapour OS
 When = PostTransaction
-Exec = /usr/lib/vapour-os/vapour-os-installer install
+Exec = /usr/lib/vapour-os/install.sh install

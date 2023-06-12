@@ -1,12 +1,12 @@
 # Maintainer: Dankcuddlybear <dankcuddlybear@protonmail.com>
 pkgname=vapour-os-kde
-pkgver=1.1.8
-pkgrel=8
+pkgver=1.0.0
+pkgrel=1
 pkgdesc='Vapour OS KDE Plasma X11 desktop environment. When prompted, please select: 1) phonon-qt5-gstreamer 2) noto-fonts 3) xdg-desktop-portal-kde. WARNING: You MUST install vapour-os-gui FIRST, before installing this package, due to dependency conflicts'
 arch=(any)
 url='https://github.com/dankcuddlybear/Vapour-OS'
 install=vapour-os-kde.install
-depends=('pipewire' 'pipewire-jack' 'pipewire-alsa' 'pipewire-pulse' 'wireplumber' 'vapour-os-gui'
+depends=(#'pipewire' 'pipewire-jack' 'pipewire-alsa' 'pipewire-pulse' 'wireplumber'
 	'appmenu-gtk-module' 'ark'
 	'bluedevil' 'breeze-gtk'
 	'dolphin-plugins' 'drkonqi'
@@ -29,6 +29,7 @@ depends=('pipewire' 'pipewire-jack' 'pipewire-alsa' 'pipewire-pulse' 'wireplumbe
 	'plasma5-applets-eventcalendar' 'plasma-browser-integration' 'plasma-desktop' 'plasma-nm' 'plasma-pa' 'plasma-thunderbolt' 'powerdevil' 'print-manager'
 	'qt5-virtualkeyboard'
 	'sddm-kcm' 'spectacle' 'svgpart'
+	'vapour-os-desktop-libs'
 	'xdg-desktop-portal-kde'
 	'yakuake'
 )

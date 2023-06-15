@@ -1,14 +1,14 @@
 # Maintainer: Dankcuddlybear <dankcuddlybear@protonmail.com>
 pkgname=vapour-os-desktop-libs
 pkgver=1.0.0
-pkgrel=3
+pkgrel=5
 pkgdesc='Desktop libraries for Vapour OS (CLI only)'
 arch=(x86_64)
 url='https://github.com/dankcuddlybear/Vapour-OS'
 replaces=('vapour-os-gui' 'vapour-os-multimedia' 'vapour-os-printing')
 install=$pkgname.install
 backup=('etc/X11/xorg.conf.d/30-touchpad.conf')
-depends=('aribb24' 'aribb25' 'android-udev'
+depends=('aribb24' 'aribb25' 'ananicy-cpp' 'ananicy-rules-git' 'android-udev'
 	'base-devel' 'bash-completion' 'bluez' 'bluez-cups'
 	'cups-pdf' 'cups-pk-helper' 
 	'exfatprogs'
@@ -18,7 +18,7 @@ depends=('aribb24' 'aribb25' 'android-udev'
 	'libdvdcss' 'libgnome-keyring' 'libsecret' 'libtiger' 'libvdpau-va-gl'
 	'man-db' 'man-pages' 'modemmanager'
 	'ocl-icd'
-	'p7zip' 'pipewire-roc' 'pipewire-x11-bell' 'pipewire-zeroconf' 'plymouth' 'python-pysmbc'
+	'p7zip' 'pipewire-roc' 'pipewire-zeroconf' 'plymouth' 'python-pysmbc'
 	'realtime-privileges'
 	'sane-airscan' 'sane-gt68xx-firmware' 'splix' 'system-config-printer'
 	'terminus-font'

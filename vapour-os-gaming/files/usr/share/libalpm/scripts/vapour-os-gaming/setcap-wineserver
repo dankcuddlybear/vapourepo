@@ -1,0 +1,2 @@
+#!/bin/sh 
+setcap cap_sys_nice+ep /usr/bin/wineserver

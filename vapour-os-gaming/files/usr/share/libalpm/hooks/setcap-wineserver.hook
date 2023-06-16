@@ -2,9 +2,9 @@
 Operation = Install
 Operation = Upgrade
 Type = Path
-Target = usr/share/wine/wine.inf
+Target = usr/bin/wineserver
 
 [Action]
 Description = Stopping Wine from hijacking file associations...
 When = PostTransaction
-Exec = /usr/share/libalpm/scripts/vapour-os-gaming/stop-wine-associations
+Exec = /usr/share/libalpm/scripts/vapour-os-gaming/setcap-wineserver

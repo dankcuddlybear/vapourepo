@@ -1,7 +1,7 @@
 # Maintainer: Dankcuddlybear <dankcuddlybear@protonmail.com>
 pkgname=vapour-os-desktop-libs
 pkgver=1.0.0
-pkgrel=5
+pkgrel=6
 pkgdesc='Desktop libraries for Vapour OS (CLI only)'
 arch=(x86_64)
 url='https://github.com/dankcuddlybear/Vapour-OS'
@@ -19,7 +19,7 @@ depends=('aribb24' 'aribb25' 'ananicy-cpp' 'ananicy-rules-git' 'android-udev'
 	'man-db' 'man-pages' 'modemmanager'
 	'ocl-icd'
 	'p7zip' 'pipewire-roc' 'pipewire-zeroconf' 'plymouth' 'python-pysmbc'
-	'realtime-privileges'
+	'realtime-privileges' 'rtirq'
 	'sane-airscan' 'sane-gt68xx-firmware' 'splix' 'system-config-printer'
 	'terminus-font'
 	'unrar' 'usb_modeswitch' 'usbutils'

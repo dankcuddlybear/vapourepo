@@ -1,24 +1,32 @@
 # Maintainer: Dankcuddlybear <dankcuddlybear@protonmail.com>
 pkgname=vapour-os
 pkgver=1.0.0
-pkgrel=16
+pkgrel=18
 pkgdesc='A modular Arch based distro optimised for energy saving and ease of use (core system)'
 arch=(x86_64)
 url='https://github.com/dankcuddlybear/vapourepo'
 install=vapour-os.install
-backup=('etc/skel/.config/yay/config.json' 'etc/vapour-os/vapour-os.conf')
-depends=('base'
+backup=('etc/skel/.config/yay/config.json'
+	'etc/vapour-os/vapour-os.conf'
+	'etc/X11/xorg.conf.d/30-vapour-os-touchpad'
+)
+depends=('ananicy-cpp' 'ananicy-rules-git'
+	'base' 'bash-completion'
 	'chaotic-keyring' 'chaotic-mirrorlist'
 	'dosfstools'
 	'efibootmgr' 'ethtool'
 	'fscrypt'
-	'hdparm' 'fscrypt'
-	'iw'
+	'hdparm'
+	'irqbalance' 'iw'
 	'kernel-modules-hook'
 	'linux-firmware'
+	'man-db' 'man-pages'
 	'networkmanager' 'nss-mdns'
+	'realtime-privileges' 'rtirq'
 	'polkit'
 	'sbctl' 'sudo'
+	'terminus-font' 'texinfo'
+	'usbutils'
 	'vapour-os-mirrorlist'
 	'wireless-regdb'
 )
@@ -27,7 +35,7 @@ package() {
 	cp -r "$srcdir/../files/usr" "$pkgdir"
 	chmod 750 "$pkgdir/etc/sudoers.d"
 	chmod +x "$pkgdir/usr/bin/syscfg" \
-		"$pkgdir/usr/lib/systemd/system-sleep/00-udevadm-trigger" \
+		"$pkgdir/usr/lib/systemd/system-sleep/00-vapour-os" \
 		"$pkgdir/usr/lib/$pkgname/install.sh" \
 		"$pkgdir/usr/lib/$pkgname/hp-lid-fix" \
 		"$pkgdir/usr/lib/$pkgname/limine-install" \

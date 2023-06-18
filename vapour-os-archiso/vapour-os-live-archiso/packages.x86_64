@@ -9,8 +9,6 @@ intel-ucode
 lib32-pipewire-jack
 linux
 linux-headers
-linux-tt
-linux-tt-headers
 memtest86+
 memtest86+-efi
 mkinitcpio-archiso

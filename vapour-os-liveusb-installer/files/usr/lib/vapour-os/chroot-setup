@@ -4,138 +4,42 @@ DISTRO_NAME="Vapour OS"
 [ $(whoami) != "root" ] && echo "[ERROR] You must run this script with root priviliges." && exit 1
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 ARCH="$(uname -m)"
-if [ -f "/etc/$DISTRO_ID/PROGRESS" ]; then PROGRESS="$(cat /etc/$DISTRO_ID/PROGRESS)"; else
-	PROGRESS=0
-	echo "0" > /etc/$DISTRO_ID/PROGRESS
-fi
-Checkpoint() {
-	PROGRESS="$1"
-	echo "$PROGRESS" > /etc/$DISTRO_ID/PROGRESS
-	sync
-}
 
-# Define packages and dependencies
-VERSION_TO_INSTALL="$(cat /etc/$DISTRO_ID/version-to-install)"
-PACKAGES="$VERSION_TO_INSTALL limine $(cat /etc/$DISTRO_ID/extra-software)"
-DEF_DEPS="base vapour-os-mirrorlist"
-if [ "$VERSION_TO_INSTALL" != "vapour-os" ]; then
-	PACKAGES="$PACKAGES lib32-pipewire-jack pipewire-alsa pipewire-jack pipewire-pulse wireplumber"
-	case "$VERSION_TO_INSTALL" in
-		vapour-os-gnome) DEF_DEPS="$DEF_DEPS xdg-desktop-portal-gnome";;
-		vapour-os-kde) DEF_DEPS="$DEF_DEPS xdg-desktop-portal-kde";;
-		vapour-os-xfce) DEF_DEPS="$DEF_DEPS xdg-desktop-portal-gtk";;
-	esac
-fi
-KERNELS=$(cat /etc/$DISTRO_ID/kernels)
-for KERNEL in $KERNELS; do PACKAGES="$PACKAGES $KERNEL $KERNEL-headers"; done
+# Packages
+pacman --asdeps -D lib32-pipewire-jack pipewire-alsa pipewire-jack pipewire-pulse xdg-desktop-portal-gnome xdg-desktop-portal-kde xdg-desktop-portal-gtk wireplumber
+pacman --noconfirm -Sc
 
-if [ $PROGRESS == 0 ]; then
-	# Block initramfs creation until after Vapour OS has been installed
-	echo "" > /etc/mkinitcpio.conf
-	# Configure pacman
-	echo "[options]" > /etc/pacman.conf
-	echo "HoldPkg = amd-ucode base glibc intel-ucode pacman $DISTRO_ID" >> /etc/pacman.conf
-	echo "Architecture = auto" >> /etc/pacman.conf
-	echo "#IgnorePkg = " >> /etc/pacman.conf
-	echo "#IgnoreGroup = " >> /etc/pacman.conf
-	echo "#NoUpgrade = " >> /etc/pacman.conf
-	echo "Color" >> /etc/pacman.conf
-	echo "CheckSpace" >> /etc/pacman.conf
-	echo "ParallelDownloads = $(nproc)" >> /etc/pacman.conf
-	echo "SigLevel = Required DatabaseOptional" >> /etc/pacman.conf
-	echo "LocalFileSigLevel = Optional" >> /etc/pacman.conf
-	echo "" >> /etc/pacman.conf
-	echo "[core]" >> /etc/pacman.conf
-	echo "Include = /etc/pacman.d/mirrorlist" >> /etc/pacman.conf
-	echo "" >> /etc/pacman.conf
-	echo "[extra]" >> /etc/pacman.conf
-	echo "Include = /etc/pacman.d/mirrorlist" >> /etc/pacman.conf
-	echo "" >> /etc/pacman.conf
-	echo "[community]" >> /etc/pacman.conf
-	echo "Include = /etc/pacman.d/mirrorlist" >> /etc/pacman.conf
-	echo "" >> /etc/pacman.conf
-	echo "[multilib]" >> /etc/pacman.conf
-	echo "Include = /etc/pacman.d/mirrorlist" >> /etc/pacman.conf
-	Checkpoint 1
-fi
+# FSCrypt
+. /usr/lib/vapour-os/diskinfo
+[ ! -z $HOME_DEV ] && fscrypt setup /home --force --quiet
+[ ! -z $MEDIA_DEV ] && fscrypt setup /media --force --quiet
 
-if [ $PROGRESS == 1 ]; then # Download and locally sign keys for Chaotic-AUR and Vapourepo
-	pacman-key --init; pacman-key --populate
-	pacman-key --recv-keys FBA220DFC880C036 --keyserver keyserver.ubuntu.com || exit 1 # Chaotic-AUR
-	pacman-key --recv-keys 7E33F46247D1BA09 --keyserver hkps://keys.mailvelope.com || exit 1 # Chaotic-AUR
-	pacman-key --lsign-key FBA220DFC880C036; pacman-key --lsign-key 7E33F46247D1BA09
-	Checkpoint 2
-fi; if [ $PROGRESS == 2 ]; then
-	# Install Chaotic-AUR keyring and mirrorlist
-	pacman --needed --noconfirm --asdeps -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst' 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst' || exit 1
-	echo "" >> /etc/pacman.conf
-	# Add repositories to pacman.conf
-	echo "[chaotic-aur]" >> /etc/pacman.conf
-	echo "Include = /etc/pacman.d/chaotic-mirrorlist" >> /etc/pacman.conf
-	echo "" >> /etc/pacman.conf
-	echo "[vapourepo]" >> /etc/pacman.conf
-	echo "Include = /etc/pacman.d/vapour-os-mirrorlist.tmp" >> /etc/pacman.conf
-	Checkpoint 3
-fi
+# Add user
+CONTINUE=0; while [ $CONTINUE == 0 ]; do
+	echo "[ATTENTION] Please enter an owner's username. This user will have administrator priviliges."
+	unset USER_NAME; read USER_NAME
+	if [ -z "$USER_NAME" ]; then echo "[ERROR] No username provided"
+	else
+		useradd -m "$USER_NAME" && CONTINUE=1 || CONTINUE=0
+	fi
+done
+passwd -d "$USER_NAME"; gpasswd -a "$USER_NAME" wheel
+CONTINUE=0; while [ $CONTINUE == 0 ]; do
+	echo "[ATTENTION] Please enter a password for that owner's account."
+	passwd "$USER_NAME" && CONTINUE=1 || CONTINUE=0
+done
 
-if [ $PROGRESS == 3 ]; then # Download temporary Vapour OS mirrorlist
-	curl -o /etc/pacman.d/vapour-os-mirrorlist.tmp https://raw.githubusercontent.com/dankcuddlybear/vapourepo/main/vapour-os-mirrorlist/etc/pacman.d/vapour-os-mirrorlist || exit 1
-	Checkpoint 4
-fi
-
-## Install Vapour OS
-if [ $PROGRESS == 4 ]; then
-	N=0; while ((N < 5)); do pacman --needed --noconfirm -Syuw $DEF_DEPS $PACKAGES && FAIL=0 || FAIL=0
-		if [ $FAIL == 1 ]; then ((N++))
-			((N < 5)) && echo "[ERROR] Failed to download packages. Retrying..." || (echo "[ERROR] Failed to download packages 5 times. Giving up..."; exit 1)
-		else N=5; fi
-	done
-	Checkpoint 5
-fi; if [ $PROGRESS == 5 ]; then
-	pacman --needed --noconfirm --asdeps -Su $DEF_DEPS || exit 1
-	pacman --needed --noconfirm -Su $PACKAGES || exit 1
-	Checkpoint 6
-fi
-
-if [ $PROGRESS == 6 ]; then
-	# Reconfigure pacman
-	sed -i "s/Include = \/etc\/pacman.d\/vapour-os-mirrorlist.tmp/Include = \/etc\/pacman.d\/vapour-os-mirrorlist/g" /etc/pacman.conf
-	rm /etc/pacman.d/vapour-os-mirrorlist.tmp
-	pacman --noconfirm -Sc
-	
-	# FSCrypt
-	. /usr/lib/vapour-os/diskinfo
-	[ ! -z $HOME_DEV ] && fscrypt setup /home --force --quiet
-	[ ! -z $MEDIA_DEV ] && fscrypt setup /media --force --quiet
-	
-	# Add user
-	CONTINUE=0; while [ $CONTINUE == 0 ]; do
-		echo "[ATTENTION] Please enter an owner's username. This user will have administrator priviliges."
-		unset USER_NAME; read USER_NAME
-		if [ -z "$USER_NAME" ]; then echo "[ERROR] No username provided"
-		else
-			useradd -m "$USER_NAME" && CONTINUE=1 || CONTINUE=0
-		fi
-	done
-	passwd -d "$USER_NAME"; gpasswd -a "$USER_NAME" wheel
-	CONTINUE=0; while [ $CONTINUE == 0 ]; do
-		echo "[ATTENTION] Please enter a password for that owner's account."
-		passwd "$USER_NAME" && CONTINUE=1 || CONTINUE=0
-	done
-	
-	# Set hostname
-	CONTINUE=0; while [ $CONTINUE == 0 ]; do
-		echo "[ATTENTION] Please enter a hostname for this computer"
-		unset HOST_NAME; read HOST_NAME
-		if [ -z "$HOST_NAME" ]; then echo "[ERROR] No hostname provided"
-		else
-			echo "$HOST_NAME" > /etc/hostname
-			echo "127.0.0.1 localhost" > /etc/hosts
-			echo "::1 localhost" >> /etc/hosts
-			echo "127.0.1.1 $HOST_NAME" >> /etc/hosts
-			CONTINUE=1
-		fi
-	done
-	rm /etc/$DISTRO_ID/PROGRESS
-	sync
-fi
+# Set hostname
+CONTINUE=0; while [ $CONTINUE == 0 ]; do
+	echo "[ATTENTION] Please enter a hostname for this computer"
+	unset HOST_NAME; read HOST_NAME
+	if [ -z "$HOST_NAME" ]; then echo "[ERROR] No hostname provided"
+	else
+		echo "$HOST_NAME" > /etc/hostname
+		echo "127.0.0.1 localhost" > /etc/hosts
+		echo "::1 localhost" >> /etc/hosts
+		echo "127.0.1.1 $HOST_NAME" >> /etc/hosts
+		CONTINUE=1
+	fi
+done
+sync

@@ -99,7 +99,7 @@ fi
 sync
 
 ## 2) Auto-detect required packages
-PACKAGES="base"
+PACKAGES="$VERSION_TO_INSTALL $KERNELS $EXTRA_SOFTWARE limine"
 MANUFACTURER="$(dmidecode -s system-manufacturer)"
 MODEL="$(HP Pavilion Gaming Laptop 17-cd1xxx)"
 CHASSIS="$(dmidecode -s chassis-type)"
@@ -129,6 +129,15 @@ Print "    Portable: $PORTABLE"
 Print "   Processor: $CPU_MODEL"
 
 ## 3) Install packages
+for KERNEL in $KERNELS; do PACKAGES="$PACKAGES $KERNEL $KERNEL-headers"; done
+if [ "$VERSION_TO_INSTALL" != "vapour-os" ]; then
+	PACKAGES="$PACKAGES lib32-pipewire-jack pipewire-alsa pipewire-jack pipewire-pulse wireplumber"
+	case "$VERSION_TO_INSTALL" in
+		vapour-os-gnome) PACKAGES="$PACKAGES xdg-desktop-portal-gnome";;
+		vapour-os-kde) PACKAGES="$PACKAGES xdg-desktop-portal-kde";;
+		vapour-os-xfce) PACKAGES="$PACKAGES xdg-desktop-portal-gtk";;
+	esac
+fi
 pacstrap /mnt $PACKAGES || exit 1
 genfstab -U /mnt >> /mnt/etc/fstab
 echo "proc /proc proc nosuid,nodev,noexec,hidepid=2,gid=proc 0 0" >> /etc/fstab

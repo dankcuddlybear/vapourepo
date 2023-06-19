@@ -1,14 +1,14 @@
 # Maintainer: Dankcuddlybear <dankcuddlybear@protonmail.com>
 pkgname=vapour-os
 pkgver=1.0.0
-pkgrel=18
+pkgrel=19
 pkgdesc='A modular Arch based distro optimised for energy saving and ease of use (core system)'
 arch=(x86_64)
 url='https://github.com/dankcuddlybear/vapourepo'
 install=vapour-os.install
 backup=('etc/skel/.config/yay/config.json'
 	'etc/vapour-os/vapour-os.conf'
-	'etc/X11/xorg.conf.d/30-vapour-os-touchpad'
+	'etc/X11/xorg.conf.d/30-touchpad-vapour-os'
 )
 depends=('ananicy-cpp' 'ananicy-rules-git'
 	'base' 'bash-completion'

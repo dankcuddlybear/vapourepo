@@ -1,9 +1,0 @@
-[Trigger]
-Type = Package
-Operation = Upgrade
-Target = limine
-
-[Action]
-Description = Upgrade Limine bootloader
-When = PostTransaction
-Exec = /usr/lib/vapour-os/limine-install upgrade

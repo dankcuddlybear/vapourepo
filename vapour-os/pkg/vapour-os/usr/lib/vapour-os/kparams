@@ -1,1 +1,0 @@
-rw acpi_osi='Linux' intel_pstate=disable pcie_aspm=off fsck.mode=force fsck.repair=yes bgrt_disable tsc=reliable clocksource=tsc threadirqs

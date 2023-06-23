@@ -110,7 +110,7 @@ Install() {
 	locale-gen
 	pacman-key --init; pacman-key --populate
 	systemctl mask systemd-resolved
-	systemctl --now enable ananicy-cpp irqbalance rtirq rtirq-resume fstrim.timer rtirq systemd-oomd NetworkManager avahi-daemon.socket
+	systemctl --now enable ananicy-cpp irqbalance rtirq rtirq-resume rtkit-daemon fstrim.timer systemd-oomd NetworkManager avahi-daemon.socket
 	SecureBootSetup
 	Upgrade # Finish installation
 }

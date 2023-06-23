@@ -1,7 +1,7 @@
 # Maintainer: Dankcuddlybear <dankcuddlybear@protonmail.com>
 pkgname=vapour-os
 pkgver=1.0.0
-pkgrel=21
+pkgrel=22
 pkgdesc='A modular Arch based distro optimised for energy saving and ease of use (core system)'
 arch=(x86_64)
 url='https://github.com/dankcuddlybear/vapourepo'
@@ -22,7 +22,7 @@ depends=('ananicy-cpp' 'ananicy-rules-git'
 	'linux-firmware'
 	'man-db' 'man-pages'
 	'networkmanager' 'nss-mdns'
-	'realtime-privileges' 'rtirq'
+	'realtime-privileges' 'rtirq' 'rtkit'
 	'polkit'
 	'sbctl' 'sudo'
 	'terminus-font' 'texinfo'

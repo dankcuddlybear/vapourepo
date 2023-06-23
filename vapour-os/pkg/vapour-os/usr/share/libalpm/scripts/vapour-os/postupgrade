@@ -1,0 +1,7 @@
+#!/bin/sh
+printf "Synchronizing disk writes..."; sync; printf " Done.\n"
+PKG_ORPHANS="$(pacman -Qdttq)"
+if [ ! -z "$PKG_ORPHANS" ]; then
+	echo "These packages are no longer required by other packages:"
+	echo "$PKG_ORPHANS"
+fi

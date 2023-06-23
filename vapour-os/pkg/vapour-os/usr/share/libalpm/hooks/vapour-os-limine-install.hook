@@ -1,0 +1,9 @@
+[Trigger]
+Type = Package
+Operation = Install
+Target = limine
+
+[Action]
+Description = Install bootloader
+When = PostTransaction
+Exec = /usr/lib/vapour-os/limine-install install

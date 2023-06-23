@@ -1,0 +1,9 @@
+[Trigger]
+Type = Package
+Operation = Remove
+Target = limine
+
+[Action]
+Description = Uninstall Limine bootloader
+When = PreTransaction
+Exec = /usr/lib/vapour-os/limine-install uninstall

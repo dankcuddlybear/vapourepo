@@ -1,3 +1,0 @@
-pre_remove() {
-	/usr/lib/vapour-os/install.sh uninstall
-}

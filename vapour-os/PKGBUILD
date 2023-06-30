@@ -1,7 +1,7 @@
 # Maintainer: Dankcuddlybear <dankcuddlybear@protonmail.com>
 pkgname=vapour-os
 pkgver=1.0.0
-pkgrel=23
+pkgrel=25
 pkgdesc='A modular Arch based distro optimised for energy saving and ease of use (core system)'
 arch=(x86_64)
 url='https://github.com/dankcuddlybear/vapourepo'
@@ -12,7 +12,7 @@ backup=('etc/skel/.config/yay/config.json'
 )
 depends=('ananicy-cpp' 'ananicy-rules-git'
 	'base' 'bash-completion'
-	'chaotic-keyring' 'chaotic-mirrorlist'
+	'cachyos-keyring' 'cachyos-mirrorlist' 'cachyos-v3-mirrorlist' 'cachyos-v4-mirrorlist' 'chaotic-keyring' 'chaotic-mirrorlist'
 	'dosfstools'
 	'efibootmgr' 'ethtool'
 	'fscrypt'

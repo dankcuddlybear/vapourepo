@@ -11,16 +11,7 @@ SecureBootSetup() {
 		sbctl create-keys
 		sbctl sign-all -g
 		if [ $INSTALL_MODE == "system" ]; then
-			sbctl enroll-keys -m && echo "Secure boot support is now enabled." ||
-			echo "[WARNING] Failed to enroll secure boot keys"
-			echo "          If you don't wish to use secure boot, you can ignore this warning. Otherwise:"
-			echo "           - Enter firmware setup utility and find an option to clear all secure boot certificates."
-			echo "             This will disable secure boot and put the firmware in setup mode."
-			echo "           - Reboot $DISTRO_NAME and run the following command: sbctl enroll-keys -m"
-			echo "             This will enroll Microsoft's keys and your own secure boot keys to the UEFI."
-			echo "             Most OPROMs are signed Microsoft's keys. Without them, most expansion cards, like graphics cards, will not work with secure boot enabled."
-			echo "             It is important to enroll Microsoft's keys as well."
-			echo "           - Enter firmware setup utility again and enable secure boot."
+			sbctl enroll-keys -m && echo "Secure boot support is now enabled." || echo "[WARNING] Failed to enroll secure boot keys"
 		fi
 	fi
 }
@@ -63,47 +54,9 @@ Install() {
 		if [ -z "$VAPOUR_OS_NO_OVERWRITE" ] || [ "$VAPOUR_OS_NO_OVERWRITE" != 1 ]; then
 			cp /usr/share/$DISTRO_ID/custom-configs/mkinitcpio.conf /etc/mkinitcpio.conf
 		fi
-		#
-		# Set up disks
-		. /usr/lib/$DISTRO_ID/diskinfo
-		if [ "$ROOT_FSTYPE" == "ext4" ]; then
-			TuneExt4 "$ROOT_DEV"
-			debugfs -w -R "set_super_value mount_opts auto_da_alloc,i_version,journal_checksum,lazytime" "$ROOT_DEV"
-			fscrypt setup
-		elif [ "$ROOT_FSTYPE" == "f2fs" ]; then
-			fsck.f2fs -O encrypt "$ROOT_DEV"
-			fscrypt setup
-		fi
-		if [ ! -z "$HOME_DEV" ]; then
-			if [ "$HOME_FSTYPE" == "ext4" ]; then
-				TuneExt4 "$HOME_DEV"
-				debugfs -w -R "set_super_value mount_opts auto_da_alloc,i_version,journal_checksum,lazytime,nodev,nosuid" "$HOME_DEV"
-				fscrypt setup /home
-			elif [ "$HOME_FSTYPE" == "f2fs" ]; then
-				fsck.f2fs -O encrypt "$HOME_DEV"
-				fscrypt setup /home
-			fi
-		fi
-		if [ ! -z "$MEDIA_DEV" ]; then
-			if [ "$MEDIA_FSTYPE" == "ext4" ]; then
-				TuneExt4 "$MEDIA_DEV"
-				debugfs -w -R "set_super_value mount_opts auto_da_alloc,i_version,journal_checksum,noatime,nodev,nosuid" "$MEDIA_DEV"
-				fscrypt setup /media
-			elif [ "$MEDIA_FSTYPE" == "f2fs" ]; then
-				fsck.f2fs -O encrypt "$MEDIA_DEV"
-				fscrypt setup /media
-			fi
-		fi
-		if [ ! -z "$PUBLIC_DEV" ]; then
-			if [ "$PUBLIC_FSTYPE" == "ext4" ]; then
-				TuneExt4 "$PUBLIC_DEV"
-				debugfs -w -R "set_super_value mount_opts auto_da_alloc,i_version,journal_checksum,noatime,nodev,nosuid" "$PUBLIC_DEV"
-				fscrypt setup /public
-			elif [ "$PUBLIC_FSTYPE" == "f2fs" ]; then
-				fsck.f2fs -O encrypt "$PUBLIC_DEV"
-				fscrypt setup /public
-			fi
-		fi
+		# FScrypt (need to update code to read UUIDS from /etc/fstab)
+		fscrypt setup
+		#[ ! -z "$HOME_DEV" ] && fscrypt setup /home
 		passwd -l root # Lock root account (su/sudo still usable)
 		cp /usr/share/$DISTRO_ID/custom-configs/locale.gen /etc/locale.gen
 	fi

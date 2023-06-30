@@ -1,21 +1,21 @@
 #!/bin/bash
 DISTRO_ID="vapour-os"
 DISTRO_NAME="Vapour OS"
-Print() {
-	echo "[INSTALLER] $1"
-}
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+E2OPTIONS="ea_inode,encrypt,inline_data,large_dir,project,quota,uninit_bg,verity"
+ARCH="$(uname -m)"
+ARCH_VERSION="$(/lib/ld-linux-x86-64.so.2 --help | grep -m 1 "supported, searched" | cut -d '(' -f 1)"
 Error() {
 	echo "[INSTALLER: ERROR] $1"
 	exit 1
 }
+Print() {
+	echo "[INSTALLER] $1"
+}
 [ $(whoami) != "root" ] && Error "You must run this script with root priviliges."
-SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-E2OPTIONS="ea_inode,encrypt,inline_data,large_dir,project,quota,uninit_bg,verity"
-ARCH="$(uname -m)"
-unset PARTITION_NOT_FOUND
-timedatectl set-ntp true
-sync
+
 ## 1) Prepare and mount filesystems
+unset PARTITION_NOT_FOUND
 ValidatePartition() { # Checks that each partition exists, and resolves links
 	if [ ! -z "$1" ]; then
 		if [ -b "$1" ]; then echo "$(readlink -f "$1")"; else PARTITION_NOT_FOUND=1; fi
@@ -101,7 +101,7 @@ sync
 ## 2) Auto-detect required packages
 PACKAGES="$VERSION_TO_INSTALL $KERNELS $EXTRA_SOFTWARE limine"
 MANUFACTURER="$(dmidecode -s system-manufacturer)"
-MODEL="$(HP Pavilion Gaming Laptop 17-cd1xxx)"
+MODEL="$(dmidecode -s system-product-name)"
 CHASSIS="$(dmidecode -s chassis-type)"
 CPU_MODEL="$(dmidecode -s processor-version)"
 CPU_MANUFACTURER="$(dmidecode -s processor-manufacturer)"
@@ -121,14 +121,7 @@ if [ ! -z "$CHASSIS" ] && ([ "$CHASSIS" == "Laptop" ] || [ "$CHASSIS" == "Notebo
 		fi
 	fi
 else PORTABLE="no"; fi
-# Print info
-Print "Manufacturer: $MANUFACTURER"
-Print "       Model: $MODEL"
-Print "        Type: $CHASSIS"
-Print "    Portable: $PORTABLE"
-Print "   Processor: $CPU_MODEL"
-
-## 3) Install packages
+# Kernel
 for KERNEL in $KERNELS; do PACKAGES="$PACKAGES $KERNEL $KERNEL-headers"; done
 if [ "$VERSION_TO_INSTALL" != "vapour-os" ]; then
 	PACKAGES="$PACKAGES lib32-pipewire-jack pipewire-alsa pipewire-jack pipewire-pulse wireplumber"
@@ -138,23 +131,52 @@ if [ "$VERSION_TO_INSTALL" != "vapour-os" ]; then
 		vapour-os-xfce) PACKAGES="$PACKAGES xdg-desktop-portal-gtk";;
 	esac
 fi
-pacstrap /mnt $PACKAGES || exit 1
-genfstab -U /mnt >> /mnt/etc/fstab
-echo "proc /proc proc nosuid,nodev,noexec,hidepid=2,gid=proc 0 0" >> /etc/fstab
-mkdir -p "/mnt/etc/$DISTRO_ID"
-cp "$SCRIPT_DIR/chroot-setup" "/mnt/etc/$DISTRO_ID/chroot-setup"
-echo "$EXTRA_SOFTWARE" > "/mnt/etc/$DISTRO_ID/extra-software"
-echo "$KERNELS" > "/mnt/etc/$DISTRO_ID/kernels"
-echo "$VERSION_TO_INSTALL" > "/mnt/etc/$DISTRO_ID/version-to-install"
+# Print info
+Print "Manufacturer: $MANUFACTURER"
+Print "       Model: $MODEL"
+Print "        Type: $CHASSIS"
+Print "    Portable: $PORTABLE"
+Print "   Processor: $CPU_MODEL"
 
+## 3) Install system
+cp "/usr/share/$DISTRO_ID/custom-configs/etc/pacman.conf" /tmp/pacman-pacstrap.conf
+if [ $ARCH == "x86_64" ]; then
+	case $ARCH_VERSION in
+		x86-64-v4)
+			sed -i '/Architecture = auto &| x86_64_v3 &| x86_64_v4/s/^#//g' /tmp/pacman-pacstrap.conf
+			sed -i '/[cachyos-v4]/s/^#//g' /tmp/pacman-pacstrap.conf
+			sed -i '/Include = /etc/pacman.d/cachyos-v4-mirrorlist/s/^#//g' /tmp/pacman-pacstrap.conf
+			sed -i '/[cachyos-v3]/s/^#//g' /tmp/pacman-pacstrap.conf
+			sed -i '/[cachyos-core-v3]/s/^#//g' /tmp/pacman-pacstrap.conf
+			sed -i '/[cachyos-extra-v3]/s/^#//g' /tmp/pacman-pacstrap.conf
+			sed -i '/Include = /etc/pacman.d/cachyos-v3-mirrorlist/s/^#//g' /tmp/pacman-pacstrap.conf
+			;;
+		x86-64-v3)
+			sed -i '/Architecture = auto &| x86_64_v3/s/^#//g' /tmp/pacman-pacstrap.conf
+			sed -i '/[cachyos-v3]/s/^#//g' /tmp/pacman-pacstrap.conf
+			sed -i '/[cachyos-core-v3]/s/^#//g' /tmp/pacman-pacstrap.conf
+			sed -i '/[cachyos-extra-v3]/s/^#//g' /tmp/pacman-pacstrap.conf
+			sed -i '/Include = /etc/pacman.d/cachyos-v3-mirrorlist/s/^#//g' /tmp/pacman-pacstrap.conf
+			;;
+		*);;
+	esac
+fi
+pacstrap -C /tmp/pacman-pacstrap.conf /mnt $PACKAGES || exit 1
+genfstab -U /mnt >> /mnt/etc/fstab
+echo "proc /proc proc nosuid,nodev,noexec,hidepid=2,gid=proc 0 0" >> /mnt/etc/fstab
+
+## 4) Chroot setup
+mkdir "/mnt/etc/$DISTRO_ID/chroot-setup"
+cp "$SCRIPT_DIR/chroot-setup.sh" "/mnt/etc/$DISTRO_ID/chroot-setup/"
+echo "$EXTRA_SOFTWARE" > "/mnt/etc/$DISTRO_ID/chroot-setup/extra-software"
+echo "$KERNELS" > "/mnt/etc/$DISTRO_ID/chroot-setup/kernels"
+echo "$ARCH" > "/mnt/etc/$DISTRO_ID/chroot-setup/arch"
+echo "$ARCH_VERSION" > "/mnt/etc/$DISTRO_ID/chroot-setup/arch-version"
+echo "$VERSION_TO_INSTALL" > "/mnt/etc/$DISTRO_ID/chroot-setup/version-to-install"
 # Detect manufacturer and model info, and enable fixes accordingly
 case "$MANUFACTURER" in
-	"HP")
-		[ "$PORTABLE" == "yes" ] && echo "systemctl enable hp-lid-fix" >> "/mnt/etc/$DISTRO_ID/chroot-setup"
-		;;
+	"HP") [ "$PORTABLE" == "yes" ] && echo "systemctl enable hp-lid-fix" >> "/mnt/etc/$DISTRO_ID/chroot-setup";;
 esac
-
-sync
-arch-chroot /mnt "/etc/$DISTRO_ID/chroot-setup" || exit 1
-rm -rf "/mnt/etc/$DISTRO_ID/chroot-setup" "/mnt/etc/$DISTRO_ID/extra-software" "/mnt/etc/$DISTRO_ID/kernels" "/mnt/etc/$DISTRO_ID/version-to-install"
+sync; arch-chroot /mnt "/etc/$DISTRO_ID/chroot-setup/chroot-setup.sh" || exit 1
+rm -rf "/mnt/etc/$DISTRO_ID/chroot-setup"
 sync

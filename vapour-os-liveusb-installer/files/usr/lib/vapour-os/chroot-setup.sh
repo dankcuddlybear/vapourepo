@@ -5,14 +5,9 @@ DISTRO_NAME="Vapour OS"
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 ARCH="$(uname -m)"
 
-# Packages
+# Clean up packages
 pacman --asdeps -D lib32-pipewire-jack pipewire-alsa pipewire-jack pipewire-pulse xdg-desktop-portal-gnome xdg-desktop-portal-kde xdg-desktop-portal-gtk wireplumber
 pacman --noconfirm -Sc
-
-# FSCrypt
-. /usr/lib/vapour-os/diskinfo
-[ ! -z $HOME_DEV ] && fscrypt setup /home --force --quiet
-[ ! -z $MEDIA_DEV ] && fscrypt setup /media --force --quiet
 
 # Add user
 CONTINUE=0; while [ $CONTINUE == 0 ]; do

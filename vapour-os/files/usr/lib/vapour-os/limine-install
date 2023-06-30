@@ -10,6 +10,27 @@ if [ ! -b "/dev/disk/by-uuid/$ROOT_UUID" ]; then
 	echo "[ERROR] /dev/disk/by-uuid/$ROOT_UUID does not exist! Please update the root UUID in /etc/fstab"
 	exit 1
 fi
+BOOT_UUID="$(cat /etc/fstab | grep " /boot " | cut -d ' ' -f 1)"
+if [ -z "$BOOT_UUID" ]; then
+	echo "[ERROR] You must set UUID=<boot partition UUID> in /etc/fstab"
+	exit 1
+else BOOT_UUID=${BOOT_UUID#?????}; fi
+if [ ! -b "/dev/disk/by-uuid/$BOOT_UUID" ]; then
+	echo "[ERROR] /dev/disk/by-uuid/$BOOT_UUID does not exist! Please update the boot UUID in /etc/fstab"
+	exit 1
+fi
+BOOT_DEV="$(readlink -f /dev/disk/by-uuid/$BOOT_UUID)"
+# This code does not work with more than 10 nvme or mmcblk drives. Fix it.
+if [ "${BOOT_DEV:5:2}" == "hd" ] || [ "${BOOT_DEV:5:2}" == "sd" ] || [ "${BOOT_DEV:5:2}" == "vd" ]; then
+	BOOT_DISK="${BOOT_DEV:0:8}"
+	BOOT_PART="${BOOT_DEV:8:3}"
+elif [ "${BOOT_DEV:5:4}" == "nvme" ]; then
+	BOOT_DISK="${BOOT_DEV:0:12}"
+	BOOT_PART="${BOOT_DEV:13:3}"
+elif [ "${BOOT_DEV:5:6}" == "mmcblk" ]; then
+	BOOT_DISK="${BOOT_DEV:0:12}"
+	BOOT_PART="${BOOT_DEV:13:3}"
+fi
 
 EFI_BITS="$(cat /sys/firmware/efi/fw_platform_size 2> /dev/null)"
 Upgrade() {

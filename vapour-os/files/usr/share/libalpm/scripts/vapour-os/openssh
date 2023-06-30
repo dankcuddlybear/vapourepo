@@ -1,0 +1,7 @@
+#!/bin/sh
+DISTRO_ID="vapour-os"
+DISTRO_NAME="Vapour OS"
+if [ -f /usr/bin/ssh ]; then
+    [ ! -f /etc/ssh/ssh_config ] && cp /usr/share/$DISTRO_ID/custom-configs/ssh_config /etc/ssh/ssh_config
+    [ ! -f /etc/ssh/sshd_config ] && cp /usr/share/$DISTRO_ID/custom-configs/sshd_config /etc/ssh/sshd_config
+fi

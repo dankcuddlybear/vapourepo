@@ -1,0 +1,2 @@
+# Use kernel ntfs3 driver for NTFS volumes by default
+SUBSYSTEM=="block", ENV{ID_FS_TYPE}=="ntfs", ENV{ID_FS_TYPE}="ntfs3"

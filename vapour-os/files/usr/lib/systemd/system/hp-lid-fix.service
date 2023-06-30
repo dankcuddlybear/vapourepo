@@ -1,0 +1,13 @@
+[Unit]
+Description=HP laptop lid fix
+
+[Service]
+Type=oneshot
+Restart=no
+RemainAfterExit=no
+ExecStart=/usr/bin/setkeycodes e057 240 e058 240
+
+[Install]
+WantedBy=rescue.target
+WantedBy=multi-user.target
+WantedBy=graphical.target

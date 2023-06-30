@@ -1,0 +1,11 @@
+set titlecolor bold,white,red
+set promptcolor white,red
+set statuscolor bold,white,red
+set errorcolor bold,white,red
+set spotlightcolor black,orange
+set selectedcolor lightwhite,cyan
+set stripecolor ,grey
+set scrollercolor lightyellow
+set numbercolor lightyellow
+set keycolor yellow
+set functioncolor red

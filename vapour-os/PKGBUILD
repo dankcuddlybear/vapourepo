@@ -1,7 +1,7 @@
 # Maintainer: Dankcuddlybear <dankcuddlybear@protonmail.com>
 pkgname=vapour-os
 pkgver=1.0.0
-pkgrel=25
+pkgrel=26
 pkgdesc='A modular Arch based distro optimised for energy saving and ease of use (core system)'
 arch=(x86_64)
 url='https://github.com/dankcuddlybear/vapourepo'
@@ -46,6 +46,7 @@ package() {
 		"$pkgdir/usr/lib/$pkgname/update-release.sh" \
 		"$pkgdir/usr/lib/$pkgname/wakeonlan-ethernet" \
 		"$pkgdir/usr/lib/$pkgname/wakeonlan-wifi" \
+		"$pkgdir/usr/share/libalpm/scripts/$pkgname/cachyos-keyring" \
 		"$pkgdir/usr/share/libalpm/scripts/$pkgname/mirrors" \
 		"$pkgdir/usr/share/libalpm/scripts/$pkgname/nano" \
 		"$pkgdir/usr/share/libalpm/scripts/$pkgname/openssh" \

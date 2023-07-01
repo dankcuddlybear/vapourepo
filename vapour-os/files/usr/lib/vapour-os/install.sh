@@ -61,7 +61,7 @@ Install() {
 		cp /usr/share/$DISTRO_ID/custom-configs/locale.gen /etc/locale.gen
 	fi
 	locale-gen
-	pacman-key --init; pacman-key --populate
+	pacman-key --init; pacman-key --populate; pacman-key --updatedb
 	systemctl mask systemd-resolved
 	systemctl --now enable ananicy-cpp irqbalance rtirq rtirq-resume rtkit-daemon fstrim.timer systemd-oomd NetworkManager avahi-daemon.socket
 	SecureBootSetup

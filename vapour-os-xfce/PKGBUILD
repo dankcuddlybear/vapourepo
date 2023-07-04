@@ -1,19 +1,16 @@
 # Maintainer: Dankcuddlybear <dankcuddlybear@protonmail.com>
 pkgname=vapour-os-xfce
 pkgver=1.0.0
-pkgrel=2
+pkgrel=4
 pkgdesc='XFCE desktop for Vapour OS with XFCE apps and addons.'
 arch=(any)
 url='https://github.com/dankcuddlybear/Vapour-OS'
 install=vapour-os-xfce.install
-depends=(#'pipewire' 'pipewire-jack' 'pipewire-alsa' 'pipewire-pulse'
+depends=(
 	'gvfs-afc' 'gvfs-goa' 'gvfs-google' 'gvfs-gphoto2' 'gvfs-mtp' 'gvfs-nfs' 'gvfs-smb'
 	'lightdm-gtk-greeter'
-	'mousepad'
 	'network-manager-applet'
 	'pavucontrol' 'python'
-	'ristretto'
-	'thunar-archive-plugin' 'thunar-media-tags-plugin' 'thunar-volman'
 	'vapour-os-desktop-libs'
 	'xdg-desktop-portal-gtk'
 	'xfce4-clipman-plugin'
@@ -22,10 +19,11 @@ depends=(#'pipewire' 'pipewire-jack' 'pipewire-alsa' 'pipewire-pulse'
 	'xfce4-pulseaudio-plugin'
 	'xfce4-screensaver'
 	'xfce4-screenshooter'
+	'xfce4-sensors-plugin'
 	'xfce4-session'
 	'xfce4-settings'
 	'xfce4-taskmanager'
-	'xfce4-terminal'
+	'xfce4-xkb-plugin'
 	'xfdesktop'
 	'xfwm4'
 )

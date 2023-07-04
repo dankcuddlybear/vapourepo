@@ -12,15 +12,21 @@ linux-headers
 memtest86+
 memtest86+-efi
 mkinitcpio-archiso
+mousepad
 nano
 onlyoffice-bin
 pipewire-alsa
 pipewire-jack
 pipewire-pulse
 pv
+ristretto
 squashfs-tools
 syslinux
 testdisk
+thunar
+thunar-archive-plugin
+thunar-media-tags-plugin
+thunar-volman
 udftools
 vapour-os-amdgpu
 vapour-os-gaming
@@ -33,3 +39,4 @@ vlc
 wireplumber
 xarchiver
 xdg-desktop-portal-gtk
+xfce4-terminal

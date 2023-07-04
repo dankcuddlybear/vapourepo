@@ -1,12 +1,12 @@
 # Maintainer: Dankcuddlybear <dankcuddlybear@protonmail.com>
 pkgname=vapour-os-xfce
 pkgver=1.0.0
-pkgrel=4
+pkgrel=6
 pkgdesc='XFCE desktop for Vapour OS with XFCE apps and addons.'
 arch=(any)
 url='https://github.com/dankcuddlybear/Vapour-OS'
 install=vapour-os-xfce.install
-depends=(
+depends=('blueman'
 	'gvfs-afc' 'gvfs-goa' 'gvfs-google' 'gvfs-gphoto2' 'gvfs-mtp' 'gvfs-nfs' 'gvfs-smb'
 	'lightdm-gtk-greeter'
 	'network-manager-applet'

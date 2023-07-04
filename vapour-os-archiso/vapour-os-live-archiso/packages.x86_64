@@ -24,7 +24,8 @@ testdisk
 udftools
 vapour-os-amdgpu
 vapour-os-gaming
-vapour-os-i915
+vapour-os-i915-gen3
+vapour-os-i915-gen10
 vapour-os-liveusb-installer
 vapour-os-nvidia
 vapour-os-xfce

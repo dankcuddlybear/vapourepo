@@ -131,6 +131,7 @@ if [ "$VERSION_TO_INSTALL" != "vapour-os" ]; then
 		vapour-os-xfce) PACKAGES="$PACKAGES mousepad ristretto thunar-archive-plugin thunar-media-tags-plugin thunar thunar-volman xdg-desktop-portal-gtk xfce4-terminal";;
 	esac
 fi
+#### TODO: Detect GPUs
 # Print info
 Print "Manufacturer: $MANUFACTURER"
 Print "       Model: $MODEL"

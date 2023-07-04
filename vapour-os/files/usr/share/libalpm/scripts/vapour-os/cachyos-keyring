@@ -1,5 +1,5 @@
 #!/bin/sh
 CACHYOS_GPG_FINGERPRINT=$(gpg --show-keys --fingerprint cachyos.gpg | cut -d ']' -f 3 | cut -d 'u' -f 1 | sed 's/ //g')
 echo ${CACHYOS_GPG_FINGERPRINT}:4: > /usr/share/pacman/keyrings/cachyos-trusted
-pacman-key --populate cachyos
+pacman-key --populate
 pacman-key --updatedb

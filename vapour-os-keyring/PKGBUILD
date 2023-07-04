@@ -1,7 +1,7 @@
 # Maintainer: Dankcuddlybear <dankcuddlybear@protonmail.com>
 pkgname=vapour-os-keyring
 pkgver=1.0.0
-pkgrel=4
+pkgrel=6
 pkgdesc='Vapourepo keyring'
 arch=(x86_64)
 url='https://github.com/dankcuddlybear/vapourepo'

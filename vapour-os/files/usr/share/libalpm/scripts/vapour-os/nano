@@ -1,7 +1,7 @@
 #!/bin/sh
 DISTRO_ID="vapour-os"
 DISTRO_NAME="Vapour OS"
-if [ -f /usr/bin/nano ]; then
-	[ ! -f /etc/nanorc.pacnew ] && cp /usr/share/$DISTRO_ID/custom-configs/nanorc /etc/nanorc
-	cp -n /usr/share/$DISTRO_ID/custom-configs/root.nanorc /root/.nanorc
+if [ -f /usr/bin/nano ] && [ ! -f /etc/nanorc.pacnew ]; then
+	cp /usr/share/$DISTRO_ID/custom-configs/nanorc /etc/nanorc &> /dev/null
+	cp -n /usr/share/$DISTRO_ID/custom-configs/root.nanorc /root/.nanorc &> /dev/null
 fi

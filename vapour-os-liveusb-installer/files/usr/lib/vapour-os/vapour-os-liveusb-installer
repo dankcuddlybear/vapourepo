@@ -2,7 +2,7 @@
 DISTRO_ID="vapour-os"
 DISTRO_NAME="Vapour OS"
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-E2OPTIONS="ea_inode,encrypt,inline_data,large_dir,project,quota,uninit_bg,verity"
+E2OPTIONS="ea_inode,encrypt,large_dir,project,quota,uninit_bg,verity"
 ARCH="$(uname -m)"
 ARCH_VERSION="$(/lib/ld-linux-x86-64.so.2 --help | grep -m 1 "supported, searched" | cut -d '(' -f 1)"
 Error() {
@@ -139,7 +139,7 @@ Print "    Portable: $PORTABLE"
 Print "   Processor: $CPU_MODEL"
 
 ## 3) Install system
-cp "/usr/share/$DISTRO_ID/custom-configs/etc/pacman.conf" /tmp/pacman-pacstrap.conf
+cp "/usr/share/$DISTRO_ID/custom-configs/pacman.conf" /tmp/pacman-pacstrap.conf
 if [ $ARCH == "x86_64" ]; then
 	case $ARCH_VERSION in
 		x86-64-v4)

@@ -15,4 +15,4 @@ mv $REPO_DIR/$REPO_NAME.db.tar.gz.sig $REPO_DIR/$REPO_NAME.db.sig
 mv $REPO_DIR/$REPO_NAME.files.tar.gz $REPO_DIR/$REPO_NAME.files
 mv $REPO_DIR/$REPO_NAME.files.tar.gz.sig $REPO_DIR/$REPO_NAME.files.sig
 
-exit
+echo "Done."

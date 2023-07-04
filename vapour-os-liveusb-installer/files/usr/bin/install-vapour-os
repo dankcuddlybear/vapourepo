@@ -58,7 +58,7 @@ PartitionChooser() {
 		7) PARTNAME="swap"; unset SWAP_DEV; OPTIONAL="n None";;
 	esac
 	GetPartitions
-	PARTSELECTNO=$(dialog --stdout --backtitle "$BACKTITLE" --cancel-label "Back" --title "Partition selection" --menu "Please select $PARTNAME partition:" 0 0 0 $PARTCHOICES $OPTIONAL "p" "Launch partitioning tool")
+	PARTSELECTNO=$(dialog --stdout --backtitle "$BACKTITLE" --cancel-label "Back" --title "Partition selection" --menu "Please select $PARTNAME partition:" 0 0 0 $OPTIONAL $PARTCHOICES "p" "Launch partitioning tool")
 	if [ -z $PARTSELECTNO ]; then ((PAGE--)) # Go back a page if back is selected
 	elif [ $PARTSELECTNO == "p" ]; then PartitionTool
 	else
@@ -74,8 +74,8 @@ PartitionChooser() {
 			if [ $PARTNAME == "root" ] && [ $FSSIZE_BYTES -lt 2147483648 ]; then
 				dialog --backtitle "$BACKTITLE" --title "Partition info" --msgbox "Device:  $PARTSELECT\nLabel:   $LABEL\nSize:    $FSSIZE\nType:    $FSTYPE\nMounted: $MOUNTED\n\nThe selected partition is too small. It needs to be at least 2GiB in size." 0 0
 				CONFIRM=0
-			elif [ $PARTNAME == "boot" ] && [ $FSSIZE_BYTES -lt 268435456 ]; then
-				dialog --backtitle "$BACKTITLE" --title "Partition info" --msgbox "Device:  $PARTSELECT\nLabel:   $LABEL\nSize:    $FSSIZE\nType:    $FSTYPE\nMounted: $MOUNTED\n\nThe selected partition is too small. It needs to be at least 256MiB in size." 0 0
+			elif [ $PARTNAME == "boot" ] && [ $FSSIZE_BYTES -lt 536870912 ]; then
+				dialog --backtitle "$BACKTITLE" --title "Partition info" --msgbox "Device:  $PARTSELECT\nLabel:   $LABEL\nSize:    $FSSIZE\nType:    $FSTYPE\nMounted: $MOUNTED\n\nThe selected partition is too small. It needs to be at least 512MiB in size." 0 0
 				CONFIRM=0
 			else
 				## Display partition info and confirm or go back
@@ -131,9 +131,8 @@ SelectVersion() {
 SelectKernel() {
 	unset KERNELS
 	export KERNELS="$(dialog --stdout --backtitle "$BACKTITLE" --cancel-label "Back" --title "Linux kernel" --checklist "Select one or more Linux kernels to install:" 0 0 0 \
-	"linux-tt" "TT scheduler Linux kernel by CachyOS with other patches and improvements (recommended). May not boot on some BIOSes." "ON" \
 	"OFFICIALLY SUPPORTED" "" "OFF" \
-	"  linux" "Vanilla Linux kernel - use if linux-tt does not boot on your BIOS." "OFF" \
+	"  linux" "Linux kernel and modules" "ON" \
 	"  linux-hardened" "Security-Hardened Linux kernel and modules" "OFF" \
 	"  linux-lts" "Linux LTS kernel and modules" "OFF" \
 	"  linux-rt" "Linux realtime kernel and modules" "OFF" \
@@ -167,6 +166,7 @@ SelectKernel() {
 	"  linux-lqx" "Linux Liquorix kernel and modules" "OFF" \
 	"  linux-mainline" "Linux Mainline kernel and modules" "OFF" \
 	"  linux-next-git" "Linux NEXT kernel and modules" "OFF" \
+	"  linux-tt" "TT scheduler Linux kernel by CachyOS with other patches and improvements. May not boot on some BIOSes." "OFF" \
 	"  linux-xanmod" "Linux kernel and modules with Xanmod patches" "OFF" \
 	"  linux-xanmod-lts" "Linux LTS kernel and modules with Xanmod patches" "OFF" \
 	"  linux-xanmod-rt" "Linux realtime kernel and modules with Xanmod patches" "OFF" \

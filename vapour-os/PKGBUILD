@@ -1,7 +1,7 @@
 # Maintainer: Dankcuddlybear <dankcuddlybear@protonmail.com>
 pkgname=vapour-os
 pkgver=1.0.0
-pkgrel=29
+pkgrel=30
 pkgdesc='A modular Arch based distro optimised for energy saving and ease of use (core system)'
 arch=(x86_64)
 url='https://github.com/dankcuddlybear/vapourepo'
@@ -10,9 +10,9 @@ backup=('etc/skel/.config/yay/config.json'
 	'etc/vapour-os/vapour-os.conf'
 	'etc/X11/xorg.conf.d/30-touchpad-vapour-os'
 )
-depends=('ananicy-cpp' 'ananicy-rules-git'
+depends=('ananicy-cpp'
 	'base' 'bash-completion'
-	'cachyos-keyring' 'cachyos-mirrorlist' 'cachyos-v3-mirrorlist' 'cachyos-v4-mirrorlist' 'chaotic-keyring' 'chaotic-mirrorlist'
+	'cachyos-ananicy-rules' 'cachyos-keyring' 'cachyos-mirrorlist' 'cachyos-v3-mirrorlist' 'cachyos-v4-mirrorlist' 'chaotic-keyring' 'chaotic-mirrorlist'
 	'dosfstools'
 	'efibootmgr' 'ethtool'
 	'fscrypt'

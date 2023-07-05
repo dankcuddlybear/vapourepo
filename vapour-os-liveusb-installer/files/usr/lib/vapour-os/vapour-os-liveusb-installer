@@ -26,16 +26,16 @@ ValidatePartition() { # Checks that each partition exists, and resolves links
 ROOT_DEV="$(ValidatePartition "$ROOT_DEV")"; [ ! -z $PARTITION_NOT_FOUND ] && Error "Root partition $ROOT_DEV does not exist!"
 BOOT_DEV="$(ValidatePartition "$BOOT_DEV")"; [ ! -z $PARTITION_NOT_FOUND ] && Error "EFI system partition $BOOT_DEV does not exist!"
 BOOT_DEV="$(readlink -f "$BOOT_DEV")"
-if [ "${BOOT_DEV:5:2}" == "hd" ] || [ "${BOOT_DEV:5:2}" == "sd" ] || [ "${BOOT_DEV:5:2}" == "vd" ]; then
-	ESPDISK="${BOOT_DEV:0:8}"
-	ESPPART="${BOOT_DEV:8:3}"
-elif [ "${BOOT_DEV:5:4}" == "nvme" ]; then
-	ESPDISK="${BOOT_DEV:0:12}"
-	ESPPART="${BOOT_DEV:13:3}"
-elif [ "${BOOT_DEV:5:6}" == "mmcblk" ]; then
-	ESPDISK="${BOOT_DEV:0:12}"
-	ESPPART="${BOOT_DEV:13:3}"
-else Error "Error detecting /boot partition!"; fi
+if [ ${BOOT_DEV:5:4} == nvme ] || [ ${BOOT_DEV:5:6} == mmcblk ]; then
+	ESPDISK=$(echo $BOOT_DEV | cut -d 'p' -f 1)
+	ESPPART=$(echo $BOOT_DEV | cut -d 'p' -f 2)
+elif [ ${BOOT:5:2} == hd ] || [ ${BOOT:5:2} == sd ] || [ ${BOOT:5:2} == vd ]; then
+	ESPDISK=$(echo $BOOT_DEV | sed 's/[0-9]//g')
+	ESPPART=$(echo $BOOT_DEV | sed 's/[^0-9]*//g')
+else
+	Error "$BOOT_DEV is on an unsupported media type! Please set /boot partition in /etc/fstab to a partition on a HDD or flash storage."
+fi
+[ $ESPDISK == $ESPPART ] && Error "$BOOT_DEV is a disk, not a partition! Please set a /boot partition in /etc/fstab."
 HOME_DEV="$(ValidatePartition "$HOME_DEV")"; [ ! -z $PARTITION_NOT_FOUND ] && Error "Home partition $HOME_DEV does not exist!"
 MEDIA_DEV="$(ValidatePartition "$MEDIA_DEV")"; [ ! -z $PARTITION_NOT_FOUND ] && Error "Media partition $MEDIA_DEV does not exist!"
 PUBLIC_DEV="$(ValidatePartition "$PUBLIC_DEV")"; [ ! -z $PARTITION_NOT_FOUND ] && Error "Public partition $PUBLIC_DEV does not exist!"

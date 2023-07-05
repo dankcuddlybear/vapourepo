@@ -1,6 +1,3 @@
 post_install() {
-	/usr/lib/vapour-os/vapour-os-desktop-libs/install.sh
-}
-pre_remove() {
-	/usr/lib/vapour-os/vapour-os-desktop-libs/uninstall.sh
+	systemctl --now enable bluetooth ModemManager ipp-usb cups.socket cups-browsed
 }

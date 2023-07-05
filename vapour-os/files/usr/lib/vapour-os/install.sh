@@ -42,7 +42,7 @@ Install() {
 		groupadd -r autologin # Create autologin group for LightDM
 		gpasswd -a live wheel 1> /dev/null; gpasswd -a live autologin 1> /dev/null # Add to groups
 		rm -rf /etc/*.pacnew # We don't need these files
-		rm /usr/local/sbin/cat # Remove cat needed by GRUB install script
+		rm /usr/local/sbin/cat /usr/local/sbin/vercmp # Remove binaries needed by GRUB install script
 		if [ -f /usr/share/applications/install-vapour-os.desktop ]; then # Create installer desktop shortcut
 			sudo -u live mkdir -p /home/live/Desktop
 			sudo -u live cp /usr/share/applications/install-vapour-os.desktop /home/live/Desktop/
@@ -55,7 +55,7 @@ Install() {
 			cp /usr/share/$DISTRO_ID/custom-configs/mkinitcpio.conf /etc/mkinitcpio.conf
 		fi
 		# FScrypt (need to update code to read UUIDS from /etc/fstab)
-		fscrypt setup
+		fscrypt setup --quiet
 		#[ ! -z "$HOME_DEV" ] && fscrypt setup /home
 		passwd -l root # Lock root account (su/sudo still usable)
 		cp /usr/share/$DISTRO_ID/custom-configs/locale.gen /etc/locale.gen

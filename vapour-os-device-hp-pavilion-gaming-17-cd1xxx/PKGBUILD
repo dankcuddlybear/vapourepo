@@ -1,0 +1,16 @@
+# Maintainer: Dankcuddlybear <dankcuddlybear@proton.me>
+pkgname=vapour-os-device-hp-pavilion-gaming-17-cd1xxx
+pkgver=1.0.0
+pkgrel=1
+pkgdesc='Vapour OS device configuration for HP Pavilion Gaming Laptop cd1013na, 17.3 inch. Includes game libraries, graphics and printer drivers.'
+arch=(x86_64)
+url='https://github.com/dankcuddlybear/Vapour-OS'
+#install=vapour-os-device-hp-pavilion-gaming-17cd1013na.install
+depends=('hdapsd'
+	'intel-ucode'
+	'vapour-os-i915'
+	'vapour-os-nvidia'
+)
+package() {
+	cp -r "$srcdir/../files/usr" "$pkgdir"
+}

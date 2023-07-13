@@ -4,7 +4,7 @@
 [mkarchiso] INFO:              Architecture:   x86_64
 [mkarchiso] INFO:         Working directory:   /tmp/vapour-os-isobuild-tmp
 [mkarchiso] INFO:    Installation directory:   vapour-os
-[mkarchiso] INFO:                Build date:   2023-07-04T15:29+0100
+[mkarchiso] INFO:                Build date:   2023-07-05T02:04+0100
 [mkarchiso] INFO:          Output directory:   /home/alex4nder/Documents/Code/vapourepo/vapour-os-archiso/out
 [mkarchiso] INFO:        Current build mode:   iso
 [mkarchiso] INFO:               Build modes:   iso
@@ -28,13 +28,13 @@
 ==> Creating install root at /tmp/vapour-os-isobuild-tmp/x86_64/airootfs
 ==> Installing packages to /tmp/vapour-os-isobuild-tmp/x86_64/airootfs
 :: Synchronizing package databases...
- cachyos                                                                              359.1 KiB   451 KiB/s 00:01 [####################################################################] 100%
- core                                                                                 133.0 KiB   311 KiB/s 00:00 [####################################################################] 100%
- extra                                                                                  8.3 MiB  1700 KiB/s 00:05 [####################################################################] 100%
- community                                                                             45.0   B   140   B/s 00:00 [####################################################################] 100%
- multilib                                                                             142.0 KiB   351 KiB/s 00:00 [####################################################################] 100%
- chaotic-aur                                                                            2.8 MiB  1449 KiB/s 00:02 [####################################################################] 100%
- vapourepo                                                                             10.8 KiB  35.3 KiB/s 00:00 [####################################################################] 100%
+ cachyos                    359.1 KiB   813 KiB/s 00:00 [##############################] 100%
+ core                       133.0 KiB   522 KiB/s 00:00 [##############################] 100%
+ extra                                                                                  8.3 MiB  2.59 MiB/s 00:03 [####################################################################] 100%
+ community                   45.0   B   124   B/s 00:00 [##############################] 100%
+ multilib                   142.0 KiB   426 KiB/s 00:00 [##############################] 100%
+ chaotic-aur                  2.8 MiB  1120 KiB/s 00:03 [##############################] 100%
+ vapourepo                   10.8 KiB  28.9 KiB/s 00:00 [##############################] 100%
 resolving dependencies...
 :: There are 2 providers available for sh:
 :: Repository core
@@ -143,39 +143,39 @@ warning: dependency cycle detected:
 warning: lib32-harfbuzz will be installed before its lib32-freetype2 dependency
 
 Packages (1028) a52dec-0.8.0-2  aalib-1.4rc5-17  acl-2.3.1-3  adobe-source-code-pro-fonts-2.042u+1.062i+1.026vf-1  adwaita-cursors-44.0-1  adwaita-icon-theme-44.0-1
-                alsa-card-profiles-1:0.3.72-1  alsa-lib-1.2.9-1  alsa-plugins-1:1.2.7.1-2  alsa-topology-conf-1.2.5.1-3  alsa-ucm-conf-1.2.9-1  ananicy-cpp-1.1.0-1
-                ananicy-rules-git-2.2.1.r302.ga1c2fd0-1  android-udev-20230303-1  aom-3.6.1-1  arch-install-scripts-28-1  archlinux-keyring-20230629-1  argon2-20190702-5  aribb24-1.0.3-3
-                aribb25-0.2.7-2  at-spi2-core-2.48.3-2  atkmm-2.28.3-1  attr-2.5.1-3  audit-3.1.1-1  autoconf-2.71-4  automake-1.16.5-2  avahi-1:0.8+r22+gfd482a7-1  base-3-1
-                base-devel-1-1  bash-5.1.016-4  bash-completion-2.11-3  binutils-2.40-10  bison-3.8.2-6  blueman-2.3.5-2  bluez-5.68-1  bluez-cups-5.68-1  bluez-libs-5.68-1
-                bluez-plugins-5.68-1  brotli-1.0.9-12  bzip2-1.0.8-5  ca-certificates-20220905-1  ca-certificates-mozilla-3.91-1  ca-certificates-utils-20220905-1  cabextract-1.11-1
-                cachyos-keyring-2-1  cachyos-mirrorlist-17-1  cachyos-v3-mirrorlist-17-1  cachyos-v4-mirrorlist-5-1  cairo-1.17.8-2  cairomm-1.14.4-1  cantarell-fonts-1:0.303.1-1
-                cdparanoia-10.2-8  chaotic-keyring-20230616-1  chaotic-mirrorlist-20230603-1  chromaprint-1.5.1-7  cifs-utils-7.0-3  clang-15.0.7-9  colord-1.4.6-1  compiler-rt-15.0.7-2
-                coreutils-9.3-1  cryptsetup-2.6.1-3  cups-1:2.4.6-1  cups-filters-1.28.17-4  cups-pdf-3.0.1-7  cups-pk-helper-0.2.7-1  curl-8.1.2-1  dav1d-1.2.1-1  db-6.2.32-1
-                db5.3-5.3.28-2  dbus-1.14.8-1  dbus-glib-0.112-3  dbus-python-1.3.2-2  dconf-0.40.0-2  debugedit-5.0-5  default-cursors-2-1  desktop-file-utils-0.26-2
-                device-mapper-2.03.21-1  dialog-1:1.3_20230209-1  diffutils-3.10-1  dkms-3.0.11-2  dmidecode-3.5-1  dnssec-anchors-20190629-3  dosfstools-4.2-3  double-conversion-3.3.0-1
-                duktape-2.7.0-6  dxvk-async-git-2.2.r22.ge9e09497-1  e2fsprogs-1.47.0-1  efibootmgr-18-2  efivar-38-3  egl-wayland-2:1.1.12-1  eglexternalplatform-1.1-2
-                elementary-icon-theme-7.3.0-1  espeak-ng-1.51.1-2  ethtool-1:6.3-1  exfatprogs-1.2.1-1  exo-4.18.0-1  expat-2.5.0-1  faac-1.30-4  faad2-2.10.1-1  fakeroot-1.31-2
-                ffmpeg-2:6.0-8  ffmpeg4.4-4.4.4-1  fftw-3.3.10-4  file-5.44-3  filesystem-2023.01.31-1  findutils-4.9.0-3  firefox-114.0.2-1  flac-1.4.3-1  flex-2.6.4-5  fluidsynth-2.3.3-1
-                fmt-9.1.0-4  fontconfig-2:2.14.2-1  foomatic-db-engine-4:20220521-1  foomatic-db-gutenprint-ppds-5.3.4-2  foomatic-db-nonfree-ppds-3:20230402-1
-                foomatic-db-ppds-3:20230402-1  freeglut-3.4.0-1  freetype2-2.13.1-1  fribidi-1.0.13-2  fscrypt-0.3.4-1  fuse-common-3.14.1-1  fuse2-2.9.9-4  fuse3-3.14.1-1  gamemode-1.7-1
-                garcon-4.18.1-1  gawk-5.2.2-1  gc-8.2.4-1  gcc-13.1.1-1  gcc-libs-13.1.1-1  gcr-3.41.1-4  gcr-4-4.1.0-1  gd-2.3.3-6  gdbm-1.23-2  gdk-pixbuf2-2.42.10-2  geoclue-2.7.0-1
-                gettext-0.22-1  ghostscript-10.01.2-1  giflib-5.2.1-2  git-2.41.0-1  glew-2.2.0-6  glew1.10-1.10.0-3  glib-networking-1:2.76.1-1  glib2-2.76.3-1  glibc-2.37-9
-                glibmm-2.66.6-1  glslang-12.2.0-1  glu-9.0.2-3  gmp-6.2.1-2  gnome-keyring-1:42.1-3  gnome-themes-extra-3.28+r6+g45b1d457-1  gnu-free-fonts-20120503-8  gnupg-2.2.41-1
-                gnutls-3.8.0-1  gobject-introspection-runtime-1.76.1-3  gperftools-2.10-3  gpgme-1.20.0-3  gpm-1.20.7.r38.ge82d1a6-5  gptfdisk-1.0.9-2  graphene-1.10.8-1
-                graphite-1:1.3.14-3  grep-3.11-1  groff-1.22.4-10  gsettings-desktop-schemas-44.0-1  gsfonts-20200910-3  gsm-1.0.22-1  gssdp-1.6.2-1  gst-libav-1.22.4-1
-                gst-plugin-pipewire-1:0.3.72-1  gst-plugins-bad-1.22.4-1  gst-plugins-bad-libs-1.22.4-1  gst-plugins-base-1.22.4-1  gst-plugins-base-libs-1.22.4-1
-                gst-plugins-good-1.22.4-1  gst-plugins-ugly-1.22.4-1  gstreamer-1.22.4-1  gtk-update-icon-cache-1:4.10.4-1  gtk2-2.24.33-3  gtk3-1:3.24.38-1  gtkmm3-3.24.7-1
-                gtksourceview4-4.8.4-1  guile-3.0.9-1  gupnp-1:1.6.4-1  gupnp-igd-1.6.0-1  gutenprint-5.3.4-2  gvfs-1.50.5-1  gvfs-afc-1.50.5-1  gvfs-goa-1.50.5-1  gvfs-google-1.50.5-1
-                gvfs-gphoto2-1.50.5-1  gvfs-mtp-1.50.5-1  gvfs-nfs-1.50.5-1  gvfs-smb-1.50.5-1  gzip-1.12-2  harfbuzz-7.3.0-2  hdparm-9.65-1  hicolor-icon-theme-0.17-3  hidapi-0.14.0-1
-                highway-1.0.4-1  hwdata-0.372-1  hwloc-2.9.1-1  iana-etc-20230524-1  icu-73.2-1  ijs-0.35-5  imagemagick-7.1.1.12-1  imath-3.1.9-1  imlib2-1.11.1-1
-                intel-compute-runtime-23.17.26241.22-1  intel-gmmlib-22.3.3-1  intel-graphics-compiler-1:1.0.13822.6-1  intel-media-driver-23.2.3-1  intel-media-sdk-23.2.2-1
-                intel-opencl-clang-15.0.0-1  ipp-usb-0.9.23-1  iproute2-6.4.0-1  iptables-1:1.8.9-1  iputils-20221126-2  irqbalance-1.9.2-1  iso-codes-4.15.0-1  iw-5.19-2  jansson-2.14-2
-                jbig2dec-0.19-1  joystickwake-0.4-1.3  json-c-0.16-1  json-glib-1.6.6-2  kbd-2.6.1-1  kernel-modules-hook-0.1.7-2  keyutils-1.6.3-2  kmod-30-3  krb5-1.20.1-1
-                l-smash-2.14.5-3  lame-3.100-4  lcms2-2.15-1  ldb-2:2.7.2-2  ldns-1.8.3-2  less-1:633-1  lib32-aalib-1.4rc5-4  lib32-acl-2.3.1-2  lib32-alsa-lib-1.2.9-1
-                lib32-alsa-plugins-1.2.7.1-2  lib32-at-spi2-core-2.48.3-1  lib32-attr-2.5.1-1  lib32-brotli-1.0.9-12  lib32-bzip2-1.0.8-3  lib32-cairo-1.17.8-2  lib32-cdparanoia-10.2-4
-                lib32-clang-15.0.7-1  lib32-colord-1.4.6-1  lib32-curl-8.1.2-1  lib32-dbus-1.14.8-1  lib32-dbus-glib-0.112-2  lib32-duktape-2.7.0-6  lib32-e2fsprogs-1.47.0-1
-                lib32-expat-2.5.0-2  lib32-flac-1.4.3-1  lib32-fluidsynth-2.3.3-1  lib32-fontconfig-2:2.14.2-1  lib32-freeglut-3.4.0-1  lib32-freetype2-2.13.1-1  lib32-fribidi-1.0.13-2
-                lib32-gamemode-1.7-1  lib32-gcc-libs-13.1.1-1  lib32-gdk-pixbuf2-2.42.10-2  lib32-gettext-0.21.1-1  lib32-giflib-5.2.1-1  lib32-glew-2.2.0-4  lib32-glew1.10-1.10.0-5
+                alsa-card-profiles-1:0.3.72-1  alsa-lib-1.2.9-1  alsa-plugins-1:1.2.7.1-2  alsa-topology-conf-1.2.5.1-3  alsa-ucm-conf-1.2.9-1  ananicy-cpp-1.1.0-1  android-udev-20230303-1
+                aom-3.6.1-1  arch-install-scripts-28-1  archlinux-keyring-20230704-1  argon2-20190702-5  aribb24-1.0.3-3  aribb25-0.2.7-2  at-spi2-core-2.48.3-2  atkmm-2.28.3-1
+                attr-2.5.1-3  audit-3.1.1-1  autoconf-2.71-4  automake-1.16.5-2  avahi-1:0.8+r22+gfd482a7-1  base-3-1  base-devel-1-1  bash-5.1.016-4  bash-completion-2.11-3
+                binutils-2.40-10  bison-3.8.2-6  blueman-2.3.5-2  bluez-5.68-1  bluez-cups-5.68-1  bluez-libs-5.68-1  bluez-plugins-5.68-1  brotli-1.0.9-12  bzip2-1.0.8-5
+                ca-certificates-20220905-1  ca-certificates-mozilla-3.91-1  ca-certificates-utils-20220905-1  cabextract-1.11-1  cachyos-ananicy-rules-1.r207.a2a5fee-1  cachyos-keyring-2-1
+                cachyos-mirrorlist-17-1  cachyos-v3-mirrorlist-17-1  cachyos-v4-mirrorlist-5-1  cairo-1.17.8-2  cairomm-1.14.4-1  cantarell-fonts-1:0.303.1-1  cdparanoia-10.2-8
+                chaotic-keyring-20230616-1  chaotic-mirrorlist-20230603-1  chromaprint-1.5.1-7  cifs-utils-7.0-3  clang-15.0.7-9  colord-1.4.6-1  compiler-rt-15.0.7-2  coreutils-9.3-1
+                cryptsetup-2.6.1-3  cups-1:2.4.6-1  cups-filters-1.28.17-4  cups-pdf-3.0.1-7  cups-pk-helper-0.2.7-1  curl-8.1.2-1  dav1d-1.2.1-1  db-6.2.32-1  db5.3-5.3.28-2
+                dbus-1.14.8-1  dbus-glib-0.112-3  dbus-python-1.3.2-2  dconf-0.40.0-2  debugedit-5.0-5  default-cursors-2-1  desktop-file-utils-0.26-2  device-mapper-2.03.21-1
+                dialog-1:1.3_20230209-1  diffutils-3.10-1  dkms-3.0.11-2  dmidecode-3.5-1  dnssec-anchors-20190629-3  dosfstools-4.2-3  double-conversion-3.3.0-1  duktape-2.7.0-6
+                dxvk-async-git-2.2.r22.ge9e09497-1  e2fsprogs-1.47.0-1  efibootmgr-18-2  efivar-38-3  egl-wayland-2:1.1.12-1  eglexternalplatform-1.1-2  elementary-icon-theme-7.3.0-1
+                espeak-ng-1.51.1-2  ethtool-1:6.3-1  exfatprogs-1.2.1-1  exo-4.18.0-1  expat-2.5.0-1  faac-1.30-4  faad2-2.10.1-1  fakeroot-1.31-2  ffmpeg-2:6.0-8  ffmpeg4.4-4.4.4-1
+                fftw-3.3.10-4  file-5.44-3  filesystem-2023.01.31-1  findutils-4.9.0-3  firefox-115.0-1  flac-1.4.3-1  flex-2.6.4-5  fluidsynth-2.3.3-1  fmt-9.1.0-4  fontconfig-2:2.14.2-1
+                foomatic-db-engine-4:20220521-1  foomatic-db-gutenprint-ppds-5.3.4-2  foomatic-db-nonfree-ppds-3:20230402-1  foomatic-db-ppds-3:20230402-1  freeglut-3.4.0-1
+                freetype2-2.13.1-1  fribidi-1.0.13-2  fscrypt-0.3.4-1  fuse-common-3.14.1-1  fuse2-2.9.9-4  fuse3-3.14.1-1  gamemode-1.7-1  garcon-4.18.1-1  gawk-5.2.2-1  gc-8.2.4-1
+                gcc-13.1.1-1  gcc-libs-13.1.1-1  gcr-3.41.1-4  gcr-4-4.1.0-1  gd-2.3.3-6  gdbm-1.23-2  gdk-pixbuf2-2.42.10-2  geoclue-2.7.0-1  gettext-0.22-1  ghostscript-10.01.2-1
+                giflib-5.2.1-2  git-2.41.0-1  glew-2.2.0-6  glew1.10-1.10.0-3  glib-networking-1:2.76.1-1  glib2-2.76.3-1  glibc-2.37-9  glibmm-2.66.6-1  glslang-12.2.0-1  glu-9.0.2-3
+                gmp-6.2.1-2  gnome-keyring-1:42.1-3  gnome-themes-extra-3.28+r6+g45b1d457-1  gnu-free-fonts-20120503-8  gnupg-2.2.41-1  gnutls-3.8.0-1
+                gobject-introspection-runtime-1.76.1-3  gperftools-2.10-3  gpgme-1.20.0-3  gpm-1.20.7.r38.ge82d1a6-5  gptfdisk-1.0.9-2  graphene-1.10.8-1  graphite-1:1.3.14-3  grep-3.11-1
+                groff-1.22.4-10  gsettings-desktop-schemas-44.0-1  gsfonts-20200910-3  gsm-1.0.22-1  gssdp-1.6.2-1  gst-libav-1.22.4-1  gst-plugin-pipewire-1:0.3.72-1
+                gst-plugins-bad-1.22.4-1  gst-plugins-bad-libs-1.22.4-1  gst-plugins-base-1.22.4-1  gst-plugins-base-libs-1.22.4-1  gst-plugins-good-1.22.4-1  gst-plugins-ugly-1.22.4-1
+                gstreamer-1.22.4-1  gtk-update-icon-cache-1:4.10.4-1  gtk2-2.24.33-3  gtk3-1:3.24.38-1  gtkmm3-3.24.7-1  gtksourceview4-4.8.4-1  guile-3.0.9-1  gupnp-1:1.6.4-1
+                gupnp-igd-1.6.0-1  gutenprint-5.3.4-2  gvfs-1.50.5-1  gvfs-afc-1.50.5-1  gvfs-goa-1.50.5-1  gvfs-google-1.50.5-1  gvfs-gphoto2-1.50.5-1  gvfs-mtp-1.50.5-1
+                gvfs-nfs-1.50.5-1  gvfs-smb-1.50.5-1  gzip-1.12-2  harfbuzz-7.3.0-2  hdparm-9.65-1  hicolor-icon-theme-0.17-3  hidapi-0.14.0-1  highway-1.0.4-1  hwdata-0.372-1
+                hwloc-2.9.1-1  iana-etc-20230524-1  icu-73.2-1  ijs-0.35-5  imagemagick-7.1.1.12-1  imath-3.1.9-1  imlib2-1.11.1-1  intel-compute-runtime-23.17.26241.22-1
+                intel-gmmlib-22.3.3-1  intel-graphics-compiler-1:1.0.13822.6-1  intel-media-driver-23.2.3-1  intel-media-sdk-23.2.2-1  intel-opencl-clang-15.0.0-1  ipp-usb-0.9.23-1
+                iproute2-6.4.0-1  iptables-1:1.8.9-1  iputils-20221126-2  irqbalance-1.9.2-1  iso-codes-4.15.0-1  iw-5.19-2  jansson-2.14-2  jbig2dec-0.19-1  joystickwake-0.4-1.3
+                json-c-0.16-1  json-glib-1.6.6-2  kbd-2.6.1-1  kernel-modules-hook-0.1.7-2  keyutils-1.6.3-2  kmod-30-3  krb5-1.20.1-1  l-smash-2.14.5-3  lame-3.100-4  lcms2-2.15-1
+                ldb-2:2.7.2-2  ldns-1.8.3-2  less-1:633-1  lib32-aalib-1.4rc5-4  lib32-acl-2.3.1-2  lib32-alsa-lib-1.2.9-1  lib32-alsa-plugins-1.2.7.1-2  lib32-at-spi2-core-2.48.3-1
+                lib32-attr-2.5.1-1  lib32-brotli-1.0.9-12  lib32-bzip2-1.0.8-3  lib32-cairo-1.17.8-2  lib32-cdparanoia-10.2-4  lib32-clang-15.0.7-1  lib32-colord-1.4.6-1
+                lib32-curl-8.1.2-1  lib32-dbus-1.14.8-1  lib32-dbus-glib-0.112-2  lib32-duktape-2.7.0-6  lib32-e2fsprogs-1.47.0-1  lib32-expat-2.5.0-2  lib32-flac-1.4.3-1
+                lib32-fluidsynth-2.3.3-1  lib32-fontconfig-2:2.14.2-1  lib32-freeglut-3.4.0-1  lib32-freetype2-2.13.1-1  lib32-fribidi-1.0.13-2  lib32-gamemode-1.7-1
+                lib32-gcc-libs-13.1.1-1  lib32-gdk-pixbuf2-2.42.10-2  lib32-gettext-0.21.1-1  lib32-giflib-5.2.1-1  lib32-glew-2.2.0-4  lib32-glew1.10-1.10.0-5
                 lib32-glib-networking-2.76.1-1  lib32-glib2-2.76.3-1  lib32-glibc-2.37-9  lib32-glu-9.0.2-3  lib32-gmp-6.2.1-1  lib32-gnutls-3.8.0-2  lib32-gpm-1.20.7.r38.ge82d1a6-1
                 lib32-gst-plugins-base-1.22.4-1  lib32-gst-plugins-base-libs-1.22.4-1  lib32-gst-plugins-good-1.22.4-1  lib32-gstreamer-1.22.4-1  lib32-gtk2-2.24.33-2
                 lib32-gtk3-1:3.24.38-1  lib32-harfbuzz-7.3.0-2  lib32-icu-73.2-1  lib32-imlib2-1.11.1-1  lib32-keyutils-1.6.3-1  lib32-krb5-1.20.1-1  lib32-lcms2-2.15-1
@@ -259,8 +259,8 @@ Packages (1028) a52dec-0.8.0-2  aalib-1.4rc5-17  acl-2.3.1-3  adobe-source-code-
                 svt-hevc-1.5.1-2  system-config-printer-1.5.18-2  systemd-253.5-2  systemd-libs-253.5-2  systemd-sysvcompat-253.5-2  taglib-1.13.1-1  talloc-2.4.0-3  tar-1.34-2
                 tcl-8.6.13-1  tdb-1.4.8-2  terminus-font-4.49.1-5  tevent-1:0.14.1-2  texinfo-7.0.3-1  tpm2-tss-4.0.1-1  tracker3-3.5.3-2  tslib-1.22-1  ttf-carlito-20230509-1
                 ttf-dejavu-2.37+18+g9b5d1b2f-4  ttf-liberation-2.1.5-1  tumbler-4.18.1-1  twolame-0.4.0-3  tzdata-2023c-2  udisks2-2.9.4-4  unrar-1:6.2.8-1  unzip-6.0-19  upower-1.90.0-4
-                usb_modeswitch-2.6.1-3  usbmuxd-1.1.1-3  usbutils-015-3  util-linux-2.39.1-1  util-linux-libs-2.39.1-1  v4l-utils-1.24.1-2  vapour-os-1.0.0-29
-                vapour-os-desktop-libs-1.0.0-10  vapour-os-keyring-1.0.0-6  vapour-os-mirrorlist-1.0.0-1  vcdimager-2.0.1-4  vid.stab-1.1.1-1  vkd3d-proton-mingw-git-2.9.r67.gc1d24a89-1
+                usb_modeswitch-2.6.1-3  usbmuxd-1.1.1-3  usbutils-015-3  util-linux-2.39.1-1  util-linux-libs-2.39.1-1  v4l-utils-1.24.1-2  vapour-os-1.0.0-31
+                vapour-os-desktop-libs-1.0.0-12  vapour-os-keyring-1.0.0-6  vapour-os-mirrorlist-1.0.0-1  vcdimager-2.0.1-4  vid.stab-1.1.1-1  vkd3d-proton-mingw-git-2.9.r67.gc1d24a89-1
                 vmaf-2.3.1-1  volume_key-0.3.12-8  vte-common-0.72.2-2  vte3-0.72.2-2  vulkan-icd-loader-1.3.255-1  vulkan-intel-23.1.2-1  vulkan-mesa-layers-23.1.2-1
                 vulkan-radeon-23.1.2-1  wavpack-5.6.0-1  wayland-1.22.0-1  wayland-protocols-1.31-1  webrtc-audio-processing-0.3.1-3  which-2.21-6  wildmidi-0.4.5-2
                 wine-ge-custom-1:GE.Proton8.8-2  wine-gecko-2.47.4-1  wine-mono-8.0.0-1  wine-nine-0.8-4  winetricks-20220411-1  wireless-regdb-2023.05.03-1  wpa_supplicant-2:2.10-8
@@ -272,25 +272,23 @@ Packages (1028) a52dec-0.8.0-2  aalib-1.4rc5-17  acl-2.3.1-3  adobe-source-code-
                 xorg-server-21.1.8-1  xorg-server-common-21.1.8-1  xorg-setxkbmap-1.3.4-1  xorg-xauth-1.1.2-1  xorg-xinit-1.4.2-1  xorg-xkbcomp-1.4.6-1  xorg-xmessage-1.0.6-1
                 xorg-xmodmap-1.0.11-1  xorg-xprop-1.2.6-1  xorg-xrandr-1.5.2-1  xorg-xrdb-1.2.2-1  xorg-xset-1.2.5-1  xorgproto-2023.2-1  xvidcore-1.3.7-2  xxhash-0.8.1-4  xz-5.4.3-1
                 yay-12.1.0-1  zbar-0.23.90-3  zenity-3.44.1-1  zeromq-4.3.4-4  zimg-3.0.4-1  zlib-1:1.2.13-3  zstd-1.5.5-2  zvbi-0.2.41-1  zxing-cpp-2.0.0-2  amd-ucode-20230625.ee91452d-3
-                edk2-shell-202305-1  espeakup-0.90-2  firefox-i18n-en-gb-114.0.2-1  firefox-i18n-en-us-114.0.2-1  gparted-1.5.0-1  grub-2:2.06.r566.g857af0e17-1  intel-ucode-20230613-1
+                edk2-shell-202305-1  espeakup-0.90-2  firefox-i18n-en-gb-115.0-1  firefox-i18n-en-us-115.0-1  gparted-1.5.0-1  grub-2:2.06.r566.g857af0e17-1  intel-ucode-20230613-1
                 lib32-pipewire-jack-1:0.3.72-1  linux-6.4.1.arch2-1  linux-headers-6.4.1.arch2-1  memtest86+-6.20-1  memtest86+-efi-6.20-1  mkinitcpio-archiso-68-1  mousepad-0.6.1-2
                 nano-7.2-1  onlyoffice-bin-7.4.0-1  pipewire-alsa-1:0.3.72-1  pipewire-jack-1:0.3.72-1  pipewire-pulse-1:0.3.72-1  pv-1.6.20-2  ristretto-0.13.1-1  squashfs-tools-4.6.1-1
                 syslinux-6.04.pre2.r11.gbf6db5b4-3  testdisk-7.1-5  thunar-4.18.6-1  thunar-archive-plugin-0.5.1-1  thunar-media-tags-plugin-0.4.0-1  thunar-volman-4.18.0-1  udftools-2.3-1
-                vapour-os-amdgpu-1.0.0-1  vapour-os-gaming-1.0.0-5  vapour-os-i915-gen10-1.0.0-7  vapour-os-i915-gen3-1.0.0-2  vapour-os-liveusb-installer-1.0.0-16
+                vapour-os-amdgpu-1.0.0-1  vapour-os-gaming-1.0.0-5  vapour-os-i915-gen10-1.0.0-7  vapour-os-i915-gen3-1.0.0-2  vapour-os-liveusb-installer-1.0.0-17
                 vapour-os-nvidia-1.0.0-4  vapour-os-xfce-1.0.0-6  vlc-3.0.18-12  wireplumber-0.4.14-1  xarchiver-0.5.4.21-1  xdg-desktop-portal-gtk-1.14.1-1  xfce4-terminal-1.0.4-1
 
-Total Download Size:    170.09 MiB
-Total Installed Size:  9605.37 MiB
+Total Download Size:      1.24 MiB
+Total Installed Size:  9629.57 MiB
 
 :: Proceed with installation? [Y/n]
 :: Retrieving packages...
- vapour-os-xfce-1.0.0-6-any                                                            13.0 KiB  57.2 KiB/s 00:00 [####################################################################] 100%
- vkd3d-proton-mingw-git-2.9.r67.gc1d24a89-1-x86_64                                      2.3 MiB  1201 KiB/s 00:02 [####################################################################] 100%
- blueman-2.3.5-2-x86_64                                                              1427.7 KiB   172 KiB/s 00:08 [####################################################################] 100%
- vlc-3.0.18-12-x86_64                                                                  11.6 MiB   403 KiB/s 00:29 [####################################################################] 100%
- linux-6.4.1.arch2-1-x86_64                                                           125.4 MiB  2020 KiB/s 01:04 [####################################################################] 100%
- linux-headers-6.4.1.arch2-1-x86_64                                                    29.5 MiB   467 KiB/s 01:05 [####################################################################] 100%
- Total (6/6)                                                                          170.1 MiB  2.63 MiB/s 01:05 [####################################################################] 100%
+ vapour-os-liveusb-installer-1.0.0-17-x86_64                                           24.1 KiB   114 KiB/s 00:00 [####################################################################] 100%
+ vapour-os-desktop-libs-1.0.0-12-x86_64                                                13.4 KiB  62.6 KiB/s 00:00 [####################################################################] 100%
+ firefox-i18n-en-us-115.0-1-any                                                       449.5 KiB  1545 KiB/s 00:00 [####################################################################] 100%
+ vapour-os-1.0.0-31-x86_64                                                            778.9 KiB  1362 KiB/s 00:01 [####################################################################] 100%
+ Total (4/4)                                                                         1265.9 KiB  1640 KiB/s 00:01 [####################################################################] 100%
 (1028/1028) checking keys in keyring                                                                              [####################################################################] 100%
 (1028/1028) checking package integrity                                                                            [####################################################################] 100%
 (1028/1028) loading package files                                                                                 [####################################################################] 100%
@@ -524,8 +522,8 @@ Optional dependencies for harfbuzz
     harfbuzz-utils: utilities
 ( 109/1028) installing freetype2                                                                                  [####################################################################] 100%
 ( 110/1028) installing fontconfig                                                                                 [####################################################################] 100%
-/tmp/alpm_NCisLO/.INSTALL: line 2: vercmp: command not found
-/tmp/alpm_NCisLO/.INSTALL: line 2: ((: < 0 : syntax error: operand expected (error token is "< 0 ")
+/tmp/alpm_jKLHA8/.INSTALL: line 2: /usr/local/sbin/vercmp: Permission denied
+/tmp/alpm_jKLHA8/.INSTALL: line 2: ((: < 0 : syntax error: operand expected (error token is "< 0 ")
 Rebuilding fontconfig cache...
 ( 111/1028) installing fribidi                                                                                    [####################################################################] 100%
 ( 112/1028) installing nettle                                                                                     [####################################################################] 100%
@@ -787,8 +785,8 @@ Optional dependencies for ffmpeg
 ( 245/1028) installing adobe-source-code-pro-fonts                                                                [####################################################################] 100%
 ( 246/1028) installing cantarell-fonts                                                                            [####################################################################] 100%
 ( 247/1028) installing dconf                                                                                      [####################################################################] 100%
-/tmp/alpm_MIlwPQ/.INSTALL: line 6: vercmp: command not found
-/tmp/alpm_MIlwPQ/.INSTALL: line 6: ((: < 0 : syntax error: operand expected (error token is "< 0 ")
+/tmp/alpm_WJ4DQv/.INSTALL: line 6: /usr/local/sbin/vercmp: Permission denied
+/tmp/alpm_WJ4DQv/.INSTALL: line 6: ((: < 0 : syntax error: operand expected (error token is "< 0 ")
 ( 248/1028) installing gsettings-desktop-schemas                                                                  [####################################################################] 100%
 ( 249/1028) installing libxi                                                                                      [####################################################################] 100%
 ( 250/1028) installing libxtst                                                                                    [####################################################################] 100%
@@ -1492,13 +1490,14 @@ Optional dependencies for texinfo
     perl-archive-zip: EPUB file output via texi2any
 ( 663/1028) installing which                                                                                      [####################################################################] 100%
 ( 664/1028) installing base-devel                                                                                 [####################################################################] 100%
-( 665/1028) installing libical                                                                                    [####################################################################] 100%
-( 666/1028) installing bluez                                                                                      [####################################################################] 100%
-( 667/1028) installing poppler                                                                                    [####################################################################] 100%
+( 665/1028) installing bash-completion                                                                            [####################################################################] 100%
+( 666/1028) installing libical                                                                                    [####################################################################] 100%
+( 667/1028) installing bluez                                                                                      [####################################################################] 100%
+( 668/1028) installing poppler                                                                                    [####################################################################] 100%
 Optional dependencies for poppler
     poppler-data: highly recommended encoding data to display PDF documents with certain encodings and characters [pending]
-( 668/1028) installing qpdf                                                                                       [####################################################################] 100%
-( 669/1028) installing cups-filters                                                                               [####################################################################] 100%
+( 669/1028) installing qpdf                                                                                       [####################################################################] 100%
+( 670/1028) installing cups-filters                                                                               [####################################################################] 100%
 Optional dependencies for cups-filters
     ghostscript: for non-PostScript printers to print with CUPS to convert PostScript to raster images [pending]
     foomatic-db: drivers use Ghostscript to convert PostScript to a printable form directly
@@ -1508,8 +1507,8 @@ Optional dependencies for cups-filters
     liblouis: for Braille embosser support
     antiword: to convert MS Word documents for Braille embosser support
     docx2txt: to convert Microsoft OOXML text from DOCX files for Braille embosser support
-( 670/1028) installing libpaper                                                                                   [####################################################################] 100%
-( 671/1028) installing cups                                                                                       [####################################################################] 100%
+( 671/1028) installing libpaper                                                                                   [####################################################################] 100%
+( 672/1028) installing cups                                                                                       [####################################################################] 100%
 >> If you use an HTTPS connection to CUPS, the first time you access
 >> the interface it may take a very long time before the site comes up.
 >> This is because the first request triggers the generation of the CUPS
@@ -1520,15 +1519,15 @@ Optional dependencies for cups
     xdg-utils: xdg .desktop file support [pending]
     colord: for ICC color profile support [pending]
     logrotate: for logfile rotation support
-( 672/1028) installing bluez-cups                                                                                 [####################################################################] 100%
-( 673/1028) installing jbig2dec                                                                                   [####################################################################] 100%
-( 674/1028) installing ijs                                                                                        [####################################################################] 100%
-( 675/1028) installing libidn                                                                                     [####################################################################] 100%
-( 676/1028) installing poppler-data                                                                               [####################################################################] 100%
-( 677/1028) installing ghostscript                                                                                [####################################################################] 100%
+( 673/1028) installing bluez-cups                                                                                 [####################################################################] 100%
+( 674/1028) installing jbig2dec                                                                                   [####################################################################] 100%
+( 675/1028) installing ijs                                                                                        [####################################################################] 100%
+( 676/1028) installing libidn                                                                                     [####################################################################] 100%
+( 677/1028) installing poppler-data                                                                               [####################################################################] 100%
+( 678/1028) installing ghostscript                                                                                [####################################################################] 100%
 Optional dependencies for ghostscript
     gtk3: needed for gsx [installed]
-( 678/1028) installing cups-pdf                                                                                   [####################################################################] 100%
+( 679/1028) installing cups-pdf                                                                                   [####################################################################] 100%
 -------------------------------------------------
 To use cups-pdf, restart cups and visit the cups
 web interface at http://localhost:631/
@@ -1541,111 +1540,111 @@ Note that cups-pdf has a configuration
 file in /etc/cups. The default location for
 pdf output is /var/spool/cups-pdf/$username.
 -------------------------------------------------
-( 679/1028) installing cups-pk-helper                                                                             [####################################################################] 100%
-( 680/1028) installing exfatprogs                                                                                 [####################################################################] 100%
-( 681/1028) installing perl-capture-tiny                                                                          [####################################################################] 100%
-( 682/1028) installing perl-ffi-checklib                                                                          [####################################################################] 100%
-( 683/1028) installing perl-file-chdir                                                                            [####################################################################] 100%
-( 684/1028) installing perl-file-which                                                                            [####################################################################] 100%
-( 685/1028) installing perl-path-tiny                                                                             [####################################################################] 100%
-( 686/1028) installing perl-alien-build                                                                           [####################################################################] 100%
-( 687/1028) installing perl-alien-libxml2                                                                         [####################################################################] 100%
-( 688/1028) installing perl-xml-sax-base                                                                          [####################################################################] 100%
-( 689/1028) installing perl-xml-namespacesupport                                                                  [####################################################################] 100%
-( 690/1028) installing perl-xml-sax                                                                               [####################################################################] 100%
-( 691/1028) installing perl-xml-libxml                                                                            [####################################################################] 100%
+( 680/1028) installing cups-pk-helper                                                                             [####################################################################] 100%
+( 681/1028) installing exfatprogs                                                                                 [####################################################################] 100%
+( 682/1028) installing perl-capture-tiny                                                                          [####################################################################] 100%
+( 683/1028) installing perl-ffi-checklib                                                                          [####################################################################] 100%
+( 684/1028) installing perl-file-chdir                                                                            [####################################################################] 100%
+( 685/1028) installing perl-file-which                                                                            [####################################################################] 100%
+( 686/1028) installing perl-path-tiny                                                                             [####################################################################] 100%
+( 687/1028) installing perl-alien-build                                                                           [####################################################################] 100%
+( 688/1028) installing perl-alien-libxml2                                                                         [####################################################################] 100%
+( 689/1028) installing perl-xml-sax-base                                                                          [####################################################################] 100%
+( 690/1028) installing perl-xml-namespacesupport                                                                  [####################################################################] 100%
+( 691/1028) installing perl-xml-sax                                                                               [####################################################################] 100%
+( 692/1028) installing perl-xml-libxml                                                                            [####################################################################] 100%
 :: Installing SAX XML Parsers
-( 692/1028) installing perl-clone                                                                                 [####################################################################] 100%
-( 693/1028) installing perl-dbi                                                                                   [####################################################################] 100%
-( 694/1028) installing foomatic-db-engine                                                                         [####################################################################] 100%
+( 693/1028) installing perl-clone                                                                                 [####################################################################] 100%
+( 694/1028) installing perl-dbi                                                                                   [####################################################################] 100%
+( 695/1028) installing foomatic-db-engine                                                                         [####################################################################] 100%
 Optional dependencies for foomatic-db-engine
     foomatic-db: linuxprinting.org xml files database to create ppd driver files
-( 695/1028) installing foomatic-db-gutenprint-ppds                                                                [####################################################################] 100%
+( 696/1028) installing foomatic-db-gutenprint-ppds                                                                [####################################################################] 100%
 Optional dependencies for foomatic-db-gutenprint-ppds
     cups: to use cups printer spooler(recommended) [installed]
-( 696/1028) installing foomatic-db-nonfree-ppds                                                                   [####################################################################] 100%
-( 697/1028) installing foomatic-db-ppds                                                                           [####################################################################] 100%
-( 698/1028) installing dnssec-anchors                                                                             [####################################################################] 100%
-( 699/1028) installing ldns                                                                                       [####################################################################] 100%
+( 697/1028) installing foomatic-db-nonfree-ppds                                                                   [####################################################################] 100%
+( 698/1028) installing foomatic-db-ppds                                                                           [####################################################################] 100%
+( 699/1028) installing dnssec-anchors                                                                             [####################################################################] 100%
+( 700/1028) installing ldns                                                                                       [####################################################################] 100%
 Optional dependencies for ldns
     libpcap: ldns-dpa tool [installed]
-( 700/1028) installing openssh                                                                                    [####################################################################] 100%
+( 701/1028) installing openssh                                                                                    [####################################################################] 100%
 Optional dependencies for openssh
     libfido2: FIDO/U2F support
     x11-ssh-askpass: input passphrase in X
     xorg-xauth: X11 forwarding [pending]
-( 701/1028) installing gcr                                                                                        [####################################################################] 100%
-( 702/1028) installing gcr-4                                                                                      [####################################################################] 100%
+( 702/1028) installing gcr                                                                                        [####################################################################] 100%
+( 703/1028) installing gcr-4                                                                                      [####################################################################] 100%
 Created symlink /etc/systemd/user/sockets.target.wants/gcr-ssh-agent.socket → /usr/lib/systemd/user/gcr-ssh-agent.socket.
 Optional dependencies for gcr-4
     gtk4: gcr-viewer-gtk4
-( 703/1028) installing gnome-keyring                                                                              [####################################################################] 100%
+( 704/1028) installing gnome-keyring                                                                              [####################################################################] 100%
 Created symlink /etc/systemd/user/sockets.target.wants/gnome-keyring-daemon.socket → /usr/lib/systemd/user/gnome-keyring-daemon.socket.
-( 704/1028) installing gsfonts                                                                                    [####################################################################] 100%
-( 705/1028) installing gst-libav                                                                                  [####################################################################] 100%
-( 706/1028) installing gst-plugin-pipewire                                                                        [####################################################################] 100%
-( 707/1028) installing graphene                                                                                   [####################################################################] 100%
-( 708/1028) installing gst-plugins-base                                                                           [####################################################################] 100%
-( 709/1028) installing libxkbcommon-x11                                                                           [####################################################################] 100%
-( 710/1028) installing gssdp                                                                                      [####################################################################] 100%
+( 705/1028) installing gsfonts                                                                                    [####################################################################] 100%
+( 706/1028) installing gst-libav                                                                                  [####################################################################] 100%
+( 707/1028) installing gst-plugin-pipewire                                                                        [####################################################################] 100%
+( 708/1028) installing graphene                                                                                   [####################################################################] 100%
+( 709/1028) installing gst-plugins-base                                                                           [####################################################################] 100%
+( 710/1028) installing libxkbcommon-x11                                                                           [####################################################################] 100%
+( 711/1028) installing gssdp                                                                                      [####################################################################] 100%
 Optional dependencies for gssdp
     gtk4: gssdp-device-sniffer
-( 711/1028) installing gupnp                                                                                      [####################################################################] 100%
+( 712/1028) installing gupnp                                                                                      [####################################################################] 100%
 Optional dependencies for gupnp
     python: gupnp-binding-tool [installed]
-( 712/1028) installing gupnp-igd                                                                                  [####################################################################] 100%
-( 713/1028) installing libnice                                                                                    [####################################################################] 100%
+( 713/1028) installing gupnp-igd                                                                                  [####################################################################] 100%
+( 714/1028) installing libnice                                                                                    [####################################################################] 100%
 Optional dependencies for libnice
     gstreamer: "nice" GStreamer plugin [installed]
-( 714/1028) installing wayland-protocols                                                                          [####################################################################] 100%
-( 715/1028) installing gst-plugins-bad-libs                                                                       [####################################################################] 100%
-( 716/1028) installing chromaprint                                                                                [####################################################################] 100%
-( 717/1028) installing libdc1394                                                                                  [####################################################################] 100%
-( 718/1028) installing libde265                                                                                   [####################################################################] 100%
+( 715/1028) installing wayland-protocols                                                                          [####################################################################] 100%
+( 716/1028) installing gst-plugins-bad-libs                                                                       [####################################################################] 100%
+( 717/1028) installing chromaprint                                                                                [####################################################################] 100%
+( 718/1028) installing libdc1394                                                                                  [####################################################################] 100%
+( 719/1028) installing libde265                                                                                   [####################################################################] 100%
 Optional dependencies for libde265
     ffmpeg: for sherlock265 [installed]
     qt5-base: for sherlock265 [pending]
     sdl: dec265 YUV overlay output [installed]
-( 719/1028) installing libdca                                                                                     [####################################################################] 100%
-( 720/1028) installing faac                                                                                       [####################################################################] 100%
-( 721/1028) installing faad2                                                                                      [####################################################################] 100%
-( 722/1028) installing libgme                                                                                     [####################################################################] 100%
-( 723/1028) installing libkate                                                                                    [####################################################################] 100%
+( 720/1028) installing libdca                                                                                     [####################################################################] 100%
+( 721/1028) installing faac                                                                                       [####################################################################] 100%
+( 722/1028) installing faad2                                                                                      [####################################################################] 100%
+( 723/1028) installing libgme                                                                                     [####################################################################] 100%
+( 724/1028) installing libkate                                                                                    [####################################################################] 100%
 Optional dependencies for libkate
     libkate-docs: for developer documentation
     libogg: for katalyzer, katedec and kateenc [installed]
     libpng: for kateenc [installed]
-( 724/1028) installing raptor                                                                                     [####################################################################] 100%
-( 725/1028) installing liblrdf                                                                                    [####################################################################] 100%
-( 726/1028) installing mjpegtools                                                                                 [####################################################################] 100%
-( 727/1028) installing libmpcdec                                                                                  [####################################################################] 100%
-( 728/1028) installing neon                                                                                       [####################################################################] 100%
-( 729/1028) installing libdvdnav                                                                                  [####################################################################] 100%
-( 730/1028) installing rtmpdump                                                                                   [####################################################################] 100%
-( 731/1028) installing libltc                                                                                     [####################################################################] 100%
-( 732/1028) installing soundtouch                                                                                 [####################################################################] 100%
-( 733/1028) installing spandsp                                                                                    [####################################################################] 100%
-( 734/1028) installing libsrtp                                                                                    [####################################################################] 100%
-( 735/1028) installing zvbi                                                                                       [####################################################################] 100%
-( 736/1028) installing wildmidi                                                                                   [####################################################################] 100%
-( 737/1028) installing liblqr                                                                                     [####################################################################] 100%
-( 738/1028) installing libraqm                                                                                    [####################################################################] 100%
-( 739/1028) installing hwloc                                                                                      [####################################################################] 100%
+( 725/1028) installing raptor                                                                                     [####################################################################] 100%
+( 726/1028) installing liblrdf                                                                                    [####################################################################] 100%
+( 727/1028) installing mjpegtools                                                                                 [####################################################################] 100%
+( 728/1028) installing libmpcdec                                                                                  [####################################################################] 100%
+( 729/1028) installing neon                                                                                       [####################################################################] 100%
+( 730/1028) installing libdvdnav                                                                                  [####################################################################] 100%
+( 731/1028) installing rtmpdump                                                                                   [####################################################################] 100%
+( 732/1028) installing libltc                                                                                     [####################################################################] 100%
+( 733/1028) installing soundtouch                                                                                 [####################################################################] 100%
+( 734/1028) installing spandsp                                                                                    [####################################################################] 100%
+( 735/1028) installing libsrtp                                                                                    [####################################################################] 100%
+( 736/1028) installing zvbi                                                                                       [####################################################################] 100%
+( 737/1028) installing wildmidi                                                                                   [####################################################################] 100%
+( 738/1028) installing liblqr                                                                                     [####################################################################] 100%
+( 739/1028) installing libraqm                                                                                    [####################################################################] 100%
+( 740/1028) installing hwloc                                                                                      [####################################################################] 100%
 Optional dependencies for hwloc
     cairo [installed]
     libxml2 [installed]
     pciutils [pending]
     libx11 [installed]
-( 740/1028) installing openpmix                                                                                   [####################################################################] 100%
+( 741/1028) installing openpmix                                                                                   [####################################################################] 100%
 Optional dependencies for openpmix
     openpmix-docs: for documentation
-( 741/1028) installing openmpi                                                                                    [####################################################################] 100%
+( 742/1028) installing openmpi                                                                                    [####################################################################] 100%
 Optional dependencies for openmpi
     cuda: cuda support
     gcc-fortran: fortran support
     perl: for aggregate_profile.pl and profile2mat.pl [installed]
-( 742/1028) installing fftw                                                                                       [####################################################################] 100%
-( 743/1028) installing imagemagick                                                                                [####################################################################] 100%
+( 743/1028) installing fftw                                                                                       [####################################################################] 100%
+( 744/1028) installing imagemagick                                                                                [####################################################################] 100%
 Optional dependencies for imagemagick
     ghostscript: PS/PDF support [installed]
     libheif: HEIF support [pending]
@@ -1661,18 +1660,18 @@ Optional dependencies for imagemagick
     openjpeg2: JPEG2000 support [installed]
     djvulibre: DJVU support
     pango: Text rendering [installed]
-( 744/1028) installing zbar                                                                                       [####################################################################] 100%
+( 745/1028) installing zbar                                                                                       [####################################################################] 100%
 Optional dependencies for zbar
     gtk3: for zbar-gtk [installed]
     qt5-x11extras: for zbar-qt [pending]
     python: for zbar python bindings [installed]
-( 745/1028) installing qrencode                                                                                   [####################################################################] 100%
-( 746/1028) installing libavtp                                                                                    [####################################################################] 100%
-( 747/1028) installing libmicrodns                                                                                [####################################################################] 100%
-( 748/1028) installing svt-hevc                                                                                   [####################################################################] 100%
-( 749/1028) installing zxing-cpp                                                                                  [####################################################################] 100%
-( 750/1028) installing gst-plugins-bad                                                                            [####################################################################] 100%
-( 751/1028) installing gutenprint                                                                                 [####################################################################] 100%
+( 746/1028) installing qrencode                                                                                   [####################################################################] 100%
+( 747/1028) installing libavtp                                                                                    [####################################################################] 100%
+( 748/1028) installing libmicrodns                                                                                [####################################################################] 100%
+( 749/1028) installing svt-hevc                                                                                   [####################################################################] 100%
+( 750/1028) installing zxing-cpp                                                                                  [####################################################################] 100%
+( 751/1028) installing gst-plugins-bad                                                                            [####################################################################] 100%
+( 752/1028) installing gutenprint                                                                                 [####################################################################] 100%
 >>please run /usr/bin/cups-genppdupdate
 >>and restart cups daemon
 Optional dependencies for gutenprint
@@ -1680,91 +1679,91 @@ Optional dependencies for gutenprint
     libusb: required for drivers that depend on gutenprint52usb backend [installed]
     foomatic-db-gutenprint-ppds: prebuilt ppd files [installed]
     perl: to run cups-genppdupdate [installed]
-( 752/1028) installing ipp-usb                                                                                    [####################################################################] 100%
-( 753/1028) installing libdvdcss                                                                                  [####################################################################] 100%
-( 754/1028) installing libgnome-keyring                                                                           [####################################################################] 100%
+( 753/1028) installing ipp-usb                                                                                    [####################################################################] 100%
+( 754/1028) installing libdvdcss                                                                                  [####################################################################] 100%
+( 755/1028) installing libgnome-keyring                                                                           [####################################################################] 100%
 Optional dependencies for libgnome-keyring
     org.freedesktop.secrets: secret storage backend [installed]
-( 755/1028) installing libtiger                                                                                   [####################################################################] 100%
-( 756/1028) installing libvdpau-va-gl                                                                             [####################################################################] 100%
-( 757/1028) installing ppp                                                                                        [####################################################################] 100%
-( 758/1028) installing libmbim                                                                                    [####################################################################] 100%
-( 759/1028) installing libqrtr-glib                                                                               [####################################################################] 100%
-( 760/1028) installing libqmi                                                                                     [####################################################################] 100%
-( 761/1028) installing mobile-broadband-provider-info                                                             [####################################################################] 100%
-( 762/1028) installing libmm-glib                                                                                 [####################################################################] 100%
-( 763/1028) installing modemmanager                                                                               [####################################################################] 100%
+( 756/1028) installing libtiger                                                                                   [####################################################################] 100%
+( 757/1028) installing libvdpau-va-gl                                                                             [####################################################################] 100%
+( 758/1028) installing ppp                                                                                        [####################################################################] 100%
+( 759/1028) installing libmbim                                                                                    [####################################################################] 100%
+( 760/1028) installing libqrtr-glib                                                                               [####################################################################] 100%
+( 761/1028) installing libqmi                                                                                     [####################################################################] 100%
+( 762/1028) installing mobile-broadband-provider-info                                                             [####################################################################] 100%
+( 763/1028) installing libmm-glib                                                                                 [####################################################################] 100%
+( 764/1028) installing modemmanager                                                                               [####################################################################] 100%
 Optional dependencies for modemmanager
     usb_modeswitch: install if your modem shows up as a storage drive [pending]
-( 764/1028) installing p7zip                                                                                      [####################################################################] 100%
-( 765/1028) installing libuv                                                                                      [####################################################################] 100%
-( 766/1028) installing openfec                                                                                    [####################################################################] 100%
-( 767/1028) installing roc-toolkit                                                                                [####################################################################] 100%
+( 765/1028) installing p7zip                                                                                      [####################################################################] 100%
+( 766/1028) installing libuv                                                                                      [####################################################################] 100%
+( 767/1028) installing openfec                                                                                    [####################################################################] 100%
+( 768/1028) installing roc-toolkit                                                                                [####################################################################] 100%
 Optional dependencies for roc-toolkit
     libpulse: for roc-conv, roc-receive and roc-send [installed]
     sox: for roc-conv, roc-receive and roc-send
-( 768/1028) installing pipewire-roc                                                                               [####################################################################] 100%
-( 769/1028) installing pipewire-zeroconf                                                                          [####################################################################] 100%
-( 770/1028) installing plymouth                                                                                   [####################################################################] 100%
+( 769/1028) installing pipewire-roc                                                                               [####################################################################] 100%
+( 770/1028) installing pipewire-zeroconf                                                                          [####################################################################] 100%
+( 771/1028) installing plymouth                                                                                   [####################################################################] 100%
 Optional dependencies for plymouth
     gtk3: x11 renderer [installed]
-( 771/1028) installing talloc                                                                                     [####################################################################] 100%
+( 772/1028) installing talloc                                                                                     [####################################################################] 100%
 Optional dependencies for talloc
     python: for python bindings [installed]
-( 772/1028) installing libmd                                                                                      [####################################################################] 100%
-( 773/1028) installing libbsd                                                                                     [####################################################################] 100%
-( 774/1028) installing libwbclient                                                                                [####################################################################] 100%
+( 773/1028) installing libmd                                                                                      [####################################################################] 100%
+( 774/1028) installing libbsd                                                                                     [####################################################################] 100%
+( 775/1028) installing libwbclient                                                                                [####################################################################] 100%
 Optional dependencies for libwbclient
     python-dnspython: samba_dnsupdate and samba_upgradedns in AD setup
     python-markdown: for samba-tool domain schemeupgrade
     glusterfs: for vfs_glusterfs support
-( 775/1028) installing cifs-utils                                                                                 [####################################################################] 100%
+( 776/1028) installing cifs-utils                                                                                 [####################################################################] 100%
 Optional dependencies for cifs-utils
     python: for smb2-quota and smbinfo script [installed]
-( 776/1028) installing tevent                                                                                     [####################################################################] 100%
+( 777/1028) installing tevent                                                                                     [####################################################################] 100%
 Optional dependencies for tevent
     python: for python bindings [installed]
-( 777/1028) installing lmdb                                                                                       [####################################################################] 100%
-( 778/1028) installing ldb                                                                                        [####################################################################] 100%
+( 778/1028) installing lmdb                                                                                       [####################################################################] 100%
+( 779/1028) installing ldb                                                                                        [####################################################################] 100%
 Optional dependencies for ldb
     python: for python bindings [installed]
-( 779/1028) installing smbclient                                                                                  [####################################################################] 100%
+( 780/1028) installing smbclient                                                                                  [####################################################################] 100%
 Optional dependencies for smbclient
     python-dnspython: samba_dnsupdate and samba_upgradedns in AD setup
     python-markdown: for samba-tool domain schemeupgrade
     glusterfs: for vfs_glusterfs support
-( 780/1028) installing python-pysmbc                                                                              [####################################################################] 100%
-( 781/1028) installing libieee1284                                                                                [####################################################################] 100%
+( 781/1028) installing python-pysmbc                                                                              [####################################################################] 100%
+( 782/1028) installing libieee1284                                                                                [####################################################################] 100%
 Optional dependencies for libieee1284
     python: for python module [installed]
-( 782/1028) installing pciutils                                                                                   [####################################################################] 100%
+( 783/1028) installing pciutils                                                                                   [####################################################################] 100%
 Optional dependencies for pciutils
     which: for update-pciids [installed]
     grep: for update-pciids [installed]
     curl: for update-pciids [installed]
-( 783/1028) installing net-snmp                                                                                   [####################################################################] 100%
+( 784/1028) installing net-snmp                                                                                   [####################################################################] 100%
 Optional dependencies for net-snmp
     perl-term-readkey: for snmpcheck application
     perl-tk: for snmpcheck and tkmib applications
     python: for the python modules [installed]
-( 784/1028) installing libxpm                                                                                     [####################################################################] 100%
-( 785/1028) installing libheif                                                                                    [####################################################################] 100%
+( 785/1028) installing libxpm                                                                                     [####################################################################] 100%
+( 786/1028) installing libheif                                                                                    [####################################################################] 100%
 Optional dependencies for libheif
     libjpeg: for heif-convert and heif-enc [installed]
     libpng: for heif-convert and heif-enc [installed]
     svt-av1: svt-av1 encoder [installed]
     rav1e: rav1e encoder [installed]
-( 786/1028) installing gd                                                                                         [####################################################################] 100%
+( 787/1028) installing gd                                                                                         [####################################################################] 100%
 Optional dependencies for gd
     perl: bdftogd script [installed]
-( 787/1028) installing libgphoto2                                                                                 [####################################################################] 100%
-( 788/1028) installing poppler-glib                                                                               [####################################################################] 100%
-( 789/1028) installing sane                                                                                       [####################################################################] 100%
-( 790/1028) installing sane-airscan                                                                               [####################################################################] 100%
+( 788/1028) installing libgphoto2                                                                                 [####################################################################] 100%
+( 789/1028) installing poppler-glib                                                                               [####################################################################] 100%
+( 790/1028) installing sane                                                                                       [####################################################################] 100%
+( 791/1028) installing sane-airscan                                                                               [####################################################################] 100%
 Optional dependencies for sane-airscan
     ipp-usb: allows to send HTTP requests via a USB connection on devices without Ethernet or WiFi connections [installed]
-( 791/1028) installing sane-gt68xx-firmware                                                                       [####################################################################] 100%
-( 792/1028) installing splix                                                                                      [####################################################################] 100%
+( 792/1028) installing sane-gt68xx-firmware                                                                       [####################################################################] 100%
+( 793/1028) installing splix                                                                                      [####################################################################] 100%
 Installation of the color profile for color printers:
 -----------------------------------------------------
 
@@ -1776,34 +1775,33 @@ directory. Install the contents to "/usr/share/cups/profiles/$MANUFACTURER".
         Samsung color profile files are available at:
                 (Then use MANUFACTURER=samsung)
                 http://splix.ap2c.org/samsung_cms.tar.bz2
-( 793/1028) installing python-pycups                                                                              [####################################################################] 100%
-( 794/1028) installing dbus-python                                                                                [####################################################################] 100%
+( 794/1028) installing python-pycups                                                                              [####################################################################] 100%
+( 795/1028) installing dbus-python                                                                                [####################################################################] 100%
 Optional dependencies for dbus-python
     python-gobject: D-Bus services via PyGI [pending]
-( 795/1028) installing python-pycurl                                                                              [####################################################################] 100%
-( 796/1028) installing libgirepository                                                                            [####################################################################] 100%
-( 797/1028) installing gobject-introspection-runtime                                                              [####################################################################] 100%
-( 798/1028) installing python-gobject                                                                             [####################################################################] 100%
+( 796/1028) installing python-pycurl                                                                              [####################################################################] 100%
+( 797/1028) installing libgirepository                                                                            [####################################################################] 100%
+( 798/1028) installing gobject-introspection-runtime                                                              [####################################################################] 100%
+( 799/1028) installing python-gobject                                                                             [####################################################################] 100%
 Optional dependencies for python-gobject
     cairo: Cairo bindings [installed]
-( 799/1028) installing python-cairo                                                                               [####################################################################] 100%
-( 800/1028) installing system-config-printer                                                                      [####################################################################] 100%
+( 800/1028) installing python-cairo                                                                               [####################################################################] 100%
+( 801/1028) installing system-config-printer                                                                      [####################################################################] 100%
 Optional dependencies for system-config-printer
     libsecret: password management [installed]
     python-pysmbc: SMB browser support [installed]
     cups-pk-helper: PolicyKit helper to configure cups with fine-grained privileges [installed]
-( 801/1028) installing unrar                                                                                      [####################################################################] 100%
-( 802/1028) installing tcl                                                                                        [####################################################################] 100%
-( 803/1028) installing usb_modeswitch                                                                             [####################################################################] 100%
-( 804/1028) installing fmt                                                                                        [####################################################################] 100%
-( 805/1028) installing spdlog                                                                                     [####################################################################] 100%
-( 806/1028) installing nlohmann-json                                                                              [####################################################################] 100%
-( 807/1028) installing libbpf                                                                                     [####################################################################] 100%
-( 808/1028) installing ananicy-cpp                                                                                [####################################################################] 100%
+( 802/1028) installing unrar                                                                                      [####################################################################] 100%
+( 803/1028) installing tcl                                                                                        [####################################################################] 100%
+( 804/1028) installing usb_modeswitch                                                                             [####################################################################] 100%
+( 805/1028) installing fmt                                                                                        [####################################################################] 100%
+( 806/1028) installing spdlog                                                                                     [####################################################################] 100%
+( 807/1028) installing nlohmann-json                                                                              [####################################################################] 100%
+( 808/1028) installing libbpf                                                                                     [####################################################################] 100%
+( 809/1028) installing ananicy-cpp                                                                                [####################################################################] 100%
 Optional dependencies for ananicy-cpp
     ananicy-rules-git: community rules [pending]
     ananicy-rules: Rules based for ananicy-cpp
-( 809/1028) installing ananicy-rules-git                                                                          [####################################################################] 100%
 ( 810/1028) installing psmisc                                                                                     [####################################################################] 100%
 ( 811/1028) installing licenses                                                                                   [####################################################################] 100%
 ( 812/1028) installing systemd-sysvcompat                                                                         [####################################################################] 100%
@@ -1816,7 +1814,7 @@ Optional dependencies for iproute2
 ( 815/1028) installing base                                                                                       [####################################################################] 100%
 Optional dependencies for base
     linux: bare metal support [installed]
-( 816/1028) installing bash-completion                                                                            [####################################################################] 100%
+( 816/1028) installing cachyos-ananicy-rules                                                                      [####################################################################] 100%
 ( 817/1028) installing cachyos-keyring                                                                            [####################################################################] 100%
 error: config file /etc/pacman.d/cachyos-mirrorlist could not be read: No such file or directory
 error parsing '/etc/pacman.conf'
@@ -1828,7 +1826,7 @@ chmod: cannot access '/trustdb.gpg': No such file or directory
 ==> Generating pacman master key. This may take some time.
 gpg: Generating pacman keyring master key...
 gpg: directory '/root/.gnupg/openpgp-revocs.d' created
-gpg: revocation certificate stored as '/root/.gnupg/openpgp-revocs.d/84FBF8902F9A2BE68E87D4DB9743FEB6E0C880C1.rev'
+gpg: revocation certificate stored as '/root/.gnupg/openpgp-revocs.d/2DF676399453F24B5D53DF2CE5E4B29DFA89E6DC.rev'
 gpg: Done
 ==> Updating trust database...
 gpg: marginals needed: 3  completes needed: 1  trust model: pgp
@@ -2403,7 +2401,7 @@ gpg: migration succeeded
 ==> Generating pacman master key. This may take some time.
 gpg: Generating pacman keyring master key...
 gpg: directory '/etc/pacman.d/gnupg/openpgp-revocs.d' created
-gpg: revocation certificate stored as '/etc/pacman.d/gnupg/openpgp-revocs.d/0B736CFBB668C93C9B4A0EE35DF053A6EFB65D5A.rev'
+gpg: revocation certificate stored as '/etc/pacman.d/gnupg/openpgp-revocs.d/F32D0F4D9B2037E2039C69B1ABF65E2AD405D2D0.rev'
 gpg: Done
 ==> Updating trust database...
 gpg: marginals needed: 3  completes needed: 1  trust model: pgp
@@ -2451,9 +2449,9 @@ gpg: marginals needed: 3  completes needed: 1  trust model: pgp
 gpg: depth: 0  valid:   1  signed:  11  trust: 0-, 0q, 0n, 0m, 0f, 1u
 gpg: depth: 1  valid:  11  signed:  95  trust: 0-, 0q, 0n, 11m, 0f, 0u
 gpg: depth: 2  valid:  73  signed:  27  trust: 73-, 0q, 0n, 0m, 0f, 0u
-gpg: next trustdb check due at 2023-08-02
+gpg: next trustdb check due at 2023-08-10
 ==> Updating trust database...
-gpg: next trustdb check due at 2023-08-02
+gpg: next trustdb check due at 2023-08-10
 Generating locales...
   aa_DJ.UTF-8... done
   aa_ER.UTF-8... done
@@ -2786,14 +2784,14 @@ Created symlink /etc/systemd/system/network-online.target.wants/NetworkManager-w
 Created symlink /etc/systemd/system/sockets.target.wants/avahi-daemon.socket → /usr/lib/systemd/system/avahi-daemon.socket.
 System has not been booted with systemd as init system (PID 1). Can't operate.
 Failed to connect to bus: Host is down
-Created Owner UUID 775cd7a3-ed79-4240-8ced-4ebf5f03d9e0
+Created Owner UUID ea4a63a2-274d-4150-9664-5b8034a74687
 Creating secure boot keys...✓
 Secure boot keys created!
 Generating EFI bundles....
 ( 4/44) Restoring Linux kernel modules...
 ++ uname -r
-+ KVER=6.4.1-zen1-1-zen
-+ test -e /usr/lib/modules/backup/6.4.1-zen1-1-zen
++ KVER=6.4.1-zen2-1-zen
++ test -e /usr/lib/modules/backup/6.4.1-zen2-1-zen
 + rm -rf /usr/lib/modules/backup
 ( 5/44) Creating system user accounts...
 Creating group 'adbusers' with GID 974.
@@ -2928,35 +2926,35 @@ mkfs.fat 4.2 (2021-01-31)
 [mkarchiso] INFO: Creating SquashFS image, this may take some time...
 Parallel mksquashfs: Using 12 processors
 Creating 4.0 filesystem on /tmp/vapour-os-isobuild-tmp/iso/vapour-os/x86_64/airootfs.sfs, block size 1048576.
-[====================================================================================================================================================================-  ] 158438/159455  99%
+[====================================================================================================================================================================|  ] 158494/159511  99%
 Unrecognised xattr prefix system.posix_acl_default
 Unrecognised xattr prefix system.posix_acl_access
 Unrecognised xattr prefix system.posix_acl_default
 Unrecognised xattr prefix system.posix_acl_access
 Unrecognised xattr prefix system.posix_acl_default
-[======================================================================================================================================================================/] 159455/159455 100%
+[======================================================================================================================================================================-] 159511/159511 100%
 
 Exportable Squashfs 4.0 filesystem, xz compressed, data block size 1048576
         compressed data, compressed metadata, compressed fragments,
         compressed xattrs, compressed ids
         duplicates are removed
-Filesystem size 2846316.06 Kbytes (2779.61 Mbytes)
-        27.94% of uncompressed filesystem size (10186451.37 Kbytes)
-Inode table size 1318224 bytes (1287.33 Kbytes)
-        20.59% of uncompressed inode table size (6403342 bytes)
-Directory table size 1739530 bytes (1698.76 Kbytes)
-        35.01% of uncompressed directory table size (4968602 bytes)
+Filesystem size 2846754.36 Kbytes (2780.03 Mbytes)
+        27.88% of uncompressed filesystem size (10211239.90 Kbytes)
+Inode table size 1318148 bytes (1287.25 Kbytes)
+        20.58% of uncompressed inode table size (6403858 bytes)
+Directory table size 1739190 bytes (1698.43 Kbytes)
+        35.00% of uncompressed directory table size (4968551 bytes)
 Xattr table size 110 bytes (0.11 Kbytes)
         55.00% of uncompressed xattr table size (200 bytes)
 Number of duplicate files found 23110
-Number of inodes 189872
-Number of files 162326
+Number of inodes 189885
+Number of files 162358
 Number of fragments 3855
 Number of symbolic links 14801
 Number of device nodes 0
 Number of fifo nodes 0
 Number of socket nodes 8
-Number of directories 12737
+Number of directories 12718
 Number of hard-links 2697
 Number of ids (unique uids + gids) 14
 Number of uids 6
@@ -2986,20 +2984,20 @@ Number of gids 14
 [mkarchiso] INFO: Creating ISO image...
 xorriso 1.5.6 : RockRidge filesystem manipulator, libburnia project.
 
-xorriso : NOTE : Environment variable SOURCE_DATE_EPOCH encountered with value 1688480953
+xorriso : NOTE : Environment variable SOURCE_DATE_EPOCH encountered with value 1688519085
 Drive current: -outdev 'stdio:/home/alex4nder/Documents/Code/vapourepo/vapour-os-archiso/out/vapour-os-1.0.0-1-x86_64.iso'
 Media current: stdio file, overwriteable
 Media status : is blank
-Media summary: 0 sessions, 0 data blocks, 0 data,  188g free
+Media summary: 0 sessions, 0 data blocks, 0 data,  187g free
 Added to ISO image: directory '/'='/tmp/vapour-os-isobuild-tmp/iso'
 xorriso : UPDATE :     103 files added in 1 seconds
 xorriso : UPDATE :     103 files added in 1 seconds
 xorriso : NOTE : Copying to System Area: 432 bytes from file '/tmp/vapour-os-isobuild-tmp/iso/boot/syslinux/isohdpfx.bin'
 libisofs: NOTE : Automatically adjusted MBR geometry to 1020/180/32
-libisofs: NOTE : Aligned image size to cylinder size by 626 blocks
-xorriso : UPDATE :  4.08% done
-xorriso : UPDATE :  33.29% done
-xorriso : UPDATE :  72.14% done
+libisofs: NOTE : Aligned image size to cylinder size by 408 blocks
+xorriso : UPDATE :  4.34% done
+xorriso : UPDATE :  42.16% done
+xorriso : UPDATE :  88.42% done
 ISO image produced: 1476646 sectors
 Written to medium : 1476646 sectors at LBA 0
 Writing to 'stdio:/home/alex4nder/Documents/Code/vapourepo/vapour-os-archiso/out/vapour-os-1.0.0-1-x86_64.iso' completed successfully.

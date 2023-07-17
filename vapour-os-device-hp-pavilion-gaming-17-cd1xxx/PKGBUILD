@@ -8,6 +8,7 @@ url='https://github.com/dankcuddlybear/Vapour-OS'
 #install=vapour-os-device-hp-pavilion-gaming-17cd1013na.install
 depends=('hdapsd'
 	'intel-ucode'
+	'vapour-os-desktop-libs'
 	'vapour-os-gaming'
 	'vapour-os-i915-gen10'
 	'vapour-os-nvidia'

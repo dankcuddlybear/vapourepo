@@ -1,0 +1,10 @@
+[MODERN]
+A modern flat theme with a material design,
+Sounds:
+https://github.com/rtlewis88/rtl88-Themes/tree/Enchanted-Complete-System-Sounds
+
+[SKEUMORPH]
+An early 2000s-like skeumorphic design, with highly realistic textures and icons.
+
+[RETRO]
+A 90s style retro theme.

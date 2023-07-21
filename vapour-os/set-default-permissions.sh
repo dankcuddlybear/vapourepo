@@ -14,11 +14,12 @@ SetPermissions() {
 		fi
 	done
 }
-if [ -z "$1" ]; then echo "[ERROR] No directory sepcified"; exit 1
+if [ -z "$1" ]; then echo "[ERROR] No path sepcified"; exit 1
 else
-	echo "Setting permissions for files in directory $1"
-	cd "$1"
-	SetPermissions "$1"
+	echo "Setting recursive permissions for $1"
+	if [ -f "$1" ]; then chmod 644 "$1"
+	elif [ -d "$1" ]; then cd "$1"; SetPermissions "$1"
+	else echo "[ERROR] Path does not exist"; exit 1; fi
 	chmod +x "$SCRIPT_DIR/$(basename $0)"
-	echo "Finished setting permissions for files in directory $1"
+	echo "Finished setting recursive permissions for $1"
 fi

@@ -1,7 +1,7 @@
 # Maintainer: Dankcuddlybear <dankcuddlybear@protonmail.com>
 pkgname=vapour-os
 pkgver=1.0.0
-pkgrel=31
+pkgrel=32
 pkgdesc='A modular Arch based distro optimised for energy saving and ease of use (core system)'
 arch=(x86_64)
 url='https://github.com/dankcuddlybear/vapourepo'
@@ -35,7 +35,8 @@ package() {
 	cp -r "$srcdir/../files/usr" "$pkgdir"
 	chmod 750 "$pkgdir/etc/sudoers.d"
 	chmod +x "$pkgdir/usr/bin/syscfg" \
-		"$pkgdir/usr/lib/systemd/system-sleep/00-vapour-os" \
+		"$pkgdir/usr/lib/NetworkManager/dispatcher.d/09-$pkgname-timezone" \
+		"$pkgdir/usr/lib/systemd/system-sleep/00-$pkgname" \
 		"$pkgdir/usr/lib/$pkgname/install.sh" \
 		"$pkgdir/usr/lib/$pkgname/hp-lid-fix" \
 		"$pkgdir/usr/lib/$pkgname/limine-install" \

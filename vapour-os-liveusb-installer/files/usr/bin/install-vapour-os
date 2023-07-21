@@ -202,7 +202,7 @@ SelectExtraSoftware() {
 	"  obs-studio" "Free open-source recording/streaming software" "OFF" \
 	"  vlc" "Multi-format media player/streamer and CD/VCD/DVD/BD player" "OFF" \
 	"OFFICE, TEXT" "--------" "OFF" \
-	"  nano" "Text editor for terminal" "OFF" \
+	"  nano-syntax-highlighting" "Text editor for terminal" "OFF" \
 	"  onlyoffice-bin" "Office suite combining text, spreadsheet and presentation editors" "OFF" \
 	"SYSTEM" "--------" "OFF" \
 	"  gparted" "Graphical partition manager" "OFF" \
@@ -214,7 +214,6 @@ SelectExtraSoftware() {
 	"  firefox-i18n-en-gb" "Firefox browser (with British English language pack)" "OFF" \
 	"  firefox-i18n-en-us" "Firefox browser (with American English language pack)" "OFF" \
 	"  firefox-i18n-en-ca" "Firefox browser (with Canadian English language pack)" "OFF" \
-	"    firefox-ublock-origin" "Firefox extension for blocking ads, trackers, miners, popups, malware sites and more. Fast, potent and lean." "OFF" \
 	"  icecat" "GNU version of the Firefox browser." "OFF" \
 	"  librewolf" "Community-maintained fork of Firefox focused on privacy, security and freedom." "OFF" \
 	"  midori" "Lightweight web browser" "OFF" \
@@ -281,6 +280,9 @@ SelectExtraSoftware() {
 	fi
 	if [ ! -z "$EXTRA_SOFTWARE" ]; then
 		[[ "$EXTRA_SOFTWARE" == *"chromium"* ]] && EXTRA_SOFTWARE="$EXTRA_SOFTWARE chromium-widevine"
+		([[ "$EXTRA_SOFTWARE" == *"firefox-i18n-en-gb"* ]] || \
+		[[ "$EXTRA_SOFTWARE" == *"firefox-i18n-en-us"* ]] || \
+		[[ "$EXTRA_SOFTWARE" == *"firefox-i18n-en-ca"* ]]) && EXTRA_SOFTWARE="$EXTRA_SOFTWARE firefox-ublock-origin"
 		[[ "$EXTRA_SOFTWARE" == *"gparted"* ]] && EXTRA_SOFTWARE="$EXTRA_SOFTWARE gpart mtools ntfs-3g"
 		[[ "$EXTRA_SOFTWARE" == *"vivaldi"* ]] && EXTRA_SOFTWARE="$EXTRA_SOFTWARE vivaldi-ffmpeg-codecs"
 	fi

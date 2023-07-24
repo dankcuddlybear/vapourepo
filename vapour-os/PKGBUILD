@@ -42,10 +42,4 @@ package() {
 		chmod +x *
 	done
 	cd "$CDIR"
-
-	#chmod +x "$pkgdir/usr/bin/*" \
-	#	"$pkgdir/usr/lib/NetworkManager/dispatcher.d/*" \
-	#	"$pkgdir/usr/lib/systemd/system-sleep/*" \
-	#	"$pkgdir/usr/lib/$pkgname/*" \
-	#	"$pkgdir/usr/share/libalpm/scripts/$pkgname/*"
 }

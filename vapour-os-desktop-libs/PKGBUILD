@@ -18,7 +18,7 @@ depends=('aribb24' 'aribb25' 'android-udev'
 	'libdvdcss' 'libgnome-keyring' 'libsecret' 'libtiger' 'libvdpau-va-gl'
 	'modemmanager'
 	'ocl-icd'
-	'p7zip' 'pipewire-roc' 'pipewire-zeroconf' 'plymouth' 'python-pysmbc'
+	'p7zip' 'pipewire-zeroconf' 'plymouth' 'python-pysmbc'
 	'sane-airscan' 'sane-gt68xx-firmware' 'splix' 'system-config-printer'
 	'unrar' 'usb_modeswitch'
 	'vapour-os' 'vcdimager' 'vulkan-mesa-layers'
@@ -27,4 +27,5 @@ depends=('aribb24' 'aribb25' 'android-udev'
 )
 package() {
 	cp -r "$srcdir/../files/usr" "$pkgdir"
+	"$srcdir/../set-default-permissions.sh" "$pkgdir"
 }

@@ -8,7 +8,7 @@ url='https://github.com/dankcuddlybear/Vapour-OS'
 depends=('intel-compute-runtime'
     'intel-media-sdk'
     'lib32-mesa'
-    'lib32-opencl-mesa'
+    'lib32-opencl-clover-mesa'
     'lib32-vulkan-mesa-layers'
     'vulkan-intel' 'lib32-vulkan-intel'
 )

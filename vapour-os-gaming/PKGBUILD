@@ -1,7 +1,7 @@
 # Maintainer: Dankcuddlybear <dankcuddlybear@protonmail.com>
 pkgname=vapour-os-gaming
 pkgver=1.0.0
-pkgrel=5
+pkgrel=6
 pkgdesc='Libraries for Windows/Linux games on Vapour OS'
 arch=(x86_64)
 url='https://github.com/dankcuddlybear/vapourepo'
@@ -31,7 +31,7 @@ depends=(
 	'proton-ge-custom'
 	'sdl2_ttf'
 	'vapour-os-desktop-libs' 'vkd3d-proton-mingw-git' 
-	'winetricks' 'wine-gecko' 'wine-ge-custom' 'wine-mono' 'wine-nine'
+	'winetricks' 'wine-gecko' 'wine' 'wine-mono' 'wine-nine'
 )
 package() {
 	cp -r "$srcdir/../files/etc" "$pkgdir"

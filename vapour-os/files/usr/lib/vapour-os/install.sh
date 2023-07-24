@@ -55,7 +55,7 @@ Install() {
 			cp /usr/share/$DISTRO_ID/custom-configs/mkinitcpio.conf /etc/mkinitcpio.conf
 		fi
 		# FScrypt (need to update code to read UUIDS from /etc/fstab)
-		fscrypt setup --quiet
+		fscrypt setup --all-users --quiet
 		#[ ! -z "$HOME_DEV" ] && fscrypt setup /home
 		passwd -l root # Lock root account (su/sudo still usable)
 		cp /usr/share/$DISTRO_ID/custom-configs/locale.gen /etc/locale.gen

@@ -165,7 +165,6 @@ fi
 pacstrap -C /tmp/pacman-pacstrap.conf /mnt $PACKAGES || exit 1
 mv /tmp/pacman-pacstrap.conf /mnt/etc/pacman.conf
 genfstab -U /mnt >> /mnt/etc/fstab
-echo "proc /proc proc nosuid,nodev,noexec,hidepid=2,gid=proc 0 0" >> /mnt/etc/fstab
 
 ## 4) Chroot setup
 mkdir "/mnt/etc/$DISTRO_ID/chroot-setup"

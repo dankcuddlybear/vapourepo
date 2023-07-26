@@ -59,8 +59,8 @@ case "$1" in
 		ROOT=$(cat /etc/fstab | grep -m 1 " / \|	/ \| /	\|	/	" | cut -d ' ' -f 1 | cut -d '	' -f 1)
 		[ -z "$ROOT" ] && Error "No root (/) partition specified in /etc/fstab"
 		## Configure Limine
-		cp /usr/share/$DISTRO_ID/custom-configs/limine.cfg /boot/limine/
-		KPARAMS="$(cat /usr/share/vapour-os/custom-configs/limine.cfg | grep -m 1 "\${KPARAMS}=") $ROOT"
+		cp -n /usr/share/$DISTRO_ID/boot / # Copy bootloader config files and resources
+		KPARAMS="$(cat /usr/share/$DISTRO_ID/custom-configs/limine.cfg | grep -m 1 "\${KPARAMS}=") $ROOT"
 		sed -i "s/^.*\${KPARAMS}=.*$/$KPARAMS/" /boot/limine/limine.cfg
 		sed -i "s/^.*\${KERNEL}=.*$/\${KERNEL}=$KERNEL/" /boot/limine/limine.cfg
 		# Detect CPU and enable/disable microcode loading
@@ -72,8 +72,7 @@ case "$1" in
 		if [ ! -z "$EFI_BITS" ]; then
 			[ "$EFI_BITS" == 32 ] && efibootmgr -c -d $BOOT_DISK -p $BOOT_PART -L "Limine" -l '\EFI\Limine\BOOTIA32.EFI'
 			[ "$EFI_BITS" == 64 ] && efibootmgr -c -d $BOOT_DISK -p $BOOT_PART -L "Limine" -l '\EFI\Limine\BOOTX64.EFI'
-		fi
-		cp -n /usr/share/$DISTRO_ID/bootsplash.bmp /boot/;;
+		fi;;
 	upgrade) Upgrade;;
 	uninstall)
 		limine-deploy --undeploy $BOOT_DISK # Delete MBR boot code

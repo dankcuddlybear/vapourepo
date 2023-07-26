@@ -1,7 +1,7 @@
 # Maintainer: Dankcuddlybear <dankcuddlybear@protonmail.com>
 pkgname=vapour-os
 pkgver=1.0.0
-pkgrel=34
+pkgrel=35
 pkgdesc='A modular Arch based distro optimised for energy saving and ease of use (core system)'
 arch=(x86_64)
 url='https://github.com/dankcuddlybear/vapourepo'
@@ -37,7 +37,7 @@ package() {
 	chmod 750 "$pkgdir/etc/sudoers.d"
 
 	CDIR="$(pwd)"
-	for DIR in "$pkgdir/usr/bin" "$pkgdir/usr/lib/NetworkManager/dispatcher.d" "$pkgdir/usr/lib/systemd/system-sleep" "$pkgdir/usr/lib/$pkgname" "$pkgdir/usr/share/libalpm/scripts/$pkgname"; do
+	for DIR in "$pkgdir/usr/lib/NetworkManager/dispatcher.d" "$pkgdir/usr/lib/systemd/system-sleep" "$pkgdir/usr/lib/$pkgname" "$pkgdir/usr/share/libalpm/scripts/$pkgname"; do
 		cd "$DIR"
 		chmod +x *
 	done

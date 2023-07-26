@@ -36,6 +36,9 @@ Install() {
 	echo "Welcome!" >> /etc/issue
 	echo "" >> /etc/issue
 	#
+	## /etc/fstab
+	[ -z "$(cat /etc/fstab | grep "/proc")" ] && echo "proc /proc proc nosuid,nodev,noexec,hidepid=2,gid=proc 0 0" >> /mnt/etc/fstab
+	#
 	if [ $INSTALL_MODE == "iso" ]; then # ArchISO build mode
 		passwd -uq root; passwd -dq root # Unlock root account
 		useradd -m live; passwd -dq live # Create passwordless user "live"

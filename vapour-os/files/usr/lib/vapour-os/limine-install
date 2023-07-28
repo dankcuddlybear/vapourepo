@@ -44,8 +44,8 @@ Upgrade() {
 	mkdir -p /boot/EFI/limine /boot/limine &> /dev/null
 	cp /usr/share/limine/BOOTIA32.EFI /boot/EFI/limine/
 	cp /usr/share/limine/BOOTX64.EFI /boot/EFI/limine/
-	cp /usr/share/limine/limine.sys /boot/limine/
-	limine-deploy $BOOT_DISK # Install MBR boot code
+	cp /usr/share/limine/limine-bios.sys /boot/limine/
+	limine bios-install $BOOT_DISK # Install MBR boot code
 }
 
 case "$1" in

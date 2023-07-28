@@ -1,7 +1,7 @@
 # Maintainer: Dankcuddlybear <dankcuddlybear@protonmail.com>
 pkgname=vapour-os
 pkgver=1.0.0
-pkgrel=35
+pkgrel=36
 pkgdesc='A modular Arch based distro optimised for energy saving and ease of use (core system)'
 arch=(x86_64)
 url='https://github.com/dankcuddlybear/vapourepo'
@@ -27,7 +27,7 @@ depends=('ananicy-cpp'
 	'sbctl' 'sudo'
 	'terminus-font' 'texinfo'
 	'usbutils'
-	'vapour-os-mirrorlist' 'vapour-os-keyring'
+	'vapour-os-mirrorlist' 'vapour-os-keyring' 'voscfg'
 	'wireless-regdb'
 )
 package() {

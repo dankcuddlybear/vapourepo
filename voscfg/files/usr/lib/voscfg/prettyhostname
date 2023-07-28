@@ -1,0 +1,14 @@
+#!/bin/sh
+[ "$(whoami)" != "root" ] && echo "[ERROR] You must run this script as root" && exit 1
+DISTRO_NAME="$(cat /usr/lib/os-release | grep -i "PRETTY_NAME" | cut -d '=' -f 2 | sed 's/"//g')"
+
+unset INPUT
+if [ -z "$1" ]; then ## Prompt to enter pretty hostname
+	INPUT="$(dialog --stdout --backtitle "$DISTRO_NAME settings" --title "Pretty hostname" --inputbox "Enter a more descriptive hostname. You may use any characters or UTF-8 symbols." 0 0)"
+else INPUT="$1"; fi ## Use command line parameter instead
+
+if [ ! -z "$INPUT" ]; then
+	touch /etc/machine-info # Create /etc/machine-info if it does not exist
+	hostnamectl --pretty hostname "$INPUT"
+	echo "Set pretty hostname to \"$INPUT\""
+else echo "Pretty hostname has not been changed"; exit 125; fi

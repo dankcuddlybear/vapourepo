@@ -1,0 +1,144 @@
+#!/bin/sh
+DISTRO_NAME="$(cat /usr/lib/os-release | grep -i "PRETTY_NAME" | cut -d '=' -f 2 | sed 's/"//g')"
+SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+Help() {
+	echo "Usage: $(basename $0) [OPTIONS] <username>"
+	echo "Options:"
+	echo "    -h --help         Show this information"
+	echo "    --admin           Create an admin user (add to wheel and sys groups)."
+	echo "                      By default, the user will not be an admin"
+	echo "                      unless they are the only non-root user."
+	echo "    --encrypt         Encrypt the user's home directory with FScrypt."
+	echo "                      FScrypt encrypts file data only, not file metadata."
+	echo "                      Requires a user password. If no password is provided,"
+	echo "                      their home directory will not be encrypted."
+	echo "                      If both --encrypt and --nopasswd are specified together,"
+	echo "                      will prompt for a password anyyway."
+	echo "                      Default: not encrypted"
+	echo "    --groups=[GROUPS] Comma-separated list of groups to add the user to."
+	echo "                      Default: none"
+	echo "    --nopasswd        Do not prompt to set user password. User account"
+	echo "                      will have no password."
+	echo "                      If both --encrypt and --nopasswd are specified together,"
+	echo "                      will prompt for a password anyyway."
+	echo "                      Default: prompt for password"
+}
+
+## Parse command line parameters
+## I could add shorthand versions of these arguments
+## but it would take longer, and they are less easy to remember.
+[ -z "$(ls /home)" ] && ADMIN=1 || ADMIN=0
+ENCRYPT=0
+ADD_TO_GROUPS=""
+NOPASSWD=0
+USERNAME=""
+DIALOG=0
+for ARG in $@; do
+	if [ "$ARG" == "--admin" ]; then ADMIN=1
+	elif [ "$ARG" == "--encrypt" ]; then ENCRYPT=1; NOPASSWD=0
+	elif [ "$ARG" == "--nopasswd" ]; then
+		[ "$ENCRYPT" == 0 ] && NOPASSWD=1
+	elif [ "$ARG" == "-h" ] || [ "$ARG" == "--help" ]; then Help; exit 0
+	else
+		if [ "${ARG:0:8}" == "--groups" ]; then
+			[ -z "$ADD_TO_GROUPS" ] && ADD_TO_GROUPS="${ARG:9}" || ADD_TO_GROUPS="$ADD_TO_GROUPS,${ARG:9}"
+		elif [ "${ARG:0:1}" == "-" ]; then echo "Invalid argument \"$ARG\""; Help; exit 22
+		else USERNAME="$ARG"
+		fi
+	fi
+done
+[ "$(whoami)" != "root" ] && echo "[ERROR] You must run this script as root" && exit 13
+
+if [ -z "$USERNAME" ]; then ## Prompt for a username
+	DIALOG=1
+	USERNAME="$(dialog --stdout --backtitle "$DISTRO_NAME settings" --title "Add user" --inputbox "Enter username of new user. It must not:\n - Be longer than 32 characters\n - Include capital letters, dots or colons\n - End with a hyphen (-)\n - Be reserved for use by the system (e.g. root, ftp, nobody, mail, guest, shared)" 0 0)"
+	[ -z "$USERNAME" ] && exit 125
+	## Check if user exists (including system users)
+	unset USERS; for EXISTING_USER in $(cut -d: -f1 /etc/passwd); do USERS="$USERS $EXISTING_USER"; done
+	if [[ "$USERS" == *"$USERNAME"* ]]; then
+		if [ "$DIALOG" == 1 ]; then dialog --backtitle "$DISTRO_NAME settings" --title "Error" --msgbox "User \"$USERNAME\" already exists!" 0 0
+		else echo "[ERROR] User \"$USERNAME\" already exists!"; fi
+		exit 1
+	elif [ "$USERNAME" == "guest" ]; then
+		if [ "$DIALOG" == 1 ]; then dialog --backtitle "$DISTRO_NAME settings" --title "Error" --msgbox "You cannot create a guest account here! To enable the guest user, go back and select \"Enable guest account\"." 0 0
+		else echo "You cannot create a guest account here! To enable the guest user, go back and select \"Enable guest account\"."; fi
+		exit 1
+	fi
+	if [ "$ADMIN" == 0 ]; then # Ask to make admin
+		dialog --backtitle "$DISTRO_NAME settings" --title "Add user" --yesno "Make $USERNAME an administrator (add to wheel and sys groups)?" 0 0 && ADMIN=1
+	fi
+	ADD_TO_GROUPS="$ADD_TO_GROUPS,$(dialog --stdout --backtitle "$DISTRO_NAME settings" --title "Add user" --inputbox "Enter a comma separated list of additional groups to add $USERNAME to (optional)." 0 0)"
+	if [ "$ENCRYPT" == 0 ]; then # Ask to encrypt home directory
+		dialog --backtitle "$DISTRO_NAME settings" --title "Add user" --yesno "Would you like to encrypt $USERNAME's home directory with FScrypt?\nPlease note that only file data is encrypted, not file metadata." 0 0 && ENCRYPT=1 && NOPASSWD=0
+	fi
+	if [ "$NOPASSWD" == 0 ] && [ "$ENCRYPT" == 0 ]; then
+		dialog --backtitle "$DISTRO_NAME settings" --title "Add user" --yesno "Would you like to set a password for $USERNAME?" 0 0 || NOPASSWD=1
+	fi
+fi
+
+## Create user and set password
+useradd "$USERNAME" || exit 1
+passwd -d "$USERNAME"
+if [ "$NOPASSWD" == 0 ]; then
+	clear; CONTINUE=0; while [ "$CONTINUE" == 0 ]; do
+		if [ "$DIALOG" == 1 ]; then
+			PASSWORD1="$(dialog --stdout --backtitle "$DISTRO_NAME settings" --title "Add user" --passwordbox "Enter a secure password for \"$USERNAME\". It must:\n - Be at least 8 characters long\n - Have at least 1 digit, 1 uppercase letter and 1 lowercase letter\n - Not contain commonly used words or passwords (including swear words), even with character substitution, as modern dictionary attacks can easily work around those\n - Contain personal information, like date/place of birth, mother's maiden name, pet names, favourite band/video game etc\n - Be too easy to guess by others\nSee also https://wiki.archlinux.org/title/Security#Passwords\nYou will not see anything you type. This is for security reasons. When you have entered your password, press enter." 0 0)"
+		else
+			echo "Enter a secure password for \"$USERNAME\". It must:"
+			echo " - Be at least 8 characters long\n - Have at least 1 digit, 1 uppercase letter and 1 lowercase letter"
+			echo " - Not contain commonly used words or passwords (including swear words), even with character substitution, as modern dictionary attacks can easily work around those"
+			echo " - Contain personal information, like date/place of birth, mother's maiden name, pet names, favourite band/video game etc"
+			echo " - Be too easy to guess by others"
+			echo "See also https://wiki.archlinux.org/title/Security#Passwords"
+			echo "You will not see anything you type. This is for security reasons. When you have entered your password, press enter."
+			stty -echo; printf "Enter password for \"$USERNAME\""; unset PASSWORD1; read PASSWORD1; printf "\n"; stty echo; fi
+		if [ -z "$PASSWORD1" ]; then
+			if [ "$ENCRYPT" == 1 ]; then
+				if [ "$DIALOG" == 1 ]; then
+					dialog --backtitle "$DISTRO_NAME settings" --title "Warning" --yesno "Encryption was requested but no password was provided.\nTo enable encryption, you must set a password.\nSet a password for $USERNAME?" 0 0 || (NOPASSWD=1; CONTINUE=1)
+				else
+					echo "Encryption was requested but no password was provided."
+					echo "To enable encryption, you must set a password."
+					printf "Set a password for $USERNAME? [Y/n] "; unset ANSWER; read ANSWER; printf "\n"
+					if ([ "$ANSWER" == "n" ] || [ "$ANSWER" == "N" ] || [ "$ANSWER" == "no" ] || [ "$ANSWER" == "NO" ] || \
+					[ "$ANSWER" == "nO" ] || [ "$ANSWER" == "No" ]); then NOPASSWD=1; CONTINUE=1; fi
+				fi
+			else NOPASSWD=1; CONTINUE=1; fi
+		else
+			if [ "$DIALOG" == 1 ]; then
+				PASSWORD2="$(dialog --stdout --backtitle "$DISTRO_NAME settings" --title "Add user" --passwordbox "Enter the same password again." 0 0)"
+			else stty -echo; printf "Confirm password for \"$USERNAME\""; unset PASSWORD2; read PASSWORD2; printf "\n"; stty echo; fi
+			if [ "$PASSWORD1" == "$PASSWORD2" ]; then (echo "$PASSWORD1"; echo "$PASSWORD1") | passwd "$USERNAME"; CONTINUE=1
+			else
+				if [ "$DIALOG" == 1 ]; then dialog --backtitle "$DISTRO_NAME settings" --title "Error" --msgbox "Passwords do not match." 0 0
+				else clear; echo "[ERROR] Passwords do not match."; fi
+			fi
+		fi
+	done
+fi
+
+## Add to groups
+[ "$ADMIN" == 1 ] && "$SCRIPT_DIR/admin" "$USERNAME" 1
+ADD_TO_GROUPS="$(echo "$ADD_TO_GROUPS" | sed 's/,/ /g' | xargs)"
+for GROUP in $ADD_TO_GROUPS; do
+	gpasswd -a "$USERNAME" "$GROUP"
+done
+
+## Create/encrypt home directory
+mkdir -p "/home/$USERNAME" "/home/.tmp/$USERNAME"
+chown "$USERNAME":"$USERNAME" "/home/$USERNAME" "/home/.tmp/$USERNAME"
+chmod 750 "/home/$USERNAME" "/home/.tmp/$USERNAME"
+if [ "$NOPASSWD" == 1 ] && [ "$ENCRYPT" == 1 ]; then
+	ENCRYPT=0
+	if [ "$DIALOG" == 1 ]; then dialog --backtitle "$DISTRO_NAME settings" --title "Warning" --msgbox "Encryption was requested but no password was set. Not encrypting home directory." 0 0
+	else echo "[WARNING] Encryption was requested but no password was set. Not encrypting home directory."; fi
+fi
+if [ "$ENCRYPT" == 1 ] && [ "$NOPASSWD" == 0 ]; then
+	echo "Encrypting /home/$USERNAME"
+ 	echo "$PASSWORD1" | fscrypt encrypt "/home/$USERNAME" --source=pam_passphrase --user="$USERNAME"
+fi
+for FILE in $(ls -A /etc/skel); do
+	sudo -u "$USERNAME" cp -nr "/etc/skel/$FILE" "/home/$USERNAME"
+done
+[ "$ENCRYPT" == 1 ] && fscrypt lock "/home/$USERNAME"
+unset PASSWORD1 PASSWORD2

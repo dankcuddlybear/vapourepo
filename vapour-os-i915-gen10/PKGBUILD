@@ -1,7 +1,7 @@
 # Maintainer: Dankcuddlybear <dankcuddlybear@protonmail.com>
 pkgname=vapour-os-i915-gen10
 pkgver=1.0.0
-pkgrel=7
+pkgrel=8
 pkgdesc='Intel GPU drivers for Vapour OS. For 10th gen.'
 arch=(x86_64)
 url='https://github.com/dankcuddlybear/Vapour-OS'
@@ -14,4 +14,5 @@ depends=('intel-compute-runtime'
 )
 package() {
 	cp -r "$srcdir/../files/usr" "$pkgdir"
+	"$srcdir/../../set-default-permissions.sh" "$pkgdir"
 }

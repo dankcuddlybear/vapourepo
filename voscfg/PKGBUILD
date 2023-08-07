@@ -1,7 +1,7 @@
 # Maintainer: Dankcuddlybear <dankcuddlybear@protonmail.com>
 pkgname=voscfg
 pkgver=1.0.0
-pkgrel=3
+pkgrel=4
 pkgdesc='Curses based application for system/user management and configuration'
 arch=(any)
 url='https://github.com/dankcuddlybear/vapourepo'
@@ -16,7 +16,7 @@ depends=('dialog'
 )
 package() {
 	cp -r "$srcdir/../files/usr" "$pkgdir"
-	"$srcdir/../set-default-permissions.sh" "$pkgdir"
+	"$srcdir/../../set-default-permissions.sh" "$pkgdir"
 	CDIR="$(pwd)"
 	cd "$pkgdir/usr/lib/$pkgname"; chmod +x *
 	cd "$CDIR"

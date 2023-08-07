@@ -1,7 +1,7 @@
 # Maintainer: Dankcuddlybear <dankcuddlybear@protonmail.com>
 pkgname=vapour-os-xfce
 pkgver=1.0.0
-pkgrel=6
+pkgrel=7
 pkgdesc='XFCE desktop for Vapour OS with XFCE apps and addons.'
 arch=(any)
 url='https://github.com/dankcuddlybear/Vapour-OS'

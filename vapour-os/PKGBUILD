@@ -1,7 +1,7 @@
 # Maintainer: Dankcuddlybear <dankcuddlybear@protonmail.com>
 pkgname=vapour-os
 pkgver=1.0.0
-pkgrel=37
+pkgrel=38
 pkgdesc='A modular Arch based distro optimised for energy saving and ease of use (core system)'
 arch=(x86_64)
 url='https://github.com/dankcuddlybear/vapourepo'
@@ -33,7 +33,7 @@ depends=('ananicy-cpp'
 package() {
 	cp -r "$srcdir/../files/etc" "$pkgdir"
 	cp -r "$srcdir/../files/usr" "$pkgdir"
-	"$srcdir/../set-default-permissions.sh" "$pkgdir"
+	"$srcdir/../../set-default-permissions.sh" "$pkgdir"
 	chmod 750 "$pkgdir/etc/sudoers.d"
 
 	CDIR="$(pwd)"

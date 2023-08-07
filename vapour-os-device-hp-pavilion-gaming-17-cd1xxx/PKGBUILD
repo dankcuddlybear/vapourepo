@@ -1,7 +1,7 @@
 # Maintainer: Dankcuddlybear <dankcuddlybear@proton.me>
 pkgname=vapour-os-device-hp-pavilion-gaming-17-cd1xxx
 pkgver=1.0.0
-pkgrel=5
+pkgrel=6
 pkgdesc='Vapour OS device configuration for HP Pavilion Gaming Laptop 17-cd1xxx. Includes game libraries, graphics and printer drivers, and fixes. Choose your own desktop.'
 arch=(x86_64)
 url='https://github.com/dankcuddlybear/Vapour-OS'
@@ -15,4 +15,5 @@ depends=('hdapsd'
 )
 package() {
 	cp -r "$srcdir/../files/usr" "$pkgdir"
+	"$srcdir/../../set-default-permissions.sh" "$pkgdir"
 }

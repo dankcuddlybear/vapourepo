@@ -1,7 +1,7 @@
 # Maintainer: Dankcuddlybear <dankcuddlybear@protonmail.com>
 pkgname=lib32-vapour-os-desktop-libs
 pkgver=1.0.0
-pkgrel=1
+pkgrel=2
 pkgdesc='32-bit desktop libraries for Vapour OS (CLI only)'
 arch=(x86_64)
 url='https://github.com/dankcuddlybear/Vapour-OS'

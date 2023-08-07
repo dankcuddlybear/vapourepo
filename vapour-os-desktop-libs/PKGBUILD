@@ -1,27 +1,27 @@
 # Maintainer: Dankcuddlybear <dankcuddlybear@protonmail.com>
 pkgname=vapour-os-desktop-libs
 pkgver=1.0.0
-pkgrel=13
+pkgrel=15
 pkgdesc='Desktop libraries for Vapour OS (CLI only)'
 arch=(x86_64)
 url='https://github.com/dankcuddlybear/Vapour-OS'
-replaces=('vapour-os-gui' 'vapour-os-multimedia' 'vapour-os-printing')
+replaces=('vapour-os-gui' 'vapour-os-printing')
 install=$pkgname.install
 backup=('etc/X11/xorg.conf.d/30-touchpad.conf')
-depends=('aribb24' 'aribb25' 'android-udev'
+depends=('android-udev'
 	'base-devel' 'bash-completion' 'bluez' 'bluez-cups'
 	'cups-pdf' 'cups-pk-helper' 
 	'exfatprogs'
 	'foomatic-db-engine' 'foomatic-db-gutenprint-ppds' 'foomatic-db-nonfree-ppds' 'foomatic-db-ppds'
-	'gnome-keyring' 'gsfonts' 'gst-libav' 'gst-plugin-pipewire' 'gst-plugins-base' 'gst-plugins-bad' 'gst-plugins-good' 'gst-plugins-ugly' 'gutenprint'
+	'gnome-keyring' 'gsfonts' 'gutenprint'
 	'ipp-usb'
-	'libdvdcss' 'libgnome-keyring' 'libsecret' 'libtiger' 'libvdpau-va-gl'
+	'libgnome-keyring' 'libsecret' 'libvdpau-va-gl'
 	'modemmanager'
 	'ocl-icd'
-	'p7zip' 'pipewire-zeroconf' 'plymouth' 'python-pysmbc'
+	'p7zip' 'pipewire-zeroconf' 'plymouth'
 	'sane-airscan' 'sane-gt68xx-firmware' 'splix' 'system-config-printer'
 	'unrar' 'usb_modeswitch'
-	'vapour-os' 'vcdimager' 'vulkan-mesa-layers'
+	'vapour-os' 'vulkan-mesa-layers'
 	'xdg-desktop-portal' 'xdg-user-dirs'
 	'yay'
 )

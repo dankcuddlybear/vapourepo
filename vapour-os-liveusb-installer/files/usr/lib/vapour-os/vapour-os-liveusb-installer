@@ -29,7 +29,7 @@ BOOT_DEV="$(readlink -f "$BOOT_DEV")"
 if [ ${BOOT_DEV:5:4} == nvme ] || [ ${BOOT_DEV:5:6} == mmcblk ]; then
 	ESPDISK=$(echo $BOOT_DEV | cut -d 'p' -f 1)
 	ESPPART=$(echo $BOOT_DEV | cut -d 'p' -f 2)
-elif [ ${BOOT:5:2} == hd ] || [ ${BOOT:5:2} == sd ] || [ ${BOOT:5:2} == vd ]; then
+elif [ ${BOOT_DEV:5:2} == hd ] || [ ${BOOT_DEV:5:2} == sd ] || [ ${BOOT_DEV:5:2} == vd ]; then
 	ESPDISK=$(echo $BOOT_DEV | sed 's/[0-9]//g')
 	ESPPART=$(echo $BOOT_DEV | sed 's/[^0-9]*//g')
 else

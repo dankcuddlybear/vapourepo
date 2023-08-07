@@ -33,11 +33,11 @@ if [ ${BOOT:5:4} == nvme ] || [ ${BOOT:5:6} == mmcblk ]; then
 	BOOT_PARTNO=$(echo $BOOT | cut -d 'p' -f 2)
 elif [ ${BOOT:5:2} == hd ] || [ ${BOOT:5:2} == sd ] || [ ${BOOT:5:2} == vd ]; then
 	BOOT_DISK=$(echo $BOOT | sed 's/[0-9]//g')
-	BOOT_PART=$(echo $BOOT | sed 's/[^0-9]*//g')
+	BOOT_PARTNO=$(echo $BOOT | sed 's/[^0-9]*//g')
 else
 	Error "$BOOT is on an unsupported media type! Please set /boot partition in /etc/fstab to a partition on a HDD or flash storage."
 fi
-[ $BOOT_DISK == $BOOT_PARTNO ] && Error "$BOOT is a disk, not a partition! Please set a /boot partition in /etc/fstab."
+[ "$BOOT_DISK" == "$BOOT_PARTNO" ] && Error "$BOOT is a disk, not a partition! Please set a /boot partition in /etc/fstab."
 
 Upgrade() {
 	# Copy files
@@ -59,8 +59,8 @@ case "$1" in
 		ROOT=$(cat /etc/fstab | grep -m 1 " / \|	/ \| /	\|	/	" | cut -d ' ' -f 1 | cut -d '	' -f 1)
 		[ -z "$ROOT" ] && Error "No root (/) partition specified in /etc/fstab"
 		## Configure Limine
-		cp -n /usr/share/$DISTRO_ID/boot / # Copy bootloader config files and resources
-		KPARAMS="$(cat /usr/share/$DISTRO_ID/custom-configs/limine.cfg | grep -m 1 "\${KPARAMS}=") $ROOT"
+		cp -r /usr/share/$DISTRO_ID/boot / # Copy bootloader config files and resources
+		KPARAMS="$(cat /usr/share/$DISTRO_ID/boot/limine/limine.cfg | grep -m 1 "\${KPARAMS}=") $ROOT"
 		sed -i "s/^.*\${KPARAMS}=.*$/$KPARAMS/" /boot/limine/limine.cfg
 		sed -i "s/^.*\${KERNEL}=.*$/\${KERNEL}=$KERNEL/" /boot/limine/limine.cfg
 		# Detect CPU and enable/disable microcode loading

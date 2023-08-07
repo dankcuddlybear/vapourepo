@@ -1,7 +1,7 @@
 # Maintainer: Dankcuddlybear <dankcuddlybear@protonmail.com>
 pkgname=vapour-os-gaming
 pkgver=1.0.0
-pkgrel=7
+pkgrel=8
 pkgdesc='Libraries for Windows/Linux games on Vapour OS'
 arch=(x86_64)
 url='https://github.com/dankcuddlybear/vapourepo'
@@ -27,10 +27,10 @@ depends=(
 	'libpng12' 'lib32-libpng12'
 	'librtmp0' 'lib32-librtmp0'
 	'libtiff4' 'lib32-libtiff4'
-	'lib32-vapour-os-desktop-libs' 'lib32-vkd3d' 'libvpx1.3' 'lib32-libvpx1.3'
+	'lib32-vapour-os-desktop-libs' 'lib32-vapour-os-multimedia-codecs' 'lib32-vkd3d' 'libvpx1.3' 'lib32-libvpx1.3'
 	'proton-ge-custom'
 	'sdl2_ttf'
-	'vapour-os-desktop-libs' 'vkd3d-proton-mingw-git' 
+	'vkd3d-proton-mingw-git'
 	'winetricks' 'wine-gecko' 'wine' 'wine-mono' 'wine-nine'
 )
 package() {

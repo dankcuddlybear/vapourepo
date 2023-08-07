@@ -1,13 +1,13 @@
 # Maintainer: Dankcuddlybear <dankcuddlybear@protonmail.com>
 pkgname=vapour-os-amdgpu
 pkgver=1.0.0
-pkgrel=2
+pkgrel=3
 pkgdesc='Vapour OS AMD GPU multilib drivers for OpenGL, Vulkan, OpenCL and hardware video acceleration.'
 arch=(x86_64)
 url='https://github.com/dankcuddlybear/Vapour-OS'
 depends=(
 	'lib32-mesa'
-	'lib32-opencl-mesa'
+	'lib32-opencl-clover-mesa'
 	'libva-mesa-driver' 'lib32-libva-mesa-driver' 'libva-vdpau-driver' 'lib32-libva-vdpau-driver'
 	'mesa-vdpau' 'lib32-mesa-vdpau'
 	'opencl-amd'

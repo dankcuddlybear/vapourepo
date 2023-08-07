@@ -19,9 +19,9 @@ while true; do
 	done < /etc/passwd
 	CHOICE=$(dialog --stdout --backtitle "$DISTRO_NAME settings" --title "Users" --menu "Manage users" 0 0 0 $USERS "a" "Add user" "g" "$GUEST_ENABLE_TEXT guest account")
 	if [ -z "$CHOICE" ]; then exit 125
-	elif [ "$CHOICE" == "a" ]; then "$SCRIPT_DIR/adduser"
+	elif [ "$CHOICE" == "a" ]; then sudo "$SCRIPT_DIR/adduser"
 	elif [ "$CHOICE" == "g" ]; then
-		[ $GUEST_ENABLED == 1 ] && "$SCRIPT_DIR/guest" enable || "$SCRIPT_DIR/guest" disable
+		[ $GUEST_ENABLED == 1 ] && sudo "$SCRIPT_DIR/guest" enable || sudo "$SCRIPT_DIR/guest" disable
 	else
 		USERNAME=$(UidToUsername $CHOICE)
 	fi

@@ -4,8 +4,8 @@
 [mkarchiso] INFO:              Architecture:   x86_64
 [mkarchiso] INFO:         Working directory:   /tmp/vapour-os-isobuild-tmp
 [mkarchiso] INFO:    Installation directory:   vapour-os
-[mkarchiso] INFO:                Build date:   2023-08-07T14:41+0100
-[mkarchiso] INFO:          Output directory:   /home/alex4nder/Documents/Code/vapourepo/vapour-os-archiso/out
+[mkarchiso] INFO:                Build date:   2023-08-07T23:26+0100
+[mkarchiso] INFO:          Output directory:   /home/alex4nder/out
 [mkarchiso] INFO:        Current build mode:   iso
 [mkarchiso] INFO:               Build modes:   iso
 [mkarchiso] INFO:                   GPG key:   None
@@ -28,13 +28,13 @@
 ==> Creating install root at /tmp/vapour-os-isobuild-tmp/x86_64/airootfs
 ==> Installing packages to /tmp/vapour-os-isobuild-tmp/x86_64/airootfs
 :: Synchronizing package databases...
- cachyos                                                                              366.0 KiB   882 KiB/s 00:00 [####################################################################] 100%
- core                                                                                 130.6 KiB   233 KiB/s 00:01 [####################################################################] 100%
- extra                                                                                  8.4 MiB   694 KiB/s 00:12 [####################################################################] 100%
- community                                                                             45.0   B   100   B/s 00:00 [####################################################################] 100%
- multilib                                                                             143.2 KiB  28.4 KiB/s 00:05 [####################################################################] 100%
- chaotic-aur                                                                            2.8 MiB   348 KiB/s 00:08 [####################################################################] 100%
- vapourepo                                                                             12.1 KiB  53.9 KiB/s 00:00 [####################################################################] 100%
+ cachyos                    365.9 KiB  1036 KiB/s 00:00 [##############################] 100%
+ core                       130.6 KiB   204 KiB/s 00:01 [##############################] 100%
+ extra                                                                                  8.3 MiB  1831 KiB/s 00:05 [####################################################################] 100%
+ community                   45.0   B  99.0   B/s 00:00 [##############################] 100%
+ multilib                                                                             143.2 KiB  55.8 KiB/s 00:03 [####################################################################] 100%
+ chaotic-aur                                                                            2.8 MiB  1779 KiB/s 00:02 [####################################################################] 100%
+ vapourepo                   12.1 KiB  40.1 KiB/s 00:00 [##############################] 100%
 resolving dependencies...
 :: There are 2 providers available for sh:
 :: Repository core
@@ -147,7 +147,7 @@ Packages (1025) a52dec-0.8.0-2  aalib-1.4rc5-17  acl-2.3.1-3  adobe-source-code-
                 dialog-1:1.3_20230209-1  diffutils-3.10-1  dkms-3.0.11-2  dmidecode-3.5-1  dnssec-anchors-20190629-3  dosfstools-4.2-3  double-conversion-3.3.0-1  duktape-2.7.0-6
                 dxvk-async-git-2.2.r22.ge9e09497-1  e2fsprogs-1.47.0-1  efibootmgr-18-2  efivar-38-3  egl-wayland-2:1.1.12-1  eglexternalplatform-1.1-2  elementary-icon-theme-7.3.0-1
                 espeak-ng-1.51.1-2  ethtool-1:6.4-1  exfatprogs-1.2.1-1  exo-4.18.0-1  expat-2.5.0-1  faac-1.30-4  faad2-2.10.1-1  fakeroot-1.32.1-1  ffmpeg-2:6.0-8  ffmpeg4.4-4.4.4-1
-                fftw-3.3.10-4  file-5.44-3  filesystem-2023.01.31-1  findutils-4.9.0-3  firefox-116.0.1-1  flac-1.4.3-1  flex-2.6.4-5  fluidsynth-2.3.3-1  fmt-10.0.0-1
+                fftw-3.3.10-4  file-5.44-3  filesystem-2023.01.31-1  findutils-4.9.0-3  firefox-116.0.2-1  flac-1.4.3-1  flex-2.6.4-5  fluidsynth-2.3.3-1  fmt-10.0.0-1
                 fontconfig-2:2.14.2-1  foomatic-db-engine-4:20220521-1  foomatic-db-gutenprint-ppds-5.3.4-2  foomatic-db-nonfree-ppds-3:20230709-1  foomatic-db-ppds-3:20230709-1
                 freeglut-3.4.0-1  freetype2-2.13.1-1  fribidi-1.0.13-2  fscrypt-0.3.4-1  fuse-common-3.15.1-1  fuse2-2.9.9-4  fuse3-3.15.1-1  gamemode-1.7-1  garcon-4.18.1-1  gawk-5.2.2-1
                 gc-8.2.4-1  gcc-13.2.1-3  gcc-libs-13.2.1-3  gcr-3.41.1-4  gcr-4-4.1.0-1  gd-2.3.3-6  gdbm-1.23-2  gdk-pixbuf2-2.42.10-2  geoclue-2.7.0-1  gettext-0.22-1
@@ -159,7 +159,7 @@ Packages (1025) a52dec-0.8.0-2  aalib-1.4rc5-17  acl-2.3.1-3  adobe-source-code-
                 gstreamer-1.22.5-1  gtk-update-icon-cache-1:4.10.5-1  gtk2-2.24.33-3  gtk3-1:3.24.38-1  gtkmm3-3.24.7-1  gtksourceview4-4.8.4-1  guile-3.0.9-1  gupnp-1:1.6.5-1
                 gupnp-igd-1.6.0-1  gutenprint-5.3.4-2  gvfs-1.50.6-1  gvfs-afc-1.50.6-1  gvfs-goa-1.50.6-1  gvfs-google-1.50.6-1  gvfs-gphoto2-1.50.6-1  gvfs-mtp-1.50.6-1
                 gvfs-nfs-1.50.6-1  gvfs-smb-1.50.6-1  gzip-1.12-2  harfbuzz-8.1.1-1  hdparm-9.65-1  hicolor-icon-theme-0.17-3  hidapi-0.14.0-1  highway-1.0.5-1  hwdata-0.372-1
-                hwloc-2.9.1-1  iana-etc-20230629-1  icu-73.2-2  ijs-0.35-5  imagemagick-7.1.1.15-1  imath-3.1.9-1  imlib2-1.11.1-1  intel-compute-runtime-23.22.26516.18-1
+                hwloc-2.9.1-1  iana-etc-20230629-1  icu-73.2-2  ijs-0.35-5  imagemagick-7.1.1.15-2  imath-3.1.9-1  imlib2-1.11.1-1  intel-compute-runtime-23.22.26516.18-1
                 intel-gmmlib-22.3.3-1  intel-graphics-compiler-1:1.0.14062.11-1  intel-media-driver-23.3.0-1  intel-media-sdk-23.2.2-2  intel-opencl-clang-15.0.0-1  ipp-usb-0.9.23-1
                 iproute2-6.4.0-1  iptables-1:1.8.9-1  iputils-20221126-2  irqbalance-1.9.2-1  iso-codes-4.15.0-1  iw-5.19-2  jansson-2.14-2  jbig2dec-0.19-1  joystickwake-0.4-1.3
                 json-c-0.16-1  json-glib-1.6.6-2  kbd-2.6.1-1  kernel-modules-hook-0.1.7-2  keyutils-1.6.3-2  kmod-30-3  krb5-1.20.1-1  l-smash-2.14.5-3  lame-3.100-4  lcms2-2.15-1
@@ -176,7 +176,7 @@ Packages (1025) a52dec-0.8.0-2  aalib-1.4rc5-17  acl-2.3.1-3  adobe-source-code-
                 lib32-libdbusmenu-glib-16.04.0-5  lib32-libdbusmenu-gtk2-16.04.0-5  lib32-libdbusmenu-gtk3-16.04.0-5  lib32-libdrm-2.4.115-1  lib32-libdv-1.0.0-8  lib32-libelf-0.189-1
                 lib32-libepoxy-1.5.10-1  lib32-libffi-3.4.4-1  lib32-libgcrypt-1.10.2-1  lib32-libgcrypt15-1.5.6-7  lib32-libglvnd-1.6.0-1  lib32-libgpg-error-1.47-1  lib32-libgudev-238-1
                 lib32-libice-1.1.1-1  lib32-libidn11-1.33-2  lib32-libidn2-2.3.4-2  lib32-libiec61883-1.2.0-4  lib32-libindicator-gtk2-12.10.1-9  lib32-libindicator-gtk3-12.10.1-9
-                lib32-libinstpatch-1.1.6-2  lib32-libjpeg-turbo-3.0.0-1  lib32-libjpeg6-turbo-1.5.3-2  lib32-libldap-2.6.4-1  lib32-libltdl-2.4.7-3  lib32-libmikmod-3.3.11.1-6
+                lib32-libinstpatch-1.1.6-2  lib32-libjpeg-turbo-3.0.0-1  lib32-libjpeg6-turbo-1.5.3-2  lib32-libldap-2.6.6-1  lib32-libltdl-2.4.7-3  lib32-libmikmod-3.3.11.1-6
                 lib32-libmodplug-0.8.9.0-4  lib32-libnghttp2-1.55.1-1  lib32-libnl-3.7.0-1  lib32-libnm-1.42.6-1  lib32-libogg-1.3.5-1  lib32-libpcap-1.10.4-1  lib32-libpciaccess-0.17-1
                 lib32-libpipewire-1:0.3.77-1  lib32-libpng-1.6.40-2  lib32-libpng12-1.2.59-2  lib32-libproxy-0.5.3-1  lib32-libpsl-0.21.2-1  lib32-libpulse-16.1-6  lib32-libraw1394-2.1.2-4
                 lib32-librsvg-2:2.56.3-1  lib32-librtmp0-2.4-5  lib32-libshout-2.4.6-3  lib32-libsm-1.2.4-1  lib32-libsndfile-1.2.0-1  lib32-libsoup-2.74.3-1  lib32-libsoup3-3.4.2-1
@@ -212,7 +212,7 @@ Packages (1025) a52dec-0.8.0-2  aalib-1.4rc5-17  acl-2.3.1-3  adobe-source-code-
                 libmpd-11.8.17-5  libmpeg2-0.5.1-8  libmtp-1.1.21-1  libmysofa-1.3.1-2  libndp-1.8-1  libnetfilter_conntrack-1.0.9-1  libnewt-0.52.23-2  libnfnetlink-1.0.2-1
                 libnfs-5.0.2-1  libnftnl-1.2.5-1  libnghttp2-1.55.1-1  libnice-0.1.21-2  libnl-3.7.0-3  libnm-1.42.6-1  libnma-1.10.6-2  libnma-common-1.10.6-2  libnotify-0.8.2-1
                 libnsl-2.0.0-3  libogg-1.3.5-1  libomxil-bellagio-0.9.3-4  libopenmpt-0.7.2-1  libp11-kit-0.25.0-1  libpaper-2.1.1-1  libpcap-1.10.4-1  libpciaccess-0.17-1
-                libpgm-5.3.128-3  libpipeline-1.5.7-1  libpipewire-1:0.3.77-1  libplacebo-5.264.1-2  libplist-2.3.0-2  libpng-1.6.40-2  libpng12-1.2.59-2  libproxy-0.5.3-1  libpsl-0.21.2-1
+                libpgm-5.3.128-3  libpipeline-1.5.7-1  libpipewire-1:0.3.77-1  libplacebo-5.264.1-2  libplist-2.3.0-2  libpng-1.6.40-2  libpng12-1.2.59-2  libproxy-0.5.3-2  libpsl-0.21.2-1
                 libpulse-16.1-6  libqmi-1.32.4-1  libqrtr-glib-1.2.2-2  libraqm-0.10.1-1  libraw1394-2.1.2-3  librsvg-2:2.56.3-1  librtmp0-2.4-5  libsasl-2.1.28-4  libseccomp-2.5.4-2
                 libsecret-0.20.5-2  libshout-1:2.4.6-2  libsigc++-2.12.0-1  libsm-1.2.4-1  libsndfile-1.2.0-1  libsodium-1.0.18-2  libsonic-0.2.0-1  libsoup-2.74.3-1  libsoup3-3.4.2-1
                 libsoxr-0.1.3-3  libsrtp-1:2.5.0-1  libssh-0.10.5-1  libssh2-1.11.0-1  libstemmer-2.2.0-2  libsysprof-capture-3.48.0-4  libtar-1.2.20-6  libtasn1-4.19.0-1  libteam-1.31-8
@@ -229,14 +229,14 @@ Packages (1025) a52dec-0.8.0-2  aalib-1.4rc5-17  acl-2.3.1-3  adobe-source-code-
                 lmdb-0.9.30-3  lsb-release-2.0.r53.a86f885-1  lsof-4.98.0-1  lua-5.4.6-1  lua52-5.2.4-5  lv2-1.18.10-1  lz4-1:1.9.4-1  lzo-2.10-5  m4-1.4.19-3  mailcap-2.1.54-1
                 make-4.4.1-2  man-db-2.11.2-1  man-pages-6.04-1  md4c-0.4.8-1  mdadm-4.2-2  mesa-23.1.5-2  mesa-vdpau-23.1.5-2  mjpegtools-2.2.1-2  mkinitcpio-36-1
                 mkinitcpio-busybox-1.36.1-1  mobile-broadband-provider-info-20230416-1  modemmanager-1.20.6-1  mpfr-4.2.0.p12-3  mpg123-1.31.3-1  mtdev-1.1.6-2  ncurses-6.4_20230520-1
-                neon-0.32.5-2  net-snmp-5.9.1-6  nettle-3.9.1-1  network-manager-applet-1.32.0-3  networkmanager-1.42.6-1  nlohmann-json-3.11.2-1  nm-connection-editor-1.32.0-3  npth-1.6-4
+                neon-0.32.5-2  net-snmp-5.9.1-7  nettle-3.9.1-1  network-manager-applet-1.32.0-3  networkmanager-1.42.6-1  nlohmann-json-3.11.2-1  nm-connection-editor-1.32.0-3  npth-1.6-4
                 nspr-4.35-1  nss-3.92-1  nss-mdns-0.15.1-1  ntfs-3g-2022.10.3-1  numactl-2.0.16-1  nvidia-dkms-535.86.05-2  nvidia-prime-1.0-4  nvidia-settings-535.86.05-1
                 nvidia-utils-535.86.05-2  ocl-icd-2.3.2-1  openal-1.23.1-1  opencl-amd-1:5.6.0-2  opencl-clover-mesa-23.1.5-2  opencl-nvidia-535.86.05-2  opencore-amr-0.1.6-1
                 openexr-3.1.10-1  openjpeg2-2.5.0-2  openmpi-4.1.5-2  openpmix-4.2.3-2  openssh-9.3p2-1  openssl-3.1.2-1  openssl-1.1-1.1.1.u-1  opus-1.4-1  opusfile-0.12-3  orc-0.4.34-1
                 p11-kit-0.25.0-1  p7zip-1:17.05-1  pacman-6.0.2-10  pacman-mirrorlist-20230628-1  pahole-1:1.25-5  pam-1.5.3-3  pambase-20221020-1  pango-1:1.50.14-1  pangomm-2.46.3-1
-                parted-3.6-1  patch-2.7.6-10  pavucontrol-1:5.0+r64+geba9ca6-1  pcaudiolib-1.2-2  pciutils-3.10.0-1  pcre-8.45-3  pcre2-10.42-2  pcsclite-2.0.0-1  perl-5.36.1-2
-                perl-alien-build-2.80-1  perl-alien-libxml2-0.19-1  perl-capture-tiny-0.48-6  perl-clone-0.46-1  perl-dbi-1.643-4  perl-error-0.17029-4  perl-ffi-checklib-0.31-2
-                perl-file-chdir-0.1011-4  perl-file-which-1.27-2  perl-mailtools-2.21-6  perl-path-tiny-0.144-1  perl-timedate-2.33-4  perl-xml-libxml-2.0208-1
+                parted-3.6-1  patch-2.7.6-10  pavucontrol-1:5.0+r64+geba9ca6-1  pcaudiolib-1.2-2  pciutils-3.10.0-1  pcre-8.45-3  pcre2-10.42-2  pcsclite-2.0.0-1  perl-5.38.0-1
+                perl-alien-build-2.80-2  perl-alien-libxml2-0.19-2  perl-capture-tiny-0.48-7  perl-clone-0.46-2  perl-dbi-1.643-6  perl-error-0.17029-5  perl-ffi-checklib-0.31-3
+                perl-file-chdir-0.1011-4  perl-file-which-1.27-3  perl-mailtools-2.21-7  perl-path-tiny-0.144-2  perl-timedate-2.33-5  perl-xml-libxml-2.0209-1
                 perl-xml-namespacesupport-1.12-5  perl-xml-sax-1.02-1  perl-xml-sax-base-1.09-5  pinentry-1.2.1-1  pipewire-1:0.3.77-1  pipewire-audio-1:0.3.77-1  pipewire-v4l2-1:0.3.77-1
                 pipewire-zeroconf-1:0.3.77-1  pixman-0.42.2-1  pkgconf-1.8.1-1  plymouth-22.02.122-7  pocl-4.0-1  polkit-123-1  polkit-gnome-0.105-10  poppler-23.07.0-1
                 poppler-data-0.4.12-1  poppler-glib-23.07.0-1  popt-1.19-1  portaudio-1:19.7.0-2  ppp-2.4.9-3  procps-ng-4.0.3-1  proton-ge-custom-2:GE.Proton8.8-1  psmisc-23.6-1
@@ -263,7 +263,7 @@ Packages (1025) a52dec-0.8.0-2  aalib-1.4rc5-17  acl-2.3.1-3  adobe-source-code-
                 xkeyboard-config-2.39-1  xorg-fonts-encodings-1.0.7-1  xorg-iceauth-1.0.9-1  xorg-server-21.1.8-2  xorg-server-common-21.1.8-2  xorg-setxkbmap-1.3.4-1  xorg-xauth-1.1.2-1
                 xorg-xinit-1.4.2-1  xorg-xkbcomp-1.4.6-1  xorg-xmessage-1.0.6-1  xorg-xmodmap-1.0.11-1  xorg-xprop-1.2.6-1  xorg-xrandr-1.5.2-1  xorg-xrdb-1.2.2-1  xorg-xset-1.2.5-1
                 xorgproto-2023.2-1  xvidcore-1.3.7-2  xxhash-0.8.2-1  xz-5.4.4-1  yay-12.1.2-1  zbar-0.23.90-3  zenity-3.44.1-1  zeromq-4.3.4-4  zimg-3.0.5-1  zlib-1:1.2.13-3  zstd-1.5.5-2
-                zvbi-0.2.41-1  zxing-cpp-2.1.0-1  amd-ucode-20230625.ee91452d-5  edk2-shell-202305-1  espeakup-0.90-2  firefox-i18n-en-gb-116.0.1-1  firefox-i18n-en-us-116.0.1-1
+                zvbi-0.2.41-1  zxing-cpp-2.1.0-1  amd-ucode-20230625.ee91452d-5  edk2-shell-202305-1  espeakup-0.90-2  firefox-i18n-en-gb-116.0.2-1  firefox-i18n-en-us-116.0.2-1
                 gparted-1.5.0-1  grub-2:2.06.r499.ge67a551a4-1  intel-ucode-20230613-1  lib32-pipewire-jack-1:0.3.77-1  linux-6.4.8.arch1-1  linux-headers-6.4.8.arch1-1  memtest86+-6.20-1
                 memtest86+-efi-6.20-1  mkinitcpio-archiso-68-1  mousepad-0.6.1-2  nano-7.2-1  onlyoffice-bin-7.4.1-1  pipewire-alsa-1:0.3.77-1  pipewire-jack-1:0.3.77-1
                 pipewire-pulse-1:0.3.77-1  pv-1.7.0-1  ristretto-0.13.1-1  squashfs-tools-4.6.1-1  syslinux-6.04.pre2.r11.gbf6db5b4-3  testdisk-7.1-5  thunar-4.18.6-1
@@ -271,12 +271,32 @@ Packages (1025) a52dec-0.8.0-2  aalib-1.4rc5-17  acl-2.3.1-3  adobe-source-code-
                 vapour-os-i915-gen10-1.0.0-8  vapour-os-i915-gen3-1.0.0-3  vapour-os-liveusb-installer-1.0.0-20  vapour-os-nvidia-1.0.0-6  vapour-os-xfce-1.0.0-7  vlc-3.0.18-13
                 wireplumber-0.4.14-1  xarchiver-0.5.4.21-1  xdg-desktop-portal-gtk-1.14.1-1  xfce4-terminal-1.0.4-1
 
-Total Download Size:      0.02 MiB
-Total Installed Size:  9720.12 MiB
+Total Download Size:     95.69 MiB
+Total Installed Size:  9724.92 MiB
 
 :: Proceed with installation? [Y/n]
 :: Retrieving packages...
- joystickwake-0.4-1.3-any                                                              16.5 KiB  24.5 KiB/s 00:01 [####################################################################] 100%
+ lib32-libldap-2.6.6-1-x86_64                                                         171.7 KiB   115 KiB/s 00:01 [####################################################################] 100%
+ perl-alien-build-2.80-2-any                                                          355.7 KiB   173 KiB/s 00:02 [####################################################################] 100%
+ perl-mailtools-2.21-7-any                                                             58.6 KiB   160 KiB/s 00:00 [####################################################################] 100%
+ firefox-i18n-en-gb-116.0.2-1-any                                                     456.0 KiB   195 KiB/s 00:02 [####################################################################] 100%
+ firefox-i18n-en-us-116.0.2-1-any                                                     451.8 KiB   193 KiB/s 00:02 [####################################################################] 100%
+ perl-xml-libxml-2.0209-1-x86_64                                                      657.1 KiB   264 KiB/s 00:02 [####################################################################] 100%
+ perl-path-tiny-0.144-2-any                                                            45.8 KiB   138 KiB/s 00:00 [####################################################################] 100%
+ perl-timedate-2.33-5-any                                                              34.0 KiB  55.9 KiB/s 00:01 [####################################################################] 100%
+ libproxy-0.5.3-2-x86_64                                                               28.7 KiB  45.7 KiB/s 00:01 [####################################################################] 100%
+ perl-error-0.17029-5-any                                                              21.4 KiB  33.5 KiB/s 00:01 [####################################################################] 100%
+ perl-dbi-1.643-6-x86_64                                                              838.9 KiB   233 KiB/s 00:04 [####################################################################] 100%
+ perl-capture-tiny-0.48-7-any                                                          17.6 KiB  27.6 KiB/s 00:01 [####################################################################] 100%
+ perl-ffi-checklib-0.31-3-any                                                          15.5 KiB  23.1 KiB/s 00:01 [####################################################################] 100%
+ perl-file-which-1.27-3-any                                                            11.9 KiB  20.3 KiB/s 00:01 [####################################################################] 100%
+ perl-clone-0.46-2-x86_64                                                              10.2 KiB  17.8 KiB/s 00:01 [####################################################################] 100%
+ perl-alien-libxml2-0.19-2-any                                                          9.1 KiB  15.6 KiB/s 00:01 [####################################################################] 100%
+ net-snmp-5.9.1-7-x86_64                                                                2.0 MiB   280 KiB/s 00:07 [####################################################################] 100%
+ firefox-116.0.2-1-x86_64                                                              62.1 MiB  3.27 MiB/s 00:19 [####################################################################] 100%
+ perl-5.38.0-1-x86_64                                                                  20.3 MiB   898 KiB/s 00:23 [####################################################################] 100%
+ imagemagick-7.1.1.15-2-x86_64                                                          8.2 MiB   358 KiB/s 00:23 [####################################################################] 100%
+ Total (20/20)                                                                         95.7 MiB  4.08 MiB/s 00:23 [####################################################################] 100%
 (1025/1025) checking keys in keyring                                                                              [####################################################################] 100%
 (1025/1025) checking package integrity                                                                            [####################################################################] 100%
 (1025/1025) loading package files                                                                                 [####################################################################] 100%
@@ -512,8 +532,8 @@ Optional dependencies for harfbuzz
     harfbuzz-utils: utilities
 ( 109/1025) installing freetype2                                                                                  [####################################################################] 100%
 ( 110/1025) installing fontconfig                                                                                 [####################################################################] 100%
-/tmp/alpm_SJoeZO/.INSTALL: line 2: /usr/local/sbin/vercmp: Permission denied
-/tmp/alpm_SJoeZO/.INSTALL: line 2: ((: < 0 : syntax error: operand expected (error token is "< 0 ")
+/tmp/alpm_JMziX0/.INSTALL: line 2: /usr/local/sbin/vercmp: Permission denied
+/tmp/alpm_JMziX0/.INSTALL: line 2: ((: < 0 : syntax error: operand expected (error token is "< 0 ")
 Rebuilding fontconfig cache...
 ( 111/1025) installing fribidi                                                                                    [####################################################################] 100%
 ( 112/1025) installing nettle                                                                                     [####################################################################] 100%
@@ -775,8 +795,8 @@ Optional dependencies for ffmpeg
 ( 245/1025) installing adobe-source-code-pro-fonts                                                                [####################################################################] 100%
 ( 246/1025) installing cantarell-fonts                                                                            [####################################################################] 100%
 ( 247/1025) installing dconf                                                                                      [####################################################################] 100%
-/tmp/alpm_d27CE5/.INSTALL: line 6: /usr/local/sbin/vercmp: Permission denied
-/tmp/alpm_d27CE5/.INSTALL: line 6: ((: < 0 : syntax error: operand expected (error token is "< 0 ")
+/tmp/alpm_q2WI7T/.INSTALL: line 6: /usr/local/sbin/vercmp: Permission denied
+/tmp/alpm_q2WI7T/.INSTALL: line 6: ((: < 0 : syntax error: operand expected (error token is "< 0 ")
 ( 248/1025) installing gsettings-desktop-schemas                                                                  [####################################################################] 100%
 ( 249/1025) installing libxi                                                                                      [####################################################################] 100%
 ( 250/1025) installing libxtst                                                                                    [####################################################################] 100%
@@ -1803,7 +1823,7 @@ chmod: cannot access '/trustdb.gpg': No such file or directory
 ==> Generating pacman master key. This may take some time.
 gpg: Generating pacman keyring master key...
 gpg: directory '/root/.gnupg/openpgp-revocs.d' created
-gpg: revocation certificate stored as '/root/.gnupg/openpgp-revocs.d/FD1946C980D8A90F2208EAE421810CC60486D9D2.rev'
+gpg: revocation certificate stored as '/root/.gnupg/openpgp-revocs.d/01A891B0CD184BBBED81B9DF9D221B297BAA734B.rev'
 gpg: Done
 ==> Updating trust database...
 gpg: marginals needed: 3  completes needed: 1  trust model: pgp
@@ -2380,7 +2400,7 @@ gpg: migration succeeded
 ==> Generating pacman master key. This may take some time.
 gpg: Generating pacman keyring master key...
 gpg: directory '/etc/pacman.d/gnupg/openpgp-revocs.d' created
-gpg: revocation certificate stored as '/etc/pacman.d/gnupg/openpgp-revocs.d/0B8FEE09D688E2B40A762A055477D5F274715DB7.rev'
+gpg: revocation certificate stored as '/etc/pacman.d/gnupg/openpgp-revocs.d/83ABC30E41CCF7F68F65C60594B046EA16862431.rev'
 gpg: Done
 ==> Updating trust database...
 gpg: marginals needed: 3  completes needed: 1  trust model: pgp
@@ -2763,7 +2783,7 @@ Created symlink /etc/systemd/system/network-online.target.wants/NetworkManager-w
 Created symlink /etc/systemd/system/sockets.target.wants/avahi-daemon.socket → /usr/lib/systemd/system/avahi-daemon.socket.
 System has not been booted with systemd as init system (PID 1). Can't operate.
 Failed to connect to bus: Host is down
-Created Owner UUID 3bc01851-99cb-40d3-bd36-d4d17f21fa91
+Created Owner UUID 306236cc-39e7-4f11-94f4-150d4464fc84
 Creating secure boot keys...✓
 Secure boot keys created!
 Generating EFI bundles....
@@ -2909,30 +2929,30 @@ mkfs.fat 4.2 (2021-01-31)
 [mkarchiso] INFO: Creating SquashFS image, this may take some time...
 Parallel mksquashfs: Using 12 processors
 Creating 4.0 filesystem on /tmp/vapour-os-isobuild-tmp/iso/vapour-os/x86_64/airootfs.sfs, block size 1048576.
-[====================================================================================================================================================================\  ] 159486/160497  99%
+[====================================================================================================================================================================|  ] 159503/160514  99%
 Unrecognised xattr prefix system.posix_acl_default
 Unrecognised xattr prefix system.posix_acl_access
 Unrecognised xattr prefix system.posix_acl_default
 Unrecognised xattr prefix system.posix_acl_access
 Unrecognised xattr prefix system.posix_acl_default
-[======================================================================================================================================================================-] 160497/160497 100%
+[======================================================================================================================================================================-] 160514/160514 100%
 
 Exportable Squashfs 4.0 filesystem, xz compressed, data block size 1048576
         compressed data, compressed metadata, compressed fragments,
         compressed xattrs, compressed ids
         duplicates are removed
-Filesystem size 2848677.47 Kbytes (2781.91 Mbytes)
-        27.65% of uncompressed filesystem size (10304329.67 Kbytes)
-Inode table size 1325460 bytes (1294.39 Kbytes)
-        20.59% of uncompressed inode table size (6436232 bytes)
-Directory table size 1747068 bytes (1706.12 Kbytes)
-        34.99% of uncompressed directory table size (4992838 bytes)
+Filesystem size 2849380.65 Kbytes (2782.60 Mbytes)
+        27.64% of uncompressed filesystem size (10309249.08 Kbytes)
+Inode table size 1325444 bytes (1294.38 Kbytes)
+        20.59% of uncompressed inode table size (6436593 bytes)
+Directory table size 1748108 bytes (1707.14 Kbytes)
+        35.01% of uncompressed directory table size (4993160 bytes)
 Xattr table size 106 bytes (0.10 Kbytes)
         66.25% of uncompressed xattr table size (160 bytes)
 Number of duplicate files found 23144
-Number of inodes 190853
-Number of files 163375
-Number of fragments 3998
+Number of inodes 190865
+Number of files 163387
+Number of fragments 3999
 Number of symbolic links 14807
 Number of device nodes 0
 Number of fifo nodes 0
@@ -2967,8 +2987,8 @@ Number of gids 14
 [mkarchiso] INFO: Creating ISO image...
 xorriso 1.5.6 : RockRidge filesystem manipulator, libburnia project.
 
-xorriso : NOTE : Environment variable SOURCE_DATE_EPOCH encountered with value 1691415714
-Drive current: -outdev 'stdio:/home/alex4nder/Documents/Code/vapourepo/vapour-os-archiso/out/vapour-os-1.0.0-1-x86_64.iso'
+xorriso : NOTE : Environment variable SOURCE_DATE_EPOCH encountered with value 1691447192
+Drive current: -outdev 'stdio:/home/alex4nder/out/vapour-os-1.0.0-1-x86_64.iso'
 Media current: stdio file, overwriteable
 Media status : is blank
 Media summary: 0 sessions, 0 data blocks, 0 data,  188g free
@@ -2977,14 +2997,14 @@ xorriso : UPDATE :     103 files added in 1 seconds
 xorriso : UPDATE :     103 files added in 1 seconds
 xorriso : NOTE : Copying to System Area: 432 bytes from file '/tmp/vapour-os-isobuild-tmp/iso/boot/syslinux/isohdpfx.bin'
 libisofs: NOTE : Automatically adjusted MBR geometry to 1022/180/32
-libisofs: NOTE : Aligned image size to cylinder size by 1326 blocks
-xorriso : UPDATE :  5.58% done
-xorriso : UPDATE :  48.02% done
-xorriso : UPDATE :  90.86% done
+libisofs: NOTE : Aligned image size to cylinder size by 974 blocks
+xorriso : UPDATE :  5.96% done
+xorriso : UPDATE :  28.44% done
+xorriso : UPDATE :  73.52% done
 ISO image produced: 1479526 sectors
 Written to medium : 1479526 sectors at LBA 0
-Writing to 'stdio:/home/alex4nder/Documents/Code/vapourepo/vapour-os-archiso/out/vapour-os-1.0.0-1-x86_64.iso' completed successfully.
+Writing to 'stdio:/home/alex4nder/out/vapour-os-1.0.0-1-x86_64.iso' completed successfully.
 
 [mkarchiso] INFO: Done!
-2.9G    /home/alex4nder/Documents/Code/vapourepo/vapour-os-archiso/out/vapour-os-1.0.0-1-x86_64.iso
-Done. Press ENTER to exit.
+2.9G    /home/alex4nder/out/vapour-os-1.0.0-1-x86_64.iso
+chown: cannot access '/home/alex4nder/Documents/Code/vapourepo/vapour-os-archiso/out': No such file or directory

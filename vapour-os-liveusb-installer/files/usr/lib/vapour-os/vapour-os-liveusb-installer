@@ -5,6 +5,7 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 E2OPTIONS="ea_inode,encrypt,large_dir,project,quota,uninit_bg,verity"
 ARCH="$(uname -m)"
 ARCH_VERSION="$(/lib/ld-linux-x86-64.so.2 --help | grep -m 1 "supported, searched" | cut -d '(' -f 1)"
+[ ! -z "$DEBUG" ] && DEBUG=0; [ "$DEBUG" == 1 ] && Print "Debug mode enabled"
 Error() {
 	echo "[INSTALLER: ERROR] $1"
 	exit 1
@@ -139,6 +140,8 @@ Print "        Type: $CHASSIS"
 Print "    Portable: $PORTABLE"
 Print "   Processor: $CPU_MODEL"
 
+if [ "$DEBUG" == 1 ]; then echo "Press enter to begin installing packages"; read; fi
+
 ## 3) Install system
 cp "/usr/share/$DISTRO_ID/custom-configs/pacman.conf" /tmp/pacman-pacstrap.conf
 if [ $ARCH == "x86_64" ]; then
@@ -169,15 +172,12 @@ genfstab -U /mnt >> /mnt/etc/fstab
 ## 4) Chroot setup
 mkdir "/mnt/etc/$DISTRO_ID/chroot-setup"
 cp "$SCRIPT_DIR/chroot-setup.sh" "/mnt/etc/$DISTRO_ID/chroot-setup/"
-echo "$EXTRA_SOFTWARE" > "/mnt/etc/$DISTRO_ID/chroot-setup/extra-software"
-echo "$KERNELS" > "/mnt/etc/$DISTRO_ID/chroot-setup/kernels"
-echo "$ARCH" > "/mnt/etc/$DISTRO_ID/chroot-setup/arch"
-echo "$ARCH_VERSION" > "/mnt/etc/$DISTRO_ID/chroot-setup/arch-version"
-echo "$VERSION_TO_INSTALL" > "/mnt/etc/$DISTRO_ID/chroot-setup/version-to-install"
 # Detect manufacturer and model info, and enable fixes accordingly
 case "$MANUFACTURER" in
 	"HP") [ "$PORTABLE" == "yes" ] && echo "systemctl enable hp-lid-fix" >> "/mnt/etc/$DISTRO_ID/chroot-setup";;
 esac
-sync; arch-chroot /mnt "/etc/$DISTRO_ID/chroot-setup/chroot-setup.sh" || exit 1
+sync
+if [ "$DEBUG" == 1 ]; then echo "Press enter to begin chroot setup"; read; fi
+arch-chroot /mnt "/etc/$DISTRO_ID/chroot-setup/chroot-setup.sh" || exit 1
 rm -rf "/mnt/etc/$DISTRO_ID/chroot-setup"
 sync

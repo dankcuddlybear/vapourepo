@@ -1,7 +1,7 @@
 # Maintainer: Dankcuddlybear <dankcuddlybear@protonmail.com>
 pkgname=voscfg
 pkgver=1.0.0
-pkgrel=4
+pkgrel=5
 pkgdesc='Curses based application for system/user management and configuration'
 arch=(any)
 url='https://github.com/dankcuddlybear/vapourepo'

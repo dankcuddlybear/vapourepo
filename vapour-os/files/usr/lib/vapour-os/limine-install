@@ -60,7 +60,7 @@ case "$1" in
 		[ -z "$ROOT" ] && Error "No root (/) partition specified in /etc/fstab"
 		## Configure Limine
 		cp -r /usr/share/$DISTRO_ID/boot / # Copy bootloader config files and resources
-		KPARAMS="$(cat /usr/share/$DISTRO_ID/boot/limine/limine.cfg | grep -m 1 "\${KPARAMS}=") $ROOT"
+		KPARAMS="$(cat /usr/share/$DISTRO_ID/boot/limine/limine.cfg | grep -m 1 "\${KPARAMS}=") root=$ROOT"
 		sed -i "s/^.*\${KPARAMS}=.*$/$KPARAMS/" /boot/limine/limine.cfg
 		sed -i "s/^.*\${KERNEL}=.*$/\${KERNEL}=$KERNEL/" /boot/limine/limine.cfg
 		# Detect CPU and enable/disable microcode loading

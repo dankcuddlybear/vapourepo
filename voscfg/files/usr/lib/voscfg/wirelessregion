@@ -204,21 +204,25 @@ if [ -z "$1" ]; then ## Prompt to select Wifi country
 	rm /run/voscfg/syscfg-wirelessregion /run/voscfg/syscfg-wirelessregion-answer
 else ## Use command line parameter instead
 	if [[ "$REGDOMS" != *"$1"* ]]; then
-		echo "[ERROR] Region code \"$1\" is not in wireless-regdb."
-		echo "The available region codes are listed below:"
-		for REGDOM in $REGDOMS; do
-			echo "$REGDOM ($(CodeToCountry $REGDOM))"
-		done
-		echo "If your region isn't listed here, you should use code \"00\" (World)."
-		echo "Wireless region has not been changed."
-		exit 1
+		if [ ! -z "$2" ] && [ "$2" == "force" ]; then
+			echo "[WARNING] Region code \"$1\" is not in wireless-regdb. Setting to 00 (World) instead."
+			SELECTED_REGDOM="00"
+		else
+			echo "[ERROR] Region code \"$1\" is not in wireless-regdb."
+			echo "The available region codes are listed below:"
+			for REGDOM in $REGDOMS; do
+				echo "$REGDOM ($(CodeToCountry $REGDOM))"
+			done
+			echo "If your region isn't listed here, you should use code \"00\" (World)."
+			echo "Wireless region has not been changed."
+			exit 1
+		fi
 	else SELECTED_REGDOM="$1"; fi
 fi
 
 if [ ! -z "$SELECTED_REGDOM" ]; then ## Set the wireless country if one has been selected
 	sed -i 's/^\([^#].*\)/#\1/g' /etc/conf.d/wireless-regdom # Comment all lines in /etc/conf.d/wireless-regdom
 	sed -i "/^#WIRELESS_REGDOM=\"$SELECTED_REGDOM\"/ cWIRELESS_REGDOM=\"$SELECTED_REGDOM\"" /etc/conf.d/wireless-regdom # Uncomment regdomain
-	echo "options cfg80211 ieee80211_regdom=$SELECTED_REGDOM" > /etc/modprobe.d/cfg80211-wireless-regdom.conf
 	iw reg set $SELECTED_REGDOM # Set the regdomain now
 	echo "Set wireless region to \"$SELECTED_REGDOM\" ($(CodeToCountry $SELECTED_REGDOM))"
 else echo "Wireless region has not been changed."; exit 125; fi

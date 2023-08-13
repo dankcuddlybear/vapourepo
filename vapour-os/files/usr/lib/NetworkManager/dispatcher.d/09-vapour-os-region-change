@@ -1,0 +1,7 @@
+#!/bin/sh
+case "$2" in
+	connectivity-change)
+		timedatectl set-timezone "$(curl -s --fail https://ipapi.co/timezone)"
+		/usr/lib/voscfg/wirelessregion $(curl -s https://ipinfo.io/$(curl -s https://ipinfo.io/ip) | grep -i "\"country\": " | cut -d ':' -f 2 | sed 's|[\", ]||g') force
+		;;
+esac

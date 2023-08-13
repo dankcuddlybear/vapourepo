@@ -28,7 +28,7 @@ Install() {
 	#
 	## Create custom /etc/issue greeting
 	setterm -cursor on > /etc/issue
-	echo -e "$(cat /usr/share/$DISTRO_ID/$DISTRO_ID.ascii)" >> /etc/issue
+	#echo -e "$(cat /usr/share/$DISTRO_ID/$DISTRO_ID.ascii)" >> /etc/issue
 	echo "\\n \\r \\m" >> /etc/issue
 	echo "\\d \\t" >> /etc/issue
 	echo "/dev/\\l" >> /etc/issue
@@ -64,12 +64,11 @@ Install() {
 		cp /usr/share/$DISTRO_ID/custom-configs/locale.gen /etc/locale.gen
 	fi
 
-	# Pacman keys
+	## Pacman keys
 	pacman-key --init
-	pacman-key --add /usr/share/pacman/keyrings/cachyos.gpg; pacman-key --lsign-key F3B607488DB35A47
-	pacman-key --add /usr/share/pacman/keyrings/vapourepo.gpg; pacman-key --lsign-key 7E33F46247D1BA09
+	pacman-key --add /usr/share/pacman/keyrings/vapourepo.gpg
+	pacman-key --add /usr/share/pacman/keyrings/cachyos.gpg
 	pacman-key --populate
-	pacman-key --updatedb
 
 	locale-gen
 	systemctl mask systemd-resolved

@@ -2,9 +2,8 @@
 DISTRO_ID="vapour-os"
 DISTRO_NAME="Vapour OS"
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-E2OPTIONS="ea_inode,encrypt,large_dir,project,quota,uninit_bg,verity"
+E2OPTIONS="" # E2OPTIONS="ea_inode,encrypt,large_dir,project,quota,uninit_bg,verity"
 ARCH="$(uname -m)"
-ARCH_VERSION="$(/lib/ld-linux-x86-64.so.2 --help | grep -m 1 "supported, searched" | cut -d '(' -f 1)"
 [ ! -z "$DEBUG" ] && DEBUG=0; [ "$DEBUG" == 1 ] && Print "Debug mode enabled"
 Error() {
 	echo "[INSTALLER: ERROR] $1"
@@ -104,11 +103,12 @@ PACKAGES="$VERSION_TO_INSTALL $KERNELS $EXTRA_SOFTWARE limine"
 MANUFACTURER="$(dmidecode -s system-manufacturer)"
 MODEL="$(dmidecode -s system-product-name)"
 CHASSIS="$(dmidecode -s chassis-type)"
-CPU_MODEL="$(dmidecode -s processor-version)"
-CPU_MANUFACTURER="$(dmidecode -s processor-manufacturer)"
+
 # Microcode
-[ "$CPU_MANUFACTURER" == "AMD" ] && PACKAGES="$PACKAGES amd-ucode"
-[ "$CPU_MANUFACTURER" == "Intel(R) Corporation" ] && PACKAGES="$PACKAGES intel-ucode"
+shopt -s nocaseglob; shopt -s nocasematch
+[ "$CPU_MODEL" == "AuthenticAMD" ] && PACKAGES="$PACKAGES amd-ucode"
+[ "$CPU_MODEL" == "GenuineIntel" ] && PACKAGES="$PACKAGES intel-ucode"
+shopt -u nocaseglob; shopt -u nocasematch
 # Detect laptop hardware
 if [ ! -z "$CHASSIS" ] && ([ "$CHASSIS" == "Laptop" ] || [ "$CHASSIS" == "Notebook" ] || \
 [ "$CHASSIS" == "Convertible" ] || [ "$CHASSIS" == "Detachable" ] || [ "$CHASSIS" == "Tablet" ] || \
@@ -138,11 +138,12 @@ Print "Manufacturer: $MANUFACTURER"
 Print "       Model: $MODEL"
 Print "        Type: $CHASSIS"
 Print "    Portable: $PORTABLE"
-Print "   Processor: $CPU_MODEL"
 
-if [ "$DEBUG" == 1 ]; then echo "Press enter to begin installing packages"; read; fi
+[ "$DEBUG" == 1 ] && echo "Press enter to start updating Pacman GPG keys" && read
+pacman-key --refresh-keys
 
 ## 3) Install system
+[ "$DEBUG" == 1 ] && echo echo "Press enter to start installing packages" && read
 cp "/usr/share/$DISTRO_ID/custom-configs/pacman.conf" /tmp/pacman-pacstrap.conf
 if [ $ARCH == "x86_64" ]; then
 	case $ARCH_VERSION in

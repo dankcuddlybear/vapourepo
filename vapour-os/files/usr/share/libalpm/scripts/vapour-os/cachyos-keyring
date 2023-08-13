@@ -1,4 +1,5 @@
 #!/bin/sh
 CACHYOS_GPG_FINGERPRINT="$(gpg --show-keys --fingerprint /usr/share/pacman/keyrings/cachyos.gpg | cut -d ']' -f 3 | cut -d 'u' -f 1 | sed 's/ //g')"
 echo ${CACHYOS_GPG_FINGERPRINT}:4: > /usr/share/pacman/keyrings/cachyos-trusted
+pacman-key --add /usr/share/pacman/keyrings/cachyos.gpg
 pacman-key --populate

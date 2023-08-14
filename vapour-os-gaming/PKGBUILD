@@ -1,7 +1,7 @@
 # Maintainer: Dankcuddlybear <dankcuddlybear@protonmail.com>
 pkgname=vapour-os-gaming
 pkgver=1.0.0
-pkgrel=8
+pkgrel=9
 pkgdesc='Libraries for Windows/Linux games on Vapour OS'
 arch=(x86_64)
 url='https://github.com/dankcuddlybear/vapourepo'
@@ -38,7 +38,7 @@ package() {
 	cp -r "$srcdir/../files/usr" "$pkgdir"
 	"$srcdir/../../set-default-permissions.sh" "$pkgdir"
 	CDIR="$(pwd)"
-	cd "$pkgdir/usr/share/libalpm/scripts"
+	cd "$pkgdir/usr/share/libalpm/scripts/$pkgname"
 	chmod +x *
 	cd "$CDIR"
 }

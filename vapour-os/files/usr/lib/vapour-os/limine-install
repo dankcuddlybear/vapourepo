@@ -65,7 +65,7 @@ case "$1" in
 		sed -i "s/^.*\${KERNEL}=.*$/\${KERNEL}=$KERNEL/" /boot/limine/limine.cfg
 		# Detect CPU and enable/disable microcode loading
 		if [ -f /boot/amd-ucode.img ]; then sed -i "s/^.*\${CPU}=.*$/\${CPU}=amd/" /boot/limine/limine.cfg
-		elif [ -f /boot/intel-ucode.img ]; then sed -i "s/^.*\${CPU}=.*$/\${CPU}=amd/" /boot/limine/limine.cfg
+		elif [ -f /boot/intel-ucode.img ]; then sed -i "s/^.*\${CPU}=.*$/\${CPU}=intel/" /boot/limine/limine.cfg
 		else sed -i "s/^[^#]*MODULE_PATH=boot:\/\/\/\${CPU}-ucode.img/#&/" /boot/limine/limine.cfg; fi
 		## Create UEFI boot entry
 		EFI_BITS="$(cat /sys/firmware/efi/fw_platform_size 2> /dev/null)"

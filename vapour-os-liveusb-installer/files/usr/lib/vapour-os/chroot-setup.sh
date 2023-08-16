@@ -4,6 +4,9 @@ DISTRO_NAME="Vapour OS"
 [ $(whoami) != "root" ] && echo "[ERROR] You must run this script with root priviliges." && exit 1
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
+# Install bootloader
+/usr/lib/$DISTRO_ID/limine-install install
+
 # Clean up packages
 pacman --asdeps -D lib32-pipewire-jack pipewire-alsa pipewire-jack pipewire-pulse xdg-desktop-portal-gnome xdg-desktop-portal-kde xdg-desktop-portal-gtk wireplumber
 pacman --noconfirm -Sc

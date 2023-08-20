@@ -36,6 +36,7 @@ vapour-os-i915-gen10
 vapour-os-liveusb-installer
 vapour-os-multimedia-codecs
 vapour-os-nvidia
+vapour-os-printer-drivers
 vapour-os-xfce
 vlc
 wireplumber

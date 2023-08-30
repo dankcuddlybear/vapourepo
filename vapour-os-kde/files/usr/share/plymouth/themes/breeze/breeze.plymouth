@@ -1,8 +1,0 @@
-[Plymouth Theme]
-Name=Breeze
-Description=Breeze theme without Arch logo or KDE/Plasma branding. Original theme by jtyr (https://github.com/jtyr/plymouth-theme-arch-breeze). Modified theme by dankcuddlybear.
-ModuleName=script
-
-[script]
-ImageDir=/usr/share/plymouth/themes/breeze
-ScriptFile=/usr/share/plymouth/themes/breeze/script

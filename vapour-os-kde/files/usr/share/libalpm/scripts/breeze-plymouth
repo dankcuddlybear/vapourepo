@@ -1,7 +1,0 @@
-#!/bin/sh
-if [ -x /bin/plymouth-set-default-theme ]; then plymouth-set-default-theme -R breeze
-else
-	echo "Plymouth is not installed. To enable boot splash, install plymouth-git and run command \"plymouth-set-default-theme -R breeze\"."
-	echo "If you want a different boot splash, replace \"breeze\" with the theme name."
-	echo "Plymouth themes are located in /usr/share/plymouth/themes"
-fi

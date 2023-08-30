@@ -1,9 +1,0 @@
-[Trigger]
-Type = Package
-Operation = Install
-Target = vapour-os-kde
-
-[Action]
-Description = Enable Breeze Plymouth theme
-When = PostTransaction
-Exec = /usr/share/libalpm/scripts/breeze-plymouth

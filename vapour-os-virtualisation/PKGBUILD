@@ -1,0 +1,15 @@
+# Maintainer: Dankcuddlybear <dankcuddlybear@protonmail.com>
+pkgname=vapour-os-virtualisation
+pkgver=1.0.0
+pkgrel=1
+pkgdesc='Prepares your computer for running virtual machines'
+arch=(any)
+url='https://github.com/dankcuddlybear/Vapour-OS'
+install=install.install
+depends=(
+    'dnsmasq'
+    'edk2-ovmf'
+    'iptables-nft'
+    'qemu-desktop'
+    'swtpm'
+)

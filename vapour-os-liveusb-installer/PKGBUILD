@@ -1,0 +1,15 @@
+# Maintainer: Dankcuddlybear <dankcuddlybear@protonmail.com>
+pkgname=vapour-os-liveusb-installer
+pkgver=1.0.0
+pkgrel=27
+pkgdesc='Vapour OS Live USB installer files'
+arch=(x86_64)
+url='https://github.com/dankcuddlybear/vapourepo'
+depends=('arch-install-scripts' 'dialog' 'dmidecode' 'parted')
+package() {
+	cp -r "$srcdir/../files/usr" "$pkgdir"
+	"$srcdir/../../set-default-permissions.sh" "$pkgdir"
+	chmod +x "$pkgdir/usr/bin/install-vapour-os" \
+		"$pkgdir/usr/lib/vapour-os/chroot-setup.sh" \
+		"$pkgdir/usr/lib/vapour-os/vapour-os-liveusb-installer"
+}

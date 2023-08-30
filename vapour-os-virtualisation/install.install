@@ -1,0 +1,3 @@
+post_install() {
+	systemctl --now enable libvirtd
+}

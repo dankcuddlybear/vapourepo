@@ -1,0 +1,18 @@
+# Maintainer: Dankcuddlybear <dankcuddlybear@protonmail.com>
+pkgname=vapour-os-printer-drivers
+pkgver=1.0.0
+pkgrel=1
+pkgdesc='Drivers for printers and scanners'
+arch=(x86_64)
+url='https://github.com/dankcuddlybear/Vapour-OS'
+replaces=('vapour-os-printing')
+install=$pkgname.install
+depends=(
+	'bluez-cups'
+	'cups-pdf' 'cups-pk-helper'
+	'foomatic-db-engine' 'foomatic-db-gutenprint-ppds' 'foomatic-db-nonfree-ppds' 'foomatic-db-ppds'
+	'gsfonts' 'gutenprint'
+	'ipp-usb'
+	'sane-airscan'
+	'sane-gt68xx-firmware' 'splix' 'system-config-printer'
+)

@@ -1,0 +1,11 @@
+# Maintainer: Dankcuddlybear <dankcuddlybear@protonmail.com>
+pkgname=vapour-os-mirrorlist
+pkgver=1.0.0
+pkgrel=2
+pkgdesc='Vapourepo mirrorlist'
+arch=(x86_64)
+url='https://github.com/dankcuddlybear/vapourepo'
+package() {
+	cp -r "$srcdir/../etc" "$pkgdir"
+	"$srcdir/../../set-default-permissions.sh" "$pkgdir"
+}

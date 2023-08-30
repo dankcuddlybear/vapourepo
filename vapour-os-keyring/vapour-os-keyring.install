@@ -1,0 +1,9 @@
+post_install() {
+    pacman-key --add /usr/share/pacman/keyrings/vapourepo.gpg
+    pacman-key --lsign-key 7E33F46247D1BA09
+    pacman-key --populate
+    pacman-key --updatedb
+}
+post_upgrade() {
+    post_install
+}

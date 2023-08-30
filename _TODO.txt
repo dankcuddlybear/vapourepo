@@ -1,0 +1,12 @@
+[CRITICAL ISSUES]
+
+
+
+[ADDITIONAL FEATURES]
+
+Reset to factory settings in VOScfg
+
+
+
+[ENHANCEMENTS]
+Plymouth graphical boot screen

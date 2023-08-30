@@ -1,0 +1,3 @@
+post_install() {
+	systemctl --now enable ipp-usb cups.socket cups-browsed
+}

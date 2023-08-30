@@ -1,0 +1,7 @@
+#!/bin/sh
+[ -z "$1" ] && echo "[ERROR] No device specified" && exit 1
+DISTRO_ID="vapour-os"
+. /usr/lib/$DISTRO_ID/read-settings
+if [ $WAKEONLAN_WIFI == 0 ]; then iw dev $1 set power_save on
+else iw dev $1 set power_save off; fi
+

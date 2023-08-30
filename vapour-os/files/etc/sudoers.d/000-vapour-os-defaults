@@ -1,0 +1,6 @@
+# Set default EDITOR to restricted version of nano,
+# and do not allow visudo to use EDITOR/VISUAL.
+Defaults editor=/usr/bin/rnano, !env_editor
+
+# Allow members of group wheel to use sudo
+%wheel ALL=(ALL:ALL) ALL

@@ -1,0 +1,11 @@
+[Trigger]
+Operation = Install
+Operation = Upgrade
+Type = Package
+Target = pacman-mirrorlist
+
+[Action]
+Description = Upgrade Arch Linux mirrorlist
+Depends = sed
+When = PostTransaction
+Exec = /usr/share/libalpm/scripts/vapour-os/mirrors

@@ -1,0 +1,75 @@
+unset PCI_DEVICES ENTRY SLOT CLASS VENDOR DEVICE BUS DEV FUN GPUNO GPU INTEL_LEGACY INTEL_GEN GPU0 GPU0_BUSID GPU1_BUSID
+PCI_DEVICES=$(lspci -mm)
+IFS=$'\n' # Set delimiter to newline instead of space
+for ENTRY in $PCI_DEVICES; do
+	eval "ENTRY=($ENTRY)"
+	SLOT="${ENTRY[0]}"; CLASS="${ENTRY[1]}"; VENDOR="${ENTRY[2]}"; DEVICE="${ENTRY[3]}"
+	
+	## Split raw BusID into 3 numbers: Bus, device and function
+	BUS=$(echo $SLOT | cut -d ':' -f 1)
+	DEV=$(echo $SLOT | cut -d ':' -f 2 | cut -d '.' -f 1)
+	FUN=$(echo $SLOT | cut -d ':' -f 2 | cut -d '.' -f 2)
+	
+	## Convert bus and device into single digit numbers if they are less than 10
+	if [ $BUS == 00 ]; then BUS=0; else BUS=$(echo $BUS | sed 's/^0*//'); fi
+	if [ $DEV == 00 ]; then DEV=0; else DEV=$(echo $DEV | sed 's/^0*//'); fi
+	
+	## Configure GPUs
+	if [ $CLASS == "VGA compatible controller" ]; then
+		if [ -z $GPUNO ]; then GPUNO=0; elif [ $GPUNO == 0 ]; then GPUNO=1; elif [ $GPUNO == 1 ]; then GPUNO=2; fi
+		if [ "$VENDOR" == "Advanced Micro Devices, Inc. [AMD/ATI]" ]; then
+			GPU="amd"
+			echo "Found AMD graphics at $BUS:$DEV:$FUN"
+		elif [ "$VENDOR" == "Intel Corporation" ]; then
+			INTEL_LEGACY=0
+			if [[ $DEVICE != *"[UHD Graphics]"* ]] && [[ $DEVICE != *"CometLake"* ]] && [[ $DEVICE != *"Skylake"* ]]; then
+				#2nd Generation Core Processor Family Integrated Graphics Controller
+				#3rd Gen Core processor Graphics Controller
+				#4 Series Chipset Integrated Graphics Controller
+				#4th Gen Core Processor Integrated Graphics Controller
+				#4th Generation Core Processor Family Integrated Graphics Controller
+				#82945G/GZ Integrated Graphics Controller
+				if [[ $DEVICE == *" Generation "* ]] || [[ $DEVICE == *" Gen "* ]] || [[ $DEVICE == *" Series "* ]]; then
+					INTEL_GEN=$(echo "$DEVICE" | cut -d ' ' -f 1 | cut -c1)
+					if (($INTEL_GEN < 8)); then INTEL_LEGACY=1; fi
+				fi
+			fi
+			if [ INTEL_LEGACY == 1 ]; then
+				GPU="intel-legacy"
+				echo "Found legacy Intel graphics at $BUS:$DEV:$FUN"
+			else
+				GPU="intel"
+				echo "Found Intel graphics at $BUS:$DEV:$FUN"
+			fi
+		elif [ "$VENDOR" == "NVIDIA Corporation" ]; then
+			GPU="nvidia"
+			echo "Found Nvidia graphics at $BUS:$DEV:$FUN"
+		elif [ "$VENDOR" == "Vendor 1234" -a "$DEVICE" == "Device 1111" ] || [ "$VENDOR" == "Vendor 4321" -a "$DEVICE" == "Device 1111" ]; then
+			GPU="std"
+			echo "Found STDVGA graphics at $BUS:$DEV:$FUN"
+		elif [ "$VENDOR" == "Red Hat, Inc." -a "$DEVICE" == "Virtio GPU" ]; then
+			GPU="virtio"
+			echo "Found Virtio graphics at $BUS:$DEV:$FUN"
+		elif [ "$VENDOR" == "Red Hat, Inc." -a "$DEVICE" == "QXL paravirtual graphic card" ]; then
+			GPU="qxl"
+			echo "Found QXL graphics at $BUS:$DEV:$FUN"
+		elif [ "$VENDOR" == "VMware" ]; then
+			GPU="vmware"
+			echo "Found VMware graphics at $BUS:$DEV:$FUN"
+			echo "[WARNING] VMware graphics are buggy, unstable and not officially supported by Vapour OS. You should use Virtio (if possible), QXL or STD."
+		elif [ "$VENDOR" == "Cirrus Logic" ]; then
+			GPU="cirrus"
+			echo "Found Cirrus graphics at $BUS:$DEV:$FUN"
+			echo "[WARNING] Cirrus graphics are extremely outdated and not officially supported by Vapour OS. You should use Virtio (if possible), QXL or STD."
+		else GPU="unknown"; echo "[WARNING] Unrecognised GPU, skipping configuration for $SLOT $CLASS: $VENDOR $DEVICE"; fi
+		
+		if [ $GPUNO == 0 ]; then
+			GPU0=$GPU
+			GPU0_BUSID="PCI:$BUS:$DEV:$FUN"
+		elif [ $GPUNO == 1 ]; then
+			GPU1=$GPU
+			GPU1_BUSID="PCI:$BUS:$DEV:$FUN"
+		fi
+	fi
+done
+unset PCI_DEVICES ENTRY SLOT CLASS VENDOR DEVICE BUS DEV FUN GPUNO GPU INTEL_LEGACY INTEL_GEN

@@ -1,0 +1,16 @@
+[Trigger]
+Type = Package
+Operation = Install
+Target = openssh
+Target = openssh-git
+Target = openssh-hpn
+Target = openssh-hpn-git
+Target = openssh-hpn-shim
+Target = openssh-selinux
+Target = openssh-xdg-git
+Target = vapour-os
+
+[Action]
+Description = Configure OpenSSH
+When = PostTransaction
+Exec = /usr/share/libalpm/scripts/vapour-os/openssh

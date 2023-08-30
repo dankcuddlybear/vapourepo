@@ -1,0 +1,10 @@
+[Trigger]
+Type = Package
+Operation = Install
+Operation = Upgrade
+Target = cachyos-keyring
+
+[Action]
+Description = Trust CachyOS keyring
+When = PostTransaction
+Exec = /usr/share/libalpm/scripts/vapour-os/cachyos-keyring

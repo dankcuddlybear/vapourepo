@@ -1,0 +1,45 @@
+#!/bin/bash
+[ $(whoami) != "root" ] && echo "[ERROR] You must run this script with root priviliges." && exit 1
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+DISPLAY_SIZE=$1
+# Error handling
+[ -z $DISPLAY_SIZE ] && echo "[ERROR] Screen size in inches not specified - applications will default to 96dpi." && exit 1
+
+# Get framebuffer resolution, then calculate DPI
+PIXELS_X=$(cat /sys/class/graphics/fb0/virtual_size | cut -d , -f 1)
+PIXELS_Y=$(cat /sys/class/graphics/fb0/virtual_size | cut -d , -f 2)
+DPI_FLOAT=$(echo "scale=4; (sqrt(($PIXELS_X^2)+($PIXELS_Y^2)))/$DISPLAY_SIZE" | bc)
+DPI=$(echo $DPI_FLOAT | awk '{print int($1)}')
+
+# Calculate console font size, then set font
+if (($DPI < 80)); then CONSOLEFONT="ter-112n"
+elif (($DPI < 90)); then CONSOLEFONT="ter-114b"
+elif (($DPI < 100)); then CONSOLEFONT="ter-116b"
+elif (($DPI < 115)); then CONSOLEFONT="ter-118b"
+elif (($DPI < 130)); then CONSOLEFONT="ter-120b"
+elif (($DPI < 140)); then CONSOLEFONT="ter-122b"
+elif (($DPI < 160)); then CONSOLEFONT="ter-124b"
+elif (($DPI < 190)); then CONSOLEFONT="ter-128b"
+elif (($DPI > 190)); then CONSOLEFONT="ter-132b"
+fi
+$SCRIPT_DIR/setvar set /etc/vconsole.conf FONT $CONSOLEFONT
+
+# Calculate and set X cursor size
+if (($DPI < 110)); then XCURSOR_SIZE=24
+elif (($DPI < 150)); then XCURSOR_SIZE=32
+elif (($DPI < 225)); then XCURSOR_SIZE=48
+elif (($DPI < 320)); then XCURSOR_SIZE=64
+elif (($DPI > 320)); then XCURSOR_SIZE=96
+fi
+$SCRIPT_DIR/setvar set /etc/environment XCURSOR_SIZE $XCURSOR_SIZE
+
+# QT scaling settings
+$SCRIPT_DIR/setvar set /etc/environment QT_AUTO_SCREEN_SCALE_FACTOR "1"
+$SCRIPT_DIR/setvar set /etc/environment QT_FONT_DPI $DPI
+
+# Calculate and set scale for GTK/EFL apps
+DISPLAY_SCALE=$(echo "scale=6; $DPI_FLOAT*(1/96)" | bc)
+$SCRIPT_DIR/setvar set /etc/environment GDK_DPI_SCALE $DISPLAY_SCALE
+$SCRIPT_DIR/setvar set /etc/environment ELM_SCALE $DISPLAY_SCALE
+
+$SCRIPT_DIR/setvar set /etc/environment _JAVA_OPTIONS "-Dswing.aatext=TRUE -Dawt.useSystemAAFontSettings=on -Dswing.defaultlaf=com.sun.java.swing.plaf.gtk.GTKLookAndFeel -Dswing.crossplatformlaf=com.sun.java.swing.plaf.gtk.GTKLookAndFeel"

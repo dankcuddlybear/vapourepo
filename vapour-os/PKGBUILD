@@ -1,0 +1,45 @@
+# Maintainer: Dankcuddlybear <dankcuddlybear@protonmail.com>
+pkgname=vapour-os
+pkgver=1.0.0
+pkgrel=47
+pkgdesc='A modular Arch based distro optimised for energy saving and ease of use (core system)'
+arch=(x86_64)
+url='https://github.com/dankcuddlybear/vapourepo'
+install=vapour-os.install
+backup=('etc/skel/.config/yay/config.json'
+	'etc/vapour-os/vapour-os.conf'
+	'etc/X11/xorg.conf.d/30-touchpad-vapour-os'
+)
+depends=('ananicy-cpp'
+	'base'
+	'cachyos-ananicy-rules' 'cachyos-keyring' 'cachyos-mirrorlist' 'cachyos-v3-mirrorlist' 'cachyos-v4-mirrorlist' 'chaotic-keyring' 'chaotic-mirrorlist'
+	'dialog' 'dosfstools'
+	'efibootmgr' 'ethtool'
+	'fscrypt'
+	'hdparm'
+	'irqbalance' 'iw'
+	'kernel-modules-hook'
+	'linux-firmware'
+	'man-db' 'man-pages'
+	'networkmanager' 'nss-mdns'
+	'realtime-privileges' 'rtirq' 'rtkit'
+	'polkit'
+	'sbctl' 'sudo'
+	'terminus-font' 'texinfo'
+	'usbutils'
+	'vapour-os-mirrorlist' 'vapour-os-keyring' 'voscfg'
+	'wireless-regdb'
+)
+package() {
+	cp -r "$srcdir/../files/etc" "$pkgdir"
+	cp -r "$srcdir/../files/usr" "$pkgdir"
+	"$srcdir/../../set-default-permissions.sh" "$pkgdir"
+	chmod 750 "$pkgdir/etc/sudoers.d"
+
+	CDIR="$(pwd)"
+	for DIR in "$pkgdir/usr/lib/NetworkManager/dispatcher.d" "$pkgdir/usr/lib/systemd/system-sleep" "$pkgdir/usr/lib/$pkgname" "$pkgdir/usr/share/libalpm/scripts/$pkgname"; do
+		cd "$DIR"
+		chmod +x *
+	done
+	cd "$CDIR"
+}

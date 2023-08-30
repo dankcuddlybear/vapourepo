@@ -1,0 +1,16 @@
+# Maintainer: Dankcuddlybear <dankcuddlybear@protonmail.com>
+pkgname=lib32-vapour-os-desktop-libs
+pkgver=1.0.0
+pkgrel=2
+pkgdesc='32-bit desktop libraries for Vapour OS (CLI only)'
+arch=(x86_64)
+url='https://github.com/dankcuddlybear/Vapour-OS'
+depends=(
+	'lib32-gst-plugins-base' 'lib32-gst-plugins-good'
+	'lib32-libcups'
+	'lib32-pipewire-v4l2'
+	'lib32-ocl-icd'
+	'lib32-vulkan-mesa-layers'
+	'vapour-os-desktop-libs'
+)
+

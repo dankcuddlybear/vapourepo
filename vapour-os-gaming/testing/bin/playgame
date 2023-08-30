@@ -1,0 +1,150 @@
+#!/bin/bash
+## This script is for games and retro emulation. Run "playgame <game executable>" or "playrom <rom file>"
+## Specify these arguments in the command line:
+## GPU_MODE: Which GPU(s) to use
+## -1: Use default GPUs (default)
+##  0: Use integrated GPU only
+##  1: Use dedicated GPU only (if there isn't one, use integrated GPU)
+## COMPAT_32BIT: Run game with 32-bit drivers (0/1, off by default)
+## AMDPRO: Use AMDGPU PRO OpenGL/Vulkan drivers (0/1, off by default)
+## RUNNER: Command used to launch a ROM (string). If unspecified, the script will pick one automatically. Applies to emulated games only.
+[ -z "$1" ] && echo "[ERROR] No command" && exit 1
+BASENAME="$(basename $0)"
+[ -z "$GPU_MODE" ] || [ "$COMPAT_32BIT" != 0 ] || [ "$COMPAT_32BIT" != 1 ] && GPU_MODE=-1
+[ -z "$COMPAT_32BIT" ] || [ "$COMPAT_32BIT" != 1 ] && COMPAT_32BIT=0
+[ -z "$AMDPRO" ] || [ "$AMDPRO" != 1 ] && AMDPRO=0
+export __GL_MaxFramesAllowed=1
+export __GL_SYNC_TO_VBLANK=0
+export LD_BIND_NOW=1
+export vblank_mode=0
+if (($GPU_MODE >= 0)) || [ $AMDPRO == 1 ]; then
+	. /opt/vapour-os/pcihwinfo
+	if [ $GPU_MODE == 1 ]; then
+		if [ -z $GPU1 ]; then
+			GPU=$GPU0
+			export GPU_MODE=0
+		else GPU=$GPU1; fi
+	else GPU="$GPU0"; fi
+	
+	if [ $GPU == "amd" ]; then
+		if [ $AMDPRO == 1 ]; then
+			export DISABLE_LAYER_AMD_SWITCHABLE_GRAPHICS_1=1 VK_ICD_FILENAMES=/usr/share/vulkan/icd.d/amd_pro_icd32.json:/usr/share/vulkan/icd.d/amd_pro_icd64.json
+			if [ $COMPAT_32BIT == 1 ]; then export LD_LIBRARY_PATH="/usr/lib32/amdgpu-pro/:${LD_LIBRARY_PATH}"
+			else export LD_LIBRARY_PATH="/usr/lib/amdgpu-pro/:${LD_LIBRARY_PATH}"; fi
+		fi
+		if [ $GPU_MODE != -1 ]; then
+			[ $AMDPRO != 1 ] && export AMD_VULKAN_ICD=RADV VK_ICD_FILENAMES=/usr/share/vulkan/icd.d/radeon_icd.i686.json:/usr/share/vulkan/icd.d/radeon_icd.x86_64.json
+			[ $GPU_MODE == 1 ] && export DRI_PRIME=1
+		fi
+	elif [ $GPU == "intel" ]; then
+		if [ $GPU_MODE != -1 ]; then
+			export VK_ICD_FILENAMES=/usr/share/vulkan/icd.d/intel_icd.i686.json:/usr/share/vulkan/icd.d/intel_icd.x86_64.json
+			[ $GPU_MODE == 1 ] && export DRI_PRIME=1
+		fi
+	elif [ $GPU == "nvidia" ]; then
+		if [ $GPU_MODE != -1 ]; then
+			export __VK_LAYER_NV_optimus=NVIDIA_only __GLX_VENDOR_LIBRARY_NAME=nvidia GBM_BACKEND=nvidia-drm VK_ICD_FILENAMES=/usr/share/vulkan/icd.d/nvidia_icd.json
+			[ $GPU_MODE == 1 ] && export __NV_PRIME_RENDER_OFFLOAD=1
+		fi
+	else echo "[WANRING] Unrecognised GPU"; fi
+fi
+
+if [ "$BASENAME" == "playgame" ]; then gamemoderun "$@"
+elif [ "$BASENAME" == "playrom" ]; then
+	echo "Not supported yet"
+	exit 1
+	
+	ROMFILE="$1"
+	if [ ! -f "$ROMFILE" ]; then # If ROM is not found, look in /public/roms or /media/roms
+		if [ -f "/public/roms/$ROMFILE" ]; then ROMFILE="/public/roms/$ROMFILE"
+		elif [ -f "/media/roms/$ROMFILE" ]; then ROMFILE="/media/roms/$ROMFILE"
+		else echo "[ERROR] ROM file \"$ROMFILE\" not found"; exit 1; fi
+	fi
+	if [ -z "$RUNNER" ]; then # Pick a runner automatically if one is unspecified
+		ROMFILE_BASE="$(basename "$ROMFILE")"
+		case $ROMFILE_BASE in # Get file extension, or unset if there isn't one
+			*.*) ROMFILE_EXT="${ROMFILE_BASE##*.}";;
+			*) unset ROMFILE_EXT;;
+		esac
+		if [ ! -z "$FOMFILE_EXT" ]; then # Try to match system with extension
+			case $ROMFILE_EXT in
+				## Multi-system formats
+				app) ;; # Wii/DSi/Wii U/3DS
+				cso) ;; # PS2/PSP/GCN/Wii
+				dol) ;; # GCN/Wii
+				elf) ;;
+				gcz) ;; # GCN/Wii
+				rvz) ;; # GCN/Wii
+				srl) ;; # GBA/DS
+				xex) ;; # Xbox/Xbox 360
+				3ds|3dsx|cci|cxi) ROMFILE_SYSTEM="3ds";; # 3DS
+				cdc) ROMFILE_SYSTEM="cpc";; # Amstrad CPC
+				cdi|gdi) ROMFILE_SYSTEM="dc";; # Dreamcast
+				wad) ROMFILE_SYSTEM="doom";; # DOOM WAD
+				fds) ROMFILE_SYSTEM="fds";; # Famicom Disk System
+				gb) ROMFILE_SYSTEM="gb";; # Game Boy
+				gba) ROMFILE_SYSTEM="gba";; # Game Boy Advance
+				gbc) ROMFILE_SYSTEM="gbc";; # Game Boy Colour
+				gcm) ROMFILE_SYSTEM="gcn";; # Gamecube
+				gg) ROMFILE_SYSTEM="gg";; # Game Gear
+				gen|md|smd) ROMFILE_SYSTEM="md";; # Mega Drive/Genesis
+				n64|v64|z64) ROMFILE_SYSTEM="n64";; # N64
+				ndd) ROMFILE_SYSTEM="n64dd";; # N64DD
+				ids|nds) ROMFILE_SYSTEM="nds";; # NDS
+				dsi) ROMFILE_SYSTEM="ndsi";; # Nintendo DSi
+				nes|nez|unf|unif) ROMFILE_SYSTEM="nes";; # NES
+				ngc) ROMFILE_SYSTEM="ngc";; # Neo Geo Pocket Colour
+				ngp) ROMFILE_SYSTEM="ngp";; # Neo Geo Pocket
+				cas) ROMFILE_SYSTEM="pc6000";; # NEC PC-6000 series
+				pce) ROMFILE_SYSTEM="pce";; # PC Engine
+				ecm) ROMFILE_SYSTEM="ps1";; # PS1
+				vpk) ROMFILE_SYSTEM="psvita";; # PS Vita
+				sfc|smc) ROMFILE_SYSTEM="snes";; # SNES
+				tzx) ROMFILE_SYSTEM="spectrum";; # ZX Spectrum
+				xci) ROMFILE_SYSTEM="switch";; # Switch
+				ecm) ROMFILE_SYSTEM="vb";; # Virtual Boy
+				wbfs) ROMFILE_SYSTEM="wii";; # Wii
+				ws) ROMFILE_SYSTEM="ws";; # Wonderswan
+				wsc) ROMFILE_SYSTEM="wsc";; # Wonderswan Colour
+			esac
+		fi
+		if [ -z "$FOMFILE_EXT" ] && [ -z "$RUNNER" ]; then # Try to match system with mimetype
+			echo "placeholder"
+		fi
+		case $ROMFILE_SYSTEM in
+			3ds)
+				if [ -f "/usr/bin/citra" ]; then citra "$ROMFILE"
+				elif [ -f "/usr/bin/citra-qt" ]; then citra-qt "$ROMFILE"
+				elif [ -f "/usr/lib/libretro/citra_libretro.so" ] && [ -f /usr/bin/retroarch ]; then
+					retroarch -L /usr/lib/libretro/citra_libretro.so "$ROMFILE"
+				fi
+				;;
+			cpc) ;;
+			dc) ;;
+			doom) ;;
+			fds|nes) ;;
+			gb|gbc) ;;
+			gba) ;;
+			gg) ;;
+			md) ;;
+			n64|n64dd) ;;
+			nds|ndsi) ;;
+			nes) ;;
+			ngp|ngc) ;;
+			pc6000) ;;
+			pce) ;;
+			ps1) ;;
+			psvita) ;;
+			snes) ;;
+			spectrum) ;;
+			switch) ;;
+			vb) ;;
+			wii) ;;
+			ws|wsc) ;;
+		esac
+	fi
+	gamemoderun $RUNNER "$ROMFILE"
+else
+	echo "[ERROR] The script file or symbolic link to the script must be named playgame or playrom"
+	exit 1
+fi

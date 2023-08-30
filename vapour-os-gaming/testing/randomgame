@@ -1,0 +1,50 @@
+#!/bin/bash
+# 1: Directory
+ListDirs() {
+	[ -d "$1" ] && find "$1" -mindepth 1 -maxdepth 1 -not -path '*/.*' -type d | sed 's/%/%25%/g' | sed 's/ /%20%/g'
+}
+
+# 1: Directory;
+# 2: Extension (optional, * to list all files, leave blank to only list files without extensions);
+
+ListFiles() {
+	if [ -d "$1" ]; then
+		if [ -z "$2" ]; then find "$1" -mindepth 1 -maxdepth 1 -not -path "*/*.*" -type f | sed 's/%/%25%/g' | sed 's/ /%20%/g'
+		else find "$1" -mindepth 1 -maxdepth 1 -path "*/*.$2" -not -path '*/.*' -type f | sed 's/%/%25%/g' | sed 's/ /%20%/g'
+		fi
+	fi
+}
+
+GAMES=$((ListFiles "/public/games"; ListFiles "/public/games" "sh"; (ListDirs "/public/games" | sed "s/ \/public\/games\/SteamLibrary//g"); \
+ListFiles "/public/roms/switch" "xci"; \
+ListFiles "/media/roms/3ds" "3ds"; \
+ListFiles "/media/roms/arcade" "zip"; \
+ListFiles "/media/roms/c64" "d64"; ListFiles "/media/roms/c64" "t64"; \
+ListDirs "/media/roms/dos"; \
+ListFiles "/media/roms/gb" "gb"; ListFiles "/media/roms/gb" "gbc"; \
+ListFiles "/media/roms/gba" "gba"; \
+ListFiles "/media/roms/gcn" "iso"; \
+ListFiles "/media/roms/md" "md"; \
+ListFiles "/media/roms/n64" "n64"; ListFiles "/media/roms/n64" "v64"; ListFiles "/media/roms/n64" "z64"; \
+ListFiles "/media/roms/nds" "nds"; \
+ListFiles "/media/roms/nes" "nes"; ListFiles "/media/roms/nes" "fds"; \
+ListDirs "/media/roms/ps1"; ListFiles "/media/roms/ps1" "cue"; \
+ListFiles "/media/roms/ps2" "iso"; \
+ListDirs "/media/roms/ps3"; \
+ListFiles "/media/roms/psp" "iso"; ListFiles "/media/roms/psp" "cso"; \
+ListDirs "/media/roms/scumm"; \
+ListDirs "/media/roms/segacd"; ListFiles "/media/roms/ps1" "cue"; \
+ListFiles "/media/roms/sms" "sms"; \
+ListFiles "/media/roms/snes" "sfc"; ListFiles "/media/roms/snes" "smc"; \
+ListFiles "/media/roms/spectrum" "tzx"; \
+ListFiles "/media/roms/wii" "wbfs"; ListFiles "/media/roms/wii" "iso"; \
+ListFiles "/media/roms/xbox360" "iso") | tr " " "\n" | sort -R)
+[ $(wc -w <<< $GAMES) == 0 ] && echo "[ERROR] No games found" && exit 1
+RANDOMGAME=$(echo $GAMES | cut -d ' ' -f 1 | sed 's/%20%/ /g' | sed 's/%25%/%/g')
+RANDOMGAME_TYPE=$(echo $RANDOMGAME | cut -d '/' -f 3); [ -z "$RANDOMGAME_TYPE" ] && RANDOMGAME_TYPE=games
+if [ "$RANDOMGAME_TYPE" == "roms" ]; then RANDOMGAME_NAME=$(echo $RANDOMGAME | cut -d '/' -f 5)
+else RANDOMGAME_NAME=$(echo $RANDOMGAME | cut -d '/' -f 4); fi
+RANDOMGAME_NAME=$(echo $RANDOMGAME_NAME | cut -d '.' -f 1 | sed -e 's/([^()]*)//g' | sed -e 's/\[[^][]*\]//g' | \
+sed 's/ - /: /g' | sed 's/-/ /g' | sed -e "s/\b\(.\)/\u\1/g")
+echo "Random game: $RANDOMGAME_NAME"
+echo "$RANDOMGAME"

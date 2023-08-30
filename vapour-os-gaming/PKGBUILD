@@ -1,0 +1,43 @@
+# Maintainer: Dankcuddlybear <dankcuddlybear@protonmail.com>
+pkgname=vapour-os-gaming
+pkgver=1.0.0
+pkgrel=10
+pkgdesc='Libraries for Windows/Linux games on Vapour OS'
+arch=(x86_64)
+url='https://github.com/dankcuddlybear/vapourepo'
+backup=(etc/dxvk.conf)
+depends=(
+	'bluez-plugins'
+	'dxvk-async-git'
+	'gamemode' 'glew1.10'
+	'joystickwake'
+	'lib32-dbus-glib'
+	'lib32-fluidsynth' 'lib32-freeglut'
+	'lib32-gamemode' 'lib32-glew' 'lib32-glew1.10'
+	'lib32-libcurl-compat' 'lib32-libappindicator-gtk2' 'lib32-libappindicator-gtk3' 'lib32-libnm'
+	'lib32-openal' 'lib32-openssl-1.1'
+	#'lib32-pipewire-jack'
+	'lib32-sdl2_image' 'lib32-sdl2_mixer' 'lib32-sdl2_ttf'
+	'lib32-libudev0-shim' 'lib32-libusb'
+	'lib32-libxslt'
+	'libcurl-compat' 'libcurl-gnutls' 'lib32-libcurl-gnutls'
+	'libgcrypt15' 'lib32-libgcrypt15'
+	'libidn11' 'lib32-libidn11'
+	'libjpeg6-turbo' 'lib32-libjpeg6-turbo'
+	'libpng12' 'lib32-libpng12'
+	'librtmp0' 'lib32-librtmp0'
+	'libtiff4' 'lib32-libtiff4'
+	'lib32-vapour-os-desktop-libs' 'lib32-vapour-os-multimedia-codecs' 'lib32-vkd3d' 'libvpx1.3' 'lib32-libvpx1.3'
+	'sdl2_ttf'
+	'vkd3d-proton-mingw-git'
+	'winetricks' 'wine-gecko' 'wine' 'wine-mono' 'wine-nine'
+)
+package() {
+	cp -r "$srcdir/../files/etc" "$pkgdir"
+	cp -r "$srcdir/../files/usr" "$pkgdir"
+	"$srcdir/../../set-default-permissions.sh" "$pkgdir"
+	CDIR="$(pwd)"
+	cd "$pkgdir/usr/share/libalpm/scripts/$pkgname"
+	chmod +x *
+	cd "$CDIR"
+}

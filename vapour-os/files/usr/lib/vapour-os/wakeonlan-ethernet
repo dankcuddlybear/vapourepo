@@ -1,6 +1,0 @@
-#!/bin/sh
-[ -z "$1" ] && echo "[ERROR] No device specified" && exit 1
-DISTRO_ID="vapour-os"
-. /usr/lib/$DISTRO_ID/read-settings
-ethtool -s $1 wol $WAKEONLAN_ETHERNET
-

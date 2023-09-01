@@ -126,11 +126,11 @@ PartitionChooser() {
 SelectVersion() {
 	unset VERSION_TO_INSTALL
 	export VERSION_TO_INSTALL=$(dialog --stdout --backtitle "$BACKTITLE" --cancel-label "Back" --title "Version selection" --menu "Please select a version to install:" 0 0 0 \
-	"vapour-os-kde" "KDE Plasma (best for Windows users)" \
-	"vapour-os-xfce" "XFCE (best for older devices)" \
-	"vapour-os-gnome" "GNOME Shell (best for touch devices)" \
-	"vapour-os-desktop-libs" "Command line only (PCs/laptops)" \
-	"vapour-os" "Core system only (servers and embedded devices)")
+	"vapour-os-kde" "KDE Plasma (best for Windows users)             [5.0 GiB]" \
+	"vapour-os-xfce" "XFCE (best for older devices)                   [3.0 GiB]" \
+	"vapour-os-gnome" "GNOME Shell (best for touch devices)            [3.8 GiB]" \
+	"vapour-os-desktop-libs" "Command line only (PCs/laptops)                 [2.7 GiB]" \
+	"vapour-os" "Core system only (servers and embedded devices) [1.5 GiB]")
 	[ -z "$VERSION_TO_INSTALL" ] && ((PAGE--)) || ((PAGE++))
 }
 SelectKernel() {
@@ -151,19 +151,23 @@ SelectKernel() {
 	"linux-xanmod" "Linux kernel and modules with Xanmod patches" "OFF" \
 	"linux-xanmod-lts" "Linux LTS kernel and modules with Xanmod patches" "OFF" \
 	"linux-xanmod-rt" "Linux realtime kernel and modules with Xanmod patches" "OFF")"
-	if [ -z "$KERNELS" ]; then
-		dialog --backtitle "$BACKTITLE" --title "Error" --msgbox "Please select at least 1 Linux kernel." 0 0
-	else ((PAGE++)); fi
+	[ -z "$KERNELS" ] && ((PAGE--)) || ((PAGE++))
 }
 SelectAdditionalSoftware() {
 	unset ADDITIONAL_SOFTWARE
 	export ADDITIONAL_SOFTWARE="$(dialog --stdout --backtitle "$BACKTITLE" --cancel-label "Back" --title "Additional software" --checklist "Would you like to install additional software?" 0 0 0 \
-	"vapour-os-multimedia-codecs" "Support for additional multimedia formats" "OFF" \
-	"vapour-os-gaming" "Support for 32-bit/64-bit Linux games and Windows games through Wine [Large install]" "OFF" \
-	"vapour-os-printer-drivers" "Support for printers and scanners [Large install]" "OFF" \
-	"nano" "Command-line text editor" "ON" \
-	"firefox" "Standalone web browser from mozilla.org" "ON" \
-	"gparted" "Graphical disk partition manager" "OFF")"
+	"vapour-os-multimedia-codecs" "Audio/video codecs                   [+240 MiB]" "ON" \
+	"vapour-os-gaming" "Support for Windows/Linux games      [+1.45 GiB]" "OFF" \
+	"vapour-os-printer-drivers" "Printer/scanner drivers and services [+380 MiB]" "ON" \
+	"discord" "All in 1 voice/text chat for gamers  [+220 MiB]" "OFF" \
+	"firefox" "Privacy focused browser by Mozilla   [+250 MiB]" "ON" \
+	"gparted" "Graphical disk partition manager     [10 MiB]" "OFF" \
+	"nano" "Command-line text editor             [2.6 MiB]" "ON" \
+	"obs-studio" "Screen recording/streaming software  [22 MiB]" "OFF" \
+	"onlyoffice-bin" "Office suite                         [802 MiB]" "ON" \
+	"qbittorrent" "Bittorrent client based on QT        [20 MiB]" "ON" \
+	"vlc" "Multi-platform QT multimedia player  [100 MiB]" "ON")"
+	((PAGE++))
 }
 
 dialog --backtitle "$BACKTITLE" --title "Welcome" --msgbox "Thank you for choosing $DISTRO_NAME!
@@ -217,7 +221,7 @@ while true; do
 				FINALTEXT="$FINALTEXT\n[SWAP] $SWAP_DEV"; [ ! -z "$LABEL_SWAP" ] && FINALTEXT="$FINALTEXT \"$LABEL_SWAP\""; FINALTEXT="$FINALTEXT (format)"
 			fi
 			FINALTEXT="$FINALTEXT\n\nApply changes and begin installation?"
- 			dialog --backtitle "$BACKTITLE" --title "Confirm changes" --yesno "$FINALTEXT" 0 0 && ((PAGE++)) || PAGE=8
+ 			dialog --backtitle "$BACKTITLE" --title "Confirm changes" --yesno "$FINALTEXT" 0 0 && ((PAGE++)) || PAGE=9
  			;;
 		13) # Begin installation
 			clear

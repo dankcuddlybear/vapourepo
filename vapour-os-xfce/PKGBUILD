@@ -1,10 +1,10 @@
 # Maintainer: Dankcuddlybear <dankcuddlybear@protonmail.com>
 pkgname=vapour-os-xfce
 pkgver=1.0.0
-pkgrel=7
-pkgdesc='XFCE desktop for Vapour OS with XFCE apps and addons.'
+pkgrel=8
+pkgdesc='XFCE desktop for Vapour OS'
 arch=(any)
-url='https://github.com/dankcuddlybear/Vapour-OS'
+url='https://github.com/dankcuddlybear/vapourepo'
 install=install.install
 depends=('blueman'
 	'gvfs-afc' 'gvfs-goa' 'gvfs-google' 'gvfs-gphoto2' 'gvfs-mtp' 'gvfs-nfs' 'gvfs-smb'
@@ -27,3 +27,7 @@ depends=('blueman'
 	'xfdesktop'
 	'xfwm4'
 )
+package() {
+	cp -r "$srcdir/../files/etc" "$pkgdir"
+	"$srcdir/../../set-default-permissions.sh" "$pkgdir"
+}

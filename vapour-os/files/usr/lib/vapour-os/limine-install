@@ -50,19 +50,19 @@ Upgrade() {
 
 case "$1" in
 	install)
-		Upgrade # Install bootloader first
+		Upgrade # Install bootloader files first
 		# Detect kernel (will use alphabetically lowest)
 		KERNEL_FILE="$(basename "$(ls /boot/vmlinu*-linux* | tr '\n' ' ' | awk '{print $1}')")"
 		[ -z "$KERNEL_FILE" ] && Error "No Linux kernel found"
 		KERNEL="${KERNEL_FILE:8}"
 		# Get root (/) descriptor from /etc/fstab
-		ROOT=$(cat /etc/fstab | grep -m 1 " / \|	/ \| /	\|	/	" | cut -d ' ' -f 1 | cut -d '	' -f 1)
-		[ -z "$ROOT" ] && Error "No root (/) partition specified in /etc/fstab"
+		ROOT_DEV="$(cat /etc/fstab | grep -m 1 " / \|	/ \| /	\|	/	" | cut -d ' ' -f 1 | cut -d '	' -f 1)"
+		[ -z "$ROOT_DEV" ] && Error "No root (/) partition specified in /etc/fstab"
 		## Configure Limine
-		cp -r /usr/share/$DISTRO_ID/boot / # Copy bootloader config files and resources
-		KPARAMS="$(cat /usr/share/$DISTRO_ID/boot/limine/limine.cfg | grep -m 1 "\${KPARAMS}=") root=$ROOT"
+		KPARAMS="rw root=$ROOT_DEV $(cat /usr/share/$DISTRO_ID/boot/limine/limine.cfg | grep -m 1 "\${KPARAMS}=" | cut -b12-)"
 		[ -f /boot/intel-ucode.img ] && KPARAMS="$KPARAMS intel_iommu=on"
-		sed -i "s/^.*\${KPARAMS}=.*$/$KPARAMS/" /boot/limine/limine.cfg
+		cp -r /usr/share/$DISTRO_ID/boot / # Copy bootloader config files and resources
+		sed -i "s/^.*\${KPARAMS}=.*$/\${KPARAMS}=${KPARAMS}/" /boot/limine/limine.cfg
 		sed -i "s/^.*\${KERNEL}=.*$/\${KERNEL}=$KERNEL/" /boot/limine/limine.cfg
 		# Detect CPU and enable/disable microcode loading
 		if [ -f /boot/amd-ucode.img ]; then sed -i "s/^.*\${CPU}=.*$/\${CPU}=amd/" /boot/limine/limine.cfg

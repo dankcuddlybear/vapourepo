@@ -7,3 +7,4 @@ else # System install mode
 	cp /usr/share/$DISTRO_ID/custom-configs/os-release /usr/lib/
 	[ -f /etc/lsb-release ] && cp /usr/share/$DISTRO_ID/custom-configs/lsb-release /etc/
 fi
+exit 0

@@ -9,17 +9,39 @@ Features:
  - Easy to use TUI installer
  - Fixes for HP devices
 
-Editions:
- - vapour-os: Core system (for servers and embedded devices). A lightweight, highly optimised Linux base package for many different use cases. Includes networking support via NetworkManager. Price: $20.00
- - vapour-os-desktop-libs: Additional software and functionality for everyday computing. No GUI. Price: $40.00
- - vapour-os-xfce: Desktop libs + XFCE desktop. Price: $49.99
- - vapour-os-gnome: Desktop libs + Gnome Shell. Price: $59.99
- - vapour-os-kde: Desktop libs + KDE Plasma desktop. Price: $69.99
+Main packages:
+ - vapour-os: Core system (for servers and embedded devices). A lightweight, highly optimised Linux base package for many different use cases. Includes networking support via NetworkManager.
+ - vapour-os-desktop-libs: Additional software and functionality for everyday computing. No GUI.
+ - vapour-os-xfce: Desktop libs + XFCE desktop.
+ - vapour-os-gnome: Desktop libs + Gnome Shell.
+ - vapour-os-kde: Desktop libs + KDE Plasma desktop.
 
-Just kidding, Vapour OS is completely free!
+GPU drivers:
+ - vapour-os-amdgpu: For AMD graphics
+ - vapour-os-i915-legacy: Intel GPU drivers for Vapour OS. For gen1/2 and GMA series, except PowerVR (GMA 3600)
+ - vapour-os-i915-gen3: Intel GPU drivers for Vapour OS. For gen3+
+ - vapour-os-i915-gen10: Intel GPU drivers for Vapour OS. For gen10+
+ - vapour-os-nvidia: NVIDIA proprietary drivers for Vapour OS.
+
+Extras:
+ - vapour-os-multimedia-codecs: All-in-one codec package for various multimedia formats. lib32 version also available
+ - vapour-os-printer-drivers: Printer/scanner support.
+ - vapour-os-gaming: Support for Windows games through Wine, as well as older Linux games. (multilib)
 
 # System requirements
 CPU: x86_64 CPU
-GPU: Intel/AMD/Nvidia graphics
+GPU: Any Intel graphics except GMA 3600 (PowerVR)
+     AMD graphics
+     NVIDIA GeForce 256/Quadro or newer (Nouveau driver)
+     NVIDIA GTX 745/Quadro K620 or newer (NVIDIA driver)
+
 RAM: 256MiB (no GUI), 512MiB (XFCE), 2GiB (KDE), 4GiB (GNOME)
-Storage: 1.5GiB (core), 2.7GiB (desktop libs), 3.0GiB (XFCE), 3.8GiB (GNOME), 5.0GiB (KDE)
+Storage: 1.5GiB (core), 2.7GiB (desktop libs)
+         3GiB (XFCE), 3.8GiB (GNOME), 5GiB (KDE)
+         8-16GiB+ (KDE with all additional software)
+
+# Recommended specs
+CPU: 1.6GHz quad-core (or dual-core with hyperthreading)
+GPU: Intel HD graphics/AMD Radeon Graphics (NVIDIA GPUs are NOT recommended)
+RAM: 8GiB
+Storage: 32GiB

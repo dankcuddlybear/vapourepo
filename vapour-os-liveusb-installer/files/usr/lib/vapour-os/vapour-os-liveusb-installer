@@ -2,7 +2,7 @@
 DISTRO_ID="vapour-os"
 DISTRO_NAME="Vapour OS"
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-E2OPTIONS="64bit,dir_index,ea_inode,encrypt,ext_attr,extent,filetype,huge_file,large_dir,large_file,project,quota,sparse_super2"
+E2OPTIONS="64bit,dir_index,ea_inode,encrypt,ext_attr,extent,filetype,huge_file,large_dir,large_file,sparse_super2"
 ARCH="$(uname -m)"
 [ ! -z "$DEBUG" ] && DEBUG=0; [ "$DEBUG" == 1 ] && Print "Debug mode enabled"
 Error() {
@@ -53,7 +53,7 @@ done
 # Format and tune root and boot partition, if marked for formatting
 [ ! -z $FORMAT_ROOT ] && [ $FORMAT_ROOT == 1 ] && Print "Formatting root partition $ROOT_DEV $LABEL_ROOT" && mkfs.ext4 -FL "$LABEL_ROOT" -O $E2OPTIONS "$ROOT_DEV"
 tune2fs -c 1 -o acl,user_xattr "$ROOT_DEV"
-debugfs -w -R "set_super_value mount_opts auto_da_alloc,i_version,journal_checksum,lazytime" "$ROOT_DEV"
+debugfs -w -R "set_super_value mount_opts journal_checksum,lazytime" "$ROOT_DEV"
 [ ! -z $FORMAT_BOOT ] && [ $FORMAT_BOOT == 1 ] && Print "Formatting boot partition $BOOT_DEV $LABEL_BOOT" && mkfs.fat -F 32 -n "$LABEL_BOOT" "$BOOT_DEV"
 # Set boot flag on /boot partition
 parted "$ESPDISK" set "$ESPPART" boot on 1> /dev/null
@@ -62,17 +62,17 @@ Print "Set boot flag on $BOOT_DEV."
 if [ ! -z "$HOME_DEV" ]; then
 	[ ! -z $FORMAT_HOME ] && [ $FORMAT_HOME == 1 ] &&  Print "Formatting home partition $HOME_DEV $LABEL_HOME" && mkfs.ext4 -FL "$LABEL_HOME" -O $E2OPTIONS "$HOME_DEV"
 	tune2fs -c 1 -o acl,user_xattr "$HOME_DEV"
-	debugfs -w -R "set_super_value mount_opts auto_da_alloc,i_version,journal_checksum,lazytime,nodev,nosuid" "$HOME_DEV"
+	debugfs -w -R "set_super_value mount_opts journal_checksum,lazytime,nodev,nosuid" "$HOME_DEV"
 fi
 if [ ! -z "$MEDIA_DEV" ]; then
 	[ ! -z $FORMAT_MEDIA ] && [ $FORMAT_MEDIA == 1 ] && Print "Formatting media partition $MEDIA_DEV $LABEL_MEDIA" && mkfs.ext4 -FL "$LABEL_MEDIA" -O $E2OPTIONS "$MEDIA_DEV"
 	tune2fs -c 1 -o acl,user_xattr "$MEDIA_DEV"
-	debugfs -w -R "set_super_value mount_opts auto_da_alloc,i_version,journal_checksum,noatime,nodev,nosuid" "$MEDIA_DEV"
+	debugfs -w -R "set_super_value mount_opts journal_checksum,noatime,nodev,nosuid" "$MEDIA_DEV"
 fi
 if [ ! -z "$PUBLIC_DEV" ]; then
 	[ ! -z $FORMAT_PUBLIC ] && [ $FORMAT_PUBLIC == 1 ] && Print "Formatting /public partition $PUBLIC_DEV $LABEL_LABEL" && mkfs.ext4 -FL "$LABEL_PUBLIC" -O $E2OPTIONS "$PUBLIC_DEV"
 	tune2fs -c 1 -o acl,user_xattr "$PUBLIC_DEV"
-	debugfs -w -R "set_super_value mount_opts auto_da_alloc,i_version,journal_checksum,noatime,nodev,nosuid" "$PUBLIC_DEV"
+	debugfs -w -R "set_super_value mount_opts journal_checksum,noatime,nodev,nosuid" "$PUBLIC_DEV"
 fi
 [ ! -z "$SWAP_DEV" ] && Print "Formatting swap partition $SWAP_DEV $LABEL_SWAP" && mkswap -L "$LABEL_SWAP" "$SWAP_DEV"
 # Mount and clear root filesystem

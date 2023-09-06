@@ -1,0 +1,19 @@
+# Maintainer: Dankcuddlybear <dankcuddlybear@protonmail.com>
+pkgname=vapour-os-i915-legacy
+pkgver=1.0.0
+pkgrel=1
+pkgdesc='Intel GPU drivers for Vapour OS. For gen1/2 and GMA series, except PowerVR (GMA 3600)'
+arch=(x86_64)
+url='https://github.com/dankcuddlybear/Vapour-OS'
+depends=(
+    'lib32-libva-intel-driver'
+    'lib32-mesa'
+    'lib32-libva-vdpau-driver'
+    'libva-intel-driver' 'libva-intel-driver-g45-h264'
+    'libva-vdpau-driver' 'libvdpau-va-gl'
+    'pocl'
+)
+package() {
+	cp -r "$srcdir/../files/usr" "$pkgdir"
+	"$srcdir/../../set-default-permissions.sh" "$pkgdir"
+}

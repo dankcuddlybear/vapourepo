@@ -1,7 +1,7 @@
 # Maintainer: Dankcuddlybear <dankcuddlybear@protonmail.com>
 pkgname=vapour-os-desktop-libs
 pkgver=1.0.0
-pkgrel=20
+pkgrel=21
 pkgdesc='A collection of drivers and tools for general purpose desktop computers (no GUI)'
 arch=(x86_64)
 url='https://github.com/dankcuddlybear/Vapour-OS'
@@ -12,7 +12,7 @@ depends=(
 	'base-devel' 'bash-completion' 'bluez'
 	'exfatprogs'
 	'gnome-keyring' 'gst-plugin-pipewire'
-	'libgnome-keyring' 'libsecret' 'libvdpau-va-gl'
+	'libgnome-keyring' 'libsecret' 'libva-vdpau-driver' 'libvdpau-va-gl'
 	'ocl-icd'
 	'p7zip' 'pipewire-v4l2' 'pipewire-zeroconf' 'plymouth'
 	'unrar'

@@ -1,12 +1,14 @@
 [CRITICAL ISSUES]
 
-
+[HIGH PRIORITY]
+Support for LVM2/RAID
 
 [ADDITIONAL FEATURES]
-
+Encrypt home dir support
+Reset user settings in VOScfg
 Reset to factory settings in VOScfg
-
-
+Global DPI setting
 
 [ENHANCEMENTS]
 Plymouth graphical boot screen
+Support for BTRFS and ZFS

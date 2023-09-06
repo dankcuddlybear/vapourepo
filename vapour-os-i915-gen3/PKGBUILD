@@ -1,8 +1,8 @@
 # Maintainer: Dankcuddlybear <dankcuddlybear@protonmail.com>
 pkgname=vapour-os-i915-gen3
 pkgver=1.0.0
-pkgrel=3
-pkgdesc='Intel GPU drivers for Vapour OS. For 3rd gen.'
+pkgrel=4
+pkgdesc='Intel GPU drivers for Vapour OS. For gen3+'
 arch=(x86_64)
 url='https://github.com/dankcuddlybear/Vapour-OS'
 depends=(

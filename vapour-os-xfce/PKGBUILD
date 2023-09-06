@@ -1,16 +1,18 @@
 # Maintainer: Dankcuddlybear <dankcuddlybear@protonmail.com>
 pkgname=vapour-os-xfce
 pkgver=1.0.0
-pkgrel=8
+pkgrel=10
 pkgdesc='XFCE desktop for Vapour OS'
 arch=(any)
 url='https://github.com/dankcuddlybear/vapourepo'
 install=install.install
 depends=('blueman'
+	'ffmpegthumbnailer'
 	'gvfs-afc' 'gvfs-goa' 'gvfs-google' 'gvfs-gphoto2' 'gvfs-mtp' 'gvfs-nfs' 'gvfs-smb'
-	'lightdm-gtk-greeter'
+	'libgsf' 'libgepub' 'libopenraw' 'lightdm-gtk-greeter'
 	'network-manager-applet'
 	'pavucontrol' 'python'
+	'tumbler'
 	'vapour-os-desktop-libs'
 	'xdg-desktop-portal-gtk'
 	'xfce4-clipman-plugin'

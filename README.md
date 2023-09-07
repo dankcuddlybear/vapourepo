@@ -18,10 +18,10 @@ Main packages:
 
 GPU drivers:
  - vapour-os-amdgpu: For AMD graphics
- - vapour-os-i915-legacy: Intel GPU drivers for Vapour OS. For gen1/2 and GMA series, except PowerVR (GMA 3600)
- - vapour-os-i915-gen3: Intel GPU drivers for Vapour OS. For gen3+
- - vapour-os-i915-gen10: Intel GPU drivers for Vapour OS. For gen10+
- - vapour-os-nvidia: NVIDIA proprietary drivers for Vapour OS.
+ - vapour-os-i915-legacy: Intel graphics gen1/2 and GMA series, except PowerVR (GMA 3600)
+ - vapour-os-i915-gen3: Intel graphics gen3+
+ - vapour-os-i915-gen10: Intel graphics gen10+
+ - vapour-os-nvidia: NVIDIA proprietary drivers
 
 Extras:
  - vapour-os-multimedia-codecs: All-in-one codec package for various multimedia formats. lib32 version also available
@@ -32,8 +32,8 @@ Extras:
 CPU: x86_64 CPU
 GPU: Any Intel graphics except GMA 3600 (PowerVR)
      AMD graphics
-     NVIDIA GeForce 256/Quadro or newer (Nouveau driver)
-     NVIDIA GTX 745/Quadro K620 or newer (NVIDIA driver)
+     NVIDIA GeForce 256 or newer (Nouveau driver)
+     NVIDIA GTX 745 or newer (NVIDIA driver)
 
 RAM: 256MiB (no GUI), 512MiB (XFCE), 2GiB (KDE), 4GiB (GNOME)
 Storage: 1.5GiB (core), 2.7GiB (desktop libs)

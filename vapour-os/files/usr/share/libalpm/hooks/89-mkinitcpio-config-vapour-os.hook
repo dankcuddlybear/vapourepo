@@ -1,6 +1,8 @@
 [Trigger]
 Type = Package
 Operation = Install
+Operation = Upgrade
+Operation = Remove
 Target = KSMBD-MODULE
 Target = linux
 Target = linux-hardened
@@ -70,8 +72,9 @@ Target = linux-vfio-lts
 Target = linux-xanmod
 Target = linux-xanmod-lts
 Target = linux-xanmod-rt
+Target = vapour-os
 
 [Action]
 Description = Configure mkinitcpio.d kernel presets
 When = PostTransaction
-Exec = /usr/share/libalpm/scripts/vapour-os/kernel-config
+Exec = /usr/share/libalpm/scripts/vapour-os/mkinitcpio-config

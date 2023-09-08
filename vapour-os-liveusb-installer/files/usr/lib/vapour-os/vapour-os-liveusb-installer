@@ -130,10 +130,13 @@ for KERNEL in $KERNELS; do PACKAGES="$PACKAGES $KERNEL $KERNEL-headers"; done
 if [ "$VERSION_TO_INSTALL" != "vapour-os" ]; then
 	PACKAGES="$PACKAGES lib32-pipewire-jack pipewire-alsa pipewire-jack pipewire-pulse wireplumber"
 	case "$VERSION_TO_INSTALL" in
-		vapour-os-gnome) PACKAGES="$PACKAGES xdg-desktop-portal-gnome";;
-		vapour-os-kde) PACKAGES="$PACKAGES xdg-desktop-portal-kde"
+		vapour-os-gnome)
+			PACKAGES="$PACKAGES eog file-roller gnome-calculator gnome-characters gnome-font-viewer gnome-system-monitor gnome-terminal gnome-usage nautilus nauilus-share xdg-desktop-portal-gnome";;
+		vapour-os-kde)
+			PACKAGES="$PACKAGES xdg-desktop-portal-kde"
 			[[ "$ADDITIONAL_SOFTWARE" == *" firefox "* ]] && PACKAGES="$PACKAGES firefox-extension-plasma-integration-bin";;
-		vapour-os-xfce) PACKAGES="$PACKAGES galculator mousepad ristretto thunar thunar-archive-plugin thunar-media-tags-plugin thunar-volman xarchiver xdg-desktop-portal-gtk xfce4-clipman-plugin xfce4-terminal";;
+		vapour-os-xfce)
+			PACKAGES="$PACKAGES galculator mousepad ristretto thunar thunar-archive-plugin thunar-media-tags-plugin thunar-volman xarchiver xdg-desktop-portal-gtk xfce4-clipman-plugin xfce4-terminal";;
 	esac
 fi
 #### TODO: Detect GPUs

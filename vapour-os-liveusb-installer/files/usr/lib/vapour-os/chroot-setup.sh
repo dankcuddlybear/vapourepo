@@ -8,7 +8,7 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 /usr/lib/$DISTRO_ID/limine-install install
 
 # Clean up packages
-pacman --asdeps -D xdg-desktop-portal-gnome xdg-desktop-portal-kde xdg-desktop-portal-gtk wireplumber
+pacman --asdeps -D xdg-desktop-portal-gnome xdg-desktop-portal-kde xdg-desktop-portal-gtk wireplumber &> /dev/null
 pacman --noconfirm -Sc
 
 # Add user

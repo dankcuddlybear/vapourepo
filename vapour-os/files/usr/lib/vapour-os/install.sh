@@ -15,9 +15,6 @@ SecureBootSetup() {
 		fi
 	fi
 }
-TuneExt4() {
-	tune2fs -c 1 -O ea_inode,encrypt,large_dir,verity -o acl,user_xattr $1
-}
 Upgrade() {
 	true
 }
@@ -35,9 +32,6 @@ Install() {
 	echo "" >> /etc/issue
 	echo "Welcome!" >> /etc/issue
 	echo "" >> /etc/issue
-	#
-	## /etc/fstab
-	[ -z "$(cat /etc/fstab | grep "/proc")" ] && echo "proc /proc proc nosuid,nodev,noexec,hidepid=2,gid=proc 0 0" >> /etc/fstab
 	#
 	if [ $INSTALL_MODE == "iso" ]; then # ArchISO build mode
 		passwd -uq root; passwd -dq root # Unlock root account

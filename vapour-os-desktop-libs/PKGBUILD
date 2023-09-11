@@ -1,12 +1,12 @@
 # Maintainer: Dankcuddlybear <dankcuddlybear@protonmail.com>
 pkgname=vapour-os-desktop-libs
 pkgver=1.0.0
-pkgrel=21
+pkgrel=23
 pkgdesc='A collection of drivers and tools for general purpose desktop computers (no GUI)'
 arch=(x86_64)
 url='https://github.com/dankcuddlybear/Vapour-OS'
 replaces=('vapour-os-gui')
-install=$pkgname.install
+install=install.install
 backup=('etc/X11/xorg.conf.d/30-touchpad.conf')
 depends=(
 	'base-devel' 'bash-completion' 'bluez'
@@ -16,7 +16,7 @@ depends=(
 	'ocl-icd'
 	'p7zip' 'pipewire-v4l2' 'pipewire-zeroconf' 'plymouth'
 	'unrar'
-	'vapour-os' 'vulkan-mesa-layers'
+	'vapour-os' 'vapour-os-plymouth-theme' 'vulkan-mesa-layers'
 	'xdg-desktop-portal' 'xdg-user-dirs'
 	'yay'
 

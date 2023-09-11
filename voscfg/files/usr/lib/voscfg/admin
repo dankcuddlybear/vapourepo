@@ -1,22 +1,27 @@
 #!/bin/sh
+COMMAND="$1"
+USERNAME="$2"
 Help() {
-	echo "Usage: $(basename $0) <username> <command>"
+	echo "Usage: $(basename $0) <command> <username>"
 	echo "Commands:"
 	echo "    help -h --help   Show this information"
 	echo "    on / enable / 1  Make administrator (add to wheel and sys groups)"
 	echo "    off /disable / 0 Revoke administrator priviliges (remove from wheel and sys groups)"
 }
-DISTRO_NAME="$(cat /usr/lib/os-release | grep -i "PRETTY_NAME" | cut -d '=' -f 2 | sed 's/"//g')"
-([ -z "$1" ] || [ "$1" == "help" ] || [ "$1" == "-h" ] || [ "$1" == "--help" ] || \
-[ "$2" == "help" ] || [ "$2" == "-h" ] || [ "$2" == "--help" ]) && (Help; exit 1)
-USERNAME="$2"
+if [ -z "$COMMAND" ] || [ "$COMMAND" == "help" ] || \
+[ "$COMMAND" == "-h" ] || [ "$COMMAND" == "--help" ] || \
+[ "$2" == "help" ] || [ "$2" == "-h" ] || \
+[ "$2" == "--help" ]; then Help; exit 1; fi
+
+## Print admin status if only username specified.
 if [ -z "$2" ]; then
+	USERNAME="$1"
 	if [[ "$(groups "$USERNAME")" == *"wheel"* ]]; then echo "$USERNAME is an administrator."
 	else echo "$USERNAME is not an administrator."; fi
-	exit
+	exit 0
 fi
 [ "$(whoami)" != "root" ] && echo "[ERROR] You must run this script as root" && exit 13
-case $1 in
+case $COMMAND in
 	on|enable|1)
 		gpasswd -a "$USERNAME" wheel
 		gpasswd -a "$USERNAME" sys

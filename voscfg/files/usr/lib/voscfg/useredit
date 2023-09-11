@@ -1,10 +1,91 @@
 #!/bin/sh
 DISTRO_NAME="$(cat /usr/lib/os-release | grep -i "PRETTY_NAME" | cut -d '=' -f 2 | sed 's/"//g')"
 SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+SCRIPT_USER="$(whoami)"
+BACKTITLE="$DISTRO_NAME settings"
 USERNAME="$1"
 [ -z "$USERNAME" ] && echo "[ERROR] No user specified" && exit 1
-while true; do
-	CHOICE=$(dialog --stdout --backtitle "$DISTRO_NAME settings" --title "Users" --menu "Settings for $USERNAME" 0 0 0 "p" "Password" "a" "Administrator" "e" "Encrypt home directory" "d" "Delete user")
-	if [ -z "$CHOICE" ]; then exit 125
+
+LockAccount() {
+	pkill -u $1 && passwd -l $1 || echo "[ERROR] Could not kick user $1"
+}
+
+## User menu
+CHOICE=""
+while [ ! -z $CHOICE ]; do
+	# Get admin status
+	(groups "$USERNAME" | grep "wheel" &> /dev/null) &&\
+	USERNAME_IS_ADMIN=1 || USERNAME_IS_ADMIN=0
+	# Get password set status
+	(cat /etc/passwd | grep "$USERNAME:x:" &> /dev/null) && \
+	HAS_PASSWD=1 || HAS_PASSWD=0
+
+	## To be finished later
+	ENCRYPTED_HOME="0"
+	LOCK_CHOICE="l"
+
+	## Set menu strings
+	if [ "$LOCK_CHOICE" == "l" ]; then LOCK_TEXT="Lock account"
+	else LOCK_TEXT="Unlock account"; fi
+	if [ "$ENCRYPTED_HOME" == 0 ]; then ENCRYPT_TEXT="Encrypt home directory"
+	else ENCRYPT_TEXT="Disable encryption of home directory"; fi
+	if [ "$USERNAME_IS_ADMIN" == 0 ]; then ADMIN_TEXT="Make administrator"
+	elif [ $NUM_ADMIN_USERS -le 1 ]; then
+		ADMIN_TEXT="You are the only administrator"
+	else ADMIN_TEXT="Remove administrator"; fi
+
+	if [ "$HAS_PASSWD" == 1 ]; then
+		CHOICE=$(dialog --stdout --backtitle "$BACKTITLE" --title "Users - $USERNAME" --menu "Settings for user $USERNAME" 0 0 0 \
+		"p" "Change password" "r" "Remove password" \
+		"a" "$ADMIN_TEXT" "e" "$ENCRYPT_TEXT" \
+		"n" "Rename" "$LOCK_CHOICE" "$LOCK_TEXT" "d" "Delete account"
+		)
+	else
+		CHOICE=$(dialog --stdout --backtitle "$BACKTITLE" --title "Users - $USERNAME" --menu "Settings for user $USERNAME" 0 0 0 \
+		"p" "Set password (recommended)" "a" "$ADMIN_TEXT" \
+		"e" "$ENCRYPT_TEXT" "n" "Rename" \
+		"$LOCK_CHOICE" "$LOCK_TEXT" "d" "Delete account")
 	fi
+
+	case $CHOICE in
+		p) ## Change/set password
+			# We need to ask for old password if home dir is encrypted,
+			# so we can re-encrypt their files
+			#$SCRIPT_DIR/password change
+			;;
+		r) ## Remove password
+			# We need to ask for current password if home dir is encrypted,
+			# so we can decrypt their files
+			#$SCRIPT_DIR/password remove
+			;;
+		a) ## Administrator
+			if [ $USERNAME_IS_ADMIN == 0 ]; then
+				# Make admin only if script is running as root
+				if [ "$SCRIPT_USER" == "root" ]; then
+					dialog --backtitle "$BACKTITLE" --title "Make administrator" --yesno "Administrators can install and remove software, as well manage the system and other devices. They have access to elevated priviliges by running sudo.\n\nYou can break your system if you're not careful. Don't trust commands from the internet unless you fully understand them. Respect the privacy of others, think before you type and remember: with great power comes great responsibility.\n\nReally make $USERNAME an administrator?" 0 0 && "$SCRIPT_DIR/admin 1 $USERNAME"
+				else
+					dialog --backtitle "$DISTRO_NAME settings" --title "Error" --msgbox "You cannot make yourself an administrator. Ask an administrator to do this." 0 0
+				fi
+			elif [ $NUM_ADMIN_USERS -gt 1 ]
+				# Remove administrator if not the only one
+				dialog --backtitle "$BACKTITLE" --title "Remove administrator" --yesno "Really remove administrator $USERNAME?" 0 0 && "$SCRIPT_DIR/admin 0 $USERNAME"
+			fi;;
+		l) ## Lock account
+			if [ "$SCRIPT_USER" == "root" ]; then
+				dialog --backtitle "$BACKTITLE" --title "Lock $USERNAME?" --yesno "Are you sure you want to lock account $USERNAME? $USERNAME will be forcefully logged out." 0 0 && \
+				LockAccount $USERNAME
+			else
+				dialog --backtitle "$DISTRO_NAME settings" --title "Error" --msgbox "You cannot lock your own account! This would leave you unable to log back in until an administrator unlocked your account again." 0 0
+			fi;;
+		u) ## Unlock account
+			dialog --backtitle "$BACKTITLE" --title "Unlock $USERNAME" --yesno "Are you sure you want to unlock account $USERNAME?" 0 0 && passwd -u $USERNAME;;
+		n) ## Rename account
+			# We need to ask for old password if home dir is encrypted,
+			# so we can migrate and re-encrypt their files
+			;;
+		d) ## Delete account
+			# If keeping files, we need to ask for old password if
+			# home dir is encrypted, so we can decrypt their files
+			;;
+	esac
 done

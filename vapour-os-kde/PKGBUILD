@@ -1,7 +1,7 @@
 # Maintainer: Dankcuddlybear <dankcuddlybear@protonmail.com>
 pkgname=vapour-os-kde
 pkgver=1.0.0
-pkgrel=2
+pkgrel=3
 pkgdesc='Vapour OS KDE Plasma X11 desktop environment. When prompted, please select: 1) phonon-qt5-gstreamer 2) noto-fonts 3) xdg-desktop-portal-kde. WARNING: You MUST install vapour-os-gui FIRST, before installing this package, due to dependency conflicts'
 arch=(any)
 url='https://github.com/dankcuddlybear/Vapour-OS'

@@ -127,6 +127,7 @@ else PORTABLE="no"; fi
 for KERNEL in $KERNELS; do PACKAGES="$PACKAGES $KERNEL $KERNEL-headers"; done
 # Additional software
 [[ "$ADDITIONAL_SOFTWARE" == *" firefox "* ]] && PACKAGES="$PACKAGES firefox-ublock-origin firefox-dark-reader"
+# Version
 if [ "$VERSION_TO_INSTALL" != "vapour-os" ]; then
 	PACKAGES="$PACKAGES lib32-pipewire-jack pipewire-alsa pipewire-jack pipewire-pulse wireplumber"
 	case "$VERSION_TO_INSTALL" in
@@ -139,7 +140,12 @@ if [ "$VERSION_TO_INSTALL" != "vapour-os" ]; then
 			PACKAGES="$PACKAGES galculator mousepad ristretto thunar thunar-archive-plugin thunar-media-tags-plugin thunar-volman xarchiver xdg-desktop-portal-gtk xfce4-clipman-plugin xfce4-terminal";;
 	esac
 fi
-#### TODO: Detect GPUs
+
+# Detect GPUs
+lspci | grep -i "VGA" | grep -i "AMD" &> /dev/null && PACKAGES="$PACKAGES vapour-os-amdgpu"
+lspci | grep -i "VGA" | grep -i "Intel" &> /dev/null && PACKAGES="$PACKAGES vapour-os-i915"
+lspci | grep -i "VGA" | grep -i "NVIDIA" &> /dev/null && PACKAGES="$PACKAGES vapour-os-nvidia"
+
 # Print info
 Print "Manufacturer: $MANUFACTURER"
 Print "       Model: $MODEL"

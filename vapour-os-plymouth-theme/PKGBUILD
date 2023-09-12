@@ -1,7 +1,7 @@
 # Maintainer: Dankcuddlybear <dankcuddlybear@protonmail.com>
 pkgname=vapour-os-plymouth-theme
 pkgver=1.0.0
-pkgrel=3
+pkgrel=4
 pkgdesc='Graphical boot splash for Vapour OS'
 arch=(x86_64)
 url='https://github.com/dankcuddlybear/vapourepo'

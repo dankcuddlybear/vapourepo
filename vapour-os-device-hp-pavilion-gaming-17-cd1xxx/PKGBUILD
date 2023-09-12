@@ -1,7 +1,7 @@
 # Maintainer: Dankcuddlybear <dankcuddlybear@proton.me>
 pkgname=vapour-os-device-hp-pavilion-gaming-17-cd1xxx
 pkgver=1.0.0
-pkgrel=7
+pkgrel=8
 pkgdesc='Vapour OS device configuration for HP Pavilion Gaming Laptop 17-cd1xxx. Includes game libraries, graphics and printer drivers, and fixes. Choose your own desktop.'
 arch=(x86_64)
 url='https://github.com/dankcuddlybear/Vapour-OS'
@@ -12,7 +12,7 @@ depends=('hdapsd'
 	'vapour-os-desktop-libs'
 	'vapour-os-gaming'
 	'vapour-os-i915'
-	'vapour-os-multimedia'
+	'vapour-os-multimedia-codecs'
 	'vapour-os-nvidia'
 	'vapour-os-printer-drivers'
 )

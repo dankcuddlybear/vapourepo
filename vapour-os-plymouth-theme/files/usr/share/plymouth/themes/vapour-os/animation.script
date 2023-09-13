@@ -9,16 +9,16 @@ nframespersecond = 60;
 for (i = 1; i <= nframes; i++)
 	spinner_frames[i] = Image(i + ".png");
 
-// Define logo and centre on screen
+// Define logo and centre on top half of screen
 logo_image = Image("logo.png");
 logo = Sprite();
 logo.SetX(Math.Int((Window.GetWidth()/2) - (logo_image.GetWidth()/2)));
-logo.SetY(Math.Int((Window.GetHeight()/2) - (logo_image.GetHeight()/2)));
+logo.SetY(Math.Int((Window.GetHeight()/4) - (logo_image.GetHeight()/2)));
 
-// Define spinner and centre on screen near the bottom
+// Define spinner and centre on bottom half of screen
 spinner = Sprite();
 spinner.SetX(Math.Int((Window.GetWidth()/2) - (spinner_frames[1].GetWidth()/2)));
-spinner.SetY(Math.Int(Window.GetHeight() - (spinner_frames[1].GetHeight()*1.1)));
+spinner.SetY(Math.Int((Window.GetHeight()*(3/4)) - (spinner_frames[1].GetHeight()/2)));
 
 progress = 1;
 frame = null;

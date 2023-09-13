@@ -32,9 +32,7 @@ udftools
 vapour-os-amdgpu
 vapour-os-desktop-libs
 vapour-os-gaming
-vapour-os-i915-gen3
-vapour-os-i915-gen10
-vapour-os-i915-legacy
+vapour-os-i915
 vapour-os-liveusb-installer
 vapour-os-multimedia-codecs
 vapour-os-nvidia

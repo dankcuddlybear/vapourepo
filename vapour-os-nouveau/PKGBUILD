@@ -1,0 +1,18 @@
+# Maintainer: Dankcuddlybear <dankcuddlybear@protonmail.com>
+pkgname=vapour-os-nouveau
+pkgver=1.0.0
+pkgrel=1
+pkgdesc='Open-source NVIDIA GPU drivers for Vapour OS'
+arch=(x86_64)
+url='https://github.com/dankcuddlybear/Vapour-OS'
+depends=(
+	'lib32-libva-mesa-driver'
+	'lib32-mesa' 'lib32-mesa-vdpau'
+	'libva-mesa-driver' 'libvdpau-va-gl'
+	'mesa-vdpau'
+)
+install=install.install
+package() {
+	cp -r "$srcdir/../files/usr" "$pkgdir"
+	"$srcdir/../../set-default-permissions.sh" "$pkgdir"
+}

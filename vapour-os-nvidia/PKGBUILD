@@ -1,12 +1,13 @@
 # Maintainer: Dankcuddlybear <dankcuddlybear@protonmail.com>
 pkgname=vapour-os-nvidia
 pkgver=1.0.0
-pkgrel=8
+pkgrel=10
 pkgdesc='Proprietary Nvidia drivers for OpenGL/Vulkan/OpenCL/hardware video. WARNING: loading proprietary kernel modules taints the kernel. PCIe 3 or above GPU required (some GeForce 700 series and any GeForce 900 series or above.)'
 arch=(x86_64)
 url='https://github.com/dankcuddlybear/Vapour-OS'
 conflicts=('vapour-os-nvidia-470xx')
 depends=('lib32-nvidia-utils'
+	'libva-nvidia-driver'
 	'libva-vdpau-driver' 'lib32-libva-vdpau-driver'
 	'nvidia-dkms' 'nvidia-prime' 'nvidia-settings'
 	'opencl-nvidia' 'lib32-opencl-nvidia'

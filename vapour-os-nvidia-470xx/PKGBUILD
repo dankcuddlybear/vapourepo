@@ -1,13 +1,12 @@
 # Maintainer: Dankcuddlybear <dankcuddlybear@protonmail.com>
 pkgname=vapour-os-nvidia-470xx
 pkgver=1.0.0
-pkgrel=3
+pkgrel=4
 pkgdesc='Proprietary Nvidia drivers for Kepler GPUs'
 arch=(x86_64)
 url='https://github.com/dankcuddlybear/Vapour-OS'
 conflicts=('vapour-os-nvidia')
 depends=('lib32-nvidia-utils'
-	'libva-nvidia-driver'
 	'libva-vdpau-driver' 'lib32-libva-vdpau-driver'
 	'nvidia-dkms' 'nvidia-prime' 'nvidia-settings'
 	'opencl-nvidia' 'lib32-opencl-nvidia'

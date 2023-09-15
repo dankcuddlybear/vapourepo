@@ -1,7 +1,7 @@
 # Maintainer: Dankcuddlybear <dankcuddlybear@protonmail.com>
 pkgname=vapour-os-gaming
 pkgver=1.0.0
-pkgrel=12
+pkgrel=13
 pkgdesc='Libraries for Windows/Linux games on Vapour OS'
 arch=(x86_64)
 url='https://github.com/dankcuddlybear/vapourepo'
@@ -9,7 +9,7 @@ backup=(etc/dxvk.conf)
 depends=(
 	'bluez-plugins'
 	'dxvk-async-git'
-	'gamemode' 'glew1.10'
+	'gamemode' 'game-devices-udev' 'glew1.10'
 	'joystickwake'
 	'lib32-dbus-glib'
 	'lib32-fluidsynth' 'lib32-freeglut'

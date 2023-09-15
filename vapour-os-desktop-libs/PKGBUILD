@@ -1,7 +1,7 @@
 # Maintainer: Dankcuddlybear <dankcuddlybear@protonmail.com>
 pkgname=vapour-os-desktop-libs
 pkgver=1.0.0
-pkgrel=23
+pkgrel=24
 pkgdesc='A collection of drivers and tools for general purpose desktop computers (no GUI)'
 arch=(x86_64)
 url='https://github.com/dankcuddlybear/Vapour-OS'
@@ -9,7 +9,7 @@ replaces=('vapour-os-gui')
 install=install.install
 backup=('etc/X11/xorg.conf.d/30-touchpad.conf')
 depends=(
-	'base-devel' 'bash-completion' 'bluez'
+	'base-devel' 'bash-completion' 'bluez' 'bluez-utils-compat'
 	'exfatprogs'
 	'gnome-keyring' 'gst-plugin-pipewire'
 	'libgnome-keyring' 'libsecret' 'libva-vdpau-driver' 'libvdpau-va-gl'

@@ -16,33 +16,40 @@ while [ ! -z $CHOICE ]; do
 	# Get admin status
 	(groups "$USERNAME" | grep "wheel" &> /dev/null) &&\
 	USERNAME_IS_ADMIN=1 || USERNAME_IS_ADMIN=0
-	# Get password set status
-	(cat /etc/passwd | grep "$USERNAME:x:" &> /dev/null) && \
-	HAS_PASSWD=1 || HAS_PASSWD=0
-
-	## To be finished later
-	ENCRYPTED_HOME="0"
-	LOCK_CHOICE="l"
+	# Get password and lock status
+	if (passwd -S $USERNAME | grep "$USERNAME NP " &> /dev/null); then
+		HAS_PASSWD=0; LOCK_CHOICE="l"
+	elif (passwd -S $USERNAME | grep "$USERNAME L " &> /dev/null); then
+		HAS_PASSWD=0; LOCK_CHOICE="u"
+	else HAS_PASSWD=1; LOCK_CHOICE="l"; fi
+	## Get home encryption status (u: unlocked, l: locked, n: not encrypted)
+	if (fscrypt status /home/joe | grep -i "Unlocked: Yes" &> /dev/null); then ENCRYPTED_HOME="u"
+	elif (fscrypt status /home/joe | grep -i "Unlocked: No" &> /dev/null); then ENCRYPTED_HOME="l"
+	else ENCRYPTED_HOME="n"
 
 	## Set menu strings
 	if [ "$LOCK_CHOICE" == "l" ]; then LOCK_TEXT="Lock account"
 	else LOCK_TEXT="Unlock account"; fi
-	if [ "$ENCRYPTED_HOME" == 0 ]; then ENCRYPT_TEXT="Encrypt home directory"
+	if [ "$ENCRYPTED_HOME" == "n" ]; then ENCRYPT_TEXT="Encrypt home directory"
 	else ENCRYPT_TEXT="Disable encryption of home directory"; fi
 	if [ "$USERNAME_IS_ADMIN" == 0 ]; then ADMIN_TEXT="Make administrator"
 	elif [ $NUM_ADMIN_USERS -le 1 ]; then
 		ADMIN_TEXT="You are the only administrator"
 	else ADMIN_TEXT="Remove administrator"; fi
+	if [ "$HAS_PASSWD" == 0 ]; then PASSWD_TEXT="Set password (recommended)"
+	elif [ "$HAS_PASSWD" == 0 ] && [ "$LOCK_CHOICE" == "u" ]; then
+		PASSWD_TEXT="Unlock account first to set password"
+	else PASSWD_TEXT="Change password"
 
 	if [ "$HAS_PASSWD" == 1 ]; then
 		CHOICE=$(dialog --stdout --backtitle "$BACKTITLE" --title "Users - $USERNAME" --menu "Settings for user $USERNAME" 0 0 0 \
-		"p" "Change password" "r" "Remove password" \
+		"p" "$PASSWD_TEXT" "r" "Remove password" \
 		"a" "$ADMIN_TEXT" "e" "$ENCRYPT_TEXT" \
 		"n" "Rename" "$LOCK_CHOICE" "$LOCK_TEXT" "d" "Delete account"
 		)
 	else
 		CHOICE=$(dialog --stdout --backtitle "$BACKTITLE" --title "Users - $USERNAME" --menu "Settings for user $USERNAME" 0 0 0 \
-		"p" "Set password (recommended)" "a" "$ADMIN_TEXT" \
+		"p" "$PASSWD_TEXT" "a" "$ADMIN_TEXT" \
 		"e" "$ENCRYPT_TEXT" "n" "Rename" \
 		"$LOCK_CHOICE" "$LOCK_TEXT" "d" "Delete account")
 	fi

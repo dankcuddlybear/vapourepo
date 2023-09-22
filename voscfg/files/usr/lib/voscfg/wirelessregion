@@ -203,7 +203,7 @@ if [ -z "$1" ]; then ## Prompt to select Wifi country
 	SELECTED_REGDOM="$(cat /run/voscfg/syscfg-wirelessregion-answer)"
 	rm /run/voscfg/syscfg-wirelessregion /run/voscfg/syscfg-wirelessregion-answer
 else ## Use command line parameter instead
-	if [[ "$REGDOMS" != *"$1"* ]]; then
+	if [[ " $REGDOMS " != *" $1 "* ]]; then
 		if [ ! -z "$2" ] && [ "$2" == "force" ]; then
 			echo "[WARNING] Region code \"$1\" is not in wireless-regdb. Setting to 00 (World) instead."
 			SELECTED_REGDOM="00"

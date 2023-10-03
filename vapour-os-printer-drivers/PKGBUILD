@@ -1,6 +1,6 @@
 # Maintainer: Dankcuddlybear <dankcuddlybear@protonmail.com>
 pkgname=vapour-os-printer-drivers
-pkgver=1.0.0
+pkgver=1.0.1
 pkgrel=1
 pkgdesc='Drivers for printers and scanners'
 arch=(x86_64)
@@ -9,7 +9,7 @@ replaces=('vapour-os-printing')
 install=$pkgname.install
 depends=(
 	'bluez-cups'
-	'cups-pdf' 'cups-pk-helper'
+	'cups-browsed' 'cups-pdf' 'cups-pk-helper'
 	'foomatic-db-engine' 'foomatic-db-gutenprint-ppds' 'foomatic-db-nonfree-ppds' 'foomatic-db-ppds'
 	'gsfonts' 'gutenprint'
 	'ipp-usb'

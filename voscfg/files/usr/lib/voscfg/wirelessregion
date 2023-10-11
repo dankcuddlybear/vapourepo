@@ -2,6 +2,8 @@
 [ "$(whoami)" != "root" ] && echo "[ERROR] You must run this script as root" && exit 13
 DISTRO_NAME="$(cat /usr/lib/os-release | grep -i "PRETTY_NAME" | cut -d '=' -f 2 | sed 's/"//g')"
 REGDOMS="00 GB IE AU NZ US CA AL DZ AS AD AI AR AM AW AT AZ BS BH BD BB BY BE BZ BM BT BO BA BR BN BG BF KH KY CF TD CL CN CX CO CR CI HR CU CY CZ DK DM DO EC EG SV EE ET FI FR GF PF GE DE GH GR GL GD GP GU GY GT HT HN HK HU IS IN ID IR IL IT JM JP JO KZ KE KP KR KW LV LB LS LI LT LU MO MW MY MV MT MH MQ MR MU YT MX FM MD MC MN ME MA NP NL AN NI NG MP NP MK NO OM PK PW PA PG PY PE PH PL PT PR QA RE RO RU RW BL KN LC MF PM VC WS SA SN RS SG SK SI ZA ES LK SR SE CH SY TW TZ TH TG TT TN TR TC UG UA AE UY UZ VU VE VN VI WF YE ZW"
+SCRIPT_USER=$(whoami)
+BACKTITLE="$DISTRO_NAME settings [$SCRIPT_USER]"
 CodeToCountry() {
 	case $1 in
 		AD) echo "Andorra";;
@@ -190,7 +192,7 @@ if [ -z "$1" ]; then ## Prompt to select Wifi country
 	[ -z $WIRELESS_REGDOM ] && WIRELESS_REGDOM="00"
 
 	# Construct a dialog command to be inserted into a script, and append regdom choices to it
-	DIALOG_CMD="echo \$(dialog --stdout --backtitle \"$DISTRO_NAME settings\" --title \"Wireless region\" --menu \"Please select wireless region (current: $(CodeToCountry $WIRELESS_REGDOM))\nIf your region isn't listed here, please select \\\"World\\\".\nIt is important to select the correct region to ensure wireless hardware complies with local laws set by Ofcom, FCC and other organizations.\nSetting an incorrect wireless region can cause radio interference and break local laws, and you could face prosecution.\" 0 0 0"
+	DIALOG_CMD="echo \$(dialog --stdout --backtitle \"$BACKTITLE\" --title \"Wireless region\" --menu \"Please select wireless region (current: $(CodeToCountry $WIRELESS_REGDOM))\nIf your region isn't listed here, please select \\\"World\\\".\nIt is important to select the correct region to ensure wireless hardware complies with local laws set by Ofcom, FCC and other organizations.\nSetting an incorrect wireless region can cause radio interference and break local laws, and you could face prosecution.\" 0 0 0"
 	for REGDOM in $REGDOMS; do
 		DIALOG_CMD="$DIALOG_CMD \"$REGDOM\" \"$(CodeToCountry $REGDOM)\""
 	done

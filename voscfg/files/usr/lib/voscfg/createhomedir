@@ -1,0 +1,37 @@
+#!/bin/sh
+SCRIPT_FILENAME=$(basename $0)
+USERNAME="$1"
+
+Help() {
+	echo "Usage: $SCRIPT_FILENAME <user>"
+	echo "       Creates user home directory"
+}
+UidToUsername() {
+	cat /etc/passwd | grep ":x:$1:" | cut -d ':' -f 1
+}
+GetUsers() {
+	## Read /etc/passwd and add users to list USERS in the format
+	## "<uid1> <username1> ... " (only if between UID_MIN and UID_MAX)
+	USERS=""
+	UID_MIN=$(grep -E '^UID_MIN' /etc/login.defs | sed s/"UID_MIN"//)
+	UID_MAX=$(grep -E '^UID_MAX' /etc/login.defs | sed s/"UID_MAX"//)
+	while read -r CURRENT_LINE; do
+		# Get user info
+		CURRENT_LINE_UID=$(echo "$CURRENT_LINE" | cut -d ':' -f 3)
+		CURRENT_LINE_USER="$(UidToUsername $CURRENT_LINE_UID)"
+		# Check if between UID_MIN and UID_MAX and if so add to USERS
+		if [ $CURRENT_LINE_UID -ge $UID_MIN ] && \
+		[ $CURRENT_LINE_UID -le $UID_MAX ]; then
+			USERS="$USERS $CURRENT_LINE_USER"
+		fi
+	done < /etc/passwd
+	echo $USERS
+}
+
+[ -z $USERNAME ] && echo "[ERROR] No user specified" && Help && exit 1
+USERS=$(GetUsers)
+[[ " $USERS " != *" $USERNAME "* ]] && echo "[ERROR] User \"$USERNAME\" does not exist" && exit 1
+
+mkdir -p /home/$USERNAME /home/.tmp/$USERNAME &> /dev/null
+chmod 750 /home/$USERNAME /home/.tmp/$USERNAME
+chown $USERNAME:$USERNAME /home/$USERNAME /home/.tmp/$USERNAME

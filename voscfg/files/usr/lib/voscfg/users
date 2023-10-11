@@ -2,7 +2,7 @@
 DISTRO_NAME="$(cat /usr/lib/os-release | grep -i "PRETTY_NAME" | cut -d '=' -f 2 | sed 's/"//g')"
 SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 SCRIPT_USER="$(whoami)"
-BACKTITLE="$DISTRO_NAME settings"
+BACKTITLE="$DISTRO_NAME settings [$SCRIPT_USER]"
 
 UidToUsername() {
 	cat /etc/passwd | grep ":x:$1:" | cut -d ':' -f 1
@@ -48,9 +48,9 @@ while true; do
 			USERNAME=$(UidToUsername $CHOICE)
 			# Check if user is allowed to change settings for the account
 			if [ "$USERNAME" == "$SCRIPT_USER" ]; then
-				NUM_ADMIN_USERS="$NUM_ADMIN_USERS" "$SCRIPT_DIR/useredit $USERNAME"
-			elif (groups $SCRIPT_USER | grep "wheel"); then
-				sudo NUM_ADMIN_USERS="$NUM_ADMIN_USERS" "$SCRIPT_DIR/useredit $USERNAME"
+				NUM_ADMIN_USERS="$NUM_ADMIN_USERS" "$SCRIPT_DIR/useredit" "$USERNAME"
+			elif (groups $SCRIPT_USER | grep "wheel" &> /dev/null); then
+				sudo NUM_ADMIN_USERS="$NUM_ADMIN_USERS" "$SCRIPT_DIR/useredit" "$USERNAME"
 			else
 				dialog --backtitle "$DISTRO_NAME settings" --title "Error" --msgbox "You are not allowed to change settings for other users." 0 0
 			fi;;

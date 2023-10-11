@@ -1,8 +1,10 @@
 #!/bin/sh
 DISTRO_NAME="$(cat /usr/lib/os-release | grep -i "PRETTY_NAME" | cut -d '=' -f 2 | sed 's/"//g')"
 SCRIPT_DIR="$(readlink -f $( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd ))"
+SCRIPT_USER="$(whoami)"
+BACKTITLE="$DISTRO_NAME settings [$SCRIPT_USER]"
 while true; do
-	CHOICE=$(dialog --stdout --backtitle "$DISTRO_NAME settings" --title "Users" --menu "Main menu" 0 0 0 \
+	CHOICE=$(dialog --stdout --backtitle "$BACKTITLE" --title "Users" --menu "Main menu" 0 0 0 \
 	"a" "Appearance" \
 	"r" "Regional settings" \
 	"t" "Time and date" \
@@ -16,7 +18,7 @@ while true; do
 		case $CHOICE in
 			u) "$SCRIPT_DIR/../lib/voscfg/users";;
 			*)
-				dialog --backtitle "$DISTRO_NAME settings" --title "Error" --msgbox "Not yet implemented" 0 0;;
+				dialog --backtitle "$BACKTITLE" --title "Error" --msgbox "Not yet implemented" 0 0;;
 		esac
 	fi
 done

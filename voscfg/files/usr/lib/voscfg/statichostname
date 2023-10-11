@@ -1,10 +1,12 @@
 #!/bin/sh
 [ "$(whoami)" != "root" ] && echo "[ERROR] You must run this script as root" && exit 13
 DISTRO_NAME="$(cat /usr/lib/os-release | grep -i "PRETTY_NAME" | cut -d '=' -f 2 | sed 's/"//g')"
+SCRIPT_USER=$(whoami)
+BACKTITLE="$DISTRO_NAME settings [$SCRIPT_USER]"
 
 unset INPUT
 if [ -z "$1" ]; then ## Prompt to enter static hostname
-	INPUT="$(dialog --stdout --backtitle "$DISTRO_NAME settings" --title "System hostname" --inputbox "Enter a static hostname, used to identify this device on a network. It must:\n - Include only letters, numbers and hyphens (-)\n - Not start with a hyphen\n - Not exceed 64 characters" 0 0)"
+	INPUT="$(dialog --stdout --backtitle "$BACKTITLE" --title "System hostname" --inputbox "Enter a static hostname, used to identify this device on a network. It must:\n - Include only letters, numbers and hyphens (-)\n - Not start with a hyphen\n - Not exceed 64 characters" 0 0)"
 else INPUT="$1"; fi ## Use command line parameter instead
 
 if [ ! -z "$INPUT" ]; then

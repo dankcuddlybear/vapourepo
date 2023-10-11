@@ -65,6 +65,7 @@ Install() {
 	pacman-key --populate
 
 	locale-gen
+	mkdir -p /home/.tmp; chmod +t /home /home/tmp
 	systemctl mask systemd-resolved
 	systemctl --now enable ananicy-cpp irqbalance rtirq rtirq-resume rtkit-daemon fstrim.timer systemd-oomd NetworkManager avahi-daemon.socket
 	SecureBootSetup

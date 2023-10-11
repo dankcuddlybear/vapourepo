@@ -1,0 +1,124 @@
+#!/bin/sh
+SCRIPT_DIR="$(readlink -f $( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd ))"
+SCRIPT_USER=$(whoami)
+BACKTITLE="$DISTRO_NAME settings [$SCRIPT_USER]"
+USERNAME="$1"
+COMMAND="$2"
+
+## Define functions
+Help() { # Usage information
+	echo "Usage: $(basename $0) <username> <command>"
+	echo "Commands:"
+	echo "    on / enable / 1  Encrypt home directory"
+	echo "    off /disable / 0 Disable home directory encryption"
+	echo "    status           Show home encryption status for user"
+}
+MoveHomeToTempDir() { # Move home contents to temp dir (on disk, not RAM)
+	sudo $SCRIPT_DIR/createhomedir $USERNAME || exit 1
+	for FILE in $(ls -A /home/$USERNAME); do
+		if [ "$SCRIPT_USER" == "root" ]; then sudo -u $USERNAME mv "$FILE" "/home/.tmp/$USERNAME/"
+		else mv "$FILE" "/home/.tmp/$USERNAME/"; fi
+	done
+}
+MoveTempDirToHome() { # Move temp home dir contents back to home dir
+	sudo $SCRIPT_DIR/createhomedir $USERNAME || exit 1
+	for FILE in $(ls -A /home/.tmp/$USERNAME); do
+		if [ "$SCRIPT_USER" == "root" ]; then sudo -u $USERNAME mv "$FILE" "/home/$USERNAME/"
+		else mv "$FILE" "/home/$USERNAME/"; fi
+	done
+}
+
+[ -z $USERNAME ] && echo "[ERROR] No username provided" && Help && exit 1
+[ "$SCRIPT_USER" != "$USERNAME" ] && [ "$SCRIPT_USER" != "root" ] && echo "[ERROR] You cannot change settings for other users" && exit 1
+
+# Get password/account lock status
+if (passwd -S $USERNAME | grep "$USERNAME NP " &> /dev/null); then HAS_PASSWD=0; LOCKED=0
+elif (passwd -S $USERNAME | grep "$USERNAME L " &> /dev/null); then HAS_PASSWD=1; LOCKED=1
+else HAS_PASSWD=1; LOCKED=0; fi
+
+## Get home encryption status
+if (fscrypt status /home/$USERNAME | grep -i "Unlocked: Yes") &> /dev/null; then ENCRYPTED_HOME="u"
+elif (fscrypt status /home/$USERNAME | grep -i "Unlocked: No") &> /dev/null; then ENCRYPTED_HOME="l"
+else ENCRYPTED_HOME="n"; fi
+
+[ $LOCKED == 1 ] && (dialog --backtitle "$BACKTITLE" --title "Error" --msgbox "$USERNAME's account is locked. Unlock it first to make changes." 0 0; exit 1)
+
+case $COMMAND in
+	on|enable|1)
+		if [ $ENCRYPTED_HOME != "n" ]; then
+			echo "User $USERNAME's files are already encrypted."
+			exit 0
+		else
+			PASSWORD1="$(dialog --stdout --backtitle "$BACKTITLE" --title "Encrypt $USERNAME's home directory" --passwordbox "Enter current login password for \"$USERNAME\". The same password will be used to encrypt their files, and decrypt them on login. \nYou will not see anything you type. This is for security reasons. When you have entered your password, press enter." 0 0)"
+			[ -z "$PASSWORD1" ] && exit 1
+			MoveHomeToTempDir
+			## Try to encrypt home directory - if it fails, password given was incorrect so revert changes.
+			(echo "$PASSWORD1" | fscrypt encrypt "/home/$USERNAME" --source=pam_passphrase --user="$USERNAME"; read) || \
+			(dialog --backtitle "$DISTRO_NAME settings" --title "Error" --msgbox "Incorrect password for $USERNAME." 0 0; MoveTempDirToHome; exit 1)
+			MoveTempDirToHome
+			read
+		fi;;
+	off|disable|0)
+		if [ $ENCRYPTED_HOME == "n" ]; then
+			echo "User $USERNAME's files are not encrypted."
+			exit 1
+		else
+			if [ $ENCRYPTED_HOME == "l" ]; then
+				PASSWORD1="$(dialog --stdout --backtitle "$BACKTITLE" --title "Decrypt $USERNAME's home directory" --passwordbox "$USERNAME's home directory is locked. Please enter their current login password to unlock it. \nYou will not see anything you type. This is for security reasons. When you have entered your password, press enter." 0 0)"
+				[ -z "$PASSWORD1" ] && exit 1
+				echo "$PASSWORD1" | fscrypt unlock "/home/$USERNAME"
+			fi
+			#clear
+			#MoveHomeToTempDir
+			# Get protector and delete it
+			POLICY="$(fscrypt status /home/$USERNAME | grep "Policy:" | cut -d ':' -f 2 | xargs)"
+			PROTECTOR="$(fscrypt status /home/$USERNAME | grep "login protector for $USERNAME" | cut -d ' ' -f 1)"
+			echo "POLICY=$POLICY"
+			echo "PROTECTOR=$PROTECTOR"
+			read
+
+			#if (cat /etc/fstab | grep " /home" &> /dev/null); then
+			#	fscrypt metadata destroy --force --protector=/home:$PROTECTOR
+			#	fscrypt metadata destroy --force --policy=/home:$POLICY
+			#else
+			#	echo "fscrypt metadata destroy --force --protector=/:$PROTECTOR"
+			#	sync; sleep 2
+			#	echo "fscrypt metadata destroy --force --policy=/:$POLICY"
+			#	sync; sleep 2
+			#fi
+			#echo "sudo /usr/lib/voscfg/createhomedir $USERNAME"
+			#MoveTempDirToHome
+			#sync; sleep 2; read -p "bdf"
+		fi;;
+	status)
+		case $ENCRYPTED_HOME in
+			u) echo "Encrypted, unlocked";;
+			l) echo "Encrypted, locked";;
+			n) echo "Not encrypted";;
+		esac; exit 0;;
+	*) Help; exit 0;;
+esac
+
+## After running "fscrypt status <dir>", as directory's owner or as root
+## we get this:
+## "<dir>" is encrypted with fscrypt.
+##
+## Policy:   xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+## Options:  padding:32  contents:AES_256_XTS  filenames:AES_256_CTS  policy_version:2
+## Unlocked: Yes
+##
+## Protected with 1 protector:
+## PROTECTOR         LINKED  DESCRIPTION
+## yyyyyyyyyyyyyyyy  No      login protector for <username>
+
+## To change passphrase, first move all directory contents to a temporary
+## location. Then change the user's password with passwd.
+## After that, if the directory was already mounted, you don't need
+## to do anything. Otherwise, run sudo -u <user> fscrypt metadata change-passphrase --protector=<fs root>:yyyyyyyyyyyyyyyy
+## For example, if /home is on root partition then --protector=/:yyyyyyyyyyyyyyyy
+## If /home is on another partition then --protector=/home:yyyyyyyyyyyyyyyy
+## Unlock the directory and copy back the files.
+
+## If you delete a user and their home directory, afterwards you must run
+## fscrypt metadata destroy --force --protector=/:yyyyyyyyyyyyyyyy
+## as root.

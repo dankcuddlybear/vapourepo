@@ -1,29 +1,34 @@
 # Maintainer: Dankcuddlybear <dankcuddlybear@protonmail.com>
 pkgname=vapour-os-desktop-libs
-pkgver=1.0.0
-pkgrel=25
+pkgver=1.1.0
+pkgrel=2
 pkgdesc='A collection of drivers and tools for general purpose desktop computers (no GUI)'
 arch=(x86_64)
 url='https://github.com/dankcuddlybear/Vapour-OS'
 replaces=('vapour-os-gui')
 install=install.install
 backup=('etc/X11/xorg.conf.d/30-touchpad.conf')
-depends=(
-	'base-devel' 'bash-completion' 'bluez' 'bluez-utils-compat'
-	'exfatprogs'
-	'gnome-keyring' 'gst-plugin-pipewire'
-	'libgnome-keyring' 'libsecret'
-	'ocl-icd'
-	'p7zip' 'pipewire-v4l2' 'pipewire-zeroconf' 'plymouth'
-	'unrar'
-	'vapour-os' 'vapour-os-plymouth-theme' 'vulkan-mesa-layers'
-	'xdg-desktop-portal' 'xdg-user-dirs'
-	'yay'
-
-	# Mobile phones and modems
-	'android-udev'
-	'modemmanager'
-	'usb_modeswitch'
+depends=( ## General software and services
+	plymouth vapour-os vapour-os-plymouth-theme # Vapour OS
+	p7zip unrar # Archives
+	bash-completion # Convenience
+	gnome-keyring libgnome-keyring libsecret # Credential storage
+	base-devel yay # Development packages (for AUR software)
+	exfatprogs ntfs-3g # File systems
+	xdg-desktop-portal xdg-user-dirs # User services
+	
+	## GPU and audio drivers. Basic GPU support through open source drivers.
+	## For extra functionality, also install the correct driver for your GPU.
+	mesa # OpenGL
+	swiftshader-git vulkan-icd-loader vulkan-mesa-layers vulkan-swrast # Vulkan
+	libva-mesa-driver libvdpau-va-gl libva-vdpau-driver mesa-vdpau # Video decoding
+	ocl-icd opencl-clover-mesa opencl-rusticl-mesa pocl # OpenCL
+	gst-plugin-pipewire pipewire-v4l2 pipewire-zeroconf # Audio
+	
+	## Drivers for other devices
+	bluez bluez-plugins bluez-utils-compat # Bluetooth
+	android-udev modemmanager usb_modeswitch # Phones and modems
+	game-devices-udev joystickwake # Game controllers
 )
 package() {
 	cp -r "$srcdir/../files/usr" "$pkgdir"

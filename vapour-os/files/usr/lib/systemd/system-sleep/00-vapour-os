@@ -1,2 +1,10 @@
 #!/bin/sh
-case $1 in post) udevadm trigger;; esac
+case $1 in post)
+	udevadm trigger # Reload udev rules
+
+	## Apply lid fix for HP laptops
+	if (systemctl status hp-lid-fix.service | grep "enabled" &> /dev/null); then
+		systemctl restart hp-lid-fix.service
+	fi
+	;;
+esac

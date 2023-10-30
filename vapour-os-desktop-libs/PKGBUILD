@@ -1,7 +1,7 @@
 # Maintainer: Dankcuddlybear <dankcuddlybear@protonmail.com>
 pkgname=vapour-os-desktop-libs
-pkgver=1.1.0
-pkgrel=2
+pkgver=$(date +%Y.%-m.%-d_%-H.%-M.%-S)
+pkgrel=1
 pkgdesc='A collection of drivers and tools for general purpose desktop computers (no GUI)'
 arch=(x86_64)
 url='https://github.com/dankcuddlybear/Vapour-OS'

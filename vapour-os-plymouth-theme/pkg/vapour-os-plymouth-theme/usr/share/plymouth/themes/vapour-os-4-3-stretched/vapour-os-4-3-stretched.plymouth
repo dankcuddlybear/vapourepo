@@ -1,0 +1,8 @@
+[Plymouth Theme]
+Name=vapour-os-4-3-stretched
+Description=Vapour OS splash screen (4:3 stretched to 16:9)
+ModuleName=script
+
+[script]
+ImageDir=/usr/share/plymouth/themes/vapour-os-4-3-stretched/images
+ScriptFile=/usr/share/plymouth/themes/vapour-os-4-3-stretched/animation.script

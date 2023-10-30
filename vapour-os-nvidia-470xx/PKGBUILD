@@ -1,7 +1,7 @@
 # Maintainer: Dankcuddlybear <dankcuddlybear@protonmail.com>
 pkgname=vapour-os-nvidia-470xx
-pkgver=1.0.0
-pkgrel=5
+pkgver=$(date +%Y.%-m.%-d_%-H.%-M.%-S)
+pkgrel=1
 pkgdesc='Proprietary Nvidia drivers for Kepler GPUs'
 arch=(x86_64)
 url='https://github.com/dankcuddlybear/Vapour-OS'

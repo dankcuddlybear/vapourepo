@@ -1,7 +1,7 @@
 # Maintainer: Dankcuddlybear <dankcuddlybear@protonmail.com>
 pkgname=vapour-os-mirrorlist
-pkgver=1.0.0
-pkgrel=2
+pkgver=$(date +%Y.%-m.%-d_%-H.%-M.%-S)
+pkgrel=1
 pkgdesc='Vapourepo mirrorlist'
 arch=(x86_64)
 url='https://github.com/dankcuddlybear/vapourepo'

@@ -1,0 +1,8 @@
+[Plymouth Theme]
+Name=vapour-os
+Description=Vapour OS splash screen
+ModuleName=script
+
+[script]
+ImageDir=/usr/share/plymouth/themes/vapour-os/images
+ScriptFile=/usr/share/plymouth/themes/vapour-os/animation.script

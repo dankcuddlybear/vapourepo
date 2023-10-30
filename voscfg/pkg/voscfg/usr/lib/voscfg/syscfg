@@ -1,0 +1,815 @@
+#!/bin/bash
+echo "Syscfg is deprecated! You should not use syscfg."
+echo "I am currently working on a new system configuration tool, called voscfg."
+exit 1
+
+BACKTITLE="System settings"
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+SCRIPT_NAME="$(basename $0)"
+SETTING=$1 # Change this setting and exit
+VALUE="$2" # When setting one setting, set to this value without prompting
+USERNAME="$3" # 3rd argument only needed for user management
+[ ! -z $SETTING ] && [ ! -z "$VALUE" ] && AUTO=1 || AUTO=0 ## If setting and value specified, set automatically instead of prompting
+
+Help() {
+	if [ -z $1 ]; then
+		echo "System configuration menu (interactive): $SCRIPT_NAME"
+		echo "Configure a setting and exit (interactive): $SCRIPT_NAME <setting>"
+		echo "Set value for a particular setting: $SCRIPT_NAME <setting> <value>"
+		echo "Valid settings are:"
+		echo "    help: Show this help info. Run \"$SCRIPT_NAME help <setting>\" for help with a particular setting."
+		echo "    selectlocales: Select and generate one or more system locales."
+		echo "    lang: Set the system language."
+		echo "    language: Select fallback system locales."
+		echo "    dataformats: Select locales used to format data like time, currency, addresses etc."
+		echo "    dictionary: Select dictionary used by programs like aspell and some games."
+		echo "    timezone: Set system timezone."
+		echo "    consolekeymap: Set Linux console keymap."
+		echo "    xkeymap: Set Xorg GUI keymap."
+		echo "    wificountry: Set Wifi country to conform to regulatory standards."
+		echo "    hostname: Set computer's static hostname."
+		echo "    prettyhostname: Set a more descriptive name for your computer."
+		echo "    dpi: Set the size of GUI elements and console font."
+		echo "    users: Manage users."
+		echo "    guest: Enable/disable the guest user."
+		echo "    shared: Enable/disable the shared user."
+		echo "    papersize: Set default paper size for printing."
+	else case $1 in
+			selectlocales)
+				echo "selectlocales: Select and generate one or more system locales. en_US.UTF-8 will always be generated as a fallback."
+				echo "Usage: $SCRIPT_NAME selectlocales \"<locale_1,CHARSET-1> <locale_2,CHARSET-2> ...\""
+				echo "Affects file /etc/locale.gen"
+				echo "Locales are compiled to file /usr/lib/locale/locale-archive"
+				echo "You must specify one or more locale/charset combinations in quotation marks, separating the locale and charset with a comma, like this:"
+				echo "$SCRIPT_NAME selectlocales \"en_GB.UTF-8,UTF-8 en_US.UTF-8,UTF-8\" etc..."
+				echo "See /etc/locale.gen for a list of valid locale/charset combinations.";;
+			lang)
+				echo "language: Set the system language"
+				echo "Usage: $SCRIPT_NAME language <locale>"
+				echo "Affects file /etc/locale.conf"
+				echo "If the locale name includes a charset, you must specify it with a dot. For example, you must specify \"en_GB.UTF-8\" instead of just \"en_GB\"."
+				echo "Run \"localectl list-locales\" to see what locales are currently available. If the locales you want aren't available, use \"$SCRIPT_NAME selectlocales\" to generate them."
+				echo "en_US.UTF-8 will always be used last as a fallback if multiple locales are selected.";;
+			language)
+				echo "language: Select fallback system locales."
+				echo "Usage: $SCRIPT_NAME language \"<locale_1> <locale_2> ...\""
+				echo "Affects file /etc/locale.conf"
+				echo "You must specify one or more locales in quotation marks, separating each locale with a space, like this:"
+				echo "$SCRIPT_NAME language en_AU en_GB"
+				echo "If the locale name includes a charset, do not specify it. For example, you must specify \"en_GB\" instead of \"en_GB.UTF-8\"."
+				echo "Applications will use locales in the order specified. If an application does not support a locale, it will fall back to the next supported locale."
+				echo "Run \"localectl list-locales\" to see what locales are currently available. If the locales you want aren't available, use \"$SCRIPT_NAME selectlocales\" to generate them."
+				echo "en_US and C will always be used last as a fallback if multiple locales are selected."
+				echo "Finally, for all locale variations specified, the generic locale will also be specified."
+				echo "Example: specifying \"ru_RU en_GB\" becomes \"ru_RU:ru:en_GB:en_US:en:C\".";;
+			dataformats)
+				echo "dataformats: Select locales used to format data like time, currency, addresses etc."
+				echo "Usage: $SCRIPT_NAME $VALUE <>"
+				echo "Affects file /etc/locale.conf"
+				echo "Run \"localectl list-locales\" to see what locales are currently available. If the locales you want aren't available, use \"$SCRIPT_NAME selectlocales\" to generate them.";;
+			dictionary)
+				echo "dictionary: Select dictionary used by programs like aspell and some games."
+				echo "Usage: $SCRIPT_NAME dictionary <wordsfile>"
+				echo "Will symblink specified words file to /usr/share/dict/words"
+				echo "Words files are located in /usr/share/dict";;
+			timezone)
+				echo "timezone: Set system timezone."
+				echo "Usage: $SCRIPT_NAME timezone <timezone>"
+				echo "Will symblink timezone to /etc/localtime"
+				echo "Run \"timedatectl list-timezones\" to see the list of timezones. If unset, defaults to UTC.";;
+			consolekeymap)
+				echo "consolekeymap: Set Linux console keymap."
+				echo "Usage: $SCRIPT_NAME consolekeymap <keymap>"
+				echo "Affects file /etc/vconsole.conf"
+				echo "Run \"localectl list-keymaps\" to see the list of console keymaps. If unset, defaults to us.";;
+			xkeymap)
+				echo "xkeymap: Set Xorg GUI keymap."
+				echo "Usage: $SCRIPT_NAME xkeymap <xkeymap>"
+				echo "Affects file /etc/X11/xorg.conf.d/00-keyboard.conf"
+				echo "Run \"localectl list-x11-keymap-layouts\" to see the list of Xorg keymaps. If unset, defaults to us.";;
+			wificountry)
+				echo "wificountry: Set Wifi country to conform to regulatory standards."
+				echo "Usage: $SCRIPT_NAME wificountry <country>"
+				echo "Affects file /etc/conf.d/wireless-regdom"
+				echo "The regulatory domain is used to reconfigure wireless drivers so wireless hardware complies with local laws set by Ofcom, FCC, ETSI and other organizations. Misconfiguring the regdomain could cause interference with other radio devices and break local laws resulting in a fine."
+				echo "Regdomains use ISO 3166-1 alpha-2 country codes, see /etc/conf.d/wireless-regdom for a list of codes."
+				echo "If unset, defaults to 00 (World regulatory domain).";;
+			hostname)
+				echo "hostname: Set computer's static hostname."
+				echo "Usage: $SCRIPT_NAME hostname <hostname>"
+				echo "Affects files /etc/hostname and /etc/hosts"
+				echo "A static hostname identifies your computer on a network."
+				echo "It can be up to 64 characters long, and only include letters, numbers, hyphens and underscores. A hostname may not start with a hyphen."
+				echo "Example: \"victoria-laptop\" or \"tesco_till-2\"";;
+			prettyhostname)
+				echo "prettyhostname: Set a more descriptive name for your computer."
+				echo "Usage: $SCRIPT_NAME prettyhostname \"<Pretty Hostname>\""
+				echo "Affects file /etc/machine-info"
+				echo "Unlike static hostnames, pretty hostnames can use any valid UTF8 symbol and have few limitations for maximum length."
+				echo "Example: \"Victoria's Laptop\" or \"Tesco Till #2 (Marylebone Branch)\"";;
+			dpi)
+				echo "dpi: Set the size of GUI elements and console font."
+				echo "Usage: $SCRIPT_NAME dpi <dpi|scale%>"
+				echo "Affects files /etc/environment and /etc/vconsole.conf"
+				echo "You must either specify DPI as an integer value or as a percentage (followed by a percent symbol), like this:"
+				echo "$SCRIPT_NAME dpi 127"
+				echo "$SCRIPT_NAME dpi 133%"
+				echo "Will set cursor size, console font and scale factor for GTK/QT/EFL/Java applications."
+				echo "If unset, defaults to 96DPI or 100%."
+				;;
+			users)
+				echo "users: Manage users."
+				echo "$SCRIPT_NAME users <option> <username>"
+				echo "Options:"
+				echo "    add:        Add user. Pretty self explanatory."
+				echo "    delete:     Delete user."
+				echo "    purge:      Delete user, user home directory and user mail spool."
+				echo "    password:   Set user password."
+				echo "    nopassword: Disable user password."
+				echo "    admin:      Make user admin (add to group wheel)."
+				echo "    noadmin:    Revokes admin priviliges for user (remove from group wheel)."
+				;;
+			guest)
+				echo "guest: Enable/disable the guest user."
+				echo "Usage: $SCRIPT_NAME guest <on|off>"
+				echo "The guest user is an unpriviliged user with no password and a temporary home directory. All files in the guest home directory will disappear after the system is shut down or rebooted."
+				;;
+			shared)
+				echo "guest: Enable/disable the shared user."
+				echo "Usage: $SCRIPT_NAME shared <on|off|purge|password|nopassword>"
+				echo "Purge will disable account and delete their files and mail"
+				echo "The shared user is similar to the guest user, except you can set a password, and all their files are kept after a reboot. This is intended for a group of trusted individuals who need to log into the same account (e.g. to play Mario Kart in 4-player mode without logging into the owner's account)."
+				;;
+			papersize)
+				echo "papersize: Set default paper size for printing."
+				echo "Usage: $SCRIPT_NAME papersize <papersize>"
+				echo "Affects file /etc/papersize"
+				echo "Run \"man papersize\" for a list of paper sizes."
+				echo "If unset, defaults to letter."
+				;;
+			help) Help;;
+			*) echo "[ERROR] Unknown option \"$0\"."; Help; exit 1;;
+	esac; fi
+}
+([ "$SETTING" == "help" ] || [ "$SETTING" == "--help" ] || [ "$SETTING" == "-h" ]) && Help && exit 0
+
+ErrorMsg() {
+	if [ $AUTO == 0 ]; then dialog --backtitle "$BACKTITLE" --title "Error" --msgbox "$1" 0 0; unset $SELECTION
+	else echo "[ERROR] $1"; Help $SETTING; exit 1; fi
+}
+
+GetLocales() { # 1: Include Charset (0/1), 2: Include C locale (0/1)
+	LOCALECTL_OUTPUT=$(localectl --no-pager list-locales)
+	[ -z $1 ] && INCLUDE_CHARSET=1 || INCLUDE_CHARSET=$1
+	[ -z $2 ] && INCLUDE_C=0 || INCLUDE_C=$2
+	LOCALES=""; for LOCALE in $LOCALECTL_OUTPUT; do
+		if [ $LOCALE != "C.UTF-8" ] || [ $INCLUDE_C == 1 ]; then
+			[ $INCLUDE_CHARSET == 0 ] && LOCALE=$(echo $LOCALE | cut -d '.' -f 1)
+			LOCALES="$LOCALES $LOCALE"
+		fi
+	done
+}
+
+ReadParseSelect() { # 1: Input f (file) v (variable), 2: file path/$CHOICES, 3: Multiple choice (0/1), 4: Title text, 5: Message text
+	CHOICES=""; CHOICES_MENU=""; I=1
+	if [ $1 == "f" ]; then # File
+		echo "Processing file $2 - please wait"
+		while read LINE; do
+			CHAR1=$(echo "$LINE" | cut -c1); CHAR2=$(echo "$LINE" | cut -c2)
+			if [ ! -z $CHAR1 ] && [ ! -z $CHAR2 ]; then # Look for lines that are commented or uncommented with no space
+				LINE=$(echo "${LINE//#}" | sed -r 's/ +/,/g') # Uncomment and replace space with semicolon to work around a bug
+				if [ ! -z $3 ] && [ $3 == 1 ]; then # If multiple choice
+					[ $CHAR1 == "#" ] && CHOICES_MENU="$CHOICES_MENU $I $LINE OFF" || CHOICES_MENU="$CHOICES_MENU $I $LINE ON"
+				else # If not multiple choice
+					CHOICES_MENU="$CHOICES_MENU $I $LINE"
+				fi
+			fi
+			CHOICES="$CHOICES $LINE"
+			((I++))
+		done < "$2"
+ 	elif [ $1 == "v" ]; then # Variable
+		CHOICES="$2"
+		for CHOICE in $CHOICES; do
+			if [ ! -z $3 ] && [ $3 == 1 ]; then CHOICES_MENU="$CHOICES_MENU $I $CHOICE OFF"
+			else CHOICES_MENU="$CHOICES_MENU $I $CHOICE"; fi
+			((I++))
+		done
+	fi
+	if [ $AUTO == 1 ]; then
+		SELECTION="$VALUE"
+	else
+		if [ ! -z $3 ] && [ $3 == 1 ]; then SELECTION_NOS="$(dialog --stdout --backtitle "$BACKTITLE" --title "$4" --checklist "$5" 0 0 0 $CHOICES_MENU)"
+		else SELECTION_NOS="$(dialog --stdout --backtitle "$BACKTITLE" --title "$4" --menu "$5" 0 0 0 $CHOICES_MENU)"; fi
+		SELECTION=""
+		for SUB in $SELECTION_NOS; do
+			SUB="$(echo "$CHOICES" | cut -d ' ' -f $(($SUB+1)))"
+			SELECTION="$SELECTION $SUB"
+		done
+		SELECTION="$(echo "$SELECTION" | xargs)" # Trim leading and trailing spaces
+	fi
+}
+
+## 1: file path, 2: Multiple lines (0/1), 3: Overwrite (multiple line only) (0/1), 4: Prefix ("0" to disable),
+## 5: Separator (single line only), 6: Search character (optional) 7: Replace character (optional)
+WriteConfig() {
+	if [ $2 == 1 ]; then # If multiple lines
+		sed -i 's/^\([^#].*\)/#\1/g' "$1" # Comment all lines in file
+		I=0; for SUB in $SELECTION; do
+			if [ ! -z "$6" ]; then # Replace character (if $7 is empty, assume space)
+				[ -z "$7" ] && SUB="$(echo "$SUB" | sed -r "s/$6+/ /g")" || SUB="$(echo "$SUB" | sed -r "s/$6+/$7/g") "
+			fi
+			[ ! -z "$4" ] && [ "$4" != 0 ] && SUB="$4$SUB" # Prefix
+			SUB="$(echo "$SUB" | xargs)" # Trim leading and trailing spaces
+			if [ $3 == 0 ]; then sed -i "/^#$SUB/ c$SUB" "$1" # Uncomment if overwrite off
+			else ((I < 1)) && echo "$SUB" > "$1" || echo "$SUB" >> "$1"; fi # Else write file again
+			((I++))
+		done
+	else # If single line
+		I=0; for SUB in $SELECTION; do
+			if [ ! -z "$6" ]; then # Replace character (if $7 is empty, assume space)
+				[ -z "$7" ] && SUB="$(echo "$SUB" | sed -r "s/$6+/ /g")" || SUB="$(echo "$SUB" | sed -r "s/$6+/$7/g") "
+			fi
+			if ((I < 1)); then
+				[ ! -z "$4" ] && [ "$4" != "0" ] && STR="$4$SUB" || STR="$SUB"
+			else STR="$STR$5$SUB"; fi
+		done; echo "$STR" > "$1"
+	fi; unset I STR
+}
+
+Adduser() {
+	if [ "$1" == "guest" ] || [ "$1" == "shared" ]; then
+		ErrorMsg "The username \"$USERNAME\" is reserved for use by the system. You can enable the $USERNAME account in the users menu."
+	fi
+	useradd -m "$1" || ErrorMsg "Failed to add user \"$1\". Make sure the username meets the requirements."
+	passwd -d "$1"
+	if [ $NUM_USERS == 0 ]; then
+		gpasswd -a $USERNAME wheel
+		gpasswd -a $USERNAME proc
+		gpasswd -a $USERNAME sys
+	fi
+}
+
+DeleteUser() {
+	pkill -KILL -u $1
+	userdel -f $1
+}
+
+PurgeUser() {
+	pkill -KILL -u $1
+	userdel -rf $1
+}
+
+SetPassword() {
+	clear
+	echo "Enter a secure password. It must:"
+	echo " - Be at least 8 characters long"
+	echo " - Have at least 1 digit"
+	echo " - Have at least 1 uppercase and 1 lowercase letter"
+	echo " - Not contain common words, even with character substitution/addition"
+	echo "See also https://wiki.archlinux.org/title/Security#Passwords"
+	passwd $1
+}
+
+SelectLocales() {
+	ReadParseSelect f /etc/locale.gen 1 "Locales" "Please enable one or more locales.\nPress SPACE to check or uncheck a selected locale, then press ENTER when done."
+	if [ $AUTO == 1 ]; then # Check for syntax errors (CLI only)
+		VALID_LOCALES=""; for SUB in $CHOICES; do # Generate list of valid locales to check input against
+			VALID_LOCALES="$VALID_LOCALES $(echo "$SUB" | cut -d ',' -f 1)"
+		done
+		for SUB in $SELECTION; do
+			LOCALE=$(echo $SUB | cut -d ',' -f 1)
+			CHARSET=${SUB:${#LOCALE}+1}
+			if [ -z $CHARSET ]; then
+				ErrorMsg "Syntax error: No charset specified. Leaving locales unchanged."
+				unset SELECTION
+				break
+			fi
+			if [[ " $VALID_LOCALES " != *" $LOCALE "* ]]; then
+				ErrorMsg "Locale/charset \"$(echo "$SUB" | sed -r 's/,+/ /g')\" does not exist. Leaving locales unchanged."
+				unset SELECTION
+				break
+			fi
+		done
+	fi
+	if [ ! -z "$SELECTION" ]; then
+		[[ " $SELECTION " != *" en_US.UTF-8,UTF-8 "* ]] && SELECTION="$SELECTION en_US.UTF-8,UTF-8" # Make sure en_US.UTF-8 is always included as a fallback
+		WriteConfig /etc/locale.gen 1 0 0 0 "," " "
+		locale-gen
+		
+		## Check if the current LANG is still set and available. If not, reset to en_US.UTF-8
+		GetLocales 0 0; unset LANG; [ -f /etc/locale.conf ] && . /etc/locale.conf
+		if [ -z $LANG ] || [[ " $LOCALES " != *" $LANG "* ]]; then
+			"$SCRIPT_DIR/$SCRIPT_NAME" lang "en_US.UTF-8"
+		fi
+	fi
+}
+
+Lang() {
+	GetLocales 1 0
+	unset LANG; [ -f /etc/locale.conf ] && . /etc/locale.conf; [ -z $LANG ] && LANG="unset" # Get current LANG
+	ReadParseSelect v "$LOCALES" 0 "System language" "Please select system language (current: $LANG)" # 4: Title text, 5: Message text
+	if [ $AUTO == 1 ]; then # Check the specified locale is available (console only)
+		[[ " $LOCALES " != *" $VALUE "* ]] && ErrorMsg "Locale $VALUE not available!" || LANG=$VALUE
+	fi
+	if [ ! -z "$SELECTION" ]; then
+		if [ "$LANG" == "unset" ]; then echo "LANG=$SELECTION" >> /etc/locale.conf
+		else sed -i "s/^.*LANG=.*$/LANG=$SELECTION/" /etc/locale.conf; fi # Search for "LANG=*" and replace with "LANG=$SELECTION"
+		unset LANG; source /etc/profile.d/locale.sh # Make changes immediate
+	fi
+}
+
+Language() {
+	echo "Not yet implemented"
+	GetLocales 0 0
+	if [ $AUTO == 1 ]; then
+		for ITEM in $VALUE; do # Check the specified locales are available
+			if [[ "$LOCALES" != *"$ITEM"* ]]; then
+				ErrorMsg "Locale $ITEM not available!"
+			fi
+		done
+		LANGLIST="$VALUE"
+	else
+		DONE=0
+		LANGNO=1
+		LEN_LOCALES=$(echo "$LOCALES" | wc -w)
+		LANGLIST=""
+		while (("$LANGNO" <= "LEN_LOCALES")) && [ $DONE == 0 ]; do
+			LANGSELECT=$(dialog --stdout --backtitle "$BACKTITLE" --title "Fallback languages ($LANGNO/$LEN_LOCALES)" \
+			--menu "Please select fallback language $LANGNO:" 0 0 0 $LOCALECHOICES "f" "Finished")
+			if [ -z $LANGSELECT ]; then DONE=1; unset LANGLIST
+			elif [ $LANGSELECT == "f" ]; then DONE=1
+			else LANGLIST="$LANGLIST $(echo $LOCALES | cut -d ' ' -f $LANGSELECT)"; ((LANGNO++)); fi
+		done
+	fi
+	if [ ! -z "$LANGLIST" ]; then
+		LANGLIST="$LANGLIST END_LIST"
+		LANGUAGE=""
+		PREVIOUS_LANG=""
+		for ITEM in $LANGLIST; do
+			CURRENT_LANG=$(echo $ITEM | cut -d '_' -f 1); CURRENT_VARIANT=$(echo $ITEM | cut -d '_' -f 1)
+			[ $CURRENT_LANG == $CURRENT_VARIANT ] && CURRENT_VARIANT=""
+			## Check if previous language is different from the current language.
+			## If so, add $CURRENT_LANG just before current $ITEM, unless it is the same as previous $ITEM.
+			if [ ! -z $PREVIOUS_LANG ] && [ $PREVIOUS_LANG != $CURRENT_LANG ] && [ $ITEM != $CURRENT_LANG ]; then
+				LANGUAGE="$LANGUAGE:$PREVIOUS_LANG"
+				[ $PREVIOUS_LANG == "en" ] && LANGUAGE="$LANGUAGE:C"
+			fi
+			[ $ITEM != "END_LIST" ] && LANGUAGE="$LANGUAGE:$ITEM"
+			PREVIOUS_LANG=$CURRENT_LANG
+		done
+		LANGUAGE="${LANGUAGE/:/}" # Remove leading colon
+		if [ ! -z $(cat /etc/locale.conf | grep "LANGUAGE=") ]; then # Search for line containing "LANGUAGE=" and replace with "LANGUAGE=$LANGUAGE"
+			sed -i "s/^.*LANGUAGE=.*$/LANGUAGE=$LANGUAGE/" /etc/locale.conf
+		else echo "LANGUAGE=$LANGUAGE" >> /etc/locale.conf; fi
+		unset LANGUAGE; source /etc/profile.d/locale.sh # Make changes immediate
+	fi
+}
+
+DataFormats() {
+	echo "Not yet implemented"
+}
+
+Dictionary() {
+	WORDFILES=$(ls /usr/share/dict -I cracklib-small -I words | tr '\n' ' ')
+	if [ $AUTO == 1 ]; then
+		WORDFILES=$(ls /usr/share/dict)
+		if [[ " $WORDFILES" != *"$VALUE"* ]]; then
+			ErrorMsg "Wordfile \"$VALUE\" does not exist!"
+		fi
+		WORDS=$VALUE
+	else
+		WORDS_CHOICES=""; WORDS_NO=1
+		for WORDFILE in $WORDFILES; do # Create numbered list to be used by dialog
+			WORDS_CHOICES="$WORDS_CHOICES $WORDS_NO $WORDFILE"
+			((WORDS_NO++))
+		done
+		if [ -f /usr/share/dict/words ]; then # Get current words list
+			WORDS=$(readlink -f /usr/share/dict/words)
+			WORDS=${WORDS//"/usr/share/dict/"/}
+		else WORDS="n/a"; fi
+		WORDSELECTNO=$(dialog --stdout --backtitle "$BACKTITLE" --title "Dictionary (words)" --menu "Please select words file (current: $WORDS):" 0 0 0 $WORDS_CHOICES)
+		[ -z $WORDSELECTNO ] && unset WORDS || WORDS=$(echo $WORDFILES | cut -d ' ' -f $WORDSELECTNO)
+	fi
+	if [ ! -z $WORDS ]; then
+		ln -sfr /usr/share/dict/$WORDS /usr/share/dict/words
+	fi
+}
+
+Timezone() {
+	TIMEZONES=$(timedatectl --no-pager list-timezones) # Get list of timezones
+	if [ $AUTO == 1 ]; then
+		TIMEZONE="$VALUE"
+		if [ ! -f /usr/share/zoneinfo/$TIMEZONE ]; then
+			ErrorMsg "Timezone $TIMEZONE does not exist, leaving unchanged (default: UTC)."
+		fi
+	else
+		ZONELIST=""; ZONENO=1
+		for ZONE in $TIMEZONES; do # Create numbered list of zones to be used later by dialog (1 Africa/Abidjan 2 Africa/Accra etc...)
+			ZONELIST="$ZONELIST $ZONENO $ZONE"
+			((ZONENO++))
+		done
+		if [ -f /etc/localtime ]; then # Get current timezone
+			TIMEZONE=$(readlink -f /etc/localtime)
+			TIMEZONE=${TIMEZONE//"/etc/"/}
+		else TIMEZONE="UTC"; fi
+		ZONESELECTNO=$(dialog --stdout --backtitle "$BACKTITLE" --title "Timezone" --menu "Please select timezone (current: $TIMEZONE):" 0 0 0 $ZONELIST)
+		[ -z $ZONESELECTNO ] && unset TIMEZONE || TIMEZONE=$(echo $TIMEZONES | cut -d ' ' -f $ZONESELECTNO)
+	fi
+	if [ ! -z $TIMEZONE ]; then
+		ln -sf /usr/share/zoneinfo/$TIMEZONE /etc/localtime
+	fi
+}
+
+ConsoleKeymap() {
+	KEYMAPS=$(localectl --no-pager list-keymaps) # Get list of keymaps
+	if [ $AUTO == 1 ]; then
+		if [[ "$KEYMAPS" != *"$VALUE"* ]]; then
+			ErrorMsg "Keymap $VALUE does not exist, leaving unchanged (default: us)."
+		fi
+	else
+		KEYMAPLIST=""; KEYMAPNO=1
+		for KEYMAP in $KEYMAPS; do # Create numbered list of zones to be used later by dialog (1 Africa/Abidjan 2 Africa/Accra etc...)
+			KEYMAPLIST="$KEYMAPLIST $KEYMAPNO $KEYMAP"
+			((KEYMAPNO++))
+		done
+		## Get current keymap
+		unset KEYMAP
+		[ -f /etc/vconsole.conf ] && . /etc/vconsole.conf
+		[ -z $KEYMAP ] && KEYMAP="us"
+		KEYMAPSELECTNO=$(dialog --stdout --backtitle "$BACKTITLE" --title "Console keymap" --menu "Please select console keymap (current: $KEYMAP):" 0 0 0 $KEYMAPLIST)
+		[ -z $KEYMAPSELECTNO ] && unset KEYMAP || KEYMAP=$(echo $KEYMAPS | cut -d ' ' -f $KEYMAPSELECTNO)
+	fi
+	if [ ! -z $KEYMAP ]; then
+		if [ ! -z $(cat /etc/vconsole.conf | grep "KEYMAP=") ]; then # Search for line containing "LANG=" and replace with "LANG=$LANGSELECT"
+			sed -i "s/^.*KEYMAP=.*$/KEYMAP=$KEYMAP/" /etc/locale.conf
+		else echo "KEYMAP=$KEYMAP" >> /etc/vconsole.conf; fi
+	fi
+}
+
+XKeymap() {
+	XKEYMAPS=$(localectl --no-pager list-x11-keymap-layouts) # Get list of keymaps
+	if [ $AUTO == 1 ]; then
+		if [[ "$XKEYMAPS" != *"$VALUE"* ]]; then
+			ErrorMsg "XKeymap $VALUE does not exist, leaving unchanged (default: us)."
+		fi
+	else
+		XKEYMAPLIST=""; XKEYMAPNO=1
+		for XKEYMAP in $XKEYMAPS; do # Create numbered list of zones to be used later by dialog (1 Africa/Abidjan 2 Africa/Accra etc...)
+			XKEYMAPLIST="$XKEYMAPLIST $XKEYMAPNO $XKEYMAP"
+			((XKEYMAPNO++))
+		done
+		## Get current keymap
+		unset XKEYMAP
+		XKEYMAP=$(cat /etc/X11/xorg.conf.d/00-keyboard.conf | grep "XkbLayout" | tr -s ' ' | cut -d ' ' -f 3 | tr -d '"')
+		[ -z $XKEYMAP ] && XKEYMAP="us"
+		XKEYMAPSELECTNO=$(dialog --stdout --backtitle "$BACKTITLE" --title "X11 keymap" --menu "Please select X11 keymap (current: $XKEYMAP):" 0 0 0 $XKEYMAPLIST)
+		[ -z $XKEYMAPSELECTNO ] && unset XKEYMAP || XKEYMAP=$(echo $XKEYMAPS | cut -d ' ' -f $XKEYMAPSELECTNO)
+	fi
+	if [ ! -z $XKEYMAP ]; then
+		echo "Section \"InputClass\"" > /etc/X11/xorg.conf.d/00-keyboard.conf
+		echo "	Identifier \"system-keyboard\"" >> /etc/X11/xorg.conf.d/00-keyboard.conf
+        echo "	MatchIsKeyboard \"on\"" >> /etc/X11/xorg.conf.d/00-keyboard.conf
+        echo "	Option \"XkbLayout\" \"gb\"" >> /etc/X11/xorg.conf.d/00-keyboard.conf
+		echo "EndSection" >> /etc/X11/xorg.conf.d/00-keyboard.conf
+	fi
+}
+
+WifiCountry() {
+	REGDOMS="00 AD AE AF AI AL AM AN AR AS AT AU AW AZ BA BB BD BE BF BG BH BL BM BN BO BR BS BT BY BZ CA CF CH CI CL CN CO CR CU CX CY CZ DE DK DM DO DZ EC EE EG ES ET FI FM FR GB GD GE GF GH GL GP GR GT GU GY HK HN HR HT HU ID IE IL IN IR IS IT JM JO JP KE KH KN KP KR KW KY KZ LB LC LI LK LS LT LU LV MA MC MD ME MF MH MK MN MO MP MQ MR MT MU MV MW MX MY NG NI NL NO NP NZ OM PA PE PF PG PH PK PL PM PR PT PW PY QA RE RO RS RU RW SA SE SG SI SK SN SR SV SY TC TD TG TH TN TR TT TW TZ UA UG US UY UZ VC VE VI VN VU WF WS YE YT ZA ZW"
+	if [ $AUTO == 1 ]; then
+		if [[ "$REGDOMS" != *"$VALUE"* ]]; then
+			ErrorMsg "[ERROR] Regdomain \"$VALUE\" does not exist!"
+		fi
+		REGDOM=$VALUE
+	else
+		REGDOM_CHOICES=""; REGDOM_NO=1
+		for REGDOM in $REGDOMS; do # Create numbered list to be used by dialog
+			REGDOM_CHOICES="$REGDOM_CHOICES $REGDOM_NO $REGDOM"
+			((REGDOM_NO++))
+		done
+		unset WIRELESS_REGDOM
+		[ -f /etc/conf.d/wireless-regdom ] && . /etc/conf.d/wireless-regdom
+		[ -z $WIRELESS_REGDOM ] && WIRELESS_REGDOM="world" # Get current regdomain
+		REGSELECTNO=$(dialog --stdout --backtitle "$BACKTITLE" --title "Wifi country" --menu "Please select Wifi country (current: $WIRELESS_REGDOM):" 0 0 0 $REGDOM_CHOICES)
+		[ -z $REGSELECTNO ] && unset REGDOM || REGDOM=$(echo $REGDOMS | cut -d ' ' -f $REGSELECTNO)
+	fi
+	if [ ! -z $REGDOM ]; then
+		sed -i 's/^\([^#].*\)/#\1/g' /etc/conf.d/wireless-regdom # Comment all lines in /etc/conf.d/wireless-regdom
+		sed -i "/^#WIRELESS_REGDOM=\"$REGDOM\"/ cWIRELESS_REGDOM=\"$REGDOM\"" /etc/conf.d/wireless-regdom # Uncomment regdomain
+		echo "options cfg80211 ieee80211_regdom=$REGDOM" > /etc/modprobe.d/wireless-regdom.conf
+		iw reg set $REGDOM # Set the regdomain now
+	fi
+}
+
+Hostname() {
+	if [ $AUTO == 1 ]; then
+		INPUT="$VALUE"
+	else
+		INPUT="$(dialog --stdout --backtitle "$BACKTITLE" --title "System hostname" --inputbox "Enter a static hostname, used to identify this device on a network. It must:\n - Include only letters, numbers and hyphens (-)\n - Not start with a hyphen\n - Not exceed 64 characters" 0 0)"
+	fi
+	if [ ! -z "$INPUT" ]; then # Check hostname
+		if ! [[ "$INPUT" =~ ^[0-9A-Za-z-]+$ ]]; then # Check for any (illegal) characters other than those specified in this regex
+			ErrorMsg "Hostname contains illegal characters"
+			unset INPUT
+		elif (($(expr length "$INPUT") > 64)); then # Longer than 64 characters
+			ErrorMsg "Hostname is longer than 64 characters"
+			unset INPUT
+		elif [ ${INPUT:0:1} == "-" ]; then # Begins with hyphen
+			ErrorMsg "Hostname must no begin with a hyphen (-)"
+			unset INPUT
+		fi
+	fi
+	if [ ! -z $INPUT ]; then # Set hostname
+		touch /etc/hostname /etc/hosts
+		OLD_HOSTNAME="$(cat /etc/hostname)"
+		export HOSTNAME="$INPUT"
+		echo "$INPUT" > /etc/hostname
+		EMPTY=1; while read -r LINE; do # Check if file is empty or not (file is also considered empty if it only contains comments)
+			[ ${LINE:0:1} != "#" ] && EMPTY=0;
+		done < /etc/hosts
+		## If file is empty, write the file. Otherwise just replace old hostname with new hostname
+		if [ $EMPTY == 1 ]; then
+			echo "127.0.0.1 localhost" > /etc/hosts
+			echo "::1 localhost" >> /etc/hosts
+			echo "127.0.1.1 $INPUT" >> /etc/hosts
+		else sed -i "s/$OLD_HOSTNAME/$INPUT/g" /etc/hosts; fi
+	fi
+}
+
+PrettyHostname() {
+	if [ $AUTO == 1 ]; then
+		INPUT="$VALUE"
+	else
+		INPUT="$(dialog --stdout --backtitle "$BACKTITLE" --title "Pretty hostname" --inputbox "Enter a more descriptive hostname. You may use any characters or UTF-8 symbols." 0 0)"
+	fi
+	if [ ! -z "$INPUT" ]; then # Set pretty hostname
+		touch /etc/machine-info # Create /etc/machine-info if it does not exist
+		hostnamectl --pretty hostname "$INPUT"
+	fi
+}
+
+Dpi() {
+	echo "Not yet implemented!"; exit
+}
+
+Users() {
+	LOOP_USER=1; while [ ! -z $LOOP_USER ]; do
+		unset MODE
+		USERS="$(ls -I shared -I initsetup /home)"; USER_CHOICES=""; NUM_USERS="$(echo $USERS | wc -w)"; I=1
+		for USER in $USERS; do
+			USER_CHOICES="$USER_CHOICES $I $USER"
+			((I++))
+		done
+		USER_CHOICES="$(echo "$USER_CHOICES" | xargs)" # Trim leading and trailing spaces
+		if [ $AUTO == 1 ]; then # Unless MODE=add, show error if no username provided
+			MODE="$VALUE"
+			if [ "$MODE" != "add" ] && [ "$MODE" != "delete" ] && [ "$MODE" != "purge" ] && [ "$MODE" != "password" ] && [ "$MODE" != "nopassword" ]; then
+				ErrorMsg "Invalid value \"$MODE\""
+			else
+				[ $MODE != "add" ] && [ -z "$USERNAME" ] && ErrorMsg "No username provided"
+			fi
+		fi
+		if [ -z $MODE ]; then # Show user management menu
+			SELECTION="$(dialog --stdout --backtitle "$BACKTITLE" --title "Users" --menu "Add or manage users." 0 0 0 $USER_CHOICES g "guest" s "shared" n "New user...")"
+			if [ -z $SELECTION ]; then unset LOOP_USER
+			elif [ $SELECTION == "n" ]; then MODE="add"
+			elif [ $SELECTION == "g" ]; then Guest;
+			elif [ $SELECTION == "s" ]; then Shared;
+			else
+				USERNAME="$(echo $USERS | cut -d ' ' -f $SELECTION)"
+				HAS_PASSWORD="$(cat /etc/shadow | grep "$USERNAME" | cut -d ":" -f 2)"
+				([ -z $HAS_PASSWORD ] || [ "$HAS_PASSWORD" == "!*" ] || [ "$HAS_PASSWORD" == "*" ]) && HAS_PASSWORD=0 || HAS_PASSWORD=1
+				IS_ADMIN="$(groups $USERNAME | grep "wheel")"
+				[ -z "$IS_ADMIN" ] && IS_ADMIN=0 || IS_ADMIN=1
+				[ $IS_ADMIN == 1 ] && OPTION_ADMIN="Remove administrator priviliges" || OPTION_ADMIN="Make administrator"
+				if [ $HAS_PASSWORD == 1 ]; then
+					SELECTION="$(dialog --stdout --backtitle "$BACKTITLE" --title "$USERNAME" --menu "Options for user $USERNAME" 0 0 0 "1" "Change password" "2" "Remove password" "3" "$OPTION_ADMIN" "4" "Delete user" "5" "Delete user and user home directory")"
+					case $SELECTION in
+						1) MODE="password";;
+						2) MODE="nopassword";;
+						3) [ $IS_ADMIN == 1 ] && MODE="noadmin" || MODE="admin";;
+						4) MODE="delete";;
+						5) MODE="purge";;
+					esac
+				else
+					SELECTION="$(dialog --stdout --backtitle "$BACKTITLE" --title "$USERNAME" --menu "Options for user $USERNAME" 0 0 0 "1" "Set password" "2" "$OPTION_ADMIN" "3" "Delete user" "4" "Delete user, home directory and mail spool")"
+					case $SELECTION in
+						1) MODE="password";;
+						2) [ $IS_ADMIN == 1 ] && MODE="noadmin" || MODE="admin";;
+						3) MODE="delete";;
+						4) MODE="purge";;
+					esac
+				fi
+			fi
+		fi
+		case $MODE in
+			add)
+				if [ $AUTO == 1 ] && [ ! -z "$USERNAME" ]; then Adduser "$USERNAME"; else
+					USERNAME="$(dialog --stdout --backtitle "$BACKTITLE" --title "Add user" --inputbox "Enter username of new user. It must not:\n - Be longer than 32 characters\n - Include capital letters, dots or colons\n - End with a hyphen (-)\n - Be reserved for use by the system (e.g. root, ftp, nobody, mail, guest, shared)" 0 0)"
+					[ ! -z "$USERNAME" ] && Adduser "$USERNAME"
+					dialog --backtitle "$BACKTITLE" --title "Add user" --yesno "Would you like to set a password for user $USERNAME?" 0 0 && SetPassword $USERNAME
+				fi
+				;;
+			delete)
+				if [ $NUM_USERS == 1 ]; then ErrorMsg "This is the only user!"; else
+					if [ $AUTO == 1 ]; then DeleteUser $USERNAME; else
+						dialog --backtitle "$BACKTITLE" --title "Delete user $USERNAME" --yesno "Are you sure you want to delete user $USERNAME? This cannot be undone." 0 0 && DeleteUser $USERNAME
+					fi
+				fi
+				;;
+			purge)
+				if [ $NUM_USERS == 1 ]; then ErrorMsg "This is the only user!"; else
+					if [ $AUTO == 1 ]; then DeleteUser $USERNAME; else
+						dialog --backtitle "$BACKTITLE" --title "Delete user $USERNAME" --yesno "Are you sure you want to delete user $USERNAME? All their files and mail will be deleted. This cannot be undone." 0 0 && PurgeUser $USERNAME
+					fi
+				fi
+				;;
+			password) SetPassword $USERNAME;;
+			nopassword) passwd -d $USERNAME;;
+			admin) gpasswd -a $USERNAME wheel;;
+			noadmin) if [ $NUM_USERS == 1 ]; then ErrorMsg "This is the only administrator!"; else gpasswd -d $USERNAME wheel; fi;;
+			*) if [ $AUTO == 1 ]; then ErrorMsg "Invalid option \"$MODE\""; fi;;
+		esac
+		[ $AUTO == 1 ] && unset LOOP_USER
+	done
+}
+
+Guest() {
+	GUEST_ENABLED="$(cat /etc/passwd | grep "guest:x:")"
+	if [ -z $GUEST_ENABLED ]; then
+		GUEST_ENABLED=0
+		TEXT_ENABLE="Enable"
+		TEXT_ENABLED="disabled"
+	else
+		GUEST_ENABLED=1
+		TEXT_ENABLE="Disable"
+		TEXT_ENABLED="enabled"
+	fi
+	if [ $AUTO == 1 ]; then
+		if [ "$VALUE" != "on" ] && [ "$VALUE" != "off" ]; then ErrorMsg "Invalid value \"$VALUE\""; else
+			if ([ $VALUE == "on" ] && [ $GUEST_ENABLED == 1 ]) || ([ $VALUE == "off" ] && [ $GUEST_ENABLED == 0 ]); then ErrorMsg "Guest user is already $TEXT_ENABLED"; CONFIRM=0
+			else CONFIRM=1; fi
+		fi
+	else
+		dialog --backtitle "$BACKTITLE" --title "Guest user" --yesno "Guest user is currently $TEXT_ENABLED.\n\nThe guest user is an unpriviliged user with no password and a temporary home directory. All files in the guest home directory will disappear after the system is shut down or rebooted.\n\n$TEXT_ENABLE guest user?" 0 0 && CONFIRM=1 || CONFIRM=0
+	fi
+	if [ $CONFIRM == 1 ]; then
+		if [ $GUEST_ENABLED == 0 ]; then
+			useradd -md /tmp/guest -c "Guest account" guest
+			passwd -d guest
+			chage -m 10000000 guest # Prevent guest from setting a password
+		else PurgeUser guest; fi
+	fi
+}
+
+Shared() {
+	LOOP_SHARED=1; while [ ! -z $LOOP_SHARED ]; do
+		unset MODE NO_CONT
+		SHARED_ENABLED="$(cat /etc/passwd | grep "shared:x:")"
+		if [ -z $SHARED_ENABLED ]; then SHARED_ENABLED=0
+		else
+			SHARED_ENABLED=1
+			HAS_PASSWORD="$(cat /etc/shadow | grep "shared" | cut -d ":" -f 2)"
+			([ -z $HAS_PASSWORD ] || [ "$HAS_PASSWORD" == "!*" ] || [ "$HAS_PASSWORD" == "*" ]) && HAS_PASSWORD=0 || HAS_PASSWORD=1
+		fi
+		
+		if [ $AUTO == 1 ]; then
+			MODE="$VALUE"
+			if [ "$MODE" != "on" ] || [ "$MODE" != "off" ] || [ "$MODE" != "purge" ] || [ "$MODE" != "password" ] || [ "$MODE" != "nopassword" ]; then
+				ErrorMsg "Invalid value \"$MODE\""
+			else
+				if [ $MODE == "on" ] && [ $SHARED_ENABLED == 1 ]; then ErrorMsg "Shared user is already enabled"; unset MODE
+				elif ([ $MODE == "off" ] || [ $MODE == "purge" ]) && [ $SHARED_ENABLED == 0 ]; then ErrorMsg "Shared user is already disabled"; unset MODE
+				fi
+			fi
+		else
+			if [ $SHARED_ENABLED == 0 ]; then
+				dialog --backtitle "$BACKTITLE" --title "Shared user" --yesno "Shared user is currently disabled.\n\nThe shared user is similar to the guest user, except you can set a password, and all their files are kept after a reboot. This is intended for a group of trusted individuals who need to log into the same account (e.g. to play Mario Kart in 4-player mode without logging into the owner's account)\n\nEnable shared user?" 0 0 && MODE="on"
+				unset LOOP_SHARED
+			else
+				if [ $HAS_PASSWORD == 0 ]; then
+					SELECTION="$(dialog --stdout --backtitle "$BACKTITLE" --title "Shared user" --menu "Options for shared user" 0 0 0 "1" "Set password" "2" "Disable shared account" "3" "Disable shared account, and delete all their files and mail")"
+					if [ -z $SELECTION ]; then unset LOOP_SHARED; else case $SELECTION in 1) MODE="password";; 2) MODE="off";; 3) MODE="purge";; esac; fi
+				else
+					SELECTION="$(dialog --stdout --backtitle "$BACKTITLE" --title "Shared user" --menu "Options for shared user" 0 0 0 "1" "Change password" "2" "Remove password" "3" "Disable shared account" "4" "Disable shared account, and delete all their files and mail")"
+					if [ -z $SELECTION ]; then unset LOOP_SHARED; else case $SELECTION in 1) MODE="password";; 2) MODE="nopassword";; 3) MODE="off";; 4) MODE="purge";; esac; fi
+				fi
+			fi
+		fi
+		
+		case $MODE in
+			on) useradd -m -c "Shared account" shared; passwd -d shared; unset LOOP_SHARED;;
+			off)
+				if [ $AUTO == 1 ]; then	DeleteUser shared; else
+					dialog --backtitle "$BACKTITLE" --title "Delete shared user" --yesno "Are you sure you want to disable the shared user?" 0 0 && DeleteUser shared && unset LOOP_SHARED
+				fi;;
+			purge)
+				if [ $AUTO == 1 ]; then	PurgeUser shared; else
+					dialog --backtitle "$BACKTITLE" --title "Delete shared user" --yesno "Are you sure you want to disable the shared user? All their files and mail will be deleted. This cannot be undone." 0 0 && PurgeUser shared && unset LOOP_SHARED
+				fi;;
+			password) clear; passwd shared; unset MODE;;
+			nopassword) passwd -d shared;;
+		esac; unset MODE
+		[ $AUTO == 1 ] && unset LOOP_SHARED
+	done
+}
+
+Papersize() {
+	PAPERSIZES="a3 a4 a5 b5 letter legal executive note 11x17 a0 a1 a2 a6 a7 a8 a9 a10 b0 b1 b2 b3 b4 tabloid statement note halfletter halfexecutive folio quarto ledger archA archB archC archD archE flsa flse csheet dsheet esheet 10x14"
+	if [ $AUTO == 1 ]; then
+		if [[ "PAPERSIZES" != *"$VALUE"* ]]; then
+			echo "[ERROR] Invalid size \"$VALUE\"!"
+			echo "Valid sizes are: $PAPERSIZES"
+			exit 1
+		fi
+		PAPERSIZE=$VALUE
+	else
+		PAPER_CHOICES=""; PAPER_NO=1
+		for PAPER in $PAPERSIZES; do # Create numbered list to be used by dialog
+			PAPER_CHOICES="$PAPER_CHOICES $PAPER_NO $PAPER"
+			((PAPER_NO++))
+		done
+		PAPERSELECTNO=$(dialog --stdout --backtitle "$BACKTITLE" --title "Printing paper size" --menu "Please select printing paper size:" 0 0 0 $PAPER_CHOICES)
+		[ -z $PAPERSELECTNO ] && unset PAPERSIZE || PAPERSIZE=$(echo $PAPERSIZES | cut -d ' ' -f $PAPERSELECTNO)
+	fi
+	[ ! -z $PAPERSIZE ] && echo $PAPERSIZE > /etc/papersize
+}
+
+[ $(whoami) != "root" ] && echo "[ERROR] You must run this script with root priviliges." && exit 1
+PAGE="main"
+while true; do
+	if [ -z $SETTING ]; then
+		case $PAGE in
+			"main")
+				SELECT=$(dialog --stdout --backtitle "$BACKTITLE" --cancel-label "Exit" --title "Main menu" --menu "" 0 0 0 \
+				"l" "Language and regional settings" \
+				"m" "Machine info" \
+				"d" "Display DPI" \
+				"u" "Users" \
+				"p" "Printing paper size")
+				if [ -z $SELECT ]; then exit; else
+					case $SELECT in
+						l) PAGE="regional";;
+						m) PAGE="machine-info";;
+						d) Dpi;;
+						u) Users;;
+						g) Guest;;
+						p) Papersize;;
+					esac
+				fi;;
+			"regional")
+				SELECT=$(dialog --stdout --backtitle "$BACKTITLE" --cancel-label "Back" --title "Language and regional settings" --menu "" 0 0 0 \
+				"s" "Select and generate locales" \
+				"p" "Primary language (LANG)" \
+				"l" "Fallback languages (LANGUAGE)" \
+				"f" "Data formats" \
+				"d" "Dictionary (words)" \
+				"t" "Timezone" \
+				"c" "Console keymap" \
+				"x" "X11 keymap" \
+				"w" "Wifi country")
+				if [ -z $SELECT ]; then PAGE="main"; else
+					case $SELECT in
+						s) SelectLocales;;
+						p) Lang;;
+						l) Language;;
+						f) DataFormats;;
+						d) Dictionary;;
+						t) Timezone;;
+						c) ConsoleKeymap;;
+						x) XKeymap;;
+						w) WifiCountry;;
+					esac
+				fi;;
+			"machine-info")
+				SELECT=$(dialog --stdout --backtitle "$BACKTITLE" --cancel-label "Back" --title "Machine info" --menu "" 0 0 0 \
+				"n" "Computer name (HOSTNAME)" \
+				"d" "Detailed computer name (PRETTY_HOSTNAME)")
+				if [ -z $SELECT ]; then PAGE="main"; else
+					case $SELECT in
+						n) Hostname;;
+						d) PrettyHostname;;
+					esac
+				fi;;
+		esac
+	else
+		case $SETTING in
+			selectlocales) SelectLocales; exit;;
+			lang) Lang; exit;;
+			language) Language; exit;;
+			dataformats) Dataformats; exit;;
+			dictionary) Dictionary; exit;;
+			timezone) Timezone; exit;;
+			consolekeymap) ConsoleKeymap; exit;;
+			xkeymap) XKeymap; exit;;
+			wificountry) WifiCountry; exit;;
+			hostname) Hostname; exit;;
+			prettyhostname) PrettyHostname; exit;;
+			dpi) Dpi; exit;;
+			users) Users; exit;;
+			guest) Guest; exit;;
+			papersize) Papersize; exit;;
+			help|--help|-h) Help $VALUE; exit;;
+		esac
+	fi
+done

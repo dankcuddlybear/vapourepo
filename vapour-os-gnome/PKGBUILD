@@ -1,10 +1,10 @@
 # Maintainer: Dankcuddlybear <dankcuddlybear@protonmail.com>
 pkgname=vapour-os-gnome
-pkgver=1.0.0
-pkgrel=4
+pkgver=$(date +%Y.%-m.%-d_%-H.%-M.%-S)
+pkgrel=1
 pkgdesc='Vapour OS GNOME X11/Wayland shell'
 arch=(any)
-url='https://github.com/dankcuddlybear/Vapour-OS'
+url='https://github.com/dankcuddlybear/vapourepo'
 install=install.install
 depends=(
 	'adwaita-qt5'

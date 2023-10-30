@@ -1,0 +1,71 @@
+#!/bin/sh
+SCRIPT_DIR="$(readlink -f $( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd ))"
+SCRIPT_USER=$(whoami)
+BACKTITLE="$DISTRO_NAME settings [$SCRIPT_USER]"
+USERNAME="$1"
+Help() { # Usage information
+	echo "Usage: $(basename $0) <username>"
+	echo "Encrypt home directory"
+}
+UidToUsername() {
+	cat /etc/passwd | grep ":x:$1:" | cut -d ':' -f 1
+}
+GetUsers() {
+	## Read /etc/passwd and add users to list USERS in the format
+	## "<uid1> <username1> ... " (only if between UID_MIN and UID_MAX)
+	USERS=""
+	UID_MIN=$(grep -E '^UID_MIN' /etc/login.defs | sed s/"UID_MIN"//)
+	UID_MAX=$(grep -E '^UID_MAX' /etc/login.defs | sed s/"UID_MAX"//)
+	while read -r CURRENT_LINE; do
+		# Get user info
+		CURRENT_LINE_UID=$(echo "$CURRENT_LINE" | cut -d ':' -f 3)
+		CURRENT_LINE_USER="$(UidToUsername $CURRENT_LINE_UID)"
+		# Check if between UID_MIN and UID_MAX and if so add to USERS
+		if [ $CURRENT_LINE_UID -ge $UID_MIN ] && \
+		[ $CURRENT_LINE_UID -le $UID_MAX ]; then
+			USERS="$USERS $CURRENT_LINE_USER"
+		fi
+	done < /etc/passwd
+	echo $USERS
+}
+[ -z $USERNAME ] && echo "[ERROR] No user specified" && Help && exit 1
+USERS=$(GetUsers)
+[[ " $USERS " != *" $USERNAME "* ]] && echo "[ERROR] User \"$USERNAME\" does not exist" && exit 1
+
+# Get password/account lock status
+if (passwd -S "$USERNAME" | grep "$USERNAME NP " &> /dev/null); then HAS_PASSWD=0; LOCKED=0
+elif (passwd -S "$USERNAME" | grep "$USERNAME L " &> /dev/null); then HAS_PASSWD=1; LOCKED=1
+else HAS_PASSWD=1; LOCKED=0; fi
+[ $LOCKED == 1 ] && (dialog --backtitle "$BACKTITLE" --title "Error" --msgbox "$USERNAME's account is locked. Unlock it first to make changes." 0 0; exit 1)
+[ $HAS_PASSWD == 0 ] && (dialog --backtitle "$BACKTITLE" --title "Error" --msgbox "$USERNAME's account has no password. Set a password to enable encryption." 0 0; exit 1)
+
+## Get home encryption status
+if (fscrypt status "/home/$USERNAME" | grep -i "Unlocked: Yes") &> /dev/null; then ENCRYPTED_HOME="u"
+elif (fscrypt status "/home/$USERNAME" | grep -i "Unlocked: No") &> /dev/null; then ENCRYPTED_HOME="l"
+else ENCRYPTED_HOME="n"; fi
+[ $ENCRYPTED_HOME != "n" ] && (dialog --backtitle "$BACKTITLE" --title "Error" --msgbox "$USERNAME's home directory is already encrypted!" 0 0; exit 1)
+
+## Move files to temp dir
+/usr/lib/voscfg/createhomedir "$USERNAME"
+[ ! -d "/home/.tmp/$USERNAME/" ] && echo "[ERROR] Temporary home dir (/home/.tmp/$USERNAME/) doesn't exist. Create it, set permissions 750 and owner $USERNAME." && exit 1
+for FILE in $(ls -A "/home/$USERNAME"); do
+	if [ "$SCRIPT_USER" == "root" ]; then sudo -u "$USERNAME" mv "/home/$USERNAME/$FILE" "/home/.tmp/$USERNAME/"
+	else mv "/home/$USERNAME/$FILE" "/home/.tmp/$USERNAME/"; fi
+done; sync
+read
+
+## Get password
+CONTINUE=0; while [ $CONTINUE == "0" ]; do
+	PASSWORD1="$(dialog --stdout --backtitle "$BACKTITLE" --title "Encrypt $USERNAME's home directory" --passwordbox "Enter current login password for \"$USERNAME\". The same password will be used to encrypt their files, and decrypt them on login. \nYou will not see anything you type. This is for security reasons. When you have entered your password, press enter." 0 0)"
+	[ -z "$PASSWORD1" ] && echo "Cancelled home encryption" && CONTINUE="abort"
+	if [ $CONTINUE != "abort" ]; then # Try to encrypt using password
+		(echo "$PASSWORD1" | fscrypt encrypt "/home/$USERNAME" --source=pam_passphrase --user="$USERNAME") && CONTINUE=1 || \
+		dialog --backtitle "$BACKTITLE" --title "Error" --msgbox "Incorrect password for $USERNAME. Please try again." 0 0
+	fi
+done
+
+## Move files to home dir
+for FILE in $(ls -A "/home/.tmp/$USERNAME"); do
+	if [ "$SCRIPT_USER" == "root" ]; then sudo -u "$USERNAME" mv "/home/$USERNAME/.tmp/$FILE" "/home/$USERNAME/"
+	else mv "/home/$USERNAME/.tmp/$FILE" "/home/$USERNAME/"; fi
+done; sync

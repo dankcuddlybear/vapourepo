@@ -1,0 +1,58 @@
+#!/bin/sh
+DISTRO_NAME="$(cat /usr/lib/os-release | grep -i "PRETTY_NAME" | cut -d '=' -f 2 | sed 's/"//g')"
+SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+SCRIPT_USER="$(whoami)"
+BACKTITLE="$DISTRO_NAME settings [$SCRIPT_USER]"
+
+UidToUsername() {
+	cat /etc/passwd | grep ":x:$1:" | cut -d ':' -f 1
+}
+
+while true; do
+	## Read /etc/passwd and add users to list USERS in the format
+	## "<uid1> <username1> ... " (only if between UID_MIN and UID_MAX)
+	## Also, count number of administrators on the system (NUM_ADMIN_USERS)
+	USERS=""
+	UID_MIN=$(grep -E '^UID_MIN' /etc/login.defs | sed s/"UID_MIN"//)
+	UID_MAX=$(grep -E '^UID_MAX' /etc/login.defs | sed s/"UID_MAX"//)
+	NUM_ADMIN_USERS=0
+	while read -r CURRENT_LINE; do
+		# Get user info
+		CURRENT_LINE_UID=$(echo "$CURRENT_LINE" | cut -d ':' -f 3)
+		CURRENT_LINE_USER="$(UidToUsername $CURRENT_LINE_UID)"
+		# Check if between UID_MIN and UID_MAX and if so add to USERS
+		if [ $CURRENT_LINE_UID -ge $UID_MIN ] && \
+		[ $CURRENT_LINE_UID -le $UID_MAX ]; then
+			USERS="$USERS $CURRENT_LINE_UID $CURRENT_LINE_USER"
+			# Increment NUM_ADMIN_USERS if user belongs to group wheel
+			(groups $CURRENT_LINE_USER | grep "wheel" &> /dev/null) && \
+			export NUM_ADMIN_USERS=$(expr $NUM_ADMIN_USERS + 1)
+		fi
+	done < /etc/passwd
+
+	## Check if "guest" account is active, and set menu string accordingly
+	if [ -z "$($SCRIPT_DIR/guest | grep "enabled")" ]; then
+		GUEST_ENABLED=0; GUEST_ENABLE_TEXT="Enable"
+	else GUEST_ENABLED=1; GUEST_ENABLE_TEXT="Disable"; fi
+
+	## Options dialog
+	CHOICE=$(dialog --stdout --backtitle "$BACKTITLE" --title "Users" --menu "Manage users" 0 0 0 $USERS "a" "Add user" "g" "$GUEST_ENABLE_TEXT guest account")
+	[ -z "$CHOICE" ] && exit 125
+	case $CHOICE in
+		a) sudo "$SCRIPT_DIR/adduser";;
+		g) ## Guest account
+			if [ $GUEST_ENABLED == 1 ]; then "$SCRIPT_DIR/guest" enable
+			else sudo "$SCRIPT_DIR/guest" disable; fi;;
+		*) ## The user has selected an account
+			# Get username from selected UID
+			USERNAME=$(UidToUsername $CHOICE)
+			# Check if user is allowed to change settings for the account
+			if [ "$USERNAME" == "$SCRIPT_USER" ]; then
+				NUM_ADMIN_USERS="$NUM_ADMIN_USERS" "$SCRIPT_DIR/useredit" "$USERNAME"
+			elif (groups $SCRIPT_USER | grep "wheel" &> /dev/null); then
+				sudo NUM_ADMIN_USERS="$NUM_ADMIN_USERS" "$SCRIPT_DIR/useredit" "$USERNAME"
+			else
+				dialog --backtitle "$DISTRO_NAME settings" --title "Error" --msgbox "You are not allowed to change settings for other users." 0 0
+			fi;;
+	esac
+done

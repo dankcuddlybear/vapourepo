@@ -1,10 +1,10 @@
 # Maintainer: Dankcuddlybear <dankcuddlybear@protonmail.com>
 pkgname=vapour-os-i915
-pkgver=1.0.0
-pkgrel=5
+pkgver=$(date +%Y.%-m.%-d_%-H.%-M.%-S)
+pkgrel=1
 pkgdesc='Intel GPU drivers for Vapour OS'
 arch=(x86_64)
-url='https://github.com/dankcuddlybear/Vapour-OS'
+url='https://github.com/dankcuddlybear/vapourepo'
 replaces=(vapour-os-i915-legacy vapour-os-i915-gen3 vapour-os-i915-gen10)
 depends=(
     intel-compute-runtime intel-hybrid-codec-driver-git intel-media-sdk

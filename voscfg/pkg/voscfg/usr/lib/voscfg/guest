@@ -1,0 +1,38 @@
+#!/bin/sh
+Help() {
+	echo "Usage: $(basename $0) <command>"
+	echo "Commands:"
+	echo "    help -h --help   Show this information"
+	echo "    on / enable / 1  Enable guest account"
+	echo "    off /disable / 0 Disable guest account"
+	echo "The guest user is limited to 1GiB of files in their home directory, if there is enough free memory."
+	echo "Any files in their home directory will be lost after a shutdown or reboot."
+}
+DISTRO_NAME="$(cat /usr/lib/os-release | grep -i "PRETTY_NAME" | cut -d '=' -f 2 | sed 's/"//g')"
+
+if [ -z "$1" ]; then
+	unset USERS; for EXISTING_USER in $(cut -d: -f1 /etc/passwd); do USERS="$USERS $EXISTING_USER"; done
+	if [[ "$USERS" == *"guest"* ]]; then echo "Guest account is enabled"
+	else echo "Guest account is disabled"; fi
+	exit
+fi
+([ "$1" == "-h" ] || [ "$1" == "help" ] || [ "$1" == "--help" ]) && (Help; exit)
+[ "$(whoami)" != "root" ] && echo "[ERROR] You must run this script as root" && exit 13
+case $1 in
+	on|enable|1)
+		[ -z "$(cat /etc/fstab | grep "/home/guest")" ] && echo "tmpfs /home/guest tmpfs rw,size=1G,noexec,nosuid,uid=guest,gid=guest,mode=1700,nofail 0 0" >> /etc/fstab
+		useradd guest; passwd -d guest
+		mkdir -p /home/guest
+		chmod 700 /home/guest; chown guest:guest /home/guest
+		systemctl daemon-reload; mount /home/guest
+		echo "Guest user enabled."
+		;;
+	off|disable|0)
+		pkill -KILL -u guest
+		userdel guest
+		for FILE in $(ls -A /home/guest); do
+			rm -rf "/home/guest/$FILE"
+		done
+		echo "Guest user logged out and disabled. All their files have been deleted from RAM."
+		;;
+esac

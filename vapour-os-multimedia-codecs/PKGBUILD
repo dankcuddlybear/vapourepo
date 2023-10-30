@@ -1,10 +1,10 @@
 # Maintainer: Dankcuddlybear <dankcuddlybear@protonmail.com>
 pkgname=vapour-os-multimedia-codecs
-pkgver=1.0.0
-pkgrel=2
+pkgver=$(date +%Y.%-m.%-d_%-H.%-M.%-S)
+pkgrel=1
 pkgdesc='Multimedia codecs all-in-one package for Vapour OS'
 arch=(x86_64)
-url='https://github.com/dankcuddlybear/Vapour-OS'
+url='https://github.com/dankcuddlybear/vapourepo'
 replaces=('vapour-os-multimedia')
 depends=('aribb24' 'aribb25'
 	'gst-libav' 'gst-plugin-pipewire' 'gst-plugins-base' 'gst-plugins-bad' 'gst-plugins-good' 'gst-plugins-ugly'

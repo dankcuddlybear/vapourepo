@@ -2,7 +2,8 @@
 DISTRO_NAME="$(cat /usr/lib/os-release | grep -i "PRETTY_NAME" | cut -d '=' -f 2 | sed 's/"//g')"
 SCRIPT_DIR="$(readlink -f $( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd ))"
 SCRIPT_USER="$(whoami)"
-BACKTITLE="$DISTRO_NAME settings [$SCRIPT_USER]"
+BACKTITLE="[$SCRIPT_USER] $DISTRO_NAME settings"
+(groups "$SCRIPT_USER" | grep "wheel" &> /dev/null || [ $SCRIPT_USER == "root" ]) && IS_ADMIN=1 || IS_ADMIN=0
 while true; do
 	CHOICE=$(dialog --stdout --backtitle "$BACKTITLE" --title "Users" --menu "Main menu" 0 0 0 \
 	"a" "Appearance" \
@@ -16,6 +17,8 @@ while true; do
 	)
 	if [ -z "$CHOICE" ]; then exit 125; else
 		case $CHOICE in
+			t) [ $IS_ADMIN == 1 ] && sudo "$SCRIPT_DIR/../lib/voscfg/timedate" || \
+				dialog --backtitle "$BACKTITLE" --title "Error" --msgbox "You are not allowed to change system time settings." 0 0;;
 			u) "$SCRIPT_DIR/../lib/voscfg/users";;
 			*)
 				dialog --backtitle "$BACKTITLE" --title "Error" --msgbox "Not yet implemented" 0 0;;

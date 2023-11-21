@@ -1,0 +1,19 @@
+#!/bin/sh
+UidToUsername() {
+	cat /etc/passwd | grep ":x:$1:" | cut -d ':' -f 1
+}
+UID_MIN=$(grep -E '^UID_MIN' /etc/login.defs | sed s/"UID_MIN"//)
+UID_MAX=$(grep -E '^UID_MAX' /etc/login.defs | sed s/"UID_MAX"//)
+while read -r CURRENT_USER; do
+	CURRENT_USER_UID=$(echo "$CURRENT_USER" | cut -d ':' -f 3)
+	CURRENT_USER_NAME="$(UidToUsername $CURRENT_USER_UID)"
+ 	CURRENT_USER_HOME="$(cat /etc/passwd | grep "${CURRENT_USER_NAME}:" | cut -d ':' -f 6)"
+	CURRENT_USER_TEMP="$CURRENT_USER_HOME/../.home-tmp/$CURRENT_USER_NAME"
+	# Check if between UID_MIN and UID_MAX and if so create home dirs
+	if [ $CURRENT_USER_UID -ge $UID_MIN ] && \
+	[ $CURRENT_USER_UID -le $UID_MAX ]; then
+		mkdir -p "$CURRENT_USER_HOME" "$CURRENT_USER_TEMP" &> /dev/null
+		chmod 750 "$CURRENT_USER_HOME" "$CURRENT_USER_TEMP"
+		chown $CURRENT_USER_NAME:$CURRENT_USER_NAME "$CURRENT_USER_HOME" "$CURRENT_USER_TEMP"
+	fi
+done < /etc/passwd

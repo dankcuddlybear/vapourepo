@@ -2,7 +2,7 @@
 DISTRO_NAME="$(cat /usr/lib/os-release | grep -i "PRETTY_NAME" | cut -d '=' -f 2 | sed 's/"//g')"
 SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 SCRIPT_USER="$(whoami)"
-BACKTITLE="$DISTRO_NAME settings [$SCRIPT_USER]"
+BACKTITLE="[$SCRIPT_USER] $DISTRO_NAME settings > Users > $USERNAME"
 USERNAME="$1"
 [ -z "$USERNAME" ] && echo "[ERROR] No user specified" && exit 1
 
@@ -20,8 +20,7 @@ CHOICE="none"; while [ ! -z $CHOICE ]; do
 	elif (passwd -S $USERNAME | grep "$USERNAME L " &> /dev/null); then
 		HAS_PASSWD=0; LOCK_CHOICE="u"
 	else HAS_PASSWD=1; LOCK_CHOICE="l"; fi
-
-	## Get home encryption status (u: unlocked, l: locked, n: not encrypted)
+	# Get home encryption status (u: unlocked, l: locked, n: not encrypted)
 	case "$("$SCRIPT_DIR/user-encrypt" "$USERNAME" status)" in
 		"Encrypted, unlocked") ENCRYPTED_HOME="u";;
 		"Encrypted, locked") ENCRYPTED_HOME="l";;
@@ -31,8 +30,8 @@ CHOICE="none"; while [ ! -z $CHOICE ]; do
 	## Set menu strings
 	if [ "$LOCK_CHOICE" == "l" ]; then LOCK_TEXT="Lock account"
 	else LOCK_TEXT="Unlock account"; fi
-	if [ "$ENCRYPTED_HOME" == "n" ]; then ENCRYPT_TEXT="Encrypt home directory"
-	else ENCRYPT_TEXT="Disable encryption of home directory"; fi
+	if [ "$ENCRYPTED_HOME" == "n" ]; then ENCRYPT_TEXT="Encrypt home folder"
+	else ENCRYPT_TEXT="Disable home folder encryption"; fi
 	if [ "$USERNAME_IS_ADMIN" == 0 ]; then ADMIN_TEXT="Make administrator"
 	elif [ $NUM_ADMIN_USERS -le 1 ]; then
 		ADMIN_TEXT="You are the only administrator"
@@ -91,8 +90,8 @@ CHOICE="none"; while [ ! -z $CHOICE ]; do
 			dialog --backtitle "$BACKTITLE" --title "Unlock $USERNAME" --yesno "Are you sure you want to unlock account $USERNAME?" 0 0 && passwd -u $USERNAME;;
 		e) ## Encrypt/decrypt
 			if [ $ENCRYPTED_HOME == "n" ]; then
-				"$SCRIPT_DIR/user-encrypt" "$USERNAME" enable
-			else "$SCRIPT_DIR/user-encrypt" "$USERNAME" disable; fi;;
+				sudo "$SCRIPT_DIR/user-encrypt" "$USERNAME" enable
+			else sudo "$SCRIPT_DIR/user-encrypt" "$USERNAME" disable; fi;;
 		n) ## Rename account
 			# We need to ask for old password if home dir is encrypted,
 			# so we can migrate and re-encrypt their files

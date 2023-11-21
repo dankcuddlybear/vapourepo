@@ -1,0 +1,10 @@
+#!/bin/sh
+DISTRO_NAME="$(cat /usr/lib/os-release | grep -i "PRETTY_NAME" | cut -d '=' -f 2 | sed 's/"//g')"
+SCRIPT_DIR="$(readlink -f $( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd ))"
+SCRIPT_USER="$(whoami)"
+BACKTITLE="[$SCRIPT_USER] $DISTRO_NAME settings > Time and date > Set time"
+[ $SCRIPT_USER != "root" ] && echo "[ERROR] You must be root to run this script" && exit 1
+
+TIME=$(dialog --stdout --backtitle "$BACKTITLE" --title "Set time" --timebox "Please set the current time" 0 0)
+[ -z "$TIME" ] && exit 1
+timedatectl set-time $TIME

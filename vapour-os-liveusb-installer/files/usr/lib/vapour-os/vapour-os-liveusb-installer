@@ -132,12 +132,12 @@ if [ "$VERSION_TO_INSTALL" != "vapour-os" ]; then
 	PACKAGES="$PACKAGES lib32-pipewire-jack pipewire-alsa pipewire-jack pipewire-pulse wireplumber"
 	case "$VERSION_TO_INSTALL" in
 		vapour-os-gnome)
-			PACKAGES="$PACKAGES eog file-roller gnome-calculator gnome-characters gnome-font-viewer gnome-system-monitor gnome-terminal gnome-usage nautilus nauilus-share xdg-desktop-portal-gnome";;
+			PACKAGES="$PACKAGES eog file-roller gnome-calculator gnome-characters gnome-font-viewer gnome-system-monitor gnome-terminal gnome-usage nautilus nauilus-share papirus-icon-theme-colours-vapour-os xdg-desktop-portal-gnome";;
 		vapour-os-kde)
 			PACKAGES="$PACKAGES xdg-desktop-portal-kde"
-			[[ "$ADDITIONAL_SOFTWARE" == *" firefox "* ]] && PACKAGES="$PACKAGES firefox-extension-plasma-integration-bin";;
+			[[ "$ADDITIONAL_SOFTWARE" == *" firefox "* ]] && PACKAGES="$PACKAGES firefox-extension-plasma-integration-bin papirus-icon-theme-colours-vapour-os";;
 		vapour-os-xfce)
-			PACKAGES="$PACKAGES galculator mousepad ristretto thunar thunar-archive-plugin thunar-media-tags-plugin thunar-volman xarchiver xdg-desktop-portal-gtk xfce4-clipman-plugin xfce4-terminal";;
+			PACKAGES="$PACKAGES galculator mousepad papirus-icon-theme-colours-vapour-os ristretto thunar thunar-archive-plugin thunar-media-tags-plugin thunar-volman xarchiver xdg-desktop-portal-gtk xfce4-clipman-plugin xfce4-terminal";;
 	esac
 fi
 

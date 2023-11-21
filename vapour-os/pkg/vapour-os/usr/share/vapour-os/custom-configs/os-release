@@ -1,0 +1,12 @@
+NAME="Vapour OS"
+PRETTY_NAME="Vapour OS"
+ID=vapour-os
+ID_LIKE=arch
+BUILD_ID=rolling
+HOME_URL="https://github.com/dankcuddlybear/vapourepo"
+DOCUMENTATION_URL="https://wiki.archlinux.org/"
+SUPPORT_URL="https://github.com/dankcuddlybear/vapourepo"
+BUG_REPORT_URL="https://github.com/dankcuddlybear/vapourepo/issues"
+PRIVACY_POLICY_URL="https://terms.archlinux.org/docs/privacy-policy/"
+LOGO=vapour-os
+ANSI_COLOR="38;2;23;147;209"

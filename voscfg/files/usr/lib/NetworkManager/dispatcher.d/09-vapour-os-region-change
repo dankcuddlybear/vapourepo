@@ -1,0 +1,39 @@
+#!/bin/sh
+case "$2" in
+	connectivity-change) ## When system goes online, sync time, region and Pacman mirrors
+		# Load settings
+		unset AUTO_UPDATE_TIMEZONE; AUTO_UPDATE_TIMEZONE="$(cat /etc/voscfg/auto-update-timezone)"
+		[ -z "$AUTO_UPDATE_TIMEZONE" ] || [ $AUTO_UPDATE_TIMEZONE != 0 ] && AUTO_UPDATE_TIMEZONE=1
+
+		# Sync timezone
+		[ $AUTO_UPDATE_TIMEZONE == 1 ] && ../../../voscfg/sync-timezone
+
+		COUNTRY_CODE="$(curl -s --fail https://ipapi.co/country)"
+		[ -z "$COUNTRY_CODE" ] && COUNTRY_CODE="00"
+		## Set wireless region (2-digit ISO country code)
+		## If not found in wireless-regdb, will be set to to 00 (World)
+		/usr/lib/voscfg/wirelessregion "$COUNTRY_CODE" force
+
+		## Refresh Pacman mirrorlist, placing local mirrors first and ranking them
+		MIRRORLIST_UUID="$(uuidgen)"
+		MIRRORLIST_URL="https://archlinux.org/mirrorlist/?use_mirror_status=on&protocol=https&ip_version=4&ip_version=6&country=AR&country=AU&country=AT&country=AZ&country=BD&country=BY&country=BE&country=BA&country=BR&country=BG&country=KH&country=CA&country=CL&country=CN&country=CO&country=HR&country=CZ&country=DK&country=EC&country=EE&country=FI&country=FR&country=GE&country=DE&country=GR&country=HK&country=HU&country=IS&country=IN&country=ID&country=IR&country=IE&country=IL&country=IT&country=JP&country=KZ&country=KE&country=LV&country=LT&country=LU&country=MU&country=MX&country=MD&country=MC&country=NL&country=NC&country=NZ&country=MK&country=NO&country=PY&country=PL&country=PT&country=RO&country=RU&country=RE&country=RS&country=SG&country=SK&country=SI&country=ZA&country=KR&country=ES&country=SE&country=CH&country=TW&country=TH&country=TR&country=UA&country=GB&country=US&country=UZ&country=VN"
+		mkdir -p /tmp/vapour-os &> /dev/null
+		rm -f "/tmp/vapour-os/pacman-mirrorlist-$MIRRORLIST_UUID" &> /dev/null
+		# If in one of these countries, save local mirrors to mirrorlist first and remove that country from mirrorlist URL
+		case $COUNTRY_CODE in AR|AU|AT|AZ|BD|BY|BE|BA|BR|BG|KH|CA|CL|CN|CO|HR|CZ|DK|EC|EE|FI|FR|GE|DE|GR|HK|HU|IS|IN|ID|IR|IE|IL|IT|JP|KZ|KE|LV|LT|LU|MU|MX|MD|MC|NL|NC|NZ|MK|NO|PY|PL|PT|RO|RU|RE|RS|SG|SK|SI|ZA|KR|ES|SE|CH|TW|TH|TR|UA|GB|US|UZ|VN)
+			curl -s --fail -o "/tmp/vapour-os/pacman-mirrorlist-$MIRRORLIST_UUID" "https://archlinux.org/mirrorlist/?use_mirror_status=on&protocol=https&ip_version=4&ip_version=6&country=$COUNTRY_CODE" && \
+			MIRRORLIST_URL="$(echo "$MIRRORLIST_URL" | sed "s/&country=$COUNTRY_CODE//g")";;
+		esac
+		# Append global mirrors to mirrorlist
+		touch "/tmp/vapour-os/pacman-mirrorlist-$MIRRORLIST_UUID"
+		curl -s --fail "$MIRRORLIST_URL" >> "/tmp/vapour-os/pacman-mirrorlist-$MIRRORLIST_UUID" && FAIL=0 || FAIL=1
+		if [ $FAIL == 0 ]; then
+			sed -i "/## Arch Linux repository mirrorlist/d" "/tmp/vapour-os/pacman-mirrorlist-$MIRRORLIST_UUID"
+			sed -i "/## Filtered by mirror score from mirror status page/d" "/tmp/vapour-os/pacman-mirrorlist-$MIRRORLIST_UUID"
+			sed -i "/## Generated on /d" "/tmp/vapour-os/pacman-mirrorlist-$MIRRORLIST_UUID"
+			sed -i "s/#Server = /Server = /g" "/tmp/vapour-os/pacman-mirrorlist-$MIRRORLIST_UUID"
+			rm -f /etc/pacman.d/mirrorlist
+			cp "/tmp/vapour-os/pacman-mirrorlist-$MIRRORLIST_UUID" /etc/pacman.d/mirrorlist
+		fi
+		rm -f "/tmp/vapour-os/pacman-mirrorlist-$MIRRORLIST_UUID";;
+esac

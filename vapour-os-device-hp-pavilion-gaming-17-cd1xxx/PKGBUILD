@@ -1,7 +1,7 @@
 # Maintainer: Dankcuddlybear <dankcuddlybear@proton.me>
-pkgname=$(date +%Y.%-m.%-d_%-H.%-M.%-S)
-pkgver=1.0.0
-pkgrel=1
+pkgname=vapour-os-device-hp-pavilion-gaming-17-cd1xxx
+pkgver=$(date +%Y.%-m.%-d)
+pkgrel=$(expr $(date +%-S) + $(expr 60 \* $(date +%-M)) + $(expr 3600 \* $(date +%-H)))
 pkgdesc='Vapour OS device configuration for HP Pavilion Gaming Laptop 17-cd1xxx. Includes game libraries, graphics and printer drivers, and fixes. Choose your own desktop.'
 arch=(x86_64)
 url='https://github.com/dankcuddlybear/vapourepo'

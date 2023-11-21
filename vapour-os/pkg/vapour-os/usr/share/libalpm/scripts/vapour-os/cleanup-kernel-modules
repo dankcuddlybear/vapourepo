@@ -1,0 +1,33 @@
+#!/bin/sh
+KERNELS=$(ls /boot/vmlinu*-linux* | sed "s/\/boot\/vmlinuz-//g" | sed "s/\/boot\/vmlinux-//g")
+BOOTED_KERNEL=$(uname -r | cut -d '-' -f 2 | sed 's/[0-9]//g')
+if [ -z "$BOOTED_KERNEL" ] || [ "$BOOTED_KERNEL" == "generic" ] || [ "$BOOTED_KERNEL" == "arch" ]; then
+	BOOTED_KERNEL="linux"
+else BOOTED_KERNEL="linux-$BOOTED_KERNEL"; fi
+
+for KMOD_DIR in $(ls -v -w 1 /usr/lib/modules); do
+	CURRENT_KERNEL_NAME=$(cat /usr/lib/modules/$KMOD_DIR/pkgbase)
+	## If that kernel is no longer installed, remove modules
+	if [[ " $KERNELS " != *" $CURRENT_KERNEL_NAME "* ]]; then
+		rm -rf /usr/lib/modules/$KMOD_DIR
+	else
+		## If the kernel is the same as the one currently running,
+		## delete all modules older than currently running version
+		if [ "$BOOTED_KERNEL" == "$CURRENT_KERNEL_NAME" ]; then
+			if [ "$(vercmp $(uname -r) $KMOD_DIR)" == "1" ]; then
+				rm -rf /usr/lib/modules/$KMOD_DIR
+			fi
+		else
+			if [ $CURRENT_KERNEL_NAME == "linux" ]; then
+				CURRENT_KERNEL_VERSIONS=$(ls -dv -w 1 /usr/lib/modules/*arch* | sed 's/\/usr\/lib\/modules\///g')
+			else
+				CURRENT_KERNEL_VERSIONS=$(ls -dv -w 1 /usr/lib/modules/*$(echo "$CURRENT_KERNEL_NAME" | sed "s/linux-//g")* | sed 's/\/usr\/lib\/modules\///g')
+			fi
+			## If module folder isn't the latest version, delete it
+				LATEST_VERSION="basename $(echo $VERSIONS | awk '{print $NF}')"
+				if [ "$KMOD_DIR" != "$LATEST_VERSION" ]; then
+					rm -rf /usr/lib/modules/$KMOD_DIR
+				fi
+		fi
+	fi
+done

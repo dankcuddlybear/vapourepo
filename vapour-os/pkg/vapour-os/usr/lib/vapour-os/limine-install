@@ -1,0 +1,83 @@
+#!/bin/bash
+DISTRO_ID=vapour-os
+Error() {
+	echo $1
+	exit 1
+}
+[ $(whoami) != root ] && Error "You must run this script with root priviliges."
+[ -z "$1" ] && Error "No command (install/upgrade/uninstall)"
+
+# Get boot partition from /etc/fstab
+BOOT=$(cat /etc/fstab | grep -m 1 " /boot \|	/boot \| /boot	\|	/boot	" | cut -d ' ' -f 1 | cut -d '	' -f 1)
+[ -z "$BOOT" ] && Error "No /boot partition specified in /etc/fstab"
+case $(echo $BOOT | cut -d '=' -f 1) in
+	UUID)
+		BOOT_UUID=$(echo $BOOT | cut -d '=' -f 2)
+		[ ! -b /dev/disk/by-uuid/$BOOT_UUID ] && Error "$BOOT does not exist! Please set the correct /boot partition in /etc/fstab."
+		BOOT=$(readlink -f /dev/disk/by-uuid/$BOOT_UUID)
+		;;
+	LABEL)
+		BOOT_LABEL=$(echo $BOOT | cut -d '=' -f 2)
+		[ ! -b "/dev/disk/by-label/$BOOT_LABEL" ] && Error "$BOOT does not exist! Please set the correct /boot partition in /etc/fstab."
+		BOOT=$(readlink -f /dev/disk/by-label/$BOOT_LABEL)
+		;;
+	*)
+		[ ! -b $BOOT ] && Error "$BOOT does not exist! Please set the correct /boot partition in /etc/fstab."
+		BOOT=$(readlink -f $BOOT)
+		;;
+esac
+
+# Find the disk with the boot partition, and get its partition number
+if [ ${BOOT:5:4} == nvme ] || [ ${BOOT:5:6} == mmcblk ]; then
+	BOOT_DISK=$(echo $BOOT | cut -d 'p' -f 1)
+	BOOT_PARTNO=$(echo $BOOT | cut -d 'p' -f 2)
+elif [ ${BOOT:5:2} == hd ] || [ ${BOOT:5:2} == sd ] || [ ${BOOT:5:2} == vd ]; then
+	BOOT_DISK=$(echo $BOOT | sed 's/[0-9]//g')
+	BOOT_PARTNO=$(echo $BOOT | sed 's/[^0-9]*//g')
+else
+	Error "$BOOT is on an unsupported media type! Please set /boot partition in /etc/fstab to a partition on a HDD or flash storage."
+fi
+[ "$BOOT_DISK" == "$BOOT_PARTNO" ] && Error "$BOOT is a disk, not a partition! Please set a /boot partition in /etc/fstab."
+
+Upgrade() {
+	# Copy files
+	mkdir -p /boot/EFI/limine /boot/limine &> /dev/null
+	cp /usr/share/limine/BOOTIA32.EFI /boot/EFI/limine/
+	cp /usr/share/limine/BOOTX64.EFI /boot/EFI/limine/
+	cp /usr/share/limine/limine-bios.sys /boot/limine/
+	limine bios-install $BOOT_DISK # Install MBR boot code
+}
+
+case "$1" in
+	install)
+		Upgrade # Install bootloader files first
+		# Detect kernel (will use alphabetically lowest)
+		KERNEL_FILE="$(basename "$(ls /boot/vmlinu*-linux* | tr '\n' ' ' | awk '{print $1}')")"
+		[ -z "$KERNEL_FILE" ] && Error "No Linux kernel found"
+		KERNEL="${KERNEL_FILE:8}"
+		# Get root (/) descriptor from /etc/fstab
+		ROOT_DEV="$(cat /etc/fstab | grep -m 1 " / \|	/ \| /	\|	/	" | cut -d ' ' -f 1 | cut -d '	' -f 1)"
+		[ -z "$ROOT_DEV" ] && Error "No root (/) partition specified in /etc/fstab"
+		## Configure Limine
+		KPARAMS="rw root=$ROOT_DEV $(cat /usr/share/$DISTRO_ID/boot/limine/limine.cfg | grep -m 1 "\${KPARAMS}=" | cut -b12-)"
+		[ -f /boot/intel-ucode.img ] && KPARAMS="$KPARAMS intel_iommu=on"
+		cp -r /usr/share/$DISTRO_ID/boot / # Copy bootloader config files and resources
+		sed -i "s/^.*\${KPARAMS}=.*$/\${KPARAMS}=${KPARAMS}/" /boot/limine/limine.cfg
+		sed -i "s/^.*\${KERNEL}=.*$/\${KERNEL}=$KERNEL/" /boot/limine/limine.cfg
+		# Detect CPU and enable/disable microcode loading
+		if [ -f /boot/amd-ucode.img ]; then sed -i "s/^.*\${CPU}=.*$/\${CPU}=amd/" /boot/limine/limine.cfg
+		elif [ -f /boot/intel-ucode.img ]; then sed -i "s/^.*\${CPU}=.*$/\${CPU}=intel/" /boot/limine/limine.cfg
+		else sed -i "s/^[^#]*MODULE_PATH=boot:\/\/\/\${CPU}-ucode.img/#&/" /boot/limine/limine.cfg; fi
+		## Create UEFI boot entry
+		EFI_BITS="$(cat /sys/firmware/efi/fw_platform_size 2> /dev/null)"
+		if [ ! -z "$EFI_BITS" ]; then
+			[ "$EFI_BITS" == 32 ] && efibootmgr -c -d $BOOT_DISK -p $BOOT_PART -L "Limine" -l '\EFI\Limine\BOOTIA32.EFI'
+			[ "$EFI_BITS" == 64 ] && efibootmgr -c -d $BOOT_DISK -p $BOOT_PART -L "Limine" -l '\EFI\Limine\BOOTX64.EFI'
+		fi;;
+	upgrade) Upgrade;;
+	uninstall)
+		limine-deploy --undeploy $BOOT_DISK # Delete MBR boot code
+		rm -rf /boot/EFI/limine /boot/limine
+		echo "Limine has been removed from your system";;
+	*) Error "Unrecognised command \"$1\"";;
+esac

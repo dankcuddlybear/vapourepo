@@ -1,0 +1,47 @@
+#!/bin/sh
+DISTRO_NAME="$(cat /usr/lib/os-release | grep -i "PRETTY_NAME" | cut -d '=' -f 2 | sed 's/"//g')"
+SCRIPT_DIR="$(readlink -f $( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd ))"
+SCRIPT_USER="$(whoami)"
+BACKTITLE="[$SCRIPT_USER] $DISTRO_NAME settings > Time and date"
+[ $SCRIPT_USER != "root" ] && echo "[ERROR] You must be root to run this script" && exit 1
+while true; do
+	# Load settings
+	mkdir -p /etc/voscfg &> /dev/null
+	unset AUTO_UPDATE_TIMEZONE; AUTO_UPDATE_TIMEZONE="$(cat /etc/voscfg/auto-update-timezone)"
+	[ -z "$AUTO_UPDATE_TIMEZONE" ] || [ $AUTO_UPDATE_TIMEZONE != 0 ] && AUTO_UPDATE_TIMEZONE=1
+	AUTO_UPDATE_TIMEDATE="$(timedatectl | grep "NTP service:" | cut -d ':' -f 2 | xargs)"
+
+	# Set menu strings
+	[ "$AUTO_UPDATE_TIMEDATE" == "active" ] && \
+	AUTO_UPDATE_TIMEDATE_TEXT="Auto update time and date (enabled)" || \
+	AUTO_UPDATE_TIMEDATE_TEXT="Auto update time and date (disabled)"
+	[ $AUTO_UPDATE_TIMEZONE == 1 ] && \
+	AUTO_UPDATE_TIMEZONE_TEXT="Auto update timezone (enabled)" || \
+	AUTO_UPDATE_TIMEZONE_TEXT="Auto update timezone (disabled)"
+
+	CHOICE=$(dialog --stdout --backtitle "$BACKTITLE" --title "Users" --menu "Main menu" 0 0 0 \
+	"T" "Set time" \
+	"D" "Set date"
+	"t" "$AUTO_UPDATE_TIMEDATE_TEXT" \
+	"Z" "Set timezone" \
+	"z" "$AUTO_UPDATE_TIMEZONE_TEXT"
+	)
+	if [ -z "$CHOICE" ]; then exit 125; else
+		case $CHOICE in
+			T) "$SCRIPT_DIR/set-time";;
+			D) "$SCRIPT_DIR/set-date";;
+			t) if [ "$AUTO_UPDATE_TIMEDATE" == "active" ]; then
+					dialog --backtitle "$BACKTITLE" --title "Please wait..." --infobox "Disabling time synchronisation..." 0 0
+					while [ "$(timedatectl | grep "NTP service:" | cut -d ':' -f 2 | xargs)" == "active" ]; do timedatectl set-ntp false; sleep 1; done
+				else
+					dialog --backtitle "$BACKTITLE" --title "Please wait..." --infobox "Updating date and time..." 0 0
+					"$SCRIPT_DIR/sync-timezone"; timedatectl set-ntp true
+				fi;;
+			Z) sleep 0;;
+			z) [ $AUTO_UPDATE_TIMEZONE == 1 ] && echo "0" > /etc/voscfg/auto-update-timezone || \
+				(dialog --backtitle "$BACKTITLE" --title "Please wait..." --infobox "Updating time zone..." 0 0; \
+				echo "1" > /etc/voscfg/auto-update-timezone; "$SCRIPT_DIR/sync-timezone");;
+			*) dialog --backtitle "$BACKTITLE" --title "Error" --msgbox "Not yet implemented" 0 0;;
+		esac
+	fi
+done

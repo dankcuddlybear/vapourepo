@@ -1,7 +1,7 @@
 # Maintainer: Dankcuddlybear <dankcuddlybear@protonmail.com>
 pkgname=vapour-os-nvidia
-pkgver=$(date +%Y.%-m.%-d_%-H.%-M.%-S)
-pkgrel=1
+pkgver=$(date +%Y.%-m.%-d)
+pkgrel=$(expr $(date +%-S) + $(expr 60 \* $(date +%-M)) + $(expr 3600 \* $(date +%-H)))
 pkgdesc='Proprietary Nvidia drivers for OpenGL/Vulkan/OpenCL/hardware video. WARNING: loading proprietary kernel modules taints the kernel. PCIe 3 or above GPU required (some GeForce 700 series and any GeForce 900 series or above.)'
 arch=(x86_64)
 url='https://github.com/dankcuddlybear/Vapour-OS'

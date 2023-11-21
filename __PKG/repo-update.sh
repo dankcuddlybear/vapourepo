@@ -14,10 +14,10 @@ done
 repo-add --verify --sign "$REPO_DIR/$REPO_NAME.db.tar.gz" "$REPO_DIR"/*.pkg.tar.zst
 
 # Delete/rename files for pacman
-#rm $REPO_DIR/$REPO_NAME.db $REPO_DIR/$REPO_NAME.db.sig $REPO_DIR/$REPO_NAME.files $REPO_DIR/$REPO_NAME.files.sig
-#mv $REPO_DIR/$REPO_NAME.db.tar.gz $REPO_DIR/$REPO_NAME.db
-#mv $REPO_DIR/$REPO_NAME.db.tar.gz.sig $REPO_DIR/$REPO_NAME.db.sig
-#mv $REPO_DIR/$REPO_NAME.files.tar.gz $REPO_DIR/$REPO_NAME.files
-#mv $REPO_DIR/$REPO_NAME.files.tar.gz.sig $REPO_DIR/$REPO_NAME.files.sig
+rm $REPO_NAME.db $REPO_NAME.files
+mv $REPO_NAME.db.tar.gz $REPO_NAME.db
+mv $REPO_NAME.files.tar.gz $REPO_NAME.files
+mv $REPO_NAME.db.tar.gz.sig $REPO_NAME.db.sig
+mv $REPO_NAME.files.tar.gz.sig $REPO_NAME.files.sig
 
 echo "Done."

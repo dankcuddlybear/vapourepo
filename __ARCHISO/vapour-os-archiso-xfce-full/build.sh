@@ -15,4 +15,8 @@ sudo rm -rf "$TEMP_DIR" "$OUT_DIR" &> /dev/null; sudo mkdir "$TEMP_DIR" "$OUT_DI
 #sudo pacman-key --refresh-keys
 sudo mkarchiso -v -w "$TEMP_DIR" "$ARCHISO_PROFILE" -o "$OUT_DIR"
 sudo chown -R $SCRIPT_USER:$SCRIPT_USER "$OUT_DIR"
-read -p "Done. Press ENTER to exit."
+cd "$OUT_DIR"; for FILE in $(ls *.iso); do
+	mv "$FILE" ../../../../vapour-os-iso/
+done; cd ../
+rmdir out
+echo "Done."

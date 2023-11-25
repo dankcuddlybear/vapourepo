@@ -5,7 +5,7 @@ pkgrel=$(expr $(date +%-S) + $(expr 60 \* $(date +%-M)) + $(expr 3600 \* $(date 
 pkgdesc='Vapour OS KDE Plasma X11 desktop environment. When prompted, please select: 1) phonon-qt5-gstreamer 2) noto-fonts 3) xdg-desktop-portal-kde. WARNING: You MUST install vapour-os-gui FIRST, before installing this package, due to dependency conflicts'
 arch=(any)
 url='https://github.com/dankcuddlybear/vapourepo'
-install=vapour-os-kde.install
+install=install.install
 depends=(#'pipewire' 'pipewire-jack' 'pipewire-alsa' 'pipewire-pulse' 'wireplumber'
 	'appmenu-gtk-module' 'ark'
 	'bluedevil' 'breeze-gtk'

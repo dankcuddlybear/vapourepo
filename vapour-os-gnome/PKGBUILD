@@ -7,7 +7,7 @@ arch=(any)
 url='https://github.com/dankcuddlybear/vapourepo'
 install=install.install
 depends=(
-	'adwaita-qt5'
+	'adwaita-qt5' 'adwaita-qt6'
 	'gdm-prime' 'libgdm-prime'
 	'gnome-control-center'
 	'gnome-menus'

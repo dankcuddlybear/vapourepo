@@ -6,7 +6,9 @@ pkgdesc='XFCE desktop for Vapour OS'
 arch=(any)
 url='https://github.com/dankcuddlybear/vapourepo'
 install=install.install
-depends=('blueman'
+depends=(
+	'adwaita-qt5' 'adwaita-qt6'
+	'blueman'
 	'ffmpegthumbnailer'
 	'gvfs-afc' 'gvfs-goa' 'gvfs-google' 'gvfs-gphoto2' 'gvfs-mtp' 'gvfs-nfs' 'gvfs-smb'
 	'libgsf' 'libgepub' 'libopenraw' 'lightdm-gtk-greeter'

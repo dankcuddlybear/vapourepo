@@ -1,3 +1,4 @@
 post_install() {
+	rm -f /etc/systemd/system/display-manager.service &> /dev/null
 	systemctl enable lightdm
 }

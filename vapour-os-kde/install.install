@@ -1,4 +1,4 @@
 post_install() {
 	rm -f /etc/systemd/system/display-manager.service &> /dev/null
-	systemctl enable gdm
+	systemctl enable sddm.service
 }

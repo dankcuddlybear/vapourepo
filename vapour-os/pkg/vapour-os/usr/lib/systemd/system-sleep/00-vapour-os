@@ -1,6 +1,0 @@
-#!/bin/sh
-case $1 in post)
-	udevadm trigger # Reload udev rules
-	if (systemctl status hp-lid-fix.service | grep "enabled" &> /dev/null); then
-	systemctl start hp-lid-fix.service; fi;; # Apply lid fix for HP laptops
-esac

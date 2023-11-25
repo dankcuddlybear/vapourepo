@@ -2,7 +2,7 @@
 pkgname=vapour-os
 pkgver=$(date +%Y.%-m.%-d)
 pkgrel=$(expr $(date +%-S) + $(expr 60 \* $(date +%-M)) + $(expr 3600 \* $(date +%-H)))
-pkgdesc='A modular Arch based distro optimised for energy saving and ease of use (core system)'
+pkgdesc='A smart, modular and easy-to-use Arch Linux based distro (core)'
 arch=(x86_64)
 url='https://github.com/dankcuddlybear/vapourepo'
 install=install.install
@@ -37,7 +37,7 @@ package() {
 	chmod 750 "$pkgdir/etc/sudoers.d"
 
 	CDIR="$(pwd)"
-	for DIR in "$pkgdir/usr/lib/NetworkManager/dispatcher.d" "$pkgdir/usr/lib/systemd/system-sleep" "$pkgdir/usr/lib/$pkgname" "$pkgdir/usr/share/libalpm/scripts/$pkgname"; do
+	for DIR in "$pkgdir/usr/lib/systemd/system-sleep" "$pkgdir/usr/lib/$pkgname" "$pkgdir/usr/share/libalpm/scripts/$pkgname"; do
 		cd "$DIR"
 		chmod +x *
 	done

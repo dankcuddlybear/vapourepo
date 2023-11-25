@@ -1,5 +1,0 @@
-#!/bin/sh
-for FILE in $(ls /etc/mkinitcpio.d); do
-	sed -i "s/^.*PRESETS=('default' 'fallback').*$/PRESETS=('default')/" /etc/mkinitcpio.d/$FILE
-	sed -i "s/^fallback/#&/" /etc/mkinitcpio.d/$FILE
-done

@@ -1,8 +1,0 @@
-#%PAM-1.0
-# Provided by polkit
-# This file may get overwritten by future updates of Vapour OS
-auth       include      system-auth
-account    include      system-auth
-password   include      system-auth
-session required pam_limits.so
-session    include      system-auth

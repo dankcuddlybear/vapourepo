@@ -1,9 +1,0 @@
-[Trigger]
-Type = Package
-Operation = Upgrade
-Target = vapour-os
-
-[Action]
-Description = Upgrade Vapour OS
-When = PostTransaction
-Exec = /usr/lib/vapour-os/install.sh upgrade

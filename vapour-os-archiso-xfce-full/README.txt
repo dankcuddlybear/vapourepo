@@ -1,0 +1,9 @@
+HOW TO BUILD THE ISO
+
+First, add the following repositories as Vapour OS depends on them. You can add them after all other repositories if you want.
+1) Add CachyOS repository to your system (github.com/CachyOS/linux-cachyos#how-to-add-cachyos-repositories). Only "cachyos" (x86_64) is required.
+2) Add Chaotic-AUR repository to your system (aur.chaotic.cx).
+3) Add Vapour OS repository to your system (github.com/dankcuddlybear/vapourepo).
+
+Now build the iso.
+4) chmod +x build.sh; ./build.sh

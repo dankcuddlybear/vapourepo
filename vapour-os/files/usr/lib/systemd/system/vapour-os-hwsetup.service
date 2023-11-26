@@ -1,11 +1,11 @@
 [Unit]
-Description=HP laptop lid fix
+Description=Configure hardware
 
 [Service]
 Type=oneshot
 Restart=no
 RemainAfterExit=no
-ExecStart=/usr/bin/setkeycodes e057 240 e058 240
+ExecStart=/usr/lib/vapour-os/hwsetup
 
 [Install]
 WantedBy=rescue.target

@@ -1,0 +1,27 @@
+# Maintainer: Dankcuddlybear <dankcuddlybear@protonmail.com>
+pkgname=vapour-os-archiso-base
+pkgver=$(date +%Y.%-m.%-d)
+pkgrel=$(expr $(date +%-S) + $(expr 60 \* $(date +%-M)) + $(expr 3600 \* $(date +%-H)))
+pkgdesc='Vapour OS Live USB base files'
+arch=(x86_64)
+url='https://github.com/dankcuddlybear/vapourepo'
+depends=(amd-ucode
+	edk2-shell
+	espeakup
+	grub
+	intel-ucode
+	memtest86+
+	memtest86+-efi
+	mkinitcpio-archiso
+	pv
+	squashfs-tools
+	syslinux
+	udftools
+	vapour-os-liveusb-installer
+)
+package() {
+	cp -r "$srcdir/../files/etc" "$pkgdir"
+	cp -r "$srcdir/../files/usr" "$pkgdir"
+	cp -r "$srcdir/../files/vapour-os-live" "$pkgdir"
+	"$srcdir/../../set-default-permissions.sh" "$pkgdir"
+}

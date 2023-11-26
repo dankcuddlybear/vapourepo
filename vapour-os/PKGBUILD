@@ -10,25 +10,25 @@ backup=('etc/skel/.config/yay/config.json'
 	'etc/vapour-os/vapour-os.conf'
 	'etc/X11/xorg.conf.d/30-touchpad-vapour-os'
 )
-depends=('ananicy-cpp'
-	'base'
-	'cachyos-ananicy-rules' 'cachyos-keyring' 'cachyos-mirrorlist' 'cachyos-v3-mirrorlist' 'cachyos-v4-mirrorlist' 'chaotic-keyring' 'chaotic-mirrorlist'
-	'dialog' 'dosfstools'
-	'efibootmgr' 'ethtool'
-	'fscrypt'
-	'hdparm'
-	'irqbalance' 'iw'
-	'kernel-modules-hook'
-	'linux-firmware'
-	'man-db' 'man-pages'
-	'networkmanager' 'nss-mdns'
-	'realtime-privileges' 'rtirq' 'rtkit'
-	'plymouth' 'polkit'
-	'sbctl' 'sudo'
-	'terminus-font' 'texinfo'
-	'usbutils'
-	'vapour-os-mirrorlist' 'vapour-os-keyring' 'vapour-os-plymouth-theme' 'voscfg'
-	'wireless-regdb'
+depends=(ananicy-cpp
+	base
+	cachyos-ananicy-rules cachyos-keyring cachyos-mirrorlist cachyos-v3-mirrorlist cachyos-v4-mirrorlist chaotic-keyring chaotic-mirrorlist
+	dialog dmidecode dosfstools
+	efibootmgr ethtool
+	fscrypt fwupd
+	hdparm
+	irqbalance iw
+	kernel-modules-hook
+	linux-firmware
+	man-db man-pages
+	networkmanager nss-mdns
+	realtime-privileges rtirq rtkit
+	plymouth polkit
+	sbctl sudo
+	terminus-font texinfo
+	usbutils
+	vapour-os-mirrorlist vapour-os-keyring vapour-os-plymouth-theme voscfg
+	wireless-regdb
 )
 package() {
 	cp -r "$srcdir/../files/etc" "$pkgdir"

@@ -1,0 +1,3 @@
+Run "nmcli" to connect to the internet.
+Run "install-vapour-os" to install Vapour OS.
+Run "startx" to start X11 GUI.

@@ -109,19 +109,17 @@ shopt -s nocaseglob; shopt -s nocasematch
 [ "$CPU_MODEL" == "AuthenticAMD" ] && PACKAGES="$PACKAGES amd-ucode"
 [ "$CPU_MODEL" == "GenuineIntel" ] && PACKAGES="$PACKAGES intel-ucode"
 shopt -u nocaseglob; shopt -u nocasematch
+
 # Detect laptop hardware
-if [ ! -z "$CHASSIS" ] && ([ "$CHASSIS" == "Laptop" ] || [ "$CHASSIS" == "Notebook" ] || \
-[ "$CHASSIS" == "Convertible" ] || [ "$CHASSIS" == "Detachable" ] || [ "$CHASSIS" == "Tablet" ] || \
-[ "$CHASSIS" == "Hand Held" ] || [ "$CHASSIS" == "Portable" ]); then
-	if [ ! -z "$CHASSIS" ] && ([ "$CHASSIS" == "Laptop" ] || [ "$CHASSIS" == "Notebook" ] || \
-	[ "$CHASSIS" == "Convertible" ] || [ "$CHASSIS" == "Detachable" ] || [ "$CHASSIS" == "Tablet" ]); then
+case $CHASSIS in
+	"Laptop"|"Notebook"|"Convertible"|"Detachable"|"Tablet"|"Hand Held"|"Portable")
 		PORTABLE="yes"
 		if [ -f /dev/freefall ]; then
 			echo "Found freefall sensor"
 			PACKAGES="$PACKAGES hdapsd"
-		fi
-	fi
-else PORTABLE="no"; fi
+		fi;;
+	*) PORTABLE="no";;
+esac
 
 # Kernel(s)
 for KERNEL in $KERNELS; do PACKAGES="$PACKAGES $KERNEL $KERNEL-headers"; done
@@ -186,10 +184,6 @@ genfstab -U /mnt >> /mnt/etc/fstab
 ## 4) Chroot setup
 mkdir "/mnt/etc/$DISTRO_ID/chroot-setup"
 cp "$SCRIPT_DIR/chroot-setup.sh" "/mnt/etc/$DISTRO_ID/chroot-setup/"
-# Detect manufacturer and model info, and enable fixes accordingly
-case "$MANUFACTURER" in
-	"HP") [ "$PORTABLE" == "yes" ] && echo "systemctl enable hp-lid-fix" >> "/mnt/etc/$DISTRO_ID/chroot-setup";;
-esac
 sync
 if [ "$DEBUG" == 1 ]; then echo "Press enter to begin chroot setup"; read; fi
 arch-chroot /mnt "/etc/$DISTRO_ID/chroot-setup/chroot-setup.sh" || exit 1

@@ -152,8 +152,8 @@ Print "       Model: $MODEL"
 Print "        Type: $CHASSIS"
 Print "    Portable: $PORTABLE"
 
-#[ "$DEBUG" == 1 ] && echo "Press enter to start updating Pacman GPG keys" && read
-#pacman-key --refresh-keys
+[ "$DEBUG" == 1 ] && echo "Press enter to start updating Pacman GPG keys" && read
+pacman-key --refresh-keys
 
 ## 3) Install system
 [ "$DEBUG" == 1 ] && echo echo "Press enter to start installing packages" && read

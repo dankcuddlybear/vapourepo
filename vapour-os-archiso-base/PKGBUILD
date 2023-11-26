@@ -10,12 +10,9 @@ depends=(amd-ucode
 	espeakup
 	grub
 	intel-ucode
-	memtest86+
-	memtest86+-efi
 	mkinitcpio-archiso
 	pv
 	squashfs-tools
-	syslinux
 	udftools
 	vapour-os-liveusb-installer
 )
@@ -24,4 +21,6 @@ package() {
 	cp -r "$srcdir/../files/usr" "$pkgdir"
 	cp -r "$srcdir/../files/vapour-os-live" "$pkgdir"
 	"$srcdir/../../set-default-permissions.sh" "$pkgdir"
+	chmod 750 "$pkgdir/etc/sudoers.d"
+	chmod 750 "$pkgdir/usr/share/polkit-1/rules.d"
 }

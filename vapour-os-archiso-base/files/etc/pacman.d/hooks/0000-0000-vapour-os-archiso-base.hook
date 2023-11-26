@@ -11,4 +11,4 @@ When = PostTransaction
 Depends = sh
 Depends = coreutils
 Depends = grep
-Exec = /bin/sh -c "mv /usr/share/vapour-os/custom-configs/vapour-os-archiso-base/etc /"
+Exec = /bin/sh -c "cp -r /usr/share/vapour-os/custom-configs/vapour-os-archiso-base/etc /; rm -rf /usr/share/vapour-os/custom-configs/vapour-os-archiso-base/etc"

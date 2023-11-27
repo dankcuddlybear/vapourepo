@@ -6,7 +6,6 @@ pkgdesc='Vapour OS Live USB base files'
 arch=(x86_64)
 url='https://github.com/dankcuddlybear/vapourepo'
 depends=(amd-ucode
-	edk2-shell
 	espeakup
 	grub
 	intel-ucode

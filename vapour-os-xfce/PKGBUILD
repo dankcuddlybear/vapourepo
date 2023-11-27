@@ -6,30 +6,30 @@ pkgdesc='XFCE desktop for Vapour OS'
 arch=(any)
 url='https://github.com/dankcuddlybear/vapourepo'
 install=install.install
-depends=(
-	'adwaita-qt5' 'adwaita-qt6'
-	'blueman'
-	'ffmpegthumbnailer'
-	'gvfs-afc' 'gvfs-goa' 'gvfs-google' 'gvfs-gphoto2' 'gvfs-mtp' 'gvfs-nfs' 'gvfs-smb'
-	'libgsf' 'libgepub' 'libopenraw' 'lightdm-gtk-greeter'
-	'network-manager-applet'
-	'pavucontrol' 'python'
-	'tumbler'
-	'vapour-os-desktop-libs'
-	'xdg-desktop-portal-gtk'
-	'xfce4-clipman-plugin'
-	'xfce4-mpc-plugin'
-	'xfce4-power-manager'
-	'xfce4-pulseaudio-plugin'
-	'xfce4-screensaver'
-	'xfce4-screenshooter'
-	'xfce4-sensors-plugin'
-	'xfce4-session'
-	'xfce4-settings'
-	'xfce4-taskmanager'
-	'xfce4-xkb-plugin'
-	'xfdesktop'
-	'xfwm4'
+depends=(adwaita-qt5 adwaita-qt6
+	blueman
+	ffmpegthumbnailer
+	gvfs-afc gvfs-goa gvfs-google gvfs-gphoto2 gvfs-mtp gvfs-nfs gvfs-smb
+	libgsf libgepub libopenraw lightdm-gtk-greeter
+	network-manager-applet
+	pavucontrol python
+	qt5ct qt6ct
+	tumbler
+	vapour-os-desktop-libs
+	xdg-desktop-portal-gtk
+	xfce4-clipman-plugin
+	xfce4-mpc-plugin
+	xfce4-power-manager
+	xfce4-pulseaudio-plugin
+	xfce4-screensaver
+	xfce4-screenshooter
+	xfce4-sensors-plugin
+	xfce4-session
+	xfce4-settings
+	xfce4-taskmanager
+	xfce4-xkb-plugin
+	xfdesktop
+	xfwm4
 )
 package() {
 	cp -r "$srcdir/../files/etc" "$pkgdir"

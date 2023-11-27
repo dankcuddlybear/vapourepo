@@ -6,14 +6,30 @@ val_fontsize=1
 Lines_Size=2
 Update_Interval=30
 Preferred_Height=558
-Number_Chips=2
+Number_Chips=9
 str_fontsize=small
 
 [Chip0]
-Name=coretemp-0
+Name=iwlwifi_1-0
 Number=0
 
-[Chip0_Feature0]
+[Chip1]
+Name=hp-0
+Number=1
+
+[Chip2]
+Name=nouveau-100
+Number=2
+
+[Chip3]
+Name=BAT1-0
+Number=3
+
+[Chip4]
+Name=coretemp-0
+Number=4
+
+[Chip4_Feature0]
 Address=0
 Name=Package id 0
 Color=#00B000
@@ -21,7 +37,19 @@ Show=true
 Min=0
 Max=45
 
-[Chip1]
+[Chip5]
+Name=pch_cometlake-0
+Number=5
+
+[Chip6]
+Name=nvme-600
+Number=6
+
+[Chip7]
+Name=acpitz-0
+Number=7
+
+[Chip8]
 Name=ACPI
-Number=1
+Number=8
 

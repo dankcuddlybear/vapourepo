@@ -5,6 +5,7 @@ pkgrel=$(expr $(date +%-S) + $(expr 60 \* $(date +%-M)) + $(expr 3600 \* $(date 
 pkgdesc='Open-source NVIDIA GPU drivers for Vapour OS'
 arch=(x86_64)
 url='https://github.com/dankcuddlybear/Vapour-OS'
+conflicts=('vapour-os-nvidia' 'vapour-os-nvidia-470xx')
 depends=(
 	'lib32-libva-mesa-driver'
 	'lib32-mesa' 'lib32-mesa-vdpau'

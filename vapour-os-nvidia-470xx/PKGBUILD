@@ -5,7 +5,7 @@ pkgrel=$(expr $(date +%-S) + $(expr 60 \* $(date +%-M)) + $(expr 3600 \* $(date 
 pkgdesc='Proprietary Nvidia drivers for Kepler GPUs'
 arch=(x86_64)
 url='https://github.com/dankcuddlybear/Vapour-OS'
-conflicts=('vapour-os-nvidia')
+conflicts=('vapour-os-nouveau' 'vapour-os-nvidia')
 depends=('lib32-nvidia-470xx-utils'
 	'libva-vdpau-driver' 'lib32-libva-vdpau-driver'
 	'nvidia-470xx-dkms' 'nvidia-prime' 'nvidia-470xx-settings'

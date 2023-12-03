@@ -6,7 +6,6 @@ memtest86+
 memtest86+-efi
 syslinux
 
-
 vapour-os-desktop-libs
 vapour-os-amdgpu
 vapour-os-i915
@@ -28,8 +27,6 @@ thunar-media-tags-plugin
 thunar-volman
 xarchiver
 xfce4-terminal
-
-
 
 firefox-i18n-en-gb
 firefox-i18n-en-us

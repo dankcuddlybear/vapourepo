@@ -40,11 +40,8 @@ Install() {
 		gpasswd -a live wheel 1> /dev/null; gpasswd -a live autologin 1> /dev/null # Add to groups
 		rm -rf /etc/*.pacnew # We don't need these files
 		rm /usr/local/sbin/cat /usr/local/sbin/vercmp # Remove binaries needed by GRUB install script
-		if [ -f /usr/share/applications/install-vapour-os.desktop ]; then # Create installer desktop shortcut
-			sudo -u live mkdir -p /home/live/Desktop
-			sudo -u live cp /usr/share/applications/install-vapour-os.desktop /home/live/Desktop/
-			sudo -u live chmod +x /home/live/Desktop/install-vapour-os.desktop
-		fi
+		cp /usr/share/applications/install-vapour-os.desktop /etc/xdg/autostart/install-vapour-os.desktop
+		chmod +x /etc/xdg/autostart/install-vapour-os.desktop
 	elif [ $INSTALL_MODE == "system" ]; then ## System install mode
 		# mkinitcpio.conf
 		VAPOUR_OS_NO_OVERWRITE="$(sh -c '. /etc/mkinitcpio.conf && echo $VAPOUR_OS_NO_OVERWRITE')"

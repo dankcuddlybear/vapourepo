@@ -13,7 +13,6 @@ depends=(
 	'mesa-vdpau'
 	'nouveau-fw'
 )
-install=install.install
 package() {
 	cp -r "$srcdir/../files/usr" "$pkgdir"
 	"$srcdir/../../set-default-permissions.sh" "$pkgdir"

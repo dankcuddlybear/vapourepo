@@ -142,7 +142,17 @@ fi
 # Detect GPUs
 lspci | grep -i "VGA" | grep -i "AMD" &> /dev/null && PACKAGES="$PACKAGES vapour-os-amdgpu"
 lspci | grep -i "VGA" | grep -i "Intel" &> /dev/null && PACKAGES="$PACKAGES vapour-os-i915"
-lspci | grep -i "VGA" | grep -i "NVIDIA" &> /dev/null && PACKAGES="$PACKAGES vapour-os-nvidia"
+
+
+if (lspci | grep -i "VGA compatible controller" | grep -i "NVIDIA" &> /dev/null); then
+	NVIDIA_PCI_ID="$(lspci -mmnn | grep -i "VGA compatible controller" | grep -im 1 "NVIDIA" | cut -d '"' -f 6 | awk '{print $(NF)}' | sed 's/[][]//g')"
+	# If PCI device ID matches legacy GPU that requires 470xx drivers, install those. Otherwise install the latest Nvidia driver.
+	case $NVIDIA_PCI_ID in
+		0FC6|0FC8|0FC9|0FCD|0FCE|0FD1|0FD2|0FD3|0FD4|0FD5|0FD8|0FD9|0FDF|0FE0|0FE1|0FE2|0FE3|0FE4|0FE9|0FEA|0FEC|0FED|0FEE|0FF6|0FF8|0FF9|0FFA|0FFB|0FFC|0FFD|0FFE|0FFF|1001|1004|1005|1007|1008|100A|100C|1021|1022|1023|1024|1026|1027|1028|1029|102A|102D|103A|103C|1180|1183|1184|1185|1187|1188|1189|118A|118E|118F|1193|1194|1195|1198|1199|119D|119E|119F|11A0|11A1|11A2|11A3|11A7|11B4|11B6|11B7|11B8|11BA|11BC|11BD|11BE|11C0|11C2|11C3|11C4|11C5|11C6|11C8|11CB|11E0|11E1|11E2|11E3|11FA|11FC|1280|1281|1282|1284|1286|1287|1288|1289|128B|1290|1291|1292|1293|1295|1296|1298|1299|129A|12B9|12BA)
+			PACKAGES="$PACKAGES vapour-os-nvidia-470xx";;
+		*) PACKAGES="$PACKAGES vapour-os-nvidia";;
+	esac
+fi
 
 # Print info
 Print "Manufacturer: $MANUFACTURER"

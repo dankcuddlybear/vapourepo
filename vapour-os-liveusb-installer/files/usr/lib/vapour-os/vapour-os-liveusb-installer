@@ -99,7 +99,7 @@ fi
 sync
 
 ## 2) Auto-detect required packages
-PACKAGES="$VERSION_TO_INSTALL $KERNELS $ADDITIONAL_SOFTWARE grub-silent"
+PACKAGES="$VERSION_TO_INSTALL $KERNELS $ADDITIONAL_SOFTWARE grub"
 MANUFACTURER="$(dmidecode -s system-manufacturer)"
 MODEL="$(dmidecode -s system-product-name)"
 CHASSIS="$(dmidecode -s chassis-type)"

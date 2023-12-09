@@ -1,3 +1,3 @@
 post_install() {
-	systemctl enable nvidia-hibernate nvidia-persistenced nvidia-resume nvidia-suspend
+	systemctl enable nvidia-persistenced
 }

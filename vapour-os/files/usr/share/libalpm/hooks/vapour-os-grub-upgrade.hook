@@ -4,7 +4,6 @@ Operation = Upgrade
 Target = grub
 Target = grub-btrfs
 Target = grub-improved-luks2-git
-Target = grub-silent
 Target = grub-blscfg
 Target = grub-coreos
 Target = grub-efi-arm64

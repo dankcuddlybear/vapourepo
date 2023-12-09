@@ -1,0 +1,63 @@
+#!/bin/bash
+DISTRO_ID=vapour-os
+Error() {
+	echo $1
+	exit 1
+}
+[ $(whoami) != root ] && Error "You must run this script with root priviliges."
+[ -z "$1" ] && Error "No command (install/upgrade/uninstall)"
+
+# Get boot partition from /etc/fstab
+BOOT=$(cat /etc/fstab | grep -m 1 " /boot \|	/boot \| /boot	\|	/boot	" | cut -d ' ' -f 1 | cut -d '	' -f 1)
+[ -z "$BOOT" ] && Error "No /boot partition specified in /etc/fstab"
+case $(echo $BOOT | cut -d '=' -f 1) in
+	UUID)
+		BOOT_UUID=$(echo $BOOT | cut -d '=' -f 2)
+		[ ! -b /dev/disk/by-uuid/$BOOT_UUID ] && Error "$BOOT does not exist! Please set the correct /boot partition in /etc/fstab."
+		BOOT=$(readlink -f /dev/disk/by-uuid/$BOOT_UUID)
+		;;
+	LABEL)
+		BOOT_LABEL=$(echo $BOOT | cut -d '=' -f 2)
+		[ ! -b "/dev/disk/by-label/$BOOT_LABEL" ] && Error "$BOOT does not exist! Please set the correct /boot partition in /etc/fstab."
+		BOOT=$(readlink -f /dev/disk/by-label/$BOOT_LABEL)
+		;;
+	*)
+		[ ! -b $BOOT ] && Error "$BOOT does not exist! Please set the correct /boot partition in /etc/fstab."
+		BOOT=$(readlink -f $BOOT)
+		;;
+esac
+
+# Find the disk with the boot partition, and get its partition number
+if [ ${BOOT:5:4} == nvme ] || [ ${BOOT:5:6} == mmcblk ]; then
+	BOOT_DISK=$(echo $BOOT | cut -d 'p' -f 1)
+	BOOT_PARTNO=$(echo $BOOT | cut -d 'p' -f 2)
+elif [ ${BOOT:5:2} == hd ] || [ ${BOOT:5:2} == sd ] || [ ${BOOT:5:2} == vd ]; then
+	BOOT_DISK=$(echo $BOOT | sed 's/[0-9]//g')
+	BOOT_PARTNO=$(echo $BOOT | sed 's/[^0-9]*//g')
+else
+	Error "$BOOT is on an unsupported media type! Please set /boot partition in /etc/fstab to a partition on a HDD or flash storage."
+fi
+[ "$BOOT_DISK" == "$BOOT_PARTNO" ] && Error "$BOOT is a disk, not a partition! Please set a /boot partition in /etc/fstab."
+
+Upgrade() {
+	# Install to MBR/ESP
+	grub-install --target=i386-pc $BOOT_DISK
+	grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
+	# Configure menu entries
+	cp -r /usr/share/vapour-os/custom-configs/grub.d /etc/
+}
+
+case "$1" in
+	install)
+		# Install bootloader
+		Upgrade
+		# Configure /etc/default/grub
+		cp /usr/share/vapour-os/custom-configs/grub /etc/default/grub
+		# Disable editor/console
+		grub-editenv - set superusers=""
+		;;
+	upgrade) Upgrade;;
+	uninstall)
+		echo "Not yet implemented";;
+	*) Error "Unrecognised command \"$1\"";;
+esac

@@ -37,7 +37,10 @@ package() {
 	chmod 750 "$pkgdir/etc/sudoers.d"
 
 	CDIR="$(pwd)"
-	for DIR in "$pkgdir/usr/lib/systemd/system-sleep" "$pkgdir/usr/lib/$pkgname" "$pkgdir/usr/share/libalpm/scripts/$pkgname"; do
+	for DIR in "$pkgdir/usr/lib/$pkgname" \
+	"$pkgdir/usr/lib/systemd/system-sleep" \
+	"$pkgdir/usr/share/$pkgname/custom-configs/grub.d" \
+	"$pkgdir/usr/share/libalpm/scripts/$pkgname"; do
 		cd "$DIR"
 		chmod +x *
 	done

@@ -91,7 +91,7 @@ Print "Mount points created."
 mount "$BOOT_DEV" /mnt/boot
 if [ $FORMAT_BOOT != 1 ]; then
 	Print "Deleting old system files in boot partition..."
-	rm -rf /mnt/boot/*.img /mnt/boot/vmlinu* /mnt/boot/EFI/systemd /mnt/boot/limine /mnt/boot/loader
+	rm -rf /mnt/boot/*.img /mnt/boot/vmlinu* /mnt/boot/EFI/grub /mnt/boot/EFI/systemd /mnt/boot/grub /mnt/boot/limine /mnt/boot/loader
 fi
 [ ! -z "$HOME_DEV" ] && mount "$HOME_DEV" /mnt/home
 [ ! -z "$MEDIA_DEV" ] && mount "$MEDIA_DEV" /mnt/media
@@ -99,7 +99,7 @@ fi
 sync
 
 ## 2) Auto-detect required packages
-PACKAGES="$VERSION_TO_INSTALL $KERNELS $ADDITIONAL_SOFTWARE limine"
+PACKAGES="$VERSION_TO_INSTALL $KERNELS $ADDITIONAL_SOFTWARE grub-silent"
 MANUFACTURER="$(dmidecode -s system-manufacturer)"
 MODEL="$(dmidecode -s system-product-name)"
 CHASSIS="$(dmidecode -s chassis-type)"

@@ -1,0 +1,20 @@
+[Trigger]
+Type = Package
+Operation = Upgrade
+Target = grub
+Target = grub-btrfs
+Target = grub-improved-luks2-git
+Target = grub-silent
+Target = grub-blscfg
+Target = grub-coreos
+Target = grub-efi-arm64
+Target = grub-git
+Target = grub-libzfs
+Target = grub-linux-default
+Target = grub-luks-keyfile
+Target = grub-luks-keyfile-git
+
+[Action]
+Description = Upgrade GRUB bootloader
+When = PostTransaction
+Exec = /usr/lib/vapour-os/grub-install upgrade

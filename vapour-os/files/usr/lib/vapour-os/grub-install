@@ -53,6 +53,7 @@ case "$1" in
 		Upgrade
 		# Configure /etc/default/grub
 		cp /usr/share/vapour-os/custom-configs/grub /etc/default/grub
+		grub-mkconfig -o /boot/grub/grub.cfg
 		# Disable editor/console
 		grub-editenv - set superusers=""
 		;;

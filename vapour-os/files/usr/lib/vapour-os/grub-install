@@ -4,6 +4,7 @@ Error() {
 	echo $1
 	exit 1
 }
+[ ! -d /usr/lib/grub ] && exit 0
 [ $(whoami) != root ] && Error "You must run this script with root priviliges."
 [ -z "$1" ] && Error "No command (install/upgrade/uninstall)"
 
@@ -45,13 +46,13 @@ Upgrade() {
 	grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
 	# Configure menu entries
 	cp -r /usr/share/vapour-os/custom-configs/grub.d /etc/
+	chmod -x /etc/grub.d/30-uefi-firmware
 }
 
 case "$1" in
 	install)
-		# Install bootloader
-		Upgrade
-		# Configure /etc/default/grub
+		Upgrade # Install first
+		# Configure GRUB settings
 		cp /usr/share/vapour-os/custom-configs/grub /etc/default/grub
 		grub-mkconfig -o /boot/grub/grub.cfg
 		# Disable editor/console

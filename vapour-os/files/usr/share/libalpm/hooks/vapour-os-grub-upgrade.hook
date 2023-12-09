@@ -12,6 +12,7 @@ Target = grub-libzfs
 Target = grub-linux-default
 Target = grub-luks-keyfile
 Target = grub-luks-keyfile-git
+Target = vapour-os
 
 [Action]
 Description = Upgrade GRUB bootloader

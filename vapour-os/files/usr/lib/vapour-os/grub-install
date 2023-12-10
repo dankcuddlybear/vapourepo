@@ -55,14 +55,23 @@ Upgrade() {
 
 case "$1" in
 	install)
+		echo "Installing GRUB boot loader..."
 		Upgrade # Install first
 		# Configure GRUB settings
 		cp /usr/share/vapour-os/custom-configs/grub /etc/default/grub
 		grub-mkconfig -o /boot/grub/grub.cfg
 		# Disable editor/console
 		grub-editenv - set superusers=""
+		echo "Installed GRUB boot loader successfully."
+		# Install Shim
+		$SCRIPT_DIR/shim-install install
 		;;
-	upgrade) Upgrade; grub-mkconfig -o /boot/grub/grub.cfg;;
+	upgrade)
+		if [ -d /boot/grub ]; then
+			echo "Upgrading GRUB boot loader successfully."
+			Upgrade && grub-mkconfig -o /boot/grub/grub.cfg && \
+			echo "Upgraded GRUB boot loader successfully."
+		fi;;
 	uninstall)
 		echo "Not yet implemented";;
 	*) Error "Unrecognised command \"$1\"";;

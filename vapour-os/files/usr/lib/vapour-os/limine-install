@@ -4,6 +4,7 @@ Error() {
 	echo $1
 	exit 1
 }
+[ ! -d /usr/share/limine ] && exit 0
 [ $(whoami) != root ] && Error "You must run this script with root priviliges."
 [ -z "$1" ] && Error "No command (install/upgrade/uninstall)"
 
@@ -50,6 +51,7 @@ Upgrade() {
 
 case "$1" in
 	install)
+		echo "Installing Limine bootloader..."
 		Upgrade # Install bootloader files first
 		# Detect kernel (will use alphabetically lowest)
 		KERNEL_FILE="$(basename "$(ls /boot/vmlinu*-linux* | tr '\n' ' ' | awk '{print $1}')")"
@@ -73,8 +75,14 @@ case "$1" in
 		if [ ! -z "$EFI_BITS" ]; then
 			[ "$EFI_BITS" == 32 ] && efibootmgr -c -d $BOOT_DISK -p $BOOT_PART -L "Limine" -l '\EFI\Limine\BOOTIA32.EFI'
 			[ "$EFI_BITS" == 64 ] && efibootmgr -c -d $BOOT_DISK -p $BOOT_PART -L "Limine" -l '\EFI\Limine\BOOTX64.EFI'
+		fi
+		echo "Installed Limine boot loader successfully.";;
+	upgrade)
+		if [ -d /boot/limine ]; then
+			echo "Upgrading Limine bootloader..."
+			Upgrade && \
+			echo "Upgraded Limine boot loader successfully."
 		fi;;
-	upgrade) Upgrade;;
 	uninstall)
 		limine-deploy --undeploy $BOOT_DISK # Delete MBR boot code
 		rm -rf /boot/EFI/limine /boot/limine

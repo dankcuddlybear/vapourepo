@@ -57,8 +57,15 @@ Upgrade() {
 
 case "$1" in
 	install)
-		sleep 0;;
-	upgrade) Upgrade;;
+		echo "Installing Shim secure boot preloader..."
+		Upgrade && echo "Installed Shim secure boot preloader successfully." || \
+		echo "Installed Shim secure boot preloader with errors.";;
+	upgrade)
+		if [ -f /boot/EFI/grub/shimx64.efi ] || [ -f /boot/EFI/grub/shimia32.efi ]; then
+			echo "Upgrading Shim secure boot preloader..."
+			Upgrade && echo "Upgraded Shim secure boot preloader successfully." || \
+			echo "Upgraded Shim secure boot preloader with errors."
+		fi;;
 	uninstall)
 		echo "Not yet implemented";;
 	*) Error "Unrecognised command \"$1\"";;

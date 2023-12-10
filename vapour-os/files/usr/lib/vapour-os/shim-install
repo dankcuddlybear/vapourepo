@@ -5,7 +5,7 @@ Error() {
 	echo $1
 	exit 1
 }
-[ ! -d /usr/lib/grub ] && exit 0
+[ ! -d /usr/share/shim-signed ] && exit 0
 [ $(whoami) != root ] && Error "You must run this script with root priviliges."
 [ -z "$1" ] && Error "No command (install/upgrade/uninstall)"
 
@@ -42,27 +42,23 @@ fi
 [ "$BOOT_DISK" == "$BOOT_PARTNO" ] && Error "$BOOT is a disk, not a partition! Please set a /boot partition in /etc/fstab."
 
 Upgrade() {
-	# Install to MBR/ESP
-	grub-install --target=i386-pc $BOOT_DISK
-	grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
-	# Configure menu entry scripts
-	cp -r /usr/share/vapour-os/custom-configs/grub.d /etc/
-	chmod -x /etc/grub.d/30_uefi-firmware
-	# Secure boot setup
-	$SCRIPT_DIR/machine-owner-key
-	[ -x /usr/bin/sbsign ] && sbsign --key /etc/$DISTRO_ID/mok/MOK.key --cert /etc/$DISTRO_ID/mok/MOK.crt --output /boot/EFI/grub/grubx64.efi /boot/EFI/grub/grubx64.efi
+	mkdir -p /boot/EFI/grub
+	cp /usr/share/shim-signed/shimx64.efi /boot/EFI/grub/
+	cp /usr/share/shim-signed/mmx64.efi /boot/EFI/grub/
+	cp /usr/share/shim-signed/shimia32.efi /boot/EFI/grub/
+	cp /usr/share/shim-signed/mmia32.efi /boot/EFI/grub/
+	## Create UEFI boot entry
+	EFI_BITS="$(cat /sys/firmware/efi/fw_platform_size 2> /dev/null)"
+	if [ ! -z "$EFI_BITS" ]; then
+		[ "$EFI_BITS" == 32 ] && efibootmgr --unicode -c -d $BOOT_DISK -p $BOOT_PART -L "Shim" -l '\EFI\grub\shimia32.efi'
+		[ "$EFI_BITS" == 64 ] && efibootmgr --unicode -c -d $BOOT_DISK -p $BOOT_PART -L "Shim" -l '\EFI\grub\shimx64.efi'
+	fi
 }
 
 case "$1" in
 	install)
-		Upgrade # Install first
-		# Configure GRUB settings
-		cp /usr/share/vapour-os/custom-configs/grub /etc/default/grub
-		grub-mkconfig -o /boot/grub/grub.cfg
-		# Disable editor/console
-		grub-editenv - set superusers=""
-		;;
-	upgrade) Upgrade; grub-mkconfig -o /boot/grub/grub.cfg;;
+		sleep 0;;
+	upgrade) Upgrade;;
 	uninstall)
 		echo "Not yet implemented";;
 	*) Error "Unrecognised command \"$1\"";;

@@ -1,0 +1,8 @@
+#!/bin/sh
+DISTRO_ID="vapour-os"
+if ([ ! -f /etc/$DISTRO_ID/mok/MOK.cer ] || [ ! -f /etc/$DISTRO_ID/mok/MOK.crt ] || [ ! -f /etc/$DISTRO_ID/mok/MOK.key ]); then
+	mkdir -p /etc/$DISTRO_ID/secureboot
+	openssl req -newkey rsa:2048 -nodes -keyout /etc/$DISTRO_ID/secureboot/MOK.key -new -x509 -sha256 -days 2913195 -subj "/CN=my Machine Owner Key/" -out /etc/$DISTRO_ID/secureboot/MOK.crt
+	openssl x509 -outform DER -in /etc/$DISTRO_ID/secureboot/MOK.crt -out /etc/$DISTRO_ID/secureboot/MOK.cer
+fi
+cp /etc/$DISTRO_ID/mok/MOK.cer /boot/

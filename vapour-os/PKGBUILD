@@ -24,7 +24,7 @@ depends=(ananicy-cpp
 	networkmanager nss-mdns
 	realtime-privileges rtirq rtkit
 	plymouth polkit
-	sbctl sudo
+	sbsigntools sudo
 	terminus-font texinfo
 	usbutils
 	vapour-os-mirrorlist vapour-os-keyring vapour-os-plymouth-theme voscfg
@@ -38,6 +38,7 @@ package() {
 
 	CDIR="$(pwd)"
 	for DIR in "$pkgdir/usr/lib/$pkgname" \
+	"$pkgdir/usr/lib/initcpio/post" \
 	"$pkgdir/usr/lib/systemd/system-sleep" \
 	"$pkgdir/usr/share/$pkgname/custom-configs/grub.d" \
 	"$pkgdir/usr/share/libalpm/scripts/$pkgname"; do

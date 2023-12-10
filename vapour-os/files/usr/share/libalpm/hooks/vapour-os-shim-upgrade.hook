@@ -1,0 +1,9 @@
+[Trigger]
+Type = Package
+Operation = Upgrade
+Target = shim-signed
+
+[Action]
+Description = Upgrade Shim
+When = PostTransaction
+Exec = /usr/lib/vapour-os/shim-install upgrade

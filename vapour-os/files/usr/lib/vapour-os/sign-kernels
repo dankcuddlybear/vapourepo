@@ -1,0 +1,8 @@
+#!/bin/sh
+[ ! -x /usr/bin/sbsign ] && exit 0
+DISTRO_ID="vapour-os"
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+$SCRIPT_DIR/machine-owner-key
+for KERNEL in $(ls /boot/vmlinu*-linux*); do
+	sudo sbsign --key /etc/$DISTRO_ID/secureboot/MOK.key --cert /etc/$DISTRO_ID/secureboot/MOK.crt --output $KERNEL $KERNEL
+done

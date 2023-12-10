@@ -1,4 +1,5 @@
 post_install() {
 	rm -f /etc/systemd/system/display-manager.service &> /dev/null
 	systemctl enable lightdm
+	cp /usr/share/vapour-os/custom-configs/lightdm-gtk-greeter.conf /etc/lightdm/
 }

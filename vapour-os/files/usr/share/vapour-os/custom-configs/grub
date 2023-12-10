@@ -11,6 +11,7 @@ GRUB_GFXPAYLOAD_LINUX=keep
 GRUB_DISABLE_LINUX_UUID=false
 GRUB_DISABLE_RECOVERY=true
 GRUB_DISABLE_OS_PROBER=false
+GRUB_DISTRIBUTOR="Vapour OS"
 
 # Uncomment and set to the desired menu colors.  Used by normal and wallpaper
 # modes only.  Entries specified as foreground/background.

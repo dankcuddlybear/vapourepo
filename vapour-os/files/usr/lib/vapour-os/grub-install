@@ -46,7 +46,7 @@ Upgrade() {
 	grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
 	# Configure menu entries
 	cp -r /usr/share/vapour-os/custom-configs/grub.d /etc/
-	chmod -x /etc/grub.d/30-uefi-firmware
+	chmod -x /etc/grub.d/30_uefi-firmware
 }
 
 case "$1" in
@@ -58,7 +58,7 @@ case "$1" in
 		# Disable editor/console
 		grub-editenv - set superusers=""
 		;;
-	upgrade) Upgrade;;
+	upgrade) Upgrade; grub-mkconfig -o /boot/grub/grub.cfg;;
 	uninstall)
 		echo "Not yet implemented";;
 	*) Error "Unrecognised command \"$1\"";;

@@ -31,11 +31,10 @@ datarootdir="/usr/share"
 export TEXTDOMAIN=grub
 export TEXTDOMAINDIR="${datarootdir}/locale"
 
-GRUB_DISABLE_SUBMENU=true
 CLASS="--class gnu-linux --class gnu --class os --unrestricted"
-
-OS="Vapour OS"
-CLASS="--class vapour-os ${CLASS}"
+[ "x${GRUB_DISTRIBUTOR}" = "x" ] && GRUB_DISTRIBUTOR="Vapour OS"
+OS="${GRUB_DISTRIBUTOR}"
+CLASS="--class $(echo ${GRUB_DISTRIBUTOR} | tr 'A-Z' 'a-z' | cut -d' ' -f1|LC_ALL=C sed 's,[^[:alnum:]_],_,g') ${CLASS}"
 
 # loop-AES arranges things so that /dev/loop/X can be our root device, but
 # the initrds that Linux uses don't like that.

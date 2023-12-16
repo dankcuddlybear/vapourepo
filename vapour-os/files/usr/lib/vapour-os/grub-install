@@ -50,7 +50,7 @@ Upgrade() {
 	chmod -x /etc/grub.d/30_uefi-firmware
 	# Secure boot setup
 	$SCRIPT_DIR/machine-owner-key
-	[ -x /usr/bin/sbsign ] && sbsign --key /etc/$DISTRO_ID/mok/MOK.key --cert /etc/$DISTRO_ID/mok/MOK.crt --output /boot/EFI/grub/grubx64.efi /boot/EFI/grub/grubx64.efi
+	[ -x /usr/bin/sbsign ] && sbsign --key /etc/$DISTRO_ID/MOK.key --cert /etc/$DISTRO_ID/MOK.crt --output /boot/EFI/grub/grubx64.efi /boot/EFI/grub/grubx64.efi
 }
 
 case "$1" in

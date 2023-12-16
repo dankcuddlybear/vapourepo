@@ -7,7 +7,7 @@ kernel="$1"
 # use already installed kernel if it exists
 [[ ! -f "$KERNELDESTINATION" ]] || kernel="$KERNELDESTINATION"
 
-keypairs=(/etc/$DISTRO_ID/mok/MOK.key /etc/$DISTRO_ID/mok/MOK.crt)
+keypairs=(/etc/$DISTRO_ID/MOK.key /etc/$DISTRO_ID/MOK.crt)
 
 for (( i=0; i<${#keypairs[@]}; i+=2 )); do
     key="${keypairs[$i]}" cert="${keypairs[(( i + 1 ))]}"

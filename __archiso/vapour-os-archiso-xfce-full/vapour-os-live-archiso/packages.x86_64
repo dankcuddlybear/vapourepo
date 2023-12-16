@@ -19,13 +19,16 @@ pipewire-pulse
 wireplumber
 
 vapour-os-xfce
+atril
+engrampa
 galculator
 mousepad
 ristretto
 thunar-archive-plugin
 thunar-media-tags-plugin
 thunar-volman
-xarchiver
+xdg-desktop-portal-gtk
+xfce4-weather-plugin
 xfce4-terminal
 
 firefox-i18n-en-gb

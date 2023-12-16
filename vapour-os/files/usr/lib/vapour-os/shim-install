@@ -50,8 +50,8 @@ Upgrade() {
 	## Create UEFI boot entry
 	EFI_BITS="$(cat /sys/firmware/efi/fw_platform_size 2> /dev/null)"
 	if [ ! -z "$EFI_BITS" ]; then
-		[ "$EFI_BITS" == 32 ] && efibootmgr --unicode -c -d $BOOT_DISK -p $BOOT_PART -L "Shim" -l '\EFI\grub\shimia32.efi'
-		[ "$EFI_BITS" == 64 ] && efibootmgr --unicode -c -d $BOOT_DISK -p $BOOT_PART -L "Shim" -l '\EFI\grub\shimx64.efi'
+		[ "$EFI_BITS" == 32 ] && efibootmgr --unicode -c -d $BOOT_DISK -p $BOOT_PARTNO -L "Shim" -l '\EFI\grub\shimia32.efi'
+		[ "$EFI_BITS" == 64 ] && efibootmgr --unicode -c -d $BOOT_DISK -p $BOOT_PARTNO -L "Shim" -l '\EFI\grub\shimx64.efi'
 	fi
 }
 

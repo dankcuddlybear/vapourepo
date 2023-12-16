@@ -73,8 +73,8 @@ case "$1" in
 		## Create UEFI boot entry
 		EFI_BITS="$(cat /sys/firmware/efi/fw_platform_size 2> /dev/null)"
 		if [ ! -z "$EFI_BITS" ]; then
-			[ "$EFI_BITS" == 32 ] && efibootmgr -c -d $BOOT_DISK -p $BOOT_PART -L "Limine" -l '\EFI\Limine\BOOTIA32.EFI'
-			[ "$EFI_BITS" == 64 ] && efibootmgr -c -d $BOOT_DISK -p $BOOT_PART -L "Limine" -l '\EFI\Limine\BOOTX64.EFI'
+			[ "$EFI_BITS" == 32 ] && efibootmgr -c -d $BOOT_DISK -p $BOOT_PARTNO -L "Limine" -l '\EFI\Limine\BOOTIA32.EFI'
+			[ "$EFI_BITS" == 64 ] && efibootmgr -c -d $BOOT_DISK -p $BOOT_PARTNO -L "Limine" -l '\EFI\Limine\BOOTX64.EFI'
 		fi
 		echo "Installed Limine boot loader successfully.";;
 	upgrade)

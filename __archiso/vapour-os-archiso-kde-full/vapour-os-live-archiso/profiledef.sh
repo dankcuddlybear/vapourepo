@@ -4,7 +4,7 @@ iso_name="vapour-os"
 iso_label="VOS_$(date --date="@${SOURCE_DATE_EPOCH:-$(date +%s)}" +%Y%m)"
 iso_publisher="Dankcuddlybear <https://github.com/dankcuddlybear/vapourepo>"
 iso_application="Modular Arch based distro"
-iso_version="xfce-full-$(date +%Y.%-m.%-d)-$(expr $(date +%-S) + $(expr 60 \* $(date +%-M)) + $(expr 3600 \* $(date +%-H)))"
+iso_version="kde-full-$(date +%Y.%-m.%-d)-$(expr $(date +%-S) + $(expr 60 \* $(date +%-M)) + $(expr 3600 \* $(date +%-H)))"
 install_dir="vapour-os"
 buildmodes=('iso')
 bootmodes=('bios.syslinux.mbr' 'bios.syslinux.eltorito'

@@ -1,4 +1,4 @@
-HOW TO BUILD THE ISO
+HOW TO BUILD
 
 First, add the following repositories as Vapour OS depends on them. You can add them after all other repositories if you want.
 1) Add CachyOS repository to your system (github.com/CachyOS/linux-cachyos#how-to-add-cachyos-repositories). Only "cachyos" (x86_64) is required.

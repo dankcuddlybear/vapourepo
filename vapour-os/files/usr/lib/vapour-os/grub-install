@@ -42,15 +42,53 @@ fi
 [ "$BOOT_DISK" == "$BOOT_PARTNO" ] && Error "$BOOT is a disk, not a partition! Please set a /boot partition in /etc/fstab."
 
 Upgrade() {
+	CD_MODULES="all_video
+		boot btrfs
+		cat chain configfile
+		echo efifwsetup efinet ext2
+		fat font
+		gettext gfxmenu gfxterm gfxterm_background gzio
+		halt help hfsplus
+		iso9660
+		jpeg
+		keystatus
+		loadenv loopback linux ls lsefi lsefimmap lsefisystab lssal
+		memdisk minicmd
+		normal ntfs
+		part_apple part_msdos part_gpt password_pbkdf2 png probe
+		reboot regexp
+		search search_fs_uuid search_fs_file search_label sleep smbios squash4
+		test true
+		video
+		xfs
+		zfs zfscrypt zfsinfo
+	"
+	GRUB_MODULES="$CD_MODULES
+		cryptodisk
+		gcry_arcfour
+		gcry_blowfish
+		gcry_camellia gcry_cast5 gcry_crc
+		gcry_des gcry_dsa
+		gcry_idea
+		gcry_md4 gcry_md5
+		gcry_rfc2268 gcry_rijndael gcry_rmd160 gcry_rsa
+		gcry_seed gcry_serpent gcry_sha1 gcry_sha256 gcry_sha512
+		gcry_tiger gcry_twofish
+		gcry_whirlpool
+		luks lvm
+		mdraid09 mdraid1x
+		raid5rec raid6rec
+	"
 	# Install to MBR/ESP
 	grub-install --target=i386-pc $BOOT_DISK
-	grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
+	grub-install --target=x86_64-efi --efi-directory=/boot --modules="${GRUB_MODULES}" --sbat=/usr/share/grub/sbat.csv --bootloader-id=GRUB
 	# Configure menu entry scripts
 	cp -r /usr/share/vapour-os/custom-configs/grub.d /etc/
 	chmod -x /etc/grub.d/30_uefi-firmware
 	# Secure boot setup
 	$SCRIPT_DIR/machine-owner-key
 	[ -x /usr/bin/sbsign ] && sbsign --key /etc/$DISTRO_ID/MOK.key --cert /etc/$DISTRO_ID/MOK.crt --output /boot/EFI/grub/grubx64.efi /boot/EFI/grub/grubx64.efi
+	#$SCRIPT_DIR/shim-install install
 }
 
 case "$1" in

@@ -1,7 +1,7 @@
 #!/bin/sh
 DISTRO_ID="vapour-os"
-if ([ ! -f /boot/$DISTRO_ID/MOK.cer ] || [ ! -f /etc/$DISTRO_ID/MOK.crt ] || [ ! -f /etc/$DISTRO_ID/MOK.key ]); then
-	mkdir -p /boot/$DISTRO_ID /etc/$DISTRO_ID
+if ([ ! -f /boot/MOK.cer ] || [ ! -f /etc/$DISTRO_ID/MOK.crt ] || [ ! -f /etc/$DISTRO_ID/MOK.key ]); then
+	mkdir -p /etc/$DISTRO_ID
 	openssl req -newkey rsa:2048 -nodes -keyout /etc/$DISTRO_ID/MOK.key -new -x509 -sha256 -days 365000 -subj "/CN=my Machine Owner Key/" -out /etc/$DISTRO_ID/MOK.crt
-	openssl x509 -outform DER -in /etc/$DISTRO_ID/MOK.crt -out /boot/$DISTRO_ID/MOK.cer
+	openssl x509 -outform DER -in /etc/$DISTRO_ID/MOK.crt -out /boot/MOK.cer
 fi

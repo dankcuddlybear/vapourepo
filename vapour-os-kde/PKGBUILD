@@ -6,34 +6,45 @@ pkgdesc='Vapour OS KDE Plasma X11 desktop environment. When prompted, please sel
 arch=(any)
 url='https://github.com/dankcuddlybear/vapourepo'
 install=install.install
-depends=(#'pipewire' 'pipewire-jack' 'pipewire-alsa' 'pipewire-pulse' 'wireplumber'
-	'appmenu-gtk-module' 'ark'
-	'bluedevil' 'breeze-gtk'
-	'dolphin-plugins' 'drkonqi'
-	'ffmpegthumbs' 'filelight'
-	'gwenview'
-	'icoutils'
-	'kamoso' 'kate'
-	'kcalc' 'kcharselect' 'kcolorchooser'
-	'kdegraphics-thumbnailers' 'kdenetwork-filesharing' 'kdepim-addons' 'kdeplasma-addons' 'kde-gtk-config' 'kdialog'
-	'khotkeys'
-	'kfind'
-	'kinfocenter' 'kio-gdrive'
-	'kolourpaint' 'konsole'
-	'krename'
-	'kscreen'
-	'kwallet-pam' 'kwalletmanager'
-	'markdownpart'
-	'noto-fonts' 'noto-fonts-cjk' 'noto-fonts-emoji'
-	'okular'
-	'plasma5-applets-eventcalendar' 'plasma-browser-integration' 'plasma-desktop' 'plasma-nm' 'plasma-pa' 'plasma-thunderbolt' 'powerdevil' 'print-manager'
-	'qt5-virtualkeyboard'
-	'sddm-kcm' 'spectacle' 'svgpart'
-	'vapour-os-desktop-libs'
-	'xdg-desktop-portal-kde'
-	'yakuake'
+depends=(#pipewire pipewire-jack pipewire-alsa pipewire-pulse wireplumber
+	appmenu-gtk-module
+	bluedevil breeze-gtk
+	drkonqi
+	ffmpegthumbs
+	icoutils
+	kdegraphics-thumbnailers kdenetwork-filesharing kdepim-addons kdeplasma-addons kde-gtk-config kdialog
+	kinfocenter
+	khotkeys
+	kfind
+	kio-gdrive
+	kscreen
+	kwallet-pam kwalletmanager
+	markdownpart
+	noto-fonts noto-fonts-cjk noto-fonts-emoji
+	plasma5-applets-eventcalendar plasma-browser-integration plasma-desktop plasma-nm plasma-pa plasma-thunderbolt powerdevil print-manager
+	qt5-virtualkeyboard
+	sddm-kcm svgpart
+	vapour-os-desktop-libs
+	xdg-desktop-portal-kde
 )
-optdepends=('plymouth-git: Breeze boot splash screen')
+optdepends=(
+	'ark: Archiving tool'
+	'dolphin: File manager'
+	'dolphin-plugins: Extra file manager plugins'
+	'filelight: View disk usage information'
+	'gwenview: Picture viewer'
+	'kamoso: Camera'
+	'kate: Text editor'
+	'kcalc: Calculator'
+	'kcharselect: Character Selector'
+	'kcolorchooser: Colour picker'
+	'kinfocenter: System info'
+	'kolourpaint: Paint program'
+	'konsole: Terminal'
+	'krename: Bulk rename files'
+	'okular: PFA and documant viewer'
+	'spectacle: Screenshot utility'
+)
 backup=(etc/sddm.conf.d/kde_settings.conf usr/share/sddm/themes/breeze/theme.conf.user)
 package() {
 	cp -r "$srcdir/../files/etc" "$pkgdir"

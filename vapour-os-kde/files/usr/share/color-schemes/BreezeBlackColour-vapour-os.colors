@@ -133,7 +133,6 @@ ForegroundVisited=155,89,182
 [General]
 ColorScheme=BreezeDark
 Name=Breeze Black Colour
-TintFactor=0.51
 TitlebarIsAccentColored=true
 shadeSortColumn=true
 

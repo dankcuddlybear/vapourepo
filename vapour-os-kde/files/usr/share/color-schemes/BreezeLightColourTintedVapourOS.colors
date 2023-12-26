@@ -131,8 +131,9 @@ ForegroundPositive=39,174,96
 ForegroundVisited=155,89,182
 
 [General]
-ColorScheme=BreezeLight
-Name=Breeze Light Colour
+ColorScheme=BreezeLightColourTintedVapourOS
+Name=Breeze Light Colour Tinted
+TintFactor=1
 TitlebarIsAccentColored=true
 shadeSortColumn=true
 

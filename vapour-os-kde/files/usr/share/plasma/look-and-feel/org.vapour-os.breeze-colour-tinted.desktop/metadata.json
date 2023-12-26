@@ -3,14 +3,14 @@
         "Authors": [
             {
                 "Email": "plasma-devel@kde.org",
-                "Name": "KDE Visual Design Group",
+                "Name": "KDE Visual Design Group"
             }
         ],
         "Category": "",
-        "Description": "Breeze by the KDE VDG",
-        "Id": "org.kde.breeze.desktop",
+        "Description": "Breeze Colour (tinted)",
+        "Id": "org.vapour-os.breeze-colour-tinted.desktop",
         "License": "GPLv2+",
-        "Name": "Breeze",
+        "Name": "Breeze Colour (tinted)",
         "ServiceTypes": [
             "Plasma/LookAndFeel"
         ],

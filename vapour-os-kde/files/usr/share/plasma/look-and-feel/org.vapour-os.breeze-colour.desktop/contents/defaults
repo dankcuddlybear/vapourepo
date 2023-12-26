@@ -2,7 +2,7 @@
 widgetStyle=Breeze
 
 [kdeglobals][General]
-ColorScheme=BreezeLightColour-vapour-os
+ColorScheme=BreezeLightColourVapourOS
 
 [kdeglobals][Icons]
 Theme=breeze
@@ -14,13 +14,7 @@ name=default
 Image=Next
 
 [kcminputrc][Mouse]
-cursorTheme=breeze_cursors
-
-[kwinrc][WindowSwitcher]
-LayoutName=org.kde.breeze.desktop
-
-[kwinrc][DesktopSwitcher]
-LayoutName=org.kde.breeze.desktop
+cursorTheme=Adwaita
 
 [kwinrc][org.kde.kdecoration2]
 library=org.kde.breeze

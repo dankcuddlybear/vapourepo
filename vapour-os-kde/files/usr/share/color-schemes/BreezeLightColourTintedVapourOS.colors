@@ -133,7 +133,7 @@ ForegroundVisited=155,89,182
 [General]
 ColorScheme=BreezeLightColourTintedVapourOS
 Name=Breeze Light Colour Tinted
-TintFactor=1
+TintFactor=0.5
 TitlebarIsAccentColored=true
 shadeSortColumn=true
 

@@ -103,7 +103,7 @@ immutability=1
 plugin=org.kde.plasma.systemtray
 
 [Containments][2][Applets][7][Configuration]
-PreloadWeight=90
+PreloadWeight=100
 SystrayContainmentId=8
 
 [Containments][2][ConfigDialog]
@@ -113,10 +113,10 @@ DialogWidth=1920
 [Containments][2][General]
 AppletOrder=3;4;5;6;7;24;19
 
-[Containments][26]
-ItemGeometries-1920x1080=Applet-27:1824,896,96,112,0;
-ItemGeometriesHorizontal=Applet-27:1824,896,96,112,0;
-activityId=0796275f-e5c5-483f-ab51-c1af24deba1f
+[Containments][28]
+ItemGeometries-1920x1080=
+ItemGeometriesHorizontal=
+activityId=aa15f148-4674-46f2-a13d-b38f8aaf3c9c
 formfactor=0
 immutability=1
 lastScreen=0
@@ -124,21 +124,11 @@ location=0
 plugin=org.kde.plasma.folder
 wallpaperplugin=org.kde.slideshow
 
-[Containments][26][Applets][27]
-immutability=1
-plugin=org.kde.plasma.trash
-
-[Containments][26][ConfigDialog]
+[Containments][28][ConfigDialog]
 DialogHeight=1004
 DialogWidth=1920
 
-[Containments][26][General]
-ToolBoxButtonState=topcenter
-ToolBoxButtonX=559
-positions={"1920x1080":["1"\\,"17"\\,"desktop:/install-vapour-os.desktop"\\,"0"\\,"0"]}
-sortMode=-1
-
-[Containments][26][Wallpaper][org.kde.slideshow][General]
+[Containments][28][Wallpaper][org.kde.slideshow][General]
 Image=file:///usr/share/wallpapers/vapour-os-wallpapers/05-blue-flowers.jpg
 SlideInterval=86400
 SlidePaths=/usr/share/wallpapers/vapour-os-wallpapers/
@@ -164,7 +154,7 @@ immutability=1
 plugin=org.kde.plasma.devicenotifier
 
 [Containments][8][Applets][11][Configuration]
-PreloadWeight=65
+PreloadWeight=75
 
 [Containments][8][Applets][12]
 immutability=1

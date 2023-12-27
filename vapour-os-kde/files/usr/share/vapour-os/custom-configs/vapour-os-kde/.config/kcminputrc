@@ -1,3 +1,6 @@
 [Keyboard]
 RepeatDelay=200
 RepeatRate=30
+
+[Mouse]
+X11LibInputXAccelProfileFlat=true

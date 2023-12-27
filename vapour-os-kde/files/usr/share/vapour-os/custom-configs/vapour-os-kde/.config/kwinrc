@@ -17,6 +17,7 @@ Active=true
 
 [Plugins]
 blurEnabled=false
+contrastEnabled=false
 kwin4_effect_dimscreenEnabled=true
 
 [Tiling]

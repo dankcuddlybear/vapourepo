@@ -23,31 +23,6 @@ remove=true
 [ActionPlugins][1]
 RightButton;NoModifier=org.kde.contextmenu
 
-[Containments][1]
-ItemGeometries-1920x1080=Applet-25:1824,944,96,80,0;
-ItemGeometriesHorizontal=Applet-25:1824,944,96,80,0;
-activityId=c6d18281-231c-42b8-b017-cf243af75cc3
-formfactor=0
-immutability=1
-lastScreen=0
-location=0
-plugin=org.kde.plasma.folder
-wallpaperplugin=org.kde.image
-
-[Containments][1][Applets][25]
-immutability=1
-plugin=org.kde.plasma.trash
-
-[Containments][1][ConfigDialog]
-DialogHeight=540
-DialogWidth=720
-
-[Containments][1][General]
-ToolBoxButtonState=topcenter
-ToolBoxButtonX=444
-arrangement=1
-toolTips=true
-
 [Containments][2]
 activityId=
 formfactor=2
@@ -128,7 +103,7 @@ immutability=1
 plugin=org.kde.plasma.systemtray
 
 [Containments][2][Applets][7][Configuration]
-PreloadWeight=80
+PreloadWeight=90
 SystrayContainmentId=8
 
 [Containments][2][ConfigDialog]
@@ -137,6 +112,37 @@ DialogWidth=1920
 
 [Containments][2][General]
 AppletOrder=3;4;5;6;7;24;19
+
+[Containments][26]
+ItemGeometries-1920x1080=Applet-27:1824,896,96,112,0;
+ItemGeometriesHorizontal=Applet-27:1824,896,96,112,0;
+activityId=0796275f-e5c5-483f-ab51-c1af24deba1f
+formfactor=0
+immutability=1
+lastScreen=0
+location=0
+plugin=org.kde.plasma.folder
+wallpaperplugin=org.kde.slideshow
+
+[Containments][26][Applets][27]
+immutability=1
+plugin=org.kde.plasma.trash
+
+[Containments][26][ConfigDialog]
+DialogHeight=1004
+DialogWidth=1920
+
+[Containments][26][General]
+ToolBoxButtonState=topcenter
+ToolBoxButtonX=559
+positions={"1920x1080":["1"\\,"17"\\,"desktop:/install-vapour-os.desktop"\\,"0"\\,"0"]}
+sortMode=-1
+
+[Containments][26][Wallpaper][org.kde.slideshow][General]
+Image=file:///usr/share/wallpapers/vapour-os-wallpapers/05-blue-flowers.jpg
+SlideInterval=86400
+SlidePaths=/usr/share/wallpapers/vapour-os-wallpapers/
+SlideshowMode=1
 
 [Containments][8]
 activityId=
@@ -158,7 +164,7 @@ immutability=1
 plugin=org.kde.plasma.devicenotifier
 
 [Containments][8][Applets][11][Configuration]
-PreloadWeight=60
+PreloadWeight=65
 
 [Containments][8][Applets][12]
 immutability=1
@@ -226,4 +232,4 @@ shownItems=org.kde.plasma.volume,org.kde.plasma.networkmanagement,org.kde.plasma
 
 [ScreenMapping]
 itemsOnDisabledScreens=
-screenMapping=
+screenMapping=desktop:/install-vapour-os.desktop,0,0796275f-e5c5-483f-ab51-c1af24deba1f

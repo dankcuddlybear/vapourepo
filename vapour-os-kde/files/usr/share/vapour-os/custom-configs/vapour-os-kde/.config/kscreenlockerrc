@@ -4,3 +4,12 @@ update_info=kscreenlocker.upd:0.1-autolock
 [Daemon]
 Autolock=false
 LockGrace=0
+Timeout=1
+
+[Greeter]
+WallpaperPlugin=org.kde.slideshow
+
+[Greeter][Wallpaper][org.kde.slideshow][General]
+SlideInterval=86400
+SlidePaths=/usr/share/wallpapers/vapour-os-wallpapers/
+SlideshowMode=1

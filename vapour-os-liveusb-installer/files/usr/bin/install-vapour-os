@@ -230,6 +230,6 @@ while true; do
 			echo; sleep 2
 			ARCH_VERSION="$ARCH_VERSION" CPU_MODEL="$CPU_MODEL" ADDITIONAL_SOFTWARE="$ADDITIONAL_SOFTWARE" DEBUG="$DEBUG" "/usr/lib/$DISTRO_ID/$DISTRO_ID-liveusb-installer"
 			sync
-			echo; echo "Installation complete! You may reboot your computer."; exit 0;;
+			echo; echo "Installation complete! You may reboot your computer."; echo "Press ENTER to continue"; read; exit 0;;
 	esac
 done

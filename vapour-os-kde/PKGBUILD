@@ -11,19 +11,31 @@ depends=(#pipewire pipewire-jack pipewire-alsa pipewire-pulse wireplumber
 	bluedevil breeze-gtk
 	drkonqi
 	ffmpegthumbs firefox-extension-plasma-integration-bin
-	icoutils
-	kdegraphics-thumbnailers kdenetwork-filesharing kdepim-addons kdeplasma-addons kde-gtk-config kdialog
-	kinfocenter
+	ibus icoutils
+
+	kde-gtk-config kdegraphics-thumbnailers kdenetwork-filesharing kdepim-addons kdeplasma-addons kdialog
+	kinfocenter kio-gdrive
 	khotkeys
 	kfind
-	kio-gdrive
-	kscreen
-	kwallet-pam kwalletmanager
+	kscreen ksshaskpass
+	kwallet-pam kwalletmanager kwrited
+
 	markdownpart
 	noto-fonts noto-fonts-cjk noto-fonts-emoji
-	plasma5-applets-eventcalendar plasma-browser-integration plasma-desktop plasma-nm plasma-pa plasma-thunderbolt powerdevil print-manager
+	packagekit-qt5
+
+	plasma5-applets-eventcalendar
+	plasma-browser-integration
+	plasma-desktop plasma-disks
+	plasma-firewall
+	plasma-nm
+	plasma-pa
+	plasma-thunderbolt
+	plasma-wayland-session
+
+	powerdevil power-profiles-daemon print-manager python-gobject
 	qt5-virtualkeyboard
-	sddm-kcm svgpart
+	scim sddm-kcm svgpart
 	vapour-os-desktop-libs
 	xdg-desktop-portal-kde
 )

@@ -10,7 +10,7 @@ depends=(#pipewire pipewire-jack pipewire-alsa pipewire-pulse wireplumber
 	appmenu-gtk-module
 	bluedevil breeze-gtk
 	drkonqi
-	ffmpegthumbs
+	ffmpegthumbs firefox-extension-plasma-integration-bin
 	icoutils
 	kdegraphics-thumbnailers kdenetwork-filesharing kdepim-addons kdeplasma-addons kde-gtk-config kdialog
 	kinfocenter

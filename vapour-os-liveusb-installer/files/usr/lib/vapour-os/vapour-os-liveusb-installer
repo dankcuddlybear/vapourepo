@@ -124,10 +124,10 @@ esac
 # Kernel(s)
 for KERNEL in $KERNELS; do PACKAGES="$PACKAGES $KERNEL $KERNEL-headers"; done
 # Additional software
-[[ "$ADDITIONAL_SOFTWARE" == *" firefox "* ]] && PACKAGES="$PACKAGES firefox-ublock-origin firefox-dark-reader"
+[[ "$ADDITIONAL_SOFTWARE" == *" firefox "* ]] && PACKAGES="$PACKAGES firefox-dark-reader firefox-decentraleyes firefox-ublock-origin"
 # Version
 if [ "$VERSION_TO_INSTALL" != "vapour-os" ]; then
-	PACKAGES="$PACKAGES lib32-pipewire-jack octopi octopi-notifier-qt5 pipewire-alsa pipewire-jack pipewire-pulse wireplumber"
+	PACKAGES="$PACKAGES lib32-pipewire-jack octopi octopi-notifier-qt5 pipewire-alsa pipewire-jack pipewire-pulse wireplumber vapour-os-wallpapers"
 	case "$VERSION_TO_INSTALL" in
 		vapour-os-gnome)
 			PACKAGES="$PACKAGES eog file-roller gnome-calculator gnome-characters gnome-font-viewer gnome-system-monitor gnome-terminal gnome-usage nautilus nauilus-share xdg-desktop-portal-gnome";;

@@ -7,9 +7,10 @@ arch=(any)
 url='https://github.com/dankcuddlybear/vapourepo'
 install=install.install
 depends=(#pipewire pipewire-jack pipewire-alsa pipewire-pulse wireplumber
-	appmenu-gtk-module
+	appmenu-gtk-module at-spi2-core
 	bluedevil breeze-gtk
 	drkonqi
+	espeak-ng
 	ffmpegthumbs firefox-extension-plasma-integration-bin
 	ibus icoutils
 
@@ -22,6 +23,7 @@ depends=(#pipewire pipewire-jack pipewire-alsa pipewire-pulse wireplumber
 
 	markdownpart
 	noto-fonts noto-fonts-cjk noto-fonts-emoji
+	orca
 	packagekit-qt5
 
 	plasma5-applets-eventcalendar

@@ -9,6 +9,7 @@ replaces=('vapour-os-gui')
 install=install.install
 backup=('etc/X11/xorg.conf.d/30-touchpad.conf')
 depends=( ## General software and services
+	at-spi2-core
 	plymouth vapour-os vapour-os-plymouth-theme # Vapour OS
 	p7zip unrar # Archives
 	bash-completion # Convenience
@@ -19,6 +20,7 @@ depends=( ## General software and services
 	
 	## Graphics and audio drivers. Basic GPU support through open source drivers.
 	## For extra functionality, also install the correct driver for your GPU.
+	libxaw libxfixes libxt libxtst # X11
 	mesa # OpenGL
 	vulkan-icd-loader vulkan-mesa-layers # Vulkan
 	libva-mesa-driver libvdpau-va-gl libva-vdpau-driver mesa-vdpau # Video decoding
@@ -31,6 +33,7 @@ depends=( ## General software and services
 	bluez bluez-plugins bluez-utils-compat # Bluetooth
 	android-udev modemmanager usb_modeswitch # Phones and modems
 	game-devices-udev joystickwake # Game controllers
+	brltty-udev-generic # brltty
 )
 package() {
 	cp -r "$srcdir/../files/usr" "$pkgdir"

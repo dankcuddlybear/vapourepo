@@ -51,8 +51,6 @@ Install() {
 				cp /usr/share/applications/install-vapour-os.desktop /etc/xdg/autostart/install-vapour-os.desktop
 				chmod +x /etc/xdg/autostart/install-vapour-os.desktop;;
 		esac
-
-		fi
 	elif [ $INSTALL_MODE == "system" ]; then ## System install mode
 		# mkinitcpio.conf
 		VAPOUR_OS_NO_OVERWRITE="$(sh -c '. /etc/mkinitcpio.conf && echo $VAPOUR_OS_NO_OVERWRITE')"

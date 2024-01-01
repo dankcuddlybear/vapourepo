@@ -64,4 +64,9 @@ package() {
 	cp -r "$srcdir/../files/etc" "$pkgdir"
 	cp -r "$srcdir/../files/usr" "$pkgdir"
 	"$srcdir/../../set-default-permissions.sh" "$pkgdir"
+	for DIR_TO_EXEC_FILES in $pkgdir/usr/lib/vapour-os/$pkgname; do
+		for FILE_TO_ENABLE_EXEC in $(ls -A $DIR_TO_EXEC_FILES); do
+			chmod +x "$DIR_TO_EXEC_FILES/$FILE_TO_ENABLE_EXEC"
+		done
+	done
 }

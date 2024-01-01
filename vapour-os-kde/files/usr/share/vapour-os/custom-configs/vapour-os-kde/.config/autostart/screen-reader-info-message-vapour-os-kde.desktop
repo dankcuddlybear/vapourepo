@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=Screen reader usage info
+Exec=/usr/lib/vapour-os/vapour-os-kde/screen-reader-info-message.sh
+Terminal=false
+StartupNotify=true

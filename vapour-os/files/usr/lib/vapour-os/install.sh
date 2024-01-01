@@ -16,7 +16,8 @@ SecureBootSetup() {
 	fi
 }
 Upgrade() {
-	true
+	systemctl mask systemd-resolved; systemctl stop systemd-resolved
+	systemctl --now enable ananicy-cpp irqbalance rtirq rtirq-resume rtkit-daemon fstrim.timer systemd-oomd NetworkManager avahi-daemon.socket fwupd vapour-os-hwsetup
 }
 Install() {
 	/usr/share/libalpm/scripts/$DISTRO_ID/mirrors # Update Pacman mirrorlists now
@@ -71,9 +72,7 @@ Install() {
 	pacman-key --populate
 
 	locale-gen
-	systemctl mask systemd-resolved
-	systemctl --now enable ananicy-cpp irqbalance rtirq rtirq-resume rtkit-daemon fstrim.timer systemd-oomd NetworkManager avahi-daemon.socket fwupd vapour-os-hwsetup
-	SecureBootSetup
+	#SecureBootSetup
 	Upgrade # Finish installation
 }
 Uninstall() {

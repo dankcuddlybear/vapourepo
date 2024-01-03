@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # shellcheck disable=SC2034
+###########
 iso_name="vapour-os"
-iso_label="VOS_$(date --date="@${SOURCE_DATE_EPOCH:-$(date +%s)}" +%Y%m)"
+iso_label="VOS_LIVE"
 iso_publisher="Dankcuddlybear <https://github.com/dankcuddlybear/vapourepo>"
 iso_application="Modular Arch based distro"
 iso_version="kde-full-$(date +%Y.%-m.%-d)-$(expr $(date +%-S) + $(expr 60 \* $(date +%-M)) + $(expr 3600 \* $(date +%-H)))"

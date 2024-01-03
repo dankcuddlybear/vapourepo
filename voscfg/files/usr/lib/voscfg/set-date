@@ -8,24 +8,9 @@ BACKTITLE="[$SCRIPT_USER] $DISTRO_NAME settings > Time and date > Set date"
 CONTINUE=0; while [ $CONTINUE == 0 ]; do
 	DATE=$(dialog --stdout --week-start locale --date-format %Y-%m-%d --backtitle "$BACKTITLE" --title "Set date" --calendar "Please select today's date" 0 0)
 	[ -z "$DATE" ] && exit 1
-	YEAR=$(echo "$DATE" | cut -d '-' -f 1)
-	if [ $YEAR -lt 2023 ] && [ $YEAR -ge 1970 ]; then
-		dialog --backtitle "$BACKTITLE" --title "Warning" --yesno "You have set the date to $DATE which is impossible, since this program was written in 2023. Unless you somehow went back in time.\n\nAre you a time traveler?" 0 0 && CONTINUE=1
-	elif [ $YEAR -lt 1970 ] && [ $YEAR -ge 1960 ]; then
-		dialog --backtitle "$BACKTITLE" --title "Groovy news" --yesno "It's the swingin' 60s! Rockstars, hippies, LSD, war in Viet Nam, and the recently invented MOSFET is said to start a new digital revolution.\n\nYou've set the date to $DATE, which is impossible. Also, it is before the Unix epoch (1970-01-01). Things might break.\n\nContinue?" 0 0 && CONTINUE=1
-	elif [ $YEAR -lt 1960 ] && [ $YEAR -ge 1950 ]; then
-		dialog --backtitle "$BACKTITLE" --title "Monochrome news" --yesno "The 50s sure are boring, aren't they? Why does everything have to be in black and white? And World War II just ended, so everyone is left dirt poor and miserable.\n\nYou've set the date to $DATE, which is impossible. Also, it is before the Unix epoch (1970-01-01). Things might break.\n\nContinue?" 0 0 && CONTINUE=1
-	elif [ $YEAR -lt 1950 ] && [ $YEAR -ge 1940 ]; then
-		dialog --backtitle "$BACKTITLE" --title "Blitzing news" --yesno "It's the 1940s. World War II is happening, so you'd better black out those windows! Things are looking more and more hopeless with every passing year. They said it would be over by Christmas! Never trust the government. Apparently, the Americans are working on a bomb powerful enough to blow up entire cities.\n\nYou've set the date to $DATE, which is impossible. Also, it is before the Unix epoch (1970-01-01). Things might break.\n\nContinue?" 0 0 && CONTINUE=1
-	elif [ $YEAR -lt 1940 ] && [ $YEAR -ge 1930 ]; then
-		dialog --backtitle "$BACKTITLE" --title "Depressing news" --yesno "It's the 1930s. We're right in the middle of The Great Depression, one of the biggest financial disasters ever. Stocks have fallen, unemployment is at an all time high, and most countries across the world are plagued by famine, disease and crime.\n\nYou've set the date to $DATE, which is impossible. Also, it is before the Unix epoch (1970-01-01). Things might break.\n\nContinue?" 0 0 && CONTINUE=1
-	elif [ $YEAR -lt 1930 ] && [ $YEAR -ge 1920 ]; then
-		dialog --backtitle "$BACKTITLE" --title "Roaring news" --yesno "It's the roaring 20s, and we're seeing large scale adoption of automobiles, telephones, motion pictures, radios and household electricity.\n\nYou've set the date to $DATE, which is impossible. Also, it is before the Unix epoch (1970-01-01). Things might break.\n\nContinue?" 0 0 && CONTINUE=1
-	elif [ $YEAR -lt 1920 ] && [ $YEAR -ge 1910 ]; then
-		dialog --backtitle "$BACKTITLE" --title "World War news" --yesno "It's the 1910s, and we're in the middle of a huge world war, the likes of which never seen before! Surely this will never happen again... right?\n\nYou've set the date to $DATE, which is impossible. Also, it is before the Unix epoch (1970-01-01). Things might break.\n\nContinue?" 0 0 && CONTINUE=1
-	elif [ $YEAR -lt 1910 ] && [ $YEAR -ge 1902 ]; then
-		dialog --backtitle "$BACKTITLE" --title "Noir news" --yesno "It's the beginning of the 1900s, and we're seeing mass production of motor vehicles, radio broadcasts and women's rights, as well as the discovery of radioactivity by Marie Curie and Pierre Curie.\n\nYou've set the date to $DATE, which is impossible. Also, it is before the Unix epoch (1970-01-01). Things might break.\n\nContinue?" 0 0 && CONTINUE=1
-	elif [ $YEAR -lt 1902 ]; then
-		dialog --backtitle "$BACKTITLE" --title "DANGER - SPACETIME COMPROMISED" --yesno "You've set the date to $DATE, which is over a century behind the correct date! Things will definitely break.\n\nContinue?" 0 0 && CONTINUE=1
-	fi
+	YEAR=$(echo "$DATE" | cut -d '-' -f 1); if [ $YEAR -lt 2024 ]; then
+		dialog --backtitle "$BACKTITLE" --title "Warning" --yesno "You have set the date before 2024. Some programs may become unstable.\n\nReally set the date to $DATE?" 0 0 && CONTINUE=1
+	else CONTINUE=1; fi
 done
+
+timedatectl set-time $DATE $(timedatectl | grep -i "Local time:" | cut -d '-' -f 3 | cut -d ' ' -f 2)

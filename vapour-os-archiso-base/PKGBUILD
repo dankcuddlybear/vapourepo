@@ -13,6 +13,7 @@ depends=(amd-ucode
 	pv
 	squashfs-tools
 	udftools
+	vapour-os
 	vapour-os-liveusb-installer
 )
 package() {

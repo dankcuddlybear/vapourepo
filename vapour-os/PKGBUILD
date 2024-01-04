@@ -44,6 +44,5 @@ package() {
 	"$pkgdir/usr/share/libalpm/scripts/$pkgname"; do
 		cd "$DIR"
 		chmod +x *
-	done
-	cd "$CDIR"
+	done; cd "$CDIR"
 }

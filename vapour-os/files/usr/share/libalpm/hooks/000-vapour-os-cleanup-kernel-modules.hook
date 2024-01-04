@@ -6,6 +6,6 @@ Type = Package
 Target = *
 
 [Action]
-Description = Removing up old Linux kernel modules...
+Description = Removing old Linux kernel modules...
 When = PreTransaction
 Exec = /usr/share/libalpm/scripts/vapour-os/cleanup-kernel-modules

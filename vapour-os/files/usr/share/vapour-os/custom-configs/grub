@@ -1,11 +1,8 @@
-GRUB_CMDLINE_LINUX_DEFAULT=""
-GRUB_CMDLINE_LINUX=""
 GRUB_DEFAULT=saved
 GRUB_SAVEDEFAULT=true
 GRUB_TIMEOUT=5
 GRUB_TIMEOUT_STYLE=menu
 GRUB_TERMINAL_INPUT=console
-#GRUB_TERMINAL_INPUT="usb_keyboard at_keyboard console"
 GRUB_GFXMODE=auto
 GRUB_GFXPAYLOAD_LINUX=keep
 GRUB_DISABLE_LINUX_UUID=false
@@ -13,7 +10,15 @@ GRUB_DISABLE_RECOVERY=true
 GRUB_DISABLE_OS_PROBER=false
 GRUB_DISTRIBUTOR="Vapour OS"
 
-# Uncomment and set to the desired menu colors.  Used by normal and wallpaper
+# Kernel parameters
+# GRUB_CMDLINE_LINUX applies to all boot modes (including recovery)
+# GRUB_CMDLINE_LINUX_DEFAULT applies to non-recovery boot modes only
+# The kernel parameter "reboot=pci" forces a cold reboot and fixes
+# an issue where some systems hang indefinitely instead of rebooting.
+GRUB_CMDLINE_LINUX="reboot=pci"
+GRUB_CMDLINE_LINUX_DEFAULT=""
+
+# Uncomment and set to the desired menu colors. Used by normal and wallpaper
 # modes only.  Entries specified as foreground/background.
 #GRUB_COLOR_NORMAL="light-blue/black"
 #GRUB_COLOR_HIGHLIGHT="light-cyan/blue"

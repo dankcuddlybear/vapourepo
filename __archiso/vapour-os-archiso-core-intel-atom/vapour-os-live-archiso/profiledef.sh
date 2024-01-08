@@ -4,12 +4,12 @@ iso_name="vapour-os"
 iso_label="VOS_LIVE"
 iso_publisher="Dankcuddlybear <https://github.com/dankcuddlybear/vapourepo>"
 iso_application="Modular Arch based distro"
-iso_version="xfce-full-$(date +%Y.%-m.%-d)-$(expr $(date +%-S) + $(expr 60 \* $(date +%-M)) + $(expr 3600 \* $(date +%-H)))"
+iso_version="core-intel-atom-$(date +%Y.%-m.%-d)-$(expr $(date +%-S) + $(expr 60 \* $(date +%-M)) + $(expr 3600 \* $(date +%-H)))"
 install_dir="vapour-os"
 buildmodes=('iso')
 bootmodes=('bios.syslinux.mbr' 'bios.syslinux.eltorito'
 	'uefi-ia32.systemd-boot.esp' 'uefi-ia32.systemd-boot.eltorito'
-	'uefi-x64.grub.esp' 'uefi-x64.grub.eltorito')
+	'uefi-x64.systemd-boot.esp' 'uefi-x64.systemd-boot.eltorito')
 arch="x86_64"
 pacman_conf="pacman.conf"
 airootfs_image_type="squashfs"

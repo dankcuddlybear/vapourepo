@@ -1,3 +1,22 @@
+post_upgrade() {
+	# $1: New package version, $2: Old package version
+	# To check if the old version was a certain version or below, run
+	# vercmp $2 2023-05-15-684302
+	# If old version is earlier than specified version, will return -1
+	# If old version is equal to specified version, will return 0
+	# If old version is greater than specified version, will return 1
+	# If return value less than 1, that means we should run some commands
+	# to perform fixes.
+	#
+	# Fix an issue in 2024.1.4-73109 and below where
+	# some systems will hang indefinitely instead of rebooting.
+	# Solution: set kernel parameter "reboot=pci" to cold reboot
+	# using PCI reset register.
+	if [ $(vercmp $2 2024.1.4-73109) -lt 1 ]; then
+		cp /usr/share/vapour-os/custom-configs/grub /etc/default/grub
+		grub-mkconfig -o /boot/grub/grub.cfg
+	fi
+}
 pre_remove() {
 	/usr/lib/vapour-os/install.sh uninstall
 }

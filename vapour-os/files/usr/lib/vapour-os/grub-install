@@ -85,10 +85,6 @@ Upgrade() {
 	# Configure menu entry scripts
 	cp -r /usr/share/vapour-os/custom-configs/grub.d /etc/
 	chmod -x /etc/grub.d/30_uefi-firmware
-	# Secure boot setup
-	$SCRIPT_DIR/machine-owner-key
-	[ -x /usr/bin/sbsign ] && sbsign --key /etc/$DISTRO_ID/MOK.key --cert /etc/$DISTRO_ID/MOK.crt --output /boot/EFI/grub/grubx64.efi /boot/EFI/grub/grubx64.efi
-	#$SCRIPT_DIR/shim-install install
 }
 
 case "$1" in
@@ -101,8 +97,6 @@ case "$1" in
 		# Disable editor/console
 		grub-editenv - set superusers=""
 		echo "Installed GRUB boot loader successfully."
-		# Install Shim
-		$SCRIPT_DIR/shim-install install
 		;;
 	upgrade)
 		if [ -d /boot/grub ]; then

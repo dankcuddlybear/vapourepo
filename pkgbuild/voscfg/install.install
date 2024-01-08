@@ -1,0 +1,8 @@
+post_upgrade() {
+	systemctl --now enable voscfg-apply-settings
+}
+post_install() {
+	post_upgrade
+}
+
+

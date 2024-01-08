@@ -1,0 +1,13 @@
+[Unit]
+Description=Apply VOScfg settings
+
+[Service]
+Type=oneshot
+Restart=no
+RemainAfterExit=no
+ExecStart=/usr/lib/voscfg/apply-settings
+
+[Install]
+WantedBy=rescue.target
+WantedBy=multi-user.target
+WantedBy=graphical.target

@@ -1,0 +1,3 @@
+## Vapour OS mirrorlist
+Server = https://raw.githubusercontent.com/dankcuddlybear/vapourepo/main/__PKG
+Server = https://raw.githubusercontent.com/dankcuddlybear/vapourepo/main/pkg

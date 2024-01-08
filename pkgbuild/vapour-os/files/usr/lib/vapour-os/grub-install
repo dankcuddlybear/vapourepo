@@ -1,0 +1,110 @@
+#!/bin/bash
+DISTRO_ID=vapour-os
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+Error() {
+	echo $1
+	exit 1
+}
+[ ! -d /usr/lib/grub ] && exit 0
+[ $(whoami) != root ] && Error "You must run this script with root priviliges."
+[ -z "$1" ] && Error "No command (install/upgrade/uninstall)"
+
+# Get boot partition from /etc/fstab
+BOOT=$(cat /etc/fstab | grep -m 1 " /boot \|	/boot \| /boot	\|	/boot	" | cut -d ' ' -f 1 | cut -d '	' -f 1)
+[ -z "$BOOT" ] && Error "No /boot partition specified in /etc/fstab"
+case $(echo $BOOT | cut -d '=' -f 1) in
+	UUID)
+		BOOT_UUID=$(echo $BOOT | cut -d '=' -f 2)
+		[ ! -b /dev/disk/by-uuid/$BOOT_UUID ] && Error "$BOOT does not exist! Please set the correct /boot partition in /etc/fstab."
+		BOOT=$(readlink -f /dev/disk/by-uuid/$BOOT_UUID)
+		;;
+	LABEL)
+		BOOT_LABEL=$(echo $BOOT | cut -d '=' -f 2)
+		[ ! -b "/dev/disk/by-label/$BOOT_LABEL" ] && Error "$BOOT does not exist! Please set the correct /boot partition in /etc/fstab."
+		BOOT=$(readlink -f /dev/disk/by-label/$BOOT_LABEL)
+		;;
+	*)
+		[ ! -b $BOOT ] && Error "$BOOT does not exist! Please set the correct /boot partition in /etc/fstab."
+		BOOT=$(readlink -f $BOOT)
+		;;
+esac
+
+# Find the disk with the boot partition, and get its partition number
+if [ ${BOOT:5:4} == nvme ] || [ ${BOOT:5:6} == mmcblk ]; then
+	BOOT_DISK=$(echo $BOOT | cut -d 'p' -f 1)
+	BOOT_PARTNO=$(echo $BOOT | cut -d 'p' -f 2)
+elif [ ${BOOT:5:2} == hd ] || [ ${BOOT:5:2} == sd ] || [ ${BOOT:5:2} == vd ]; then
+	BOOT_DISK=$(echo $BOOT | sed 's/[0-9]//g')
+	BOOT_PARTNO=$(echo $BOOT | sed 's/[^0-9]*//g')
+else
+	Error "$BOOT is on an unsupported media type! Please set /boot partition in /etc/fstab to a partition on a HDD or flash storage."
+fi
+[ "$BOOT_DISK" == "$BOOT_PARTNO" ] && Error "$BOOT is a disk, not a partition! Please set a /boot partition in /etc/fstab."
+
+Upgrade() {
+	CD_MODULES="all_video
+		boot btrfs
+		cat chain configfile
+		echo efifwsetup efinet ext2
+		fat font
+		gettext gfxmenu gfxterm gfxterm_background gzio
+		halt help hfsplus
+		iso9660
+		jpeg
+		keystatus
+		loadenv loopback linux ls lsefi lsefimmap lsefisystab lssal
+		memdisk minicmd
+		normal ntfs
+		part_apple part_msdos part_gpt password_pbkdf2 png probe
+		reboot regexp
+		search search_fs_uuid search_fs_file search_label sleep smbios squash4
+		test true
+		video
+		xfs
+		zfs zfscrypt zfsinfo
+	"
+	GRUB_MODULES="$CD_MODULES
+		cryptodisk
+		gcry_arcfour
+		gcry_blowfish
+		gcry_camellia gcry_cast5 gcry_crc
+		gcry_des gcry_dsa
+		gcry_idea
+		gcry_md4 gcry_md5
+		gcry_rfc2268 gcry_rijndael gcry_rmd160 gcry_rsa
+		gcry_seed gcry_serpent gcry_sha1 gcry_sha256 gcry_sha512
+		gcry_tiger gcry_twofish
+		gcry_whirlpool
+		luks lvm
+		mdraid09 mdraid1x
+		raid5rec raid6rec
+	"
+	# Install to MBR/ESP
+	grub-install --target=i386-pc $BOOT_DISK
+	grub-install --target=x86_64-efi --efi-directory=/boot --modules="${GRUB_MODULES}" --sbat=/usr/share/grub/sbat.csv --bootloader-id=GRUB
+	# Configure menu entry scripts
+	cp -r /usr/share/vapour-os/custom-configs/grub.d /etc/
+	chmod -x /etc/grub.d/30_uefi-firmware
+}
+
+case "$1" in
+	install)
+		echo "Installing GRUB boot loader..."
+		Upgrade # Install first
+		# Configure GRUB settings
+		cp /usr/share/vapour-os/custom-configs/grub /etc/default/grub
+		grub-mkconfig -o /boot/grub/grub.cfg
+		# Disable editor/console
+		grub-editenv - set superusers=""
+		echo "Installed GRUB boot loader successfully."
+		;;
+	upgrade)
+		if [ -d /boot/grub ]; then
+			echo "Upgrading GRUB boot loader successfully."
+			Upgrade && grub-mkconfig -o /boot/grub/grub.cfg && \
+			echo "Upgraded GRUB boot loader successfully."
+		fi;;
+	uninstall)
+		echo "Not yet implemented";;
+	*) Error "Unrecognised command \"$1\"";;
+esac

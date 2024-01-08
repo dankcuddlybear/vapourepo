@@ -1,0 +1,8 @@
+# Enable runtime power management for PCI devices
+ACTION=="add", SUBSYSTEM=="pci", ATTR{power/control}="auto"
+
+# Enable runtime power management for all block devices except external optical drives
+ACTION=="add|change", SUBSYSTEM=="block", KERNEL!="sr*", ATTR{power/control}="auto"
+ACTION=="add|change", KERNEL=="sr*", ATTRS{removable}=="0", ATTR{power/control}="auto"
+ACTION=="add|change", KERNEL=="sr*", ATTRS{removable}=="1", ATTR{power/control}="on"
+

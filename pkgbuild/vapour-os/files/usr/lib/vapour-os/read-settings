@@ -1,0 +1,13 @@
+DISTRO_ID="vapour-os"
+[ -f /usr/lib/$DISTRO_ID/$DISTRO_ID.conf ] && . /usr/lib/$DISTRO_ID/$DISTRO_ID.conf
+if [ -d /usr/lib/$DISTRO_ID/$DISTRO_ID.conf.d ]; then
+	for FILE in $(ls -A /usr/lib/$DISTRO_ID/$DISTRO_ID.conf.d/*.conf); do
+		. $FILE
+	done
+fi
+[ -z "$WAKEONLAN_ETHERNET" ] && WAKEONLAN_ETHERNET=d
+if [ -z "$WAKEONLAN_WIFI" ]; then
+	WAKEONLAN_WIFI=0
+elif [ "$WAKEONLAN_WIFI" != "0" ] && [ "$WAKEONLAN_WIFI" != "1" ]; then
+	WAKEONLAN_WIFI=0
+fi

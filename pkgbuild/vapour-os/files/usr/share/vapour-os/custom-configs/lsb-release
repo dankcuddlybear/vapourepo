@@ -1,0 +1,3 @@
+DISTRIB_RELEASE="rolling"
+DISTRIB_ID="vapour-os"
+DISTRIB_DESCRIPTION="Vapour OS"

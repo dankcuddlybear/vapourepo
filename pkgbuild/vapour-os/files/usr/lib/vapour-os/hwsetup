@@ -1,0 +1,15 @@
+#!/bin/sh
+CHASSIS="$(dmidecode -s chassis-type)"
+MANUFACTURER="$(dmidecode -s system-manufacturer)"
+case $CHASSIS in
+	"Laptop"|"Notebook"|"Convertible"|"Detachable"|\
+	"Tablet"|"Hand Held"|"Portable") PORTABLE="yes";;
+	*) PORTABLE="no";;
+esac
+
+## OEM-specific fixes
+case "$MANUFACTURER" in
+	"HP")
+		# Fix Wifi shutoff on lid close bug on HP laptops
+		[ "$PORTABLE" == "yes" ] && /usr/bin/setkeycodes e057 240 e058 240;;
+esac

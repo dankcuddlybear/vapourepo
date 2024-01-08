@@ -1,0 +1,13 @@
+#!/bin/sh
+mkdir /etc/voscfg &> /dev/null
+case "$(dmidecode -s chassis-type)" in
+	"Laptop"|"Notebook"|"Convertible"|"Detachable"|\
+	"Tablet"|"Hand Held"|"Portable") PORTABLE="yes";;
+	*) PORTABLE="no";;
+esac
+
+CPU_TURBO_BOOST="$(cat /etc/voscfg/cpu-turbo-enable)"
+if [ -z "$CPU_TURBO_BOOST" ]; then
+	[ $PORTABLE == "yes" ] && CPU_TURBO_BOOST=0 || CPU_TURBO_BOOST=1
+	echo "$CPU_TURBO_BOOST" > /sys/devices/system/cpu/cpufreq/boost
+fi

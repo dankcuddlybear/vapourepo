@@ -26,7 +26,7 @@ while true; do
 		EXTRA_CHOICES="Z Timezone"
 	fi
 
-	CHOICE=$(dialog --stdout --backtitle "$BACKTITLE" --title "Users" --menu "Main menu" 0 0 0 \
+	CHOICE=$(dialog --stdout --backtitle "$BACKTITLE" --title "Time and date" --menu "Configure date, time and timezone" 0 0 0 \
 	"t" "$AUTO_UPDATE_TIMEDATE_TEXT" "z" "$AUTO_UPDATE_TIMEZONE_TEXT" "$EXTRA_CHOICES")
 	if [ -z "$CHOICE" ]; then exit 125; else
 		case $CHOICE in

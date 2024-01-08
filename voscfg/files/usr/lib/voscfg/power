@@ -1,0 +1,44 @@
+#!/bin/sh
+DISTRO_NAME="$(cat /usr/lib/os-release | grep -i "PRETTY_NAME" | cut -d '=' -f 2 | sed 's/"//g')"
+SCRIPT_DIR="$(readlink -f $( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd ))"
+SCRIPT_USER="$(whoami)"
+BACKTITLE="[$SCRIPT_USER] $DISTRO_NAME settings > Power management"
+[ $SCRIPT_USER != "root" ] && echo "[ERROR] You must be root to run this script" && exit 1
+while true; do
+	# Get CPU turbo boost info
+	if [ -f /sys/devices/system/cpu/cpufreq/boost ]; then
+		if [ $(cat /sys/devices/system/cpu/cpufreq/boost) == 1 ]; then
+			CPU_TURBO="1"
+			CPU_TURBO_TEXT="Disable CPU turbo boost"
+		else
+			CPU_TURBO="0"
+			CPU_TURBO_TEXT="Enable CPU turbo boost"
+		fi
+	else
+		CPU_TURBO="-1"
+		CPU_TURBO_TEXT="CPU turbo boost is not supported"
+	fi
+	CHOICE=$(dialog --stdout --backtitle "$BACKTITLE" --title "Power management" --menu "Configure hardware power management" 0 0 0 \
+	"T" "$CPU_TURBO_TEXT")
+	if [ -z "$CHOICE" ]; then exit; else
+		case $CHOICE in
+			T)
+				if [ $CPU_TURBO == 0 ]; then
+					dialog --title "Enable CPU turbo boost" --yesno "CPU turbo boost makes the CPU run faster when under its thermal or power limit. This will significantly increase performance but also significantly increase power consumption and heat.
+					This feature is recommended for desktops and stationary devices with good cooling. It is not recommended for laptops and portable devices as they can get hot and battery life will be reduced.
+
+					Enable CPU turbo boost?" 0 0 && CPU_TURBO_ENABLE=1
+					if [ $CPU_TURBO_ENABLE == 1 ]; then
+						mkdir /etc/voscfg &> /dev/null
+						echo 1 > /etc/voscfg/cpu-turbo-enable
+						echo 1 > /sys/devices/system/cpu/cpufreq/boost
+					fi
+				elif [ $CPU_TURBO == 1 ]; then
+					mkdir /etc/voscfg &> /dev/null
+					echo 0 > /etc/voscfg/cpu-turbo-enable
+					echo 0 > /sys/devices/system/cpu/cpufreq/boost
+				fi;;
+			*) dialog --backtitle "$BACKTITLE" --title "Error" --msgbox "Not yet implemented" 0 0;;
+		esac
+	fi
+done

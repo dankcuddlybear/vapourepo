@@ -5,7 +5,7 @@ pkgrel=$(expr $(date +%-S) + $(expr 60 \* $(date +%-M)) + $(expr 3600 \* $(date 
 pkgdesc='Curses based application for system/user management and configuration'
 arch=(any)
 url='https://github.com/dankcuddlybear/vapourepo'
-depends=('dialog'
+depends=('dialog' 'dmidecode'
 	'ethtool'
 	'fscrypt'
 	'hdparm'
@@ -13,8 +13,6 @@ depends=('dialog'
 	'networkmanager'
 	'terminus-font'
 	'wireless-regdb'
-)
-backup=('etc/voscfg/auto-update-timezone'
 )
 package() {
 	cp -r "$srcdir/../files/etc" "$pkgdir"

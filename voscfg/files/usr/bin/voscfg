@@ -17,9 +17,13 @@ while true; do
 	)
 	if [ -z "$CHOICE" ]; then exit 125; else
 		case $CHOICE in
-			t) [ $IS_ADMIN == 1 ] && sudo "$SCRIPT_DIR/../lib/voscfg/timedate" || \
-				dialog --backtitle "$BACKTITLE" --title "Error" --msgbox "You are not allowed to change system time settings." 0 0;;
+			t) if [ $IS_ADMIN == 1 ]; then sudo "$SCRIPT_DIR/../lib/voscfg/timedate"; else
+				dialog --backtitle "$BACKTITLE" --title "Error" --msgbox "You are not allowed to change system time settings." 0 0
+				fi;;
 			u) "$SCRIPT_DIR/../lib/voscfg/users";;
+			p) if [ $IS_ADMIN == 1 ]; then sudo "$SCRIPT_DIR/../lib/voscfg/power"; else
+				dialog --backtitle "$BACKTITLE" --title "Error" --msgbox "You are not allowed to change power management settings." 0 0
+				fi;;
 			*)
 				dialog --backtitle "$BACKTITLE" --title "Error" --msgbox "Not yet implemented" 0 0;;
 		esac

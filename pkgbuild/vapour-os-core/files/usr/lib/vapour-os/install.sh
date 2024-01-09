@@ -11,7 +11,7 @@ Upgrade() {
 	pacman-key --populate
 	locale-gen
 	systemctl mask systemd-resolved; systemctl stop systemd-resolved
-	systemctl --now enable irqbalance rtirq rtirq-resume rtkit-daemon fstrim.timer systemd-oomd NetworkManager avahi-daemon.socket fwupd vapour-os-hwsetup
+	systemctl --now enable irqbalance rtirq rtirq-resume rtkit-daemon fstrim.timer systemd-oomd NetworkManager avahi-daemon.socket fwupd
 }
 Install() {
 	/usr/share/libalpm/scripts/$DISTRO_ID/mirrors # Update Pacman mirrorlists now

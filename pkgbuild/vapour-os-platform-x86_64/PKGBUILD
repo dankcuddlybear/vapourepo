@@ -18,3 +18,13 @@ depends=(
 	chaotic-mirrorlist
 	vapour-os-core
 )
+package() {
+	cp -r "$srcdir/../files/usr" "$pkgdir"
+	"$srcdir/../../set-default-permissions.sh" "$pkgdir"
+
+	CDIR="$(pwd)"
+	for DIR in "$pkgdir/usr/share/libalpm/scripts/vapour-os"; do
+		cd "$DIR"
+		chmod +x *
+	done; cd "$CDIR"
+}

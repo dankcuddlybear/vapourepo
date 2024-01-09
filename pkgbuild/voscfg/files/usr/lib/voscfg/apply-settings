@@ -11,3 +11,5 @@ if [ -z "$CPU_TURBO_BOOST" ]; then
 	[ $PORTABLE == "yes" ] && CPU_TURBO_BOOST=0 || CPU_TURBO_BOOST=1
 	echo "$CPU_TURBO_BOOST" > /sys/devices/system/cpu/cpufreq/boost
 fi
+
+exit 0

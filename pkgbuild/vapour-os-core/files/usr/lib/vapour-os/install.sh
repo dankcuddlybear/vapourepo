@@ -9,8 +9,8 @@ if [ -f "/$DISTRO_ID-live" ]; then INSTALL_MODE="iso"; else INSTALL_MODE="system
 Upgrade() {
 	pacman-key --populate
 	locale-gen
-	systemctl mask systemd-resolved; systemctl stop systemd-resolved
-	systemctl --now enable irqbalance rtirq rtirq-resume rtkit-daemon fstrim.timer systemd-oomd NetworkManager avahi-daemon.socket fwupd
+	systemctl mask systemd-resolved; systemctl stop systemd-resolved &> /dev/null
+	systemctl --now enable irqbalance rtirq rtirq-resume rtkit-daemon fstrim.timer systemd-oomd NetworkManager avahi-daemon.socket fwupd &> /dev/null
 }
 Install() {
 	/usr/share/libalpm/scripts/$DISTRO_ID/mirrors # Update Pacman mirrorlists now
@@ -33,7 +33,7 @@ Install() {
 		groupadd -r autologin # Create autologin group for LightDM
 		gpasswd -a live wheel 1> /dev/null; gpasswd -a live autologin 1> /dev/null # Add to groups
 		rm -rf /etc/*.pacnew # We don't need these files
-		rm /usr/local/sbin/cat /usr/local/sbin/vercmp # Remove binaries needed by GRUB install script
+		rm /usr/local/bin/* # Remove binaries needed by install scripts
 		# Add installer shortcut
 		case "$(cat /$DISTRO_ID-live)" in
 			kde)
@@ -42,6 +42,7 @@ Install() {
 				chmod 755 /home/live/Desktop/install-vapour-os.desktop
 				chown live:live /home/live/Desktop/install-vapour-os.desktop;;
 			*)
+				mkdir -p /etc/xdg/autostart
 				cp /usr/share/applications/install-vapour-os.desktop /etc/xdg/autostart/install-vapour-os.desktop
 				chmod +x /etc/xdg/autostart/install-vapour-os.desktop;;
 		esac
@@ -60,27 +61,11 @@ Install() {
 	pacman-key --init # Pacman keys
 	Upgrade # Finish installation
 }
-Uninstall() {
-	# Restore default configs
-	cp /usr/share/factory/etc/issue /etc/issue
-	cp -r /usr/share/$DISTRO_ID/arch-configs/usr/* /usr
-	[ -f /etc/lsb-release ] && cp usr/share/$DISTRO_ID/arch-configs/lsb-release /etc/lsb-release
-	passwd -u root; passwd -d root # Unlock root account
-	
-	echo "$DISTRO_NAME has now been uninstalled. Please read the following info:"
-	echo "[INFO] The following units may be still enabled: avahi-daemon.socket fstrim.timer NetworkManager systemd-oomd"
-	echo "    To disable, run \"sudo systemctl disable <units>\""
-	echo "[WARNING] The root account has now been unlocked. This is a huge security risk,"
-	echo "    and was done only to prevent administrators from getting locked out."
-	echo "    When you are sure everything works properly, re-lock root with \"sudo passwd -l root\""
-	echo "    or set a password with \"sudo passwd root\"."
-}
 
 case $1 in
 	install) Install;;
 	upgrade) Upgrade;;
-	help|-h|--help) echo "Usage: $(basename $0) <command> (install/upgrade/uninstall)"; exit;;
-	uninstall) Uninstall;;
-	*) Error "Unrecognised command \"$1\" - valid commands are install, upgrade or uninstall";;
+	help|-h|--help) echo "Usage: $(basename $0) <command> (install/upgrade)"; exit;;
+	*) Error "Unrecognised command \"$1\" - valid commands are install or upgrade";;
 esac
 

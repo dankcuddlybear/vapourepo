@@ -15,5 +15,7 @@ pacman_conf="pacman.conf"
 airootfs_image_type="squashfs"
 airootfs_image_tool_options=('-comp' 'xz' '-Xbcj' 'x86' '-b' '1M' '-Xdict-size' '1M')
 file_permissions=(
-	["/usr/local/sbin/cat"]="0:0:755"
+	["/usr/local/bin/cat"]="0:0:755"
+	["/usr/local/bin/pacman-key"]="0:0:755"
+	["/usr/local/bin/vercmp"]="0:0:755"
 )

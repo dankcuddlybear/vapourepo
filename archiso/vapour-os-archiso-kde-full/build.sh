@@ -9,15 +9,16 @@ Error() {
 	echo "[ERROR] $1" && exit 1
 }
 [ "$SCRIPT_USER" == "root" ] && Error "Do not run this script as root."
-rm -rf "$ARCHISO_PROFILE/airootfs/usr/local/sbin"
-mkdir -p "$ARCHISO_PROFILE/airootfs/usr/local/sbin"
+rm -rf "$ARCHISO_PROFILE/airootfs/usr/local/bin"
+mkdir -p "$ARCHISO_PROFILE/airootfs/usr/local/bin"
 for BIN in cat pacman-key vercmp; do
-	cp /usr/bin/$BIN "$ARCHISO_PROFILE/airootfs/usr/local/sbin/"
+	cp /usr/bin/$BIN "$ARCHISO_PROFILE/airootfs/usr/local/bin/"
+	chmod +x "$ARCHISO_PROFILE/airootfs/usr/local/bin/"
 done
 sudo rm -rf "$TEMP_DIR" "$OUT_DIR" &> /dev/null; sudo mkdir "$TEMP_DIR" "$OUT_DIR"
 #sudo pacman-key --refresh-keys
 sudo mkarchiso -v -w "$TEMP_DIR" "$ARCHISO_PROFILE" -o "$OUT_DIR"
-rm -rf "$ARCHISO_PROFILE/airootfs/usr/local/sbin"
+rm -rf "$ARCHISO_PROFILE/airootfs/usr/local/bin"
 sudo chown -R $SCRIPT_USER:$SCRIPT_USER "$OUT_DIR"
 cd "$OUT_DIR"; for FILE in $(ls *.iso); do
 	mv "$FILE" ../../../../vapour-os-iso/

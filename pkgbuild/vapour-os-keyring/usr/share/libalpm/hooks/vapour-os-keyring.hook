@@ -1,0 +1,10 @@
+[Trigger]
+Type = Package
+Operation = Install
+Operation = Upgrade
+Target = vapour-os-keyring
+
+[Action]
+Description = Add Vapour OS keyring
+When = PostTransaction
+Exec = /usr/share/libalpm/scripts/vapour-os/vapour-os-keyring

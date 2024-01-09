@@ -41,7 +41,6 @@ package() {
 	"$pkgdir/usr/lib/systemd/system-sleep" \
 	"$pkgdir/usr/share/vapour-os/custom-configs/grub.d" \
 	"$pkgdir/usr/share/libalpm/scripts/vapour-os"; do
-		cd "$DIR"
-		chmod +x *
+		cd "$DIR"; chmod +x *
 	done; cd "$CDIR"
 }

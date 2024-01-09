@@ -7,7 +7,6 @@ Error() {
 [ -z "$1" ] && Error "No command (install/upgrade/uninstall)"
 if [ -f "/$DISTRO_ID-live" ]; then INSTALL_MODE="iso"; else INSTALL_MODE="system"; fi
 Upgrade() {
-	pacman-key --add /usr/share/pacman/keyrings/vapourepo.gpg
 	pacman-key --populate
 	locale-gen
 	systemctl mask systemd-resolved; systemctl stop systemd-resolved

@@ -5,8 +5,11 @@ pkgrel=$(expr $(date +%-S) + $(expr 60 \* $(date +%-M)) + $(expr 3600 \* $(date 
 pkgdesc='Vapourepo keyring'
 arch=(any)
 url='https://github.com/dankcuddlybear/vapourepo'
-install=$pkgname.install
 package() {
 	cp -r "$srcdir/../usr" "$pkgdir"
 	"$srcdir/../../set-default-permissions.sh" "$pkgdir"
+	CDIR="$(pwd)"
+	for DIR in "$pkgdir/usr/share/libalpm/scripts/vapour-os"; do
+		cd "$DIR"; chmod +x *
+	done; cd "$CDIR"
 }

@@ -4,7 +4,7 @@ Operation = Install
 Operation = Upgrade
 Target = filesystem
 Target = lsb-release
-Target = vapour-os
+Target = vapour-os-core
 
 [Action]
 Description = Update release info

@@ -2,7 +2,7 @@
 Type = Package
 Operation = Install
 Target = nano
-Target = vapour-os
+Target = vapour-os-core
 
 [Action]
 Description = Configure Nano editor

@@ -9,7 +9,7 @@ replaces=('vapour-os-gui')
 install=install.install
 backup=('etc/X11/xorg.conf.d/30-touchpad.conf')
 depends=( ## General software and services
-	plymouth vapour-os vapour-os-plymouth-theme # Vapour OS
+	plymouth vapour-os-core vapour-os-plymouth-theme # Vapour OS
 	p7zip unrar # Archives
 	bash-completion # Convenience
 	gnome-keyring libgnome-keyring libsecret # Credential storage

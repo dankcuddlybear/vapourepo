@@ -5,6 +5,7 @@ pkgrel=$(expr $(date +%-S) + $(expr 60 \* $(date +%-M)) + $(expr 3600 \* $(date 
 pkgdesc='Platform independent core for Vapour OS'
 arch=(any)
 url='https://github.com/dankcuddlybear/vapourepo'
+replaces=(vapour-os)
 backup=('etc/skel/.config/yay/config.json'
 	'etc/vapour-os/vapour-os.conf'
 	'etc/X11/xorg.conf.d/30-touchpad-vapour-os'
@@ -26,8 +27,7 @@ depends=(#ananicy-cpp
 	sudo
 	terminus-font texinfo
 	usbutils
-	vapour-os-keyring vapour-os-plymouth-theme voscfg
-	#vapour-os-mirrorlist
+	vapour-os-keyring vapour-os-mirrorlist vapour-os-platform vapour-os-plymouth-theme voscfg
 	wireless-regdb
 )
 package() {
@@ -37,10 +37,10 @@ package() {
 	chmod 750 "$pkgdir/etc/sudoers.d"
 
 	CDIR="$(pwd)"
-	for DIR in "$pkgdir/usr/lib/$pkgname" \
+	for DIR in "$pkgdir/usr/lib/vapour-os" \
 	"$pkgdir/usr/lib/systemd/system-sleep" \
-	"$pkgdir/usr/share/$pkgname/custom-configs/grub.d" \
-	"$pkgdir/usr/share/libalpm/scripts/$pkgname"; do
+	"$pkgdir/usr/share/vapour-os/custom-configs/grub.d" \
+	"$pkgdir/usr/share/libalpm/scripts/vapour-os"; do
 		cd "$DIR"
 		chmod +x *
 	done; cd "$CDIR"

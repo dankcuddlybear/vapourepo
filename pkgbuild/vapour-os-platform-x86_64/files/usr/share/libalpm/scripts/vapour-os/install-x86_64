@@ -1,0 +1,21 @@
+#!/bin/sh
+DISTRO_ID="vapour-os"; DISTRO_NAME="Vapour OS"
+Error() {
+	echo "[ERROR] $1"
+	exit 1
+}
+[ -z "$1" ] && Error "No command (install/upgrade/uninstall)"
+Upgrade() {
+	pacman-key --add /usr/share/pacman/keyrings/cachyos.gpg
+	pacman-key --populate
+	systemctl --now enable ananicy-cpp
+}
+Install() {
+	Upgrade
+}
+case $1 in
+	install) Install;;
+	upgrade) Upgrade;;
+	help|-h|--help) echo "Usage: $(basename $0) <command> (install/upgrade)"; exit;;
+	*) Error "Unrecognised command \"$1\" - valid commands are install or upgrade";;
+esac

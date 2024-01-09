@@ -1,13 +1,14 @@
 #!/bin/bash
-DISTRO_ID="vapour-os"
-DISTRO_NAME="Vapour OS"
-ARCH="$(uname -m)"
-ARCH_VERSION="$(/lib/ld-linux-x86-64.so.2 --help | grep -m 1 "supported, searched" | cut -d '(' -f 1 | xargs)"
-CPU_MODEL="$(lscpu | grep -m 1 -i "Vendor ID:" | cut -d ':' -f 2 | xargs)"
-
 [ "$(whoami)" != "root" ] && echo "[ERROR] You must run this installer as root" && exit 1
 ([ -z "$DEBUG" ] && [ "$DEBUG" != 1 ]) && DEBUG=0 || echo "Debug mode enabled"
+DISTRO_ID="vapour-os"
+DISTRO_NAME="Vapour OS"
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+ARCH="$(uname -m)"
+case $ARCH in
+	x86_64) ARCH_VERSION="$(/lib/ld-linux-x86-64.so.2 --help | grep -m 1 "supported, searched" | cut -d '(' -f 1 | xargs)";;
+esac
+CPU_MODEL="$(lscpu | grep -m 1 -i "Vendor ID:" | cut -d ':' -f 2 | xargs)"
 PAGE=0 # 0: Main menu, 1: Select preset, 2: Select root partition, 3: Select boot partition
 
 GetDisks() {
@@ -130,13 +131,13 @@ SelectVersion() {
 			"vapour-os-xfce" "XFCE (best for older devices)" \
 			"vapour-os-kde" "KDE Plasma (best features and support)" \
 			"vapour-os-desktop-libs" "Command line only (PCs/laptops)" \
-			"vapour-os" "Core system only (servers and embedded devices)");;
+			"vapour-os-core" "Core system only (servers and embedded devices)");;
 		*)
 			export VERSION_TO_INSTALL=$(dialog --stdout --cancel-label "Back" --title "Version selection" --menu "Please select a version to install:" 0 0 0 \
 			"vapour-os-kde" "KDE Plasma (best features and support)" \
 			"vapour-os-xfce" "XFCE (best for older devices)" \
 			"vapour-os-desktop-libs" "Command line only (PCs/laptops)" \
-			"vapour-os" "Core system only (servers and embedded devices)");;
+			"vapour-os-core" "Core system only (servers and embedded devices)");;
 	esac
 	[ -z "$VERSION_TO_INSTALL" ] && ((PAGE--)) || ((PAGE++))
 }

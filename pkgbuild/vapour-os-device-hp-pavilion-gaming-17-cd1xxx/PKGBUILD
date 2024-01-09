@@ -8,7 +8,7 @@ url='https://github.com/dankcuddlybear/vapourepo'
 install=install.install
 depends=('hdapsd'
 	'intel-ucode'
-	'vapour-os'
+	'vapour-os-core'
 	'vapour-os-desktop-libs'
 	'vapour-os-gaming'
 	'vapour-os-i915'

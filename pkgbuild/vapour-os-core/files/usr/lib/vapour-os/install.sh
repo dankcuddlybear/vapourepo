@@ -6,18 +6,12 @@ Error() {
 }
 [ -z "$1" ] && Error "No command (install/upgrade/uninstall)"
 if [ -f "/$DISTRO_ID-live" ]; then INSTALL_MODE="iso"; else INSTALL_MODE="system"; fi
-SecureBootSetup() {
-	if ([ -d /sys/firmware/efi ] && [ ! -z "$(bash -c 'cd /sys/firmware/efi/efivars; shopt -s nocaseglob; ls *secureboot*')" ]) || [ $INSTALL_MODE == "iso" ]; then
-		sbctl create-keys
-		sbctl sign-all -g
-		if [ $INSTALL_MODE == "system" ]; then
-			sbctl enroll-keys -m && echo "Secure boot support is now enabled." || echo "[WARNING] Failed to enroll secure boot keys"
-		fi
-	fi
-}
 Upgrade() {
+	pacman-key --add /usr/share/pacman/keyrings/vapourepo.gpg
+	pacman-key --populate
+	locale-gen
 	systemctl mask systemd-resolved; systemctl stop systemd-resolved
-	systemctl --now enable ananicy-cpp irqbalance rtirq rtirq-resume rtkit-daemon fstrim.timer systemd-oomd NetworkManager avahi-daemon.socket fwupd vapour-os-hwsetup
+	systemctl --now enable irqbalance rtirq rtirq-resume rtkit-daemon fstrim.timer systemd-oomd NetworkManager avahi-daemon.socket fwupd vapour-os-hwsetup
 }
 Install() {
 	/usr/share/libalpm/scripts/$DISTRO_ID/mirrors # Update Pacman mirrorlists now
@@ -64,15 +58,7 @@ Install() {
 		passwd -l root # Lock root account (su/sudo still usable)
 		cp /usr/share/$DISTRO_ID/custom-configs/locale.gen /etc/locale.gen
 	fi
-
-	## Pacman keys
-	pacman-key --init
-	pacman-key --add /usr/share/pacman/keyrings/vapourepo.gpg
-	pacman-key --add /usr/share/pacman/keyrings/cachyos.gpg
-	pacman-key --populate
-
-	locale-gen
-	#SecureBootSetup
+	pacman-key --init # Pacman keys
 	Upgrade # Finish installation
 }
 Uninstall() {
@@ -96,6 +82,6 @@ case $1 in
 	upgrade) Upgrade;;
 	help|-h|--help) echo "Usage: $(basename $0) <command> (install/upgrade/uninstall)"; exit;;
 	uninstall) Uninstall;;
-	*) Error "Unrecognised command \"$1\" - valid commands are install, upgrade, uninstall)";;
+	*) Error "Unrecognised command \"$1\" - valid commands are install, upgrade or uninstall";;
 esac
 

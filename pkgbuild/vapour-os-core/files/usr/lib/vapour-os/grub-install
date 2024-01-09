@@ -8,6 +8,7 @@ Error() {
 [ ! -d /usr/lib/grub ] && exit 0
 [ $(whoami) != root ] && Error "You must run this script with root priviliges."
 [ -z "$1" ] && Error "No command (install/upgrade/uninstall)"
+ARCH="$(uname -m)"
 
 # Get boot partition from /etc/fstab
 BOOT=$(cat /etc/fstab | grep -m 1 " /boot \|	/boot \| /boot	\|	/boot	" | cut -d ' ' -f 1 | cut -d '	' -f 1)
@@ -80,8 +81,16 @@ Upgrade() {
 		raid5rec raid6rec
 	"
 	# Install to MBR/ESP
-	grub-install --target=i386-pc $BOOT_DISK
-	grub-install --target=x86_64-efi --efi-directory=/boot --modules="${GRUB_MODULES}" --sbat=/usr/share/grub/sbat.csv --bootloader-id=GRUB
+	case $ARCH in
+		x86_64)
+			grub-install --target=i386-pc $BOOT_DISK
+			grub-install --target=x86_64-efi --efi-directory=/boot --modules="${GRUB_MODULES}" --sbat=/usr/share/grub/sbat.csv --bootloader-id=GRUB
+			;;
+		x86)
+			grub-install --target=i386-pc $BOOT_DISK
+			grub-install --target=i386-efi --efi-directory=/boot --modules="${GRUB_MODULES}" --sbat=/usr/share/grub/sbat.csv --bootloader-id=GRUB
+			;;
+	esac
 	# Configure menu entry scripts
 	cp -r /usr/share/vapour-os/custom-configs/grub.d /etc/
 	chmod -x /etc/grub.d/30_uefi-firmware

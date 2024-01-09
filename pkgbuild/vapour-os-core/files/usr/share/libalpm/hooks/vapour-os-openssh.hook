@@ -8,7 +8,7 @@ Target = openssh-hpn-git
 Target = openssh-hpn-shim
 Target = openssh-selinux
 Target = openssh-xdg-git
-Target = vapour-os
+Target = vapour-os-core
 
 [Action]
 Description = Configure OpenSSH

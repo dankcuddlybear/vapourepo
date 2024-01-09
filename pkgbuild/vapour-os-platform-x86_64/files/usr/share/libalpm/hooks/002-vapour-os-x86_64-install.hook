@@ -1,0 +1,9 @@
+[Trigger]
+Type = Package
+Operation = Install
+Target = vapour-os-platform-x86_64
+
+[Action]
+Description = Install Vapour OS (x86_64)
+When = PostTransaction
+Exec = /usr/share/libalpm/scripts/vapour-os/install-x86_64 install

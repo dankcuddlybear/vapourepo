@@ -1,7 +1,7 @@
 [Trigger]
 Type = Package
 Operation = Upgrade
-Target = vapour-os
+Target = vapour-os-core
 
 [Action]
 Description = Upgrade Vapour OS

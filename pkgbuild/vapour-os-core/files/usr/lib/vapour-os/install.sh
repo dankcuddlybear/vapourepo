@@ -58,6 +58,7 @@ Install() {
 		passwd -l root # Lock root account (su/sudo still usable)
 		cp /usr/share/$DISTRO_ID/custom-configs/locale.gen /etc/locale.gen
 	fi
+	plymouth-set-default-theme vapour-os # Set boot splash
 	pacman-key --init # Pacman keys
 	Upgrade # Finish installation
 }

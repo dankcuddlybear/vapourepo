@@ -1,8 +1,6 @@
 post_upgrade() {
-	systemctl --now enable bluetooth ModemManager
-	systemctl enable speech-dispatcherd
+	systemctl --now enable bluetooth ModemManager speech-dispatcherd &> /dev/null
 }
 post_install() {
-	plymouth-set-default-theme vapour-os
 	post_upgrade
 }

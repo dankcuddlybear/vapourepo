@@ -32,7 +32,7 @@ depends=( ## General software and services
 	bluez bluez-plugins bluez-utils # Bluetooth
 	# bluez-utils-compat
 	android-udev modemmanager usb_modeswitch # Phones and modems
-	#game-devices-udev joystickwake # Game controllers
+	game-devices-udev joystickwake # Game controllers
 	brltty-udev-generic # Braille display
 )
 package() {

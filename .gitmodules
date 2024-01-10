@@ -1,3 +1,9 @@
 [submodule "hackbgrt-bin"]
 	path = hackbgrt-bin
 	url = ssh://aur@aur.archlinux.org/hackbgrt-bin.git
+[submodule "pkgbuild/game-devices-udev"]
+	path = pkgbuild/game-devices-udev
+	url = https://aur.archlinux.org/game-devices-udev.git
+[submodule "pkgbuild/joystickwake"]
+	path = pkgbuild/joystickwake
+	url = https://aur.archlinux.org/joystickwake.git

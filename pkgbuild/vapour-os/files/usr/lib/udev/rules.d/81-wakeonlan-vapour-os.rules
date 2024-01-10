@@ -1,2 +1,0 @@
-ACTION=="add", SUBSYSTEM=="net", KERNEL=="eno*" RUN+="/usr/lib/vapour-os/wakeonlan-ethernet %k"
-ACTION=="add", SUBSYSTEM=="net", KERNEL=="wlo*", RUN+="/usr/lib/vapour-os/wakeonlan-wifi %k"

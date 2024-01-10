@@ -101,8 +101,10 @@ sync
 ## 2) Auto-detect required packages
 PACKAGES="$VERSION_TO_INSTALL $KERNELS $ADDITIONAL_SOFTWARE grub"
 case $ARCH in
-	x86_64) PACKAGES="$DISTRO_ID-platform-x86_64 $PACKAGES";;
+	armv7h) PACKAGES="$DISTRO_ID-platform-armv7h $PACKAGES";;
+	armv7h) PACKAGES="$DISTRO_ID-platform-armv7h $PACKAGES";;
 	x86) PACKAGES="$DISTRO_ID-platform-x86 $PACKAGES";;
+	x86_64) PACKAGES="$DISTRO_ID-platform-x86_64 $PACKAGES";;
 esac
 MANUFACTURER="$(dmidecode -s system-manufacturer)"
 MODEL="$(dmidecode -s system-product-name)"
@@ -130,12 +132,9 @@ for KERNEL in $KERNELS; do PACKAGES="$PACKAGES $KERNEL $KERNEL-headers"; done
 # Additional software
 [[ "$ADDITIONAL_SOFTWARE" == *" firefox "* ]] && PACKAGES="$PACKAGES firefox-dark-reader firefox-decentraleyes firefox-ublock-origin"
 # Version
-
-
-
-
 if [ "$VERSION_TO_INSTALL" != "$DISTRO_ID-core" ]; then
-	PACKAGES="$PACKAGES lib32-pipewire-jack octopi octopi-notifier-qt5 pipewire-alsa pipewire-jack pipewire-pulse wireplumber $DISTRO_ID-wallpapers"
+	PACKAGES="$PACKAGES octopi octopi-notifier-qt5 pipewire-alsa pipewire-jack pipewire-pulse wireplumber $DISTRO_ID-wallpapers"
+	[ $ARCH == "x86_64" ] && PACKAGES="$PACKAGES lib32-pipewire-jack"
 	# Detect GPUs
 	lspci | grep -i "VGA" | grep -i "AMD" &> /dev/null && PACKAGES="$PACKAGES $DISTRO_ID-amdgpu"
 	lspci | grep -i "VGA" | grep -i "Intel" &> /dev/null && PACKAGES="$PACKAGES $DISTRO_ID-i915"
@@ -170,32 +169,23 @@ pacman-key --refresh-keys
 
 ## 3) Install system
 [ "$DEBUG" == 1 ] && echo echo "Press enter to start installing packages" && read
-cp "/usr/share/$DISTRO_ID/custom-configs/pacman.conf" /tmp/pacman-pacstrap.conf
-if [ $ARCH == "x86_64" ]; then
-	case $ARCH_VERSION in
-		x86-64-v4)
-			sed -i '/Architecture = auto &| x86_64_v3 &| x86_64_v4/s/^#//g' /tmp/pacman-pacstrap.conf
-			sed -i '/[cachyos-v4]/s/^#//g' /tmp/pacman-pacstrap.conf
-			sed -i '/Include = /etc/pacman.d/cachyos-v4-mirrorlist/s/^#//g' /tmp/pacman-pacstrap.conf
-			sed -i '/[cachyos-v3]/s/^#//g' /tmp/pacman-pacstrap.conf
-			sed -i '/[cachyos-core-v3]/s/^#//g' /tmp/pacman-pacstrap.conf
-			sed -i '/[cachyos-extra-v3]/s/^#//g' /tmp/pacman-pacstrap.conf
-			sed -i '/Include = /etc/pacman.d/cachyos-v3-mirrorlist/s/^#//g' /tmp/pacman-pacstrap.conf
-			;;
-		x86-64-v3)
-			sed -i '/Architecture = auto &| x86_64_v3/s/^#//g' /tmp/pacman-pacstrap.conf
-			sed -i '/[cachyos-v3]/s/^#//g' /tmp/pacman-pacstrap.conf
-			sed -i '/[cachyos-core-v3]/s/^#//g' /tmp/pacman-pacstrap.conf
-			sed -i '/[cachyos-extra-v3]/s/^#//g' /tmp/pacman-pacstrap.conf
-			sed -i '/Include = /etc/pacman.d/cachyos-v3-mirrorlist/s/^#//g' /tmp/pacman-pacstrap.conf
-			;;
-		*);;
-	esac
-	sed -i '/[cachyos]/s/^#//g' /tmp/pacman-pacstrap.conf
-	sed -i '/Include = /etc/pacman.d/cachyos-mirrorlist/s/^#//g' /tmp/pacman-pacstrap.conf
-	sed -i '/[chaotic-aur]/s/^#//g' /tmp/pacman-pacstrap.conf
-	sed -i '/Include = /etc/pacman.d/chaotic-mirrorlist/s/^#//g' /tmp/pacman-pacstrap.conf
-fi
+# Copy specific pacman config for architecture and arch version
+case $ARCH in
+	aarch64) cp "/usr/share/$DISTRO_ID/custom-configs/pacman-aarch64.conf" /tmp/pacman-pacstrap.conf;;
+	armv7h) cp "/usr/share/$DISTRO_ID/custom-configs/pacman-armv7h.conf" /tmp/pacman-pacstrap.conf;;
+	i686)
+		case $ARCH_VERSION in
+			pentium4) cp "/usr/share/$DISTRO_ID/custom-configs/pacman-pentium4.conf" /tmp/pacman-pacstrap.conf;;
+			i686) cp "/usr/share/$DISTRO_ID/custom-configs/pacman-i686.conf" /tmp/pacman-pacstrap.conf;;
+			*) cp "/usr/share/$DISTRO_ID/custom-configs/pacman-i486.conf" /tmp/pacman-pacstrap.conf;;
+		esac;;
+	x86_64)
+		case $ARCH_VERSION in
+			x86-64-v4) cp "/usr/share/$DISTRO_ID/custom-configs/pacman-x86_64_v4.conf" /tmp/pacman-pacstrap.conf;;
+			x86-64-v3) cp "/usr/share/$DISTRO_ID/custom-configs/pacman-x86_64_v3.conf" /tmp/pacman-pacstrap.conf;;
+			*) cp "/usr/share/$DISTRO_ID/custom-configs/pacman-x86_64.conf" /tmp/pacman-pacstrap.conf;;
+		esac;;
+esac
 pacstrap -C /tmp/pacman-pacstrap.conf /mnt $PACKAGES || exit 1
 mv /tmp/pacman-pacstrap.conf /mnt/etc/pacman.conf
 genfstab -U /mnt >> /mnt/etc/fstab

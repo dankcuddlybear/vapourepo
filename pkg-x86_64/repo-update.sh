@@ -1,6 +1,6 @@
 #!/bin/sh
 REPO_DIR="$(cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd)"
-REPO_NAME="vapourepo-armv7h"
+REPO_NAME="vapourepo-x86_64"
 
 # Delete old files
 rm -f "$REPO_DIR"/*.db "$REPO_DIR"/*.files "$REPO_DIR"/*.sig "$REPO_DIR"/*.tar.gz

@@ -7,3 +7,9 @@
 [submodule "pkgbuild/joystickwake"]
 	path = pkgbuild/joystickwake
 	url = https://aur.archlinux.org/joystickwake.git
+[submodule "pkgbuild/mugshot"]
+	path = pkgbuild/mugshot
+	url = https://aur.archlinux.org/mugshot.git
+[submodule "pkgbuild/menulibre"]
+	path = pkgbuild/menulibre
+	url = https://aur.archlinux.org/menulibre.git

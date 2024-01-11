@@ -9,7 +9,7 @@ replaces=('vapour-os-printing')
 install=install.install
 depends=(
 	'bluez-cups'
-	'cups-browsed' 'cups-pdf' 'cups-pk-helper'
+	'cups-pdf' 'cups-pk-helper'
 	'foomatic-db-engine' 'foomatic-db-gutenprint-ppds' 'foomatic-db-nonfree-ppds' 'foomatic-db-ppds'
 	'gsfonts' 'gutenprint'
 	'ipp-usb'

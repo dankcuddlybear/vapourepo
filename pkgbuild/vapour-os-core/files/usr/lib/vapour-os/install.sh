@@ -8,13 +8,13 @@ Error() {
 if [ -f "/$DISTRO_ID-live" ]; then INSTALL_MODE="iso"; else INSTALL_MODE="system"; fi
 Upgrade() {
 	pacman-key --populate
-	locale-gen
 	systemctl mask systemd-resolved; systemctl stop systemd-resolved &> /dev/null
 	systemctl --now enable irqbalance rtirq rtirq-resume rtkit-daemon fstrim.timer systemd-oomd NetworkManager avahi-daemon.socket fwupd &> /dev/null
 }
 Install() {
 	/usr/share/libalpm/scripts/$DISTRO_ID/mirrors # Update Pacman mirrorlists now
 	cp -r /usr/share/$DISTRO_ID/custom-configs/etc / # Copy custom configs
+	/usr/lib/$DISTRO_ID/mkinitcpio-config
 	echo "[ -z \"\$LOADED_BASHRC_D\" ] && (for FILE in \$(ls /etc/bashrc.d); do . \"/etc/bashrc.d/\$FILE\"; done) && LOADED_BASHRC_D=1" >> /etc/bash.bashrc
 	#
 	## Create custom /etc/issue greeting
@@ -60,6 +60,7 @@ Install() {
 	fi
 	plymouth-set-default-theme vapour-os # Set boot splash
 	pacman-key --init # Pacman keys
+	locale-gen # Locales
 	Upgrade # Finish installation
 }
 

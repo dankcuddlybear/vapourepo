@@ -72,9 +72,8 @@ Target = linux-vfio-lts
 Target = linux-xanmod
 Target = linux-xanmod-lts
 Target = linux-xanmod-rt
-Target = vapour-os-core
 
 [Action]
 Description = Configure mkinitcpio.d kernel presets
 When = PostTransaction
-Exec = /usr/share/libalpm/scripts/vapour-os/mkinitcpio-config
+Exec = /usr/lib/$DISTRO_ID/mkinitcpio-config

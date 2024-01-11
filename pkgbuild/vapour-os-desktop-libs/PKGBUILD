@@ -25,7 +25,8 @@ depends=( ## General software and services
 	mesa # OpenGL
 	vulkan-icd-loader vulkan-mesa-layers # Vulkan
 	libva-mesa-driver libvdpau-va-gl libva-vdpau-driver mesa-vdpau # Video decoding
-	ocl-icd opencl-clover-mesa opencl-rusticl-mesa pocl # OpenCL
+	ocl-icd pocl # OpenCL
+	# opencl-clover-mesa opencl-rusticl-mesa
 	gst-plugin-pipewire pipewire-v4l2 pipewire-zeroconf # Audio
 	
 	## Drivers for other devices

@@ -3,19 +3,19 @@ pkgname=vapour-os-amdgpu
 pkgver=$(date +%Y.%-m.%-d)
 pkgrel=$(expr $(date +%-S) + $(expr 60 \* $(date +%-M)) + $(expr 3600 \* $(date +%-H)))
 pkgdesc='Vapour OS AMD GPU multilib drivers for OpenGL, Vulkan, OpenCL and hardware video acceleration.'
-arch=(x86_64)
+arch=(i686)
 url='https://github.com/dankcuddlybear/vapourepo'
 depends=(
 	# X11 drivers
 	xf86-video-amdgpu xf86-video-ati
 	# OpenGL (Mesa)
-	lib32-mesa
+	mesa
 	# Vulkan (Mesa)
-	vulkan-radeon lib32-vulkan-radeon
-	# OpenCL (Mesa multilib and proprietary 64bit)
-	lib32-opencl-clover-mesa opencl-amd rocm-opencl-runtime
+	vulkan-radeon
+	# OpenCL
+	opencl-amd rocm-opencl-runtime
 	# Video acceleration VA-API
-	libva-mesa-driver lib32-libva-mesa-driver
+	libva-mesa-driver
 	# Video acceleration VDPAU
-	mesa-vdpau lib32-mesa-vdpau
+	mesa-vdpau
 )

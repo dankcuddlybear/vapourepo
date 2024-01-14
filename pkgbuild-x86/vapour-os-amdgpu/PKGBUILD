@@ -12,8 +12,6 @@ depends=(
 	mesa
 	# Vulkan (Mesa)
 	vulkan-radeon
-	# OpenCL
-	opencl-amd rocm-opencl-runtime
 	# Video acceleration VA-API
 	libva-mesa-driver
 	# Video acceleration VDPAU

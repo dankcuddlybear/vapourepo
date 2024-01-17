@@ -2,34 +2,29 @@
 pkgname=vapour-os-gaming
 pkgver=$(date +%Y.%-m.%-d)
 pkgrel=$(expr $(date +%-S) + $(expr 60 \* $(date +%-M)) + $(expr 3600 \* $(date +%-H)))
-pkgdesc='Libraries for Windows/Linux games on Vapour OS'
+pkgdesc='Windows compatibility'
 arch=(x86_64)
 url='https://github.com/dankcuddlybear/vapourepo'
 backup=(etc/dxvk.conf)
 depends=(
+	## Vapour OS libraries
+	lib32-vapour-os-desktop-libs lib32-vapour-os-multimedia-codecs
+	## Wine
 	dxvk-async-git
-	gamemode lib32-gamemode glew1.10
+	vkd3d-proton-git
+	wine-gecko wine-mono wine-nine
+	winesync-dkms winesync-header winesync-udev-rule
+	winetricks
+	## Wine optional dependencies
+	lib32-faudio lib32-fluidsynth
+	lib32-gnutls lib32-gtk2 lib32-gtk3
+	lib32-libappindicator-gtk2 lib32-libappindicator-gtk3 lib32-libcups
+	lib32-ocl-icd lib32-openal
+	lib32-pcsclite
+	lib32-sdl2_image lib32-sdl2_mixer lib32-sdl2_ttf lib32-smpeg
+	lib32-vulkan-icd-loader
+	## Misc
 	joystickwake
-	lib32-dbus-glib
-	lib32-fluidsynth lib32-freeglut
-	lib32-gamemode lib32-glew lib32-glew1.10
-	lib32-libcurl-compat lib32-libappindicator-gtk2 lib32-libappindicator-gtk3 lib32-libnm
-	lib32-openal lib32-openssl-1.1
-	#lib32-pipewire-jack
-	lib32-sdl2_image lib32-sdl2_mixer lib32-sdl2_ttf
-	lib32-libudev0-shim lib32-libusb
-	lib32-libxslt
-	libcurl-compat libcurl-gnutls lib32-libcurl-gnutls
-	libgcrypt15 lib32-libgcrypt15
-	libidn11 lib32-libidn11
-	libjpeg6-turbo lib32-libjpeg6-turbo
-	libpng12 lib32-libpng12
-	librtmp0 lib32-librtmp0
-	libtiff4 lib32-libtiff4
-	lib32-vapour-os-desktop-libs lib32-vapour-os-multimedia-codecs lib32-vkd3d libvpx1.3 lib32-libvpx1.3
-	samba sdl2_ttf
-	vkd3d-proton-mingw-git
-	winesync-dkms winesync-header winesync-udev-rule winetricks wine-gecko wine wine-mono wine-nine
 )
 package() {
 	cp -r "$srcdir/../files/etc" "$pkgdir"

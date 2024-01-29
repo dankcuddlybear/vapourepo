@@ -76,4 +76,4 @@ Target = linux-xanmod-rt
 [Action]
 Description = Configure mkinitcpio.d kernel presets
 When = PostTransaction
-Exec = /usr/lib/$DISTRO_ID/mkinitcpio-config
+Exec = /usr/lib/vapour-os/mkinitcpio-config

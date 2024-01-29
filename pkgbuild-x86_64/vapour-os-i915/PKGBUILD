@@ -17,3 +17,7 @@ depends=(
     pocl
     vulkan-intel
 )
+package() {
+	cp -r "$srcdir/../files/usr" "$pkgdir"
+	"$srcdir/../../set-default-permissions.sh" "$pkgdir"
+}

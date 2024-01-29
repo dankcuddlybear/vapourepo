@@ -18,11 +18,12 @@ depends=(
 	## Wine optional dependencies
 	lib32-faudio lib32-fluidsynth
 	lib32-gnutls lib32-gtk2 lib32-gtk3
-	lib32-libappindicator-gtk2 lib32-libappindicator-gtk3 lib32-libcups
+	lib32-libappindicator-gtk2 lib32-libappindicator-gtk3 lib32-libcups lib32-libva lib32-libxslt
 	lib32-ocl-icd lib32-openal
 	lib32-pcsclite
 	lib32-sdl2_image lib32-sdl2_mixer lib32-sdl2_ttf lib32-smpeg
 	lib32-vulkan-icd-loader
+	samba
 	## Misc
 	joystickwake
 )

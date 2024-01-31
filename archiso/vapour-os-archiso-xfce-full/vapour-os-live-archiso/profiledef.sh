@@ -8,7 +8,7 @@ iso_version="xfce-full-$(date +%Y.%-m.%-d)-$(expr $(date +%-S) + $(expr 60 \* $(
 install_dir="vapour-os"
 buildmodes=('iso')
 bootmodes=('bios.syslinux.mbr' 'bios.syslinux.eltorito'
-	'uefi-ia32.systemd-boot.esp' 'uefi-ia32.systemd-boot.eltorito'
+	'uefi-ia32.grub.esp' 'uefi-ia32.grub.eltorito'
 	'uefi-x64.grub.esp' 'uefi-x64.grub.eltorito')
 arch="x86_64"
 pacman_conf="pacman.conf"

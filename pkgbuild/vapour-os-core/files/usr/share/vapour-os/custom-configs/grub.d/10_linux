@@ -17,7 +17,7 @@ set -e
 # You should have received a copy of the GNU General Public License
 # along with GRUB.  If not, see <http://www.gnu.org/licenses/>.
 
-kparams="bert_disable bgrt_disable boot_delay=0 clocksource=tsc dma_debug=off fsck.mode=force fsck.repair=yes intel_idle.max_cstate=0 intel_pstate=disable iommu=pt mem_sleep_default=deep nmi_watchdog=0 noirqdebug nompx nowatchdog nosoftlockup panic=30 threadirqs tsc=reliable intel_iommu=on"
+kparams="bert_disable bgrt_disable boot_delay=0 clocksource=tsc dma_debug=off fsck.mode=force fsck.repair=yes intel_idle.max_cstate=0 intel_pstate=disable mem_sleep_default=deep nmi_watchdog=0 noirqdebug nompx nowatchdog nosoftlockup panic=30 threadirqs tsc=reliable"
 kparams_graphical="loglevel=1 quiet rd.systemd.show_status=false rd.udev.log_level=0 splash vt.global_cursor_default=0"
 kparams_powersave="cpufreq.default_governor=schedutil cpuidle.governor=teo highres=off pcie.port_pm=force workqueue.power_efficient"
 kparams_esports="acpi_enforce_resources=lax acpi_pm_good cpufreq.default_governor=performance cpuidle.off=1 highres=on idle=poll iomem=relaxed lapic_timer_c2_ok nohalt no_timer_check powersave=off systemd.mask=systemd-oomd.service"

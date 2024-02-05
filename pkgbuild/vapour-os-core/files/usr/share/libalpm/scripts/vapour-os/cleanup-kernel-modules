@@ -1,5 +1,6 @@
 #!/bin/sh
-KERNELS=$(ls /boot/vmlinu*-linux* | sed "s/\/boot\/vmlinuz-//g" | sed "s/\/boot\/vmlinux-//g")
+KERNELS=""; for KMOD_DIR in $(ls -v -w 1 /usr/lib/modules); do
+KERNELS="$KERNELS $(cat /usr/lib/modules/$KMOD_DIR/pkgbase)"; done
 BOOTED_KERNEL=$(uname -r | cut -d '-' -f 2 | sed 's/[0-9]//g')
 if [ -z "$BOOTED_KERNEL" ] || [ "$BOOTED_KERNEL" == "generic" ] || [ "$BOOTED_KERNEL" == "arch" ]; then
 	BOOTED_KERNEL="linux"

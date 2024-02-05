@@ -1,0 +1,24 @@
+#!/bin/sh
+KERNELS=""; for KMOD_DIR in $(ls -v -w 1 /usr/lib/modules); do
+	KERNELS="$KERNELS $(cat /usr/lib/modules/$KMOD_DIR/pkgbase)"
+done
+
+# Remove kernel files from /boot if uninstalled via pacman
+for KERNEL_FILE in $(ls /boot | grep "vmlinu"); do
+	KERNEL_NAME="$(echo $KERNEL_FILE | cut -c 9-)"
+	if [[ " $KERNELS " != *" $KERNEL_NAME "* ]]; then
+		rm /boot/$KERNEL_FILE
+		rm /boot/initramfs-$KERNEL_FILE*.img
+	fi
+done
+
+# Remove mkinitcpio presets if kernel is uninstalled via pacman
+for PRESET in $(ls /etc/mkinitcpio.d); do
+	[[ " $KERNELS " != *" $(echo $PRESET | cut -d '.' -f 1) "* ]] && rm /etc/mkinitcpio.d/$PRESET
+done
+
+# Disable fallback preset as autodetect hook is not used anyway
+for FILE in $(ls /etc/mkinitcpio.d); do
+	sed -i "s/^.*PRESETS=('default' 'fallback').*$/PRESETS=('default')/" /etc/mkinitcpio.d/$FILE
+	sed -i "s/^fallback/#&/" /etc/mkinitcpio.d/$FILE
+done

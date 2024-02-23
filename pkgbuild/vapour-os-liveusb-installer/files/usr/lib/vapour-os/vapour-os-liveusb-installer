@@ -103,7 +103,6 @@ PACKAGES="$VERSION_TO_INSTALL $KERNELS $ADDITIONAL_SOFTWARE grub"
 case $ARCH in
 	armv7h) PACKAGES="$DISTRO_ID-platform-armv7h $PACKAGES";;
 	armv7h) PACKAGES="$DISTRO_ID-platform-armv7h $PACKAGES";;
-	x86) PACKAGES="$DISTRO_ID-platform-x86 $PACKAGES";;
 	x86_64) PACKAGES="$DISTRO_ID-platform-x86_64 $PACKAGES";;
 esac
 MANUFACTURER="$(dmidecode -s system-manufacturer)"
@@ -133,7 +132,7 @@ for KERNEL in $KERNELS; do PACKAGES="$PACKAGES $KERNEL $KERNEL-headers"; done
 [[ "$ADDITIONAL_SOFTWARE" == *" firefox "* ]] && PACKAGES="$PACKAGES firefox-dark-reader firefox-decentraleyes firefox-ublock-origin"
 # Version
 if [ "$VERSION_TO_INSTALL" != "$DISTRO_ID-core" ]; then
-	PACKAGES="$PACKAGES octopi octopi-notifier-qt5 pipewire-alsa pipewire-jack pipewire-pulse wireplumber $DISTRO_ID-wallpapers"
+	PACKAGES="$PACKAGES octopi octopi-notifier-qt5 pipewire-alsa pipewire-jack pipewire-pulse wireplumber"
 	[ $ARCH == "x86_64" ] && PACKAGES="$PACKAGES lib32-pipewire-jack"
 	# Detect GPUs
 	lspci | grep -i "VGA" | grep -i "AMD" &> /dev/null && PACKAGES="$PACKAGES $DISTRO_ID-amdgpu"
@@ -186,8 +185,13 @@ case $ARCH in
 			*) cp "/usr/share/$DISTRO_ID/custom-configs/pacman-x86_64.conf" /tmp/pacman-pacstrap.conf;;
 		esac;;
 esac
-pacstrap -C /tmp/pacman-pacstrap.conf /mnt $PACKAGES || exit 1
-mv /tmp/pacman-pacstrap.conf /mnt/etc/pacman.conf
+CONTINUE=0; while [ $CONTINUE == 0 ]; do
+	pacstrap -C /tmp/pacman-pacstrap.conf /mnt $PACKAGES && CONTINUE=1
+	if [ $CONTINUE == 0 ]; then
+		read -p "Try again?" ANSWER
+		([ $ANSWER == "n" ] || [ $ANSWER == "N" ]) && exit 1
+	fi
+done; mv /tmp/pacman-pacstrap.conf /mnt/etc/pacman.conf
 genfstab -U /mnt >> /mnt/etc/fstab
 
 ## 4) Chroot setup

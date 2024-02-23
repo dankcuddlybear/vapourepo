@@ -8,10 +8,6 @@ ARCH="$(uname -m)"
 case $ARCH in
 	aarch64) ARCH_VERSION="aarch64";;
 	armv7h) ARCH_VERSION="armv7h";;
-	i686)
-		if (cat /proc/cpuinfo | grep -m 1 flags | grep "sse2" &> /dev/null); then ARCH_VERSION="pentium4"
-		elif (cat /proc/cpuinfo | grep -m 1 flags | grep "sse" &> /dev/null); then ARCH_VERSION="i686"
-		else ARCH_VERSION="i486" fi;;
 	x86_64) ARCH_VERSION="$(/lib/ld-linux-x86-64.so.2 --help | grep -m 1 "supported, searched" | cut -d '(' -f 1 | xargs)";;
 	*) echo "[ERROR] Unsupported CPU architecture \"$ARCH\"!"; exit 1;;
 esac

@@ -10,8 +10,8 @@ syslinux
 vapour-os-desktop-libs
 vapour-os-amdgpu
 vapour-os-i915
+vapour-os-multimedia-codecs
 vapour-os-nouveau
-vapour-os-gaming
 vapour-os-printer-drivers
 lib32-pipewire-jack
 pipewire-alsa

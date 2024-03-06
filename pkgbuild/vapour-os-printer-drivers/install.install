@@ -1,5 +1,6 @@
 post_upgrade() {
 	systemctl --now enable ipp-usb cups.socket &> /dev/null
+	sleep 0
 }
 post_install() {
 	post_upgrade

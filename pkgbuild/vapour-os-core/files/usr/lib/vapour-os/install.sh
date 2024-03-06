@@ -14,7 +14,7 @@ Upgrade() {
 Install() {
 	/usr/share/libalpm/scripts/$DISTRO_ID/mirrors # Update Pacman mirrorlists now
 	cp -r /usr/share/$DISTRO_ID/custom-configs/etc / # Copy custom configs
-	/usr/lib/$DISTRO_ID/mkinitcpio-config
+	/usr/lib/$DISTRO_ID/kernel-config
 	echo "[ -z \"\$LOADED_BASHRC_D\" ] && (for FILE in \$(ls /etc/bashrc.d); do . \"/etc/bashrc.d/\$FILE\"; done) && LOADED_BASHRC_D=1" >> /etc/bash.bashrc
 	#
 	## Create custom /etc/issue greeting

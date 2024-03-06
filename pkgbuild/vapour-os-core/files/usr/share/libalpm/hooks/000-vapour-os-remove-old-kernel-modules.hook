@@ -7,5 +7,5 @@ Target = *
 
 [Action]
 Description = Removing old Linux kernel modules...
-When = PostTransaction
-Exec = /usr/share/libalpm/scripts/vapour-os/cleanup-kernel-modules
+When = PreTransaction
+Exec = /usr/lib/vapour-os/remove-old-kernel-modules

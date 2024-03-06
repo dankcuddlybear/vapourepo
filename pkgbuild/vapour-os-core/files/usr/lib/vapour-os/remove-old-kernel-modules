@@ -1,0 +1,73 @@
+#!/bin/sh
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+
+# Get kernel name from kernel file name
+KernelFileToName() {
+	KERNEL=$(basename $1)
+	KERNEL=$(echo $KERNEL | sed 's/vmlinuz-//' | sed 's/vmlinux-//')
+	echo $KERNEL
+}
+
+# Get installed kernel names
+INSTALLED_KERNELS=""
+for KERNEL in $($SCRIPT_DIR/get-installed-kernels); do
+	INSTALLED_KERNELS="$INSTALLED_KERNELS $(echo $KERNEL | cut -d ';' -f 1)"
+done
+
+# Get installed kernel modules
+INSTALLED_MODULES=""
+for MODULE_DIR in $($SCRIPT_DIR/get-installed-kernels); do
+	INSTALLED_MODULES="$INSTALLED_MODULES $(echo $MODULE_DIR | cut -d ';' -f 2)"
+done
+CURRENT_MODULE_VERSION=$(uname -r)
+
+# Remove kernel initcpios from /boot if that kernel is no longer installed
+for INITRAMFS_FILE in $(ls /boot/initramfs-linux*.img); do
+	INITRAMFS=$(basename $INITRAMFS_FILE)
+	#
+	# Trim text before "linux"
+	INITRAMFS_FILE_SUBSTRING_OFFSET=$(echo "$INITRAMFS" | grep -b -o "linux" | cut -d ':' -f 1)
+	INITRAMFS=${INITRAMFS:$INITRAMFS_FILE_SUBSTRING_OFFSET}
+	# Trim file extension
+	INITRAMFS_FILE_SUBSTRING_OFFSET=$(echo "$INITRAMFS" | grep -b -o ".img" | cut -d ':' -f 1)
+	INITRAMFS=${INITRAMFS:0:$INITRAMFS_FILE_SUBSTRING_OFFSET}
+	INITRAMFS=$(echo $INITRAMFS | sed 's/-fallback//')
+	#
+	if [[ " $INSTALLED_KERNELS " != *" $INITRAMFS "* ]]; then
+		rm $INITRAMFS_FILE
+		echo "Removed $INITRAMFS_FILE"
+	fi
+done
+
+# Remove kernels from /boot if that kernel is no longer installed
+for KERNEL_FILE in $(ls /boot/vmlinu*); do
+	KERNEL=$(KernelFileToName $KERNEL_FILE)
+	if [[ " $INSTALLED_KERNELS " != *" $KERNEL "* ]]; then
+		rm $KERNEL_FILE
+		echo "Removed $KERNEL_FILE"
+	fi
+done
+
+# Remove kernel mkinitcpio presets from /etc/mkinitcpio.d if that kernel is no longer installed
+for PRESET_FILE in $(ls /etc/mkinitcpio.d/*.preset); do
+	# Check inside preset to see if a specified kernel does not exist,
+	# if that is the case then delete the preset
+	for KERNEL_FILE in $(cat $PRESET_FILE | grep "_kver="); do
+		KERNEL=$(echo $KERNEL_FILE | cut -d '"' -f 2)
+		KERNEL=$(KernelFileToName $KERNEL)
+		if [[ " $INSTALLED_KERNELS " != *" $KERNEL "* ]]; then
+			rm $PRESET_FILE
+			echo "Removed $PRESET_FILE"
+			break
+		fi
+	done
+done
+
+# Remove kernel modules from /usr/lib/modules if that version is no longer installed AND no longer in use
+for MODULE_DIR in $(ls /usr/lib/modules); do
+	if [[ " $INSTALLED_MODULES " != *" $MODULE_DIR "* ]] && \
+	[ $MODULE_DIR != "$CURRENT_MODULE_VERSION" ]; then
+		rm -r /usr/lib/modules/$MODULE_DIR
+		echo "Removed /usr/lib/modules/$MODULE_DIR"
+	fi
+done

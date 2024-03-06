@@ -1,0 +1,9 @@
+#!/bin/bash
+for DIR in $(ls -d /var/lib/pacman/local/linux*); do
+	(cat $DIR/desc | grep "linux=" &> /dev/null) && IS_KERNEL=1 || IS_KERNEL=0
+	if [ $IS_KERNEL == 1 ]; then
+		NAME=$(grep '%NAME%' --no-group-separator -A1 $DIR/desc | grep -v '%NAME%')
+		KMOD_DIR="/$(cat $DIR/files | grep "usr/lib/modules/" | grep -m 1 "linux")"
+		echo "$NAME;$(basename $KMOD_DIR)"
+	fi
+done

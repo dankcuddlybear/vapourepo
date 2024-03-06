@@ -7,6 +7,6 @@ Target = etc/mkinitcpio.d/*
 Target = usr/lib/modules/*/vmlinuz
 
 [Action]
-Description = Configure kernels
+Description = Configure mkinitcpio presets
 When = PostTransaction
-Exec = /usr/lib/vapour-os/kernel-config
+Exec = /usr/lib/vapour-os/mkinitcpio-config

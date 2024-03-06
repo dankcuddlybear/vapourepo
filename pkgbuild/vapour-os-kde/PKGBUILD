@@ -16,7 +16,6 @@ depends=(
 
 	kde-gtk-config kdegraphics-thumbnailers kdenetwork-filesharing kdepim-addons kdeplasma-addons kdialog
 	kinfocenter kio-gdrive
-	khotkeys
 	kfind
 	kscreen ksshaskpass
 	kwallet-pam kwalletmanager kwrited
@@ -33,7 +32,6 @@ depends=(
 	plasma-nm
 	plasma-pa
 	plasma-thunderbolt
-	plasma-wayland-session
 
 	powerdevil power-profiles-daemon print-manager python-gobject
 	qt5-virtualkeyboard

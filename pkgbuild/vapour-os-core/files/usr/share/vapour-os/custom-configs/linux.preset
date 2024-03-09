@@ -1,0 +1,11 @@
+# mkinitcpio preset file for the 'KERNEL_NAME' package
+
+#ALL_config="/etc/mkinitcpio.conf"
+ALL_kver="/boot/vmlinuz-KERNEL_NAME"
+
+PRESETS=('default')
+
+#default_config="/etc/mkinitcpio.conf"
+default_image="/boot/initramfs-KERNEL_NAME.img"
+#default_uki="/efi/EFI/Linux/arch-KERNEL_NAME.efi"
+#default_options="--splash /usr/share/systemd/bootctl/splash-arch.bmp"

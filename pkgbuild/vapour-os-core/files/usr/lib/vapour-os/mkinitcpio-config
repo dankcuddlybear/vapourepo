@@ -1,6 +1,18 @@
 #!/bin/sh
-# Disable fallback preset
-for FILE in $(ls /etc/mkinitcpio.d); do
+DISTRO_ID="vapour-os"
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+
+# Disable fallback image generation for existing presets
+for FILE in $(ls -A /etc/mkinitcpio.d); do
 	sed -i "s/^.*PRESETS=('default' 'fallback').*$/PRESETS=('default')/" /etc/mkinitcpio.d/$FILE
 	sed -i "s/^fallback/#&/" /etc/mkinitcpio.d/$FILE
+done
+
+# Create missing presets
+for KERNEL in $($SCRIPT_DIR/get-installed-kernels); do
+	KERNEL_NAME="$(echo $KERNEL | cut -d ';' -f 1)"
+	if [ ! -f /etc/mkinitcpio.d/$KERNEL_NAME.preset ]; then
+		cp /usr/share/$DISTRO_ID/custom-configs/linux.preset /etc/mkinitcpio.d/$KERNEL_NAME.preset
+		sed -i "s/KERNEL_NAME/$KERNEL_NAME/" /etc/mkinitcpio.d/$KERNEL_NAME.preset
+	fi
 done

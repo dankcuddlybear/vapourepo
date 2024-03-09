@@ -1,0 +1,3 @@
+# Set the HDD spin-down delay
+ACTION=="add|change", KERNEL=="sd[a-z]", ATTRS{queue/rotational}=="1", RUN+="/usr/lib/voscfg/apply-hdd-spin-down-delay /dev/%k"
+ACTION=="add|change", KERNEL=="hd[a-z]", ATTRS{queue/rotational}=="1", RUN+="/usr/lib/voscfg/apply-hdd-spin-down-delay /dev/%k"

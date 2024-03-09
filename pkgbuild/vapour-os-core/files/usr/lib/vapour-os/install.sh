@@ -61,6 +61,7 @@ Install() {
 	plymouth-set-default-theme vapour-os # Set boot splash
 	pacman-key --init # Pacman keys
 	locale-gen # Locales
+	timedatectl set-ntp true # Enable NTP
 	Upgrade # Finish installation
 }
 

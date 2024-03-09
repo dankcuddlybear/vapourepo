@@ -1,11 +1,12 @@
-#!/bin/sh
+#!/bin/bash
 DISTRO_NAME="$(cat /usr/lib/os-release | grep -i "PRETTY_NAME" | cut -d '=' -f 2 | sed 's/"//g')"
 SCRIPT_DIR="$(readlink -f $( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd ))"
 SCRIPT_USER="$(whoami)"
 (groups "$SCRIPT_USER" | grep "wheel" &> /dev/null || [ $SCRIPT_USER == "root" ]) && IS_ADMIN=1 || IS_ADMIN=0
 ExecAdmin() {
-	[ $IS_ADMIN == 1 ] && sudo $@ || \
-	dialog --title "Error" --msgbox "You do not have permission to change this setting." 0 0
+	if [ $IS_ADMIN == 1 ]; then sudo $@; else
+		dialog --title "Error" --msgbox "You do not have permission to change this setting." 0 0
+	fi
 }
 while true; do
 	CHOICE=$(dialog --stdout --title "Users" --menu "Main menu" 0 0 0 \

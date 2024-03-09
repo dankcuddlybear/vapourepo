@@ -2,7 +2,6 @@
 DISTRO_NAME="$(cat /usr/lib/os-release | grep -i "PRETTY_NAME" | cut -d '=' -f 2 | sed 's/"//g')"
 SCRIPT_DIR="$(readlink -f $( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd ))"
 SCRIPT_USER="$(whoami)"
-BACKTITLE="[$SCRIPT_USER] $DISTRO_NAME settings > Time and date"
 [ $SCRIPT_USER != "root" ] && echo "[ERROR] You must be root to run this script" && exit 1
 while true; do
 	# Load settings
@@ -25,25 +24,25 @@ while true; do
 		AUTO_UPDATE_TIMEZONE_TEXT="Enable timezone auto-update"
 		EXTRA_CHOICES="Z Timezone"
 	fi
-
-	CHOICE=$(dialog --stdout --backtitle "$BACKTITLE" --title "Time and date" --menu "Configure date, time and timezone" 0 0 0 \
-	"t" "$AUTO_UPDATE_TIMEDATE_TEXT" "z" "$AUTO_UPDATE_TIMEZONE_TEXT" "$EXTRA_CHOICES")
+	
+	CHOICE=$(dialog --stdout --title "Time and date" --menu "Configure date, time and timezone" 0 0 0 \
+	"t" "$AUTO_UPDATE_TIMEDATE_TEXT" "z" "$AUTO_UPDATE_TIMEZONE_TEXT" $EXTRA_CHOICES)
 	if [ -z "$CHOICE" ]; then exit 125; else
 		case $CHOICE in
 			t) 	if [ "$AUTO_UPDATE_TIMEDATE" == "active" ]; then
-					dialog --backtitle "$BACKTITLE" --title "Please wait..." --infobox "Disabling time and date auto-update..." 0 0
+					dialog --title "Please wait..." --infobox "Disabling time and date auto-update..." 0 0
 					while [ "$(timedatectl | grep "NTP service:" | cut -d ':' -f 2 | xargs)" == "active" ]; do timedatectl set-ntp false; sleep 1; done
 				else
-					dialog --backtitle "$BACKTITLE" --title "Please wait..." --infobox "Updating date and time..." 0 0
+					dialog --title "Please wait..." --infobox "Updating date and time..." 0 0
 					"$SCRIPT_DIR/sync-timezone"; timedatectl set-ntp true
 				fi;;
 			z) 	if [ $AUTO_UPDATE_TIMEZONE == 1 ]; then echo "0" > /etc/voscfg/auto-update-timezone; else
-					dialog --backtitle "$BACKTITLE" --title "Please wait..." --infobox "Updating time zone..." 0 0
+					dialog --title "Please wait..." --infobox "Updating time zone..." 0 0
 					echo "1" > /etc/voscfg/auto-update-timezone
 					"$SCRIPT_DIR/sync-timezone"
-				;;
+				fi;;
 			T) "$SCRIPT_DIR/set-time";; D) "$SCRIPT_DIR/set-date";; Z) sleep 0;;
-			*) dialog --backtitle "$BACKTITLE" --title "Error" --msgbox "Not yet implemented" 0 0;;
+			*) dialog --title "Error" --msgbox "Not yet implemented" 0 0;;
 		esac
 	fi
 done

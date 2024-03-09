@@ -1,0 +1,8 @@
+#!/bin/sh
+[ -z "$1" ] && echo "[ERROR] No drive given (/dev/sdX)" && exit 1
+HDD_SPIN_DOWN_DELAY=$(cat /etc/voscfg/hdd-spin-down-delay)
+if [ -z "$HDD_SPIN_DOWN_DELAY" ]; then HDD_SPIN_DOWN_DELAY=5
+elif [ $HDD_SPIN_DOWN_DELAY -lt 1 ]; then HDD_SPIN_DOWN_DELAY=0
+elif [ $HDD_SPIN_DOWN_DELAY -gt 20 ]; then HDD_SPIN_DOWN_DELAY=20; fi
+HDPARM_DELAY=$(expr $HDD_SPIN_DOWN_DELAY *\ 12)
+hdparm -S $HDPARM_DELAY $1

@@ -2,7 +2,6 @@
 DISTRO_NAME="$(cat /usr/lib/os-release | grep -i "PRETTY_NAME" | cut -d '=' -f 2 | sed 's/"//g')"
 SCRIPT_DIR="$(readlink -f $( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd ))"
 SCRIPT_USER="$(whoami)"
-BACKTITLE="[$SCRIPT_USER] $DISTRO_NAME settings > Power management"
 [ $SCRIPT_USER != "root" ] && echo "[ERROR] You must be root to run this script" && exit 1
 while true; do
 	# Get CPU turbo boost info
@@ -18,8 +17,8 @@ while true; do
 		CPU_TURBO="-1"
 		CPU_TURBO_TEXT="CPU turbo boost is not supported"
 	fi
-	CHOICE=$(dialog --stdout --backtitle "$BACKTITLE" --title "Power management" --menu "Configure hardware power management" 0 0 0 \
-	"T" "$CPU_TURBO_TEXT")
+	CHOICE=$(dialog --stdout --title "Power management" --menu "Configure hardware power management" 0 0 0 \
+	"H" "HDD spin-down delay" "T" "$CPU_TURBO_TEXT")
 
 	if [ -z "$CHOICE" ]; then exit; else
 		case $CHOICE in
@@ -38,6 +37,18 @@ while true; do
 					mkdir /etc/voscfg &> /dev/null
 					echo 0 > /etc/voscfg/cpu-turbo-enable
 					echo 0 > /sys/devices/system/cpu/cpufreq/boost
+				fi;;
+			H)
+				# Get current value
+				HDD_SPIN_DOWN_DELAY=$(cat /etc/voscfg/hdd-spin-down-delay)
+				[ -z "$HDD_SPIN_DOWN_DELAY" ] && HDD_SPIN_DOWN_DELAY=5
+				HDD_SPIN_DOWN_DELAY=$(dialog --stdout --title "HDD spin-down delay" --rangebox "Set idle spin-down delay in minutes for hard-disk drives. Set to 0 to disable spin-down. Does not affect solid-state drives (SSDs)." 0 0 0 20 $HDD_SPIN_DOWN_DELAY)
+				if [ ! -z "$HDD_SPIN_DOWN_DELAY" ]; then
+					# Save setting
+					mkdir /etc/voscfg &> /dev/null
+					echo $HDD_SPIN_DOWN_DELAY > /etc/voscfg/hdd-spin-down-delay
+					# Reload udev block device rules so the setting is applied
+					udevadm trigger --subsystem-match=block
 				fi;;
 			*) dialog --backtitle "$BACKTITLE" --title "Error" --msgbox "Not yet implemented" 0 0;;
 		esac

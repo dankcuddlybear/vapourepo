@@ -21,6 +21,14 @@ for MODULE_DIR in $($SCRIPT_DIR/get-installed-kernels); do
 done
 CURRENT_MODULE_VERSION=$(uname -r)
 
+# Safety check in case kernel detection fails
+if [ -z "$INSTALLED_KERNELS" ]; then
+	echo "[WARNING] No installed kernels detected."
+	echo "          This is normal on live install media, but may indicate a bug on installed systems."
+	echo "          Not removing any files..."
+	exit 1
+fi
+
 # Remove kernel initcpios from /boot if that kernel is no longer installed
 for INITRAMFS_FILE in $(ls /boot/initramfs-linux*.img); do
 	INITRAMFS=$(basename $INITRAMFS_FILE)

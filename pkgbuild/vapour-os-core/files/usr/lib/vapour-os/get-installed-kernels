@@ -1,9 +1,15 @@
 #!/bin/bash
+# Check pacman's installed packages metadata for installed linux kernel packages
 for DIR in $(ls -d /var/lib/pacman/local/linux*); do
-	(cat $DIR/desc | grep "linux=" &> /dev/null) && IS_KERNEL=1 || IS_KERNEL=0
-	if [ $IS_KERNEL == 1 ]; then
+	# Check description to see if package actually provides kernel modules
+	if (cat $DIR/desc | grep "linux=" &> /dev/null) || \
+	(cat $DIR/desc | grep "KSMBD-MODULE" &> /dev/null) || \
+	(cat $DIR/desc | grep "VIRTUALBOX-GUEST-MODULES" &> /dev/null); then
+		# Get package name specified after the line "%NAME%"
 		NAME=$(grep '%NAME%' --no-group-separator -A1 $DIR/desc | grep -v '%NAME%')
-		KMOD_DIR="/$(cat $DIR/files | grep "usr/lib/modules/" | grep -m 1 "linux")"
+		# Get module directory
+		KMOD_DIR="/$(cat $DIR/files | grep "usr/lib/modules/" | grep -m 1 "/kernel/" | sed "s|/kernel/||")"
+		# Print kernel name and version
 		echo "$NAME;$(basename $KMOD_DIR)"
 	fi
 done

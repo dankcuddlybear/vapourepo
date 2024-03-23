@@ -1,0 +1,21 @@
+{
+    "KPlugin": {
+        "Authors": [
+            {
+                "Email": "plasma-devel@kde.org",
+                "Name": "KDE Visual Design Group"
+            }
+        ],
+        "Category": "",
+        "Description": "Breeze Midnight",
+        "Id": "org.vapour-os.breeze-midnight.desktop",
+        "License": "GPLv2+",
+        "Name": "Breeze Midnight",
+        "ServiceTypes": [
+            "Plasma/LookAndFeel"
+        ],
+        "Version": "2.0",
+        "Website": "https://www.kde.org"
+    },
+    "X-Plasma-MainScript": "defaults"
+}

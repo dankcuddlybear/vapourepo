@@ -150,7 +150,7 @@ if [ "$VERSION_TO_INSTALL" != "$DISTRO_ID-core" ]; then
 		$DISTRO_ID-gnome)
 			PACKAGES="$PACKAGES eog file-roller gnome-calculator gnome-characters gnome-font-viewer gnome-system-monitor gnome-terminal gnome-usage nautilus nauilus-share xdg-desktop-portal-gnome";;
 		$DISTRO_ID-kde)
-			PACKAGES="$PACKAGES ark dolphin dolphin-plugins filelight gwenview kamoso kate kcalc kcharselect kcolorchooser kolourpaint konsole krename okular spectacle xdg-desktop-portal-kde"
+			PACKAGES="$PACKAGES ark dolphin dolphin-plugins filelight gwenview kamoso kate kcalc kcharselect kcolorchooser kolourpaint konsole krename okular plasma-systemmonitor spectacle xdg-desktop-portal-kde"
 			[[ "$ADDITIONAL_SOFTWARE" == *" firefox "* ]] && PACKAGES="$PACKAGES firefox-extension-plasma-integration-bin";;
 		$DISTRO_ID-xfce)
 			PACKAGES="$PACKAGES atril engrampa galculator mousepad ristretto thunar thunar-archive-plugin thunar-media-tags-plugin thunar-volman xdg-desktop-portal-gtk xfce4-clipman-plugin xfce4-weather-plugin xfce4-terminal";;

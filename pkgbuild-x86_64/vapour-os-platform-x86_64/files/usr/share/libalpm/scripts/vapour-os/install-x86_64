@@ -8,7 +8,6 @@ Error() {
 Upgrade() {
 	pacman-key --add /usr/share/pacman/keyrings/cachyos.gpg
 	pacman-key --populate
-	systemctl --now enable ananicy-cpp
 }
 Install() {
 	Upgrade

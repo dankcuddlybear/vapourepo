@@ -5,4 +5,3 @@ ACTION=="add", SUBSYSTEM=="pci", ATTR{power/control}="auto"
 ACTION=="add|change", SUBSYSTEM=="block", KERNEL!="sr*", ATTR{power/control}="auto"
 ACTION=="add|change", KERNEL=="sr*", ATTRS{removable}=="0", ATTR{power/control}="auto"
 ACTION=="add|change", KERNEL=="sr*", ATTRS{removable}=="1", ATTR{power/control}="on"
-

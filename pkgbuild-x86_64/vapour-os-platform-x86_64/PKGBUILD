@@ -8,11 +8,9 @@ url='https://github.com/dankcuddlybear/Vapour-OS'
 provides=(vapour-os-platform)
 conflicts=(vapour-os-platform-aarch64 vapour-os-platform-armv7h vapour-os-platform-x86)
 depends=(
-	ananicy-cpp ananicy-rules-git
 	cachyos-keyring
 	cachyos-mirrorlist cachyos-v3-mirrorlist cachyos-v4-mirrorlist
-	chaotic-keyring
-	chaotic-mirrorlist
+	chaotic-keyring chaotic-mirrorlist
 	vapour-os-core
 )
 package() {

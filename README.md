@@ -1,6 +1,8 @@
 # Discontinued
 Due to financial and mental health struggles, as well as bloat and old, poorly optimised code, I have decided to cease development of Vapour OS. Maybe I'll bring it back some day, or make something entirely new. I'm already working on another Arch distro, which is much closer to the vanilla Arch experience. This repository will remain up so that anyone can use my code for their projects.
 
+
+
 Are you tired of installing and configuring Arch Linux from scratch every time? Do you just want a simple Linux experience while still enjoying the benefits of Arch Linux, like rolling release software and access to the Arch User Repository (AUR)? Then this distro is for you.
 
 Features:

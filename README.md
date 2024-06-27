@@ -3,8 +3,6 @@ Due to financial and mental health struggles, as well as bloat and old, poorly o
 
 
 
-Are you tired of installing and configuring Arch Linux from scratch every time? Do you just want a simple Linux experience while still enjoying the benefits of Arch Linux, like rolling release software and access to the Arch User Repository (AUR)? Then this distro is for you.
-
 Features:
  - Pre-configured for most use cases
  - Performance/latency, power-saving and security optimisations from the Arch Wiki
